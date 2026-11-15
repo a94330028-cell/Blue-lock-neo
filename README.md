@@ -1,4 +1,8 @@
-# Blue Lock NEO 9.1.1 — Atualizador GitHub Pages
+# Blue Lock NEO 9.1.2 — Atualizador GitHub Pages
+
+## ✅ v9.1.2 — Números/Arsenal substituídos na barra inferior Android
+
+A barra de navegação **do aplicativo Android** agora contém exatamente: **🎮 Jogar | 🏆 Liga | 📜 Recordes | 👑 Ranking | 👥 Jogadores | ⚙️ Mais**. A tela antiga de Números/Estatísticas, o Arsenal e a Galeria continuam em **Mais**, com suas funções preservadas. A compilação usa `versionCode 93` e desativa o cache de recursos do WebView para não mostrar a navegação antiga. Veja [CHANGELOG-v9.1.2.md](CHANGELOG-v9.1.2.md).
 
 ## 🔄 Atualizador GitHub Pages — v9.1.1
 
