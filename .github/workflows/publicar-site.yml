@@ -32,6 +32,7 @@ jobs:
           python tools/sync_inline_v930.py web
           node tests/v970.test.cjs
           node tests/v980.test.cjs
+          node tests/v981.test.cjs
           python tools/gerar_atualizacao.py
       - name: Disponibilizar site completo (mesmo antes de habilitar Pages)
         uses: actions/upload-artifact@v4

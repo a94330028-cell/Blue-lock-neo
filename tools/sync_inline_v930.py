@@ -77,5 +77,13 @@ if 'neo-squads-v980.js' not in updated:
 if 'neo-squads-v980.css' not in updated:
     if updated.count('</head>')!=1:raise RuntimeError('Could not find page head')
     updated=updated.replace('</head>','<link rel="stylesheet" href="neo-squads-v980.css?v=9.8.0">\n</head>')
+# v9.8.1: accessible match cues and verified cinematic cup highlights.
+# Both builds (Pages and Android) use exactly this same set of scripts.
+if 'neo-match-v981.js' not in updated:
+    if updated.count('</body>') != 1: raise RuntimeError('Cannot attach match effects')
+    updated=updated.replace('</body>','<script defer src="neo-match-v981.js?v=9.8.1"></script>\n</body>')
+if 'neo-match-v981.css' not in updated:
+    if updated.count('</head>') != 1: raise RuntimeError('Cannot attach match styling')
+    updated=updated.replace('</head>','<link rel="stylesheet" href="neo-match-v981.css?v=9.8.1">\n</head>')
 html.write_text(updated,encoding='utf-8')
 print('Inline game modules synchronized:',counts)

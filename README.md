@@ -1,4 +1,14 @@
-# Blue Lock NEO v9.8.0 — Técnico IA e escalações visuais
+# Blue Lock NEO 9.8.1 — Clubes históricos, criador e transmissão
+
+## Novo na v9.8.1
+
+- APK Android com assinatura estável e atualização preservando saves.
+- Transmissão com efeitos curtos baseados nos lances verdadeiros: gols, defesas, cortes e chances.
+- Campeonatos personalizados com opção **Rever destaques** (placar, gols, assistências e defesas registrados).
+- Retrato do Kaiser substituído pela imagem fornecida pelo autor; fotos dos outros novos jogadores podem ser enviadas manualmente no criador.
+- 4 clubes históricos, personagens personalizados, rankings e fichas completas mantidos.
+
+[Notas completas](CHANGELOG-v9.8.1.md).
 
 ## 🆕 v9.7.0: seu personagem e quatro clubes históricos
 

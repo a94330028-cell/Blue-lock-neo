@@ -1,0 +1,18 @@
+/* Small cinematic signals in the pitch, never another full-width match card. */
+#stadium{position:relative}
+.neo981-cue{position:absolute;z-index:18;pointer-events:none;left:10px;right:auto;top:12px;display:flex;align-items:center;gap:8px;max-width:min(76%,380px);background:#07182fdf;border:1px solid #4b7895;border-left:4px solid #46c9ff;color:#fff;border-radius:11px;padding:8px 10px;font-size:10px;box-shadow:0 7px 20px #0008;transform:translateY(-12px);opacity:0;transition:opacity .22s ease,transform .22s ease}
+.neo981-cue strong{font-size:12px;white-space:nowrap;color:#c4ecff}.neo981-cue span{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:#cee2ef}
+.neo981-cue.neo981-visible{opacity:1;transform:translateY(0)}.neo981-cue.neo981-goal{border-color:#ffc052}.neo981-cue.neo981-goal strong{color:#ffd67d}.neo981-cue.neo981-save{border-color:#50dfaa}.neo981-cue.neo981-save strong{color:#85eccc}.neo981-cue.neo981-defense{border-color:#8fbdff}
+#stadium.neo981-impact-goal{animation:neo981-goal-flash .7s ease-out}#stadium.neo981-impact-save{animation:neo981-save-flash .7s ease-out}
+@keyframes neo981-goal-flash{0%{box-shadow:inset 0 0 0 4px #ffcc5a}100%{box-shadow:inset 0 0 0 0px transparent}}@keyframes neo981-save-flash{0%{box-shadow:inset 0 0 0 4px #64dfb4}100%{box-shadow:inset 0 0 0 0px transparent}}
+.neo981-recap-container{margin:10px 0 18px;background:#0f253a;border:1px solid #34536c;border-radius:13px;color:#e2edf8}
+.neo981-recap-container>summary{cursor:pointer;padding:12px;font-size:13px;font-weight:800;list-style-position:inside}.neo981-recap-grid{display:grid;gap:6px;padding:0 10px 10px}
+.neo981-recap-row{display:flex;align-items:center;justify-content:space-between;gap:9px;text-align:left;min-width:0;border-radius:10px;padding:10px 12px;color:#d9ecfc;background:#132e47;border:1px solid #31506a;cursor:pointer}
+.neo981-recap-row>span{display:grid;gap:4px}.neo981-recap-row small{color:#9ab8ce;font-size:10px}.neo981-recap-row strong{color:#9ed9fb;font-size:10px;white-space:nowrap}
+.neo981-dialog{position:fixed;inset:0;z-index:10040;display:none;align-items:flex-end;justify-content:center}.neo981-dialog.open{display:flex}.neo981-shade{position:absolute;inset:0;background:#03101ce0}
+.neo981-sheet{position:relative;z-index:1;width:min(100%,680px);max-height:90vh;overflow:auto;background:#0c2035;color:#e8f6ff;border:1px solid #355876;border-radius:17px 17px 0 0;padding:22px 16px 80px}
+.neo981-sheet>small{color:#78cbeb;font-weight:800;letter-spacing:.1em}.neo981-sheet h2{font-size:17px;line-height:1.35;margin:12px 24px 17px 0}.neo981-sheet h2 em{font-style:normal;color:#ffd583}
+.neo981-close{position:absolute;right:12px;top:12px;background:#153650;color:#fff;border:1px solid #3c6582;border-radius:8px;padding:8px 12px;cursor:pointer}
+.neo981-match-stats{display:flex;gap:10px;flex-wrap:wrap}.neo981-match-stats span{background:#122e48;border:1px solid #345370;border-radius:10px;padding:10px 12px;font-size:12px}.neo981-match-stats b{color:#f5dd8e}
+.neo981-goals{display:grid;gap:7px}.neo981-goal-row{display:flex;gap:14px;align-items:center;padding:12px;border-radius:10px;border:1px solid #32506c;background:#102941}.neo981-time{color:#ffd582;font-weight:900;width:34px}.neo981-goal-row div{display:grid;gap:3px}.neo981-goal-row small,.neo981-empty,.neo981-foot{color:#acc5d7;font-size:11px}.neo981-star{margin-top:12px;border-radius:10px;padding:10px 12px;background:#1b3343;color:#f9d88e;font-size:12px}
+@media (prefers-reduced-motion:reduce){.neo981-cue{transition:none;animation:none!important}#stadium.neo981-impact-goal,#stadium.neo981-impact-save{animation:none}}
