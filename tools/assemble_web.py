@@ -24,6 +24,12 @@ if '</head>' not in html.lower() or '</body>' not in html.lower():
 repairs = {
     "reader.onerror=()=>reject(Error('Não foi possível ler o arquivo. Confira a permissão de fotos do navegador.'));":
         "reader.onerror=()=>reject(Error('Falha de leitura ('+(reader.error?.name||'arquivo sem acesso')+'). No Android, escolha a imagem pelo seletor de Documentos/Arquivos e tente novamente.'));",
+    "const result=new Image(),url=portraitUrl(name,color),fallback=ORIGINAL_ART[name]||portraitIdentity(name,color);":
+        "const result=new Image(),url=portraitUrl(name,color),fallback=portraitIdentity(name,color);",
+    "const fallback=ORIGINAL_ART[name]||portraitIdentity(name,t.color),url=portraitUrl(name,t.color),remote=url.startsWith('http')?url:'';":
+        "const fallback=portraitIdentity(name,t.color),url=portraitUrl(name,t.color),remote=url.startsWith('http')?url:'';",
+    "if(mode==='premium')return ORIGINAL_ART[name]||portraitIdentity(name,color);":
+        "if(mode==='premium')return portraitIdentity(name,color);",
 }
 for before, after in repairs.items():
     if before in html:
