@@ -1,0 +1,9 @@
+app/build/
+app/src/main/assets/site/
+.gradle/
+.idea/
+*.iml
+local.properties
+.netlify/
+web/index.html
+web/updates/*.zip

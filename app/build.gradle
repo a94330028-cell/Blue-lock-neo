@@ -1,0 +1,54 @@
+plugins { id 'com.android.application' }
+
+def keyFile = System.getenv('BL_SIGNING_FILE')
+def keyPassword = System.getenv('BL_SIGNING_STORE_PASSWORD')
+def keyAliasName = System.getenv('BL_SIGNING_KEY_ALIAS')
+def keyAliasPassword = System.getenv('BL_SIGNING_KEY_PASSWORD')
+def hasSigning = keyFile && keyPassword && keyAliasName && keyAliasPassword
+
+android {
+    namespace 'com.neoegoist.simulator'
+    compileSdk 35
+    defaultConfig {
+        applicationId 'com.neoegoist.simulator'
+        minSdk 24
+        targetSdk 35
+        versionCode 85
+        versionName '8.5.0'
+    }
+    signingConfigs {
+        stableRelease {
+            if (hasSigning) {
+                storeFile file(keyFile)
+                storePassword keyPassword
+                keyAlias keyAliasName
+                keyPassword keyAliasPassword
+            }
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            if (hasSigning) signingConfig signingConfigs.stableRelease
+        }
+        debug { debuggable true }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+// Copia a versão web autopreservada para o APK na compilação.
+// Não é necessário duplicar as 754 artes em pastas do repositório.
+tasks.register('assembleWeb', Exec) {
+    workingDir rootDir
+    commandLine 'python3', 'tools/assemble_web.py'
+}
+tasks.register('prepareEmbeddedSite', Copy) {
+    dependsOn 'assembleWeb'
+    from("${rootDir}/web")
+    into("${projectDir}/src/main/assets/site")
+    exclude('updates/**')
+}
+tasks.named('preBuild') { dependsOn('prepareEmbeddedSite') }

@@ -1,0 +1,39 @@
+name: Publicar Blue Lock NEO e atualizações
+on:
+  push:
+    branches: [main]
+    paths: ['web/**', 'tools/**', '.github/workflows/publicar-site.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: blue-lock-pages
+  cancel-in-progress: true
+jobs:
+  pages:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Reconstruir jogo e pacote de atualização
+        run: |
+          python tools/assemble_web.py
+          python tools/gerar_atualizacao.py
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web
+      - id: deployment
+        uses: actions/deploy-pages@v4
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Site-Blue-Lock-NEO
+          path: web/
+          retention-days: 14
