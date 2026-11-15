@@ -25,6 +25,7 @@ jobs:
         run: |
           set -euo pipefail
           test -f web/index.html
+          python3 tools/sync_inline_v930.py web
           mkdir -p app/src/main/assets/site
           rsync -a --exclude='/updates/' --exclude='/.nojekyll' --exclude='/_headers' --exclude='/service-worker.js' web/ app/src/main/assets/site/
       - uses: actions/setup-java@v4
@@ -43,6 +44,8 @@ jobs:
         run: |
           node tests/navigation-v912.test.js
           node tests/broadcast-v920.test.js
+          node tests/balance-v930.test.js
+          node --check web/neo-v930.js
           node --check web/neo-broadcast-v920.js
           node --check web/mobile-upgrade.js
           node --check web/engine.js

@@ -1,4 +1,15 @@
-# Blue Lock NEO 9.1.2 — Atualizador GitHub Pages
+# Blue Lock NEO 9.3.0 — Mestre Striker & Defesa
+
+## ⭐ v9.3.0 — escala profissional, mestres e defesa competitiva
+
+- **Jogadores normais: até 90 OVR.** Kaiser, Rin, Aiku e Lorenzo: 90; Isagi e Barou: 89; Reo e Bachira: 88.
+- **Mestres: 96–99 OVR.** Noel Noa e Julian Loki: 99; Chris Prince, Lavinho e Marc Snuffy: 98.
+- Ações individuais de desarme, interceptação, bloqueio, disputa aérea, duelo e passe-chave contam para notas e **valores de mercado**, inclusive zagueiros, laterais e volantes.
+- Mestres têm **janelas de aproximadamente 10–12 minutos de jogo**, e podem entrar **até duas vezes por partida**, conforme tática e oportunidades de parada (não há garantia de gol).
+- UI mais compacta, com análises sob demanda e ranking específico de contribuições defensivas.
+- Os saves existentes permanecem; a v9.3.0 exige o APK v9.3.0 para atualizar seu código Android. **Não publique chaves privadas no GitHub.**
+
+A atualização está em [CHANGELOG-v9.3.0.md](CHANGELOG-v9.3.0.md).
 
 ## ✅ v9.1.2 — Números/Arsenal substituídos na barra inferior Android
 

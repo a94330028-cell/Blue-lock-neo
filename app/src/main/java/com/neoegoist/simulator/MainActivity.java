@@ -48,7 +48,7 @@ public final class MainActivity extends Activity {
     private static final int REQUEST_EXPORT = 1502;
     private static final String HOST = "appassets.androidplatform.net";
     private static final String HOME = "https://" + HOST + "/index.html";
-    private static final String BUNDLED_WEB_VERSION = "9.2.0";
+    private static final String BUNDLED_WEB_VERSION = "9.3.0";
     private static final String UPDATE_HOST = "a94330028-cell.github.io";
     private static final String MANIFEST_URL = "https://" + UPDATE_HOST + "/Blue-lock-neo/updates/latest.json";
     private static final String PREFS = "blue_lock_neo_android";
@@ -268,7 +268,7 @@ public final class MainActivity extends Activity {
         } finally { connection.disconnect(); }
     }
 
-    private static final class BuildVersion { static final int CODE = 94; }
+    private static final class BuildVersion { static final int CODE = 95; }
 
     private void installUpdate(UpdateInfo info) {
         if (updateBusy) return;

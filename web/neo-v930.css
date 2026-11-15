@@ -1,0 +1,54 @@
+/* Blue Lock NEO 9.3 — compact mobile hierarchy, visible defending, no extra overlays. */
+.neo930-fold{margin:10px 0;border:1px solid #2c5276;background:#0d1e31;border-radius:14px;overflow:hidden}
+.neo930-fold>summary{cursor:pointer;list-style:none;padding:13px 15px;color:#c8e8ff;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:space-between}
+.neo930-fold>summary::-webkit-details-marker{display:none}
+.neo930-fold>summary:after{content:'+';color:#7ec5fa;font-size:20px;line-height:1}
+.neo930-fold[open]>summary:after{content:'−'}
+.neo930-fold[open]>summary{border-bottom:1px solid #284a66}
+.neo930-fold-body{padding:9px;display:grid;gap:9px}
+.neo930-fold-body>.card{margin:0!important}
+.neo930-live-defender{padding:8px 10px;margin:3px 0 9px;border-radius:9px;background:#0d3346;color:#baf5ee;font-weight:700;font-size:11px}
+.neo930-defense-rank{border-color:#366480!important;background:linear-gradient(150deg,#102b43,#0a1b2c)!important}
+.neo930-head{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;margin-bottom:14px}
+.neo930-head h3{font-size:17px;margin:2px 0 5px;color:#e6f7ff}
+.neo930-head p{font-size:11px;color:#b0c8d9;margin:0;line-height:1.5}
+.neo930-eyebrow{font-size:9px;letter-spacing:1.4px;color:#63d7ce;font-weight:900}
+.neo930-head label{display:grid;gap:6px;font-size:10px;color:#a8cce5;font-weight:800}
+.neo930-head select{background:#10263d;border:1px solid #4d84a3;color:#fff;border-radius:9px;padding:9px;min-width:120px;max-width:220px}
+.neo930-defenders{display:grid;gap:7px}
+.neo930-defender{border:1px solid #284965;background:#102438;border-radius:11px;padding:10px}
+.neo930-defender-head{display:flex;align-items:center;gap:9px}
+.neo930-defender-head>div{min-width:0;flex:1}
+.neo930-defender-head strong{display:block;color:#e4f5ff;font-size:13px;line-height:1.3;overflow-wrap:anywhere}
+.neo930-defender-head small{color:#91afc8;font-size:10px;display:block;margin-top:3px}
+.neo930-place{font-size:12px;color:#62b9eb;width:25px}
+.neo930-bid{white-space:nowrap;color:#f4c66e;font-size:12px}
+.neo930-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}
+.neo930-tags>span{font-size:10px;border-radius:7px;border:1px solid #315777;background:#17314b;color:#b2d1e6;padding:5px 7px;white-space:nowrap}
+.neo930-tags b{color:#e6f7ff}
+.neo930-footnote{font-size:10px;line-height:1.55;color:#99b8cc;margin:11px 2px 0}
+.neo930-empty{padding:17px 12px;color:#a9c1d2;font-size:12px;line-height:1.5}
+.neo930-personal{border:1px solid #3a657c;background:#0b2433;padding:12px;border-radius:11px;margin:10px 0;color:#d5effe}
+.neo930-personal strong{font-size:12px}
+.neo930-personal p{font-size:11px;color:#a7cbdc}
+@media(max-width:700px){
+ .site-header{box-shadow:0 3px 10px #0006!important}
+ .hero-card{padding:12px!important}
+ .hero-card p{margin-bottom:3px!important}
+ #match .neo920-long-panel{margin:7px 0 9px;padding:9px 10px!important}
+ #neo920-broadcast h3{font-size:13px!important;margin:0!important}
+ #neo920-broadcast p.neo920-muted{font-size:10px!important;margin:4px 0!important;line-height:1.3!important}
+ #neo920-broadcast .neo920-durations{margin:5px 0!important;gap:4px}
+ #neo920-broadcast .neo920-durations button{padding:7px 2px;min-height:41px}
+ #match .match-layout{display:grid!important;gap:8px!important}
+ #match .match-card{border-radius:12px!important}
+ #ranking .hero-card,#records .records-hero{padding:12px!important}
+ .neo930-head{gap:8px}.neo930-head h3{font-size:14px}
+ .neo930-head select{max-width:154px;min-width:110px;font-size:11px}
+ .neo930-defender-head{gap:7px}.neo930-bid{font-size:11px}
+ .neo930-defender{padding:8px}.neo930-tags{gap:4px}.neo930-tags>span{padding:4px 5px;font-size:9px}
+ #more>.neo930-fold{margin-bottom:12px}
+ #ranking .neo930-fold-body,#records .neo930-fold-body{padding:6px}
+ #neoMatchAlert{font-size:11px!important;max-height:90px;overflow:hidden}
+}
+@media(prefers-reduced-motion:reduce){.neo930-fold,.neo930-defender{transition:none!important}}
