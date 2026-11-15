@@ -48,9 +48,9 @@ public final class MainActivity extends Activity {
     private static final int REQUEST_EXPORT = 1502;
     private static final String HOST = "appassets.androidplatform.net";
     private static final String HOME = "https://" + HOST + "/index.html";
-    private static final String BUNDLED_WEB_VERSION = "9.1.0";
-    private static final String UPDATE_HOST = "blue-lock-neo-simulator.netlify.app";
-    private static final String MANIFEST_URL = "https://" + UPDATE_HOST + "/updates/latest.json";
+    private static final String BUNDLED_WEB_VERSION = "9.1.1";
+    private static final String UPDATE_HOST = "a94330028-cell.github.io";
+    private static final String MANIFEST_URL = "https://" + UPDATE_HOST + "/Blue-lock-neo/updates/latest.json";
     private static final String PREFS = "blue_lock_neo_android";
     private static final String PREF_WEB_VERSION = "installed_web_version";
     private static final long MAX_PACKAGE_BYTES = 32L * 1024 * 1024;
@@ -236,7 +236,7 @@ public final class MainActivity extends Activity {
     private static boolean isTrustedUrl(String value) {
         try {
             URL url = new URL(value);
-            return "https".equals(url.getProtocol()) && UPDATE_HOST.equals(url.getHost()) && url.getPort() == -1;
+            return "https".equals(url.getProtocol()) && UPDATE_HOST.equals(url.getHost()) && url.getPort() == -1 && url.getPath().startsWith("/Blue-lock-neo/updates/");
         } catch (Exception ignored) { return false; }
     }
     private static HttpURLConnection connectTrusted(String urlText) throws IOException {
@@ -262,7 +262,7 @@ public final class MainActivity extends Activity {
         } finally { connection.disconnect(); }
     }
 
-    private static final class BuildVersion { static final int CODE = 91; }
+    private static final class BuildVersion { static final int CODE = 92; }
 
     private void installUpdate(UpdateInfo info) {
         if (updateBusy) return;
