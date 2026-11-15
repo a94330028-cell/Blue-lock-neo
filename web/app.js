@@ -1648,7 +1648,14 @@ function renderStats(){const rank=(data,id)=>{const entries=Object.entries(data)
  };rank(season.scorers,'scorers');rank(season.assists,'assists');}
 
 function galleryMembers(){
-  return TEAMS.flatMap(t=>[...t.players.map((name,i)=>({name,t,kind:'Titular',role:(roleList(t)[i]||'JOG')})),...t.reserves.map(name=>({name,t,kind:'Reserva',role:'RES'})),{name:t.master,t,kind:'Master Striker',role:'★'}]);
+  // Include all playable squads, not just the five original Neo Egoist teams.
+  // System-generated Best XI is excluded to avoid duplicating players' photos.
+  const available=typeof E.allTeams==='function'?E.allTeams():TEAMS;
+  return available.filter(t=>t&&t.id!=='neo-bestxi').flatMap(t=>[
+   ...(t.players||[]).map((name,i)=>({name,t,kind:'Titular',role:(roleList(t)[i]||'JOG')})),
+   ...(t.reserves||[]).map(name=>({name,t,kind:'Reserva',role:'RES'})),
+   ...(t.master?[{name:t.master,t,kind:'Master Striker',role:'★'}]:[])
+  ]);
 }
 function renderPortraitGallery(){
   const el=$('portraitGallery');if(!el)return;

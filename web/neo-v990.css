@@ -1,0 +1,32 @@
+/* 9.9 — progressive enhancement: one compact living XI, no extra permanent match panels. */
+.neo990-panel{padding:15px!important;margin:12px 0!important;border-color:#5f7890!important;background:linear-gradient(145deg,#122940,#0a1b2b)!important}
+.neo990-head{display:flex;justify-content:space-between;gap:12px;align-items:start}.neo990-head>div{min-width:0;flex:1}
+.neo990-head small{display:block;font-size:9px;letter-spacing:1.4px;color:#e1bb71;font-weight:850}
+.neo990-head h3{color:#f4f8ff;font-size:18px;margin:3px 0 5px}
+.neo990-head p{font-size:11px;line-height:1.5;color:#a9c7d9;margin:2px 0 10px}
+#neo990-round-label{border:1px solid #bc9658;border-radius:9px;padding:7px 10px;color:#fce4a4;font-size:11px;white-space:nowrap;font-weight:800}
+.neo990-select{display:grid;gap:6px;color:#aac5d8;font-size:11px;font-weight:700;margin:9px 0 12px}
+.neo990-select select{background:#112d47;border:1px solid #446986;border-radius:10px;min-height:43px;color:#eaf8ff;padding:10px}
+.neo990-empty{color:#a1bbcf;font-size:12px;padding:20px 11px;border:1px dashed #43637e;border-radius:10px}
+.neo990-team-summary{display:flex;justify-content:space-between;gap:8px;margin:8px 0 10px;font-size:12px;color:#ffe8aa}
+.neo990-team-summary small{color:#a8c0ce;font-size:10px;text-align:right}
+.neo990-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.neo990-player{border:1px solid #31536f;border-radius:10px;background:#132c43;padding:8px;display:flex;align-items:center;gap:7px;color:#f1f7ff;font:inherit;text-align:left;cursor:pointer;min-width:0}
+.neo990-player:hover,.neo990-player:focus-visible{border-color:#a6d8eb;background:#1c3d56;outline-offset:2px}
+.neo990-pic{height:43px;width:39px;flex:none;border-radius:8px;object-fit:cover;object-position:top center;background:#284863}
+.neo990-player>span{flex:1;min-width:0}.neo990-player b{font-size:11px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.neo990-player small{display:block;font-size:9px;color:#adc4d5;margin-top:2px}
+.neo990-player strong{font-size:11px;color:#eecb7f}.neo990-foot{font-size:10px;color:#98b2c6;line-height:1.5;margin:12px 0 0}
+.neo990-bench{margin-top:12px;border:1px solid #344e68;background:#10263a;border-radius:10px;padding:8px 10px}.neo990-bench summary{font-size:11px;color:#c8e5f2;cursor:pointer;font-weight:800}
+.neo990-bench>div{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid #284a63;font-size:11px}.neo990-bench>div:last-child{border-bottom:0}.neo990-bench>div span{flex:1}.neo990-bench>div b{color:#e8c782}
+.neo990-tip{background:#10324b;border:1px solid #2f7599;color:#b9e5f4;font-size:11px;border-radius:10px;padding:11px;line-height:1.5;margin:10px 0}
+@media(max-width:620px){.neo990-grid{grid-template-columns:1fr}.neo990-player{min-height:57px}.neo990-player b{font-size:12px}.neo990-head h3{font-size:16px}.neo990-head p{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.neo990-player{transition:none!important}}
+
+/* Shot/defense animations are triggered only by real engine action effects. */
+#stadium.neo990-impact-shot{animation:neo990-shot-glow .70s ease-out 1}
+#stadium.neo990-impact-save{animation:neo990-save-glow .70s ease-out 1}
+#stadium.neo990-impact-duel{animation:neo990-duel-glow .63s ease-out 1}
+@keyframes neo990-shot-glow{0%{box-shadow:inset 0 0 0 0 #ffd77c00}35%{box-shadow:inset 0 0 0 4px #ffd77cba}100%{box-shadow:inset 0 0 0 0 #ffd77c00}}
+@keyframes neo990-save-glow{0%{box-shadow:inset 0 0 0 0 #75daff00}35%{box-shadow:inset 0 0 0 4px #75daffb9}100%{box-shadow:inset 0 0 0 0 #75daff00}}
+@keyframes neo990-duel-glow{0%{box-shadow:inset 0 0 0 0 #ccaae800}35%{box-shadow:inset 0 0 0 3px #ccaae8a3}100%{box-shadow:inset 0 0 0 0 #ccaae800}}
+@media(prefers-reduced-motion:reduce){#stadium.neo990-impact-shot,#stadium.neo990-impact-save,#stadium.neo990-impact-duel{animation:none!important}}

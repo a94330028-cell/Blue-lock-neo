@@ -1,4 +1,16 @@
-# Blue Lock NEO 9.8.1 — Clubes históricos, criador e transmissão
+# Blue Lock NEO 9.9.0 — Seleção da Rodada, galeria completa e futebol inteligente
+
+## 🏅 v9.9.0 — time da rodada mutável (sem criação de equipes)
+
+- **Você cria apenas um jogador**, escolhe um time já existente e pode substituir um titular, sem opção para usuários criarem times próprios.
+- **Seleção do Campeonato dinâmica:** o melhor XI é recalculado pela **última rodada inteiramente concluída** (gols, passes, notas, defesas, interceptações e desarmes reais). Muda quando a rodada seguinte termina, com suporte para Liga NEO e copas personalizadas.
+- A seleção automática pode ser escolhida como adversária em amistosos; não modifica os cinco clubes originais nem substitui o campeonato salvo.
+- **Galeria principal ampliada:** inclui titulares e reservas de Manchester United 2008, Flamengo 2019, Sport Recife 2015 e Mirassol 2025, com filtros por equipe. O importador continua salvando fotos individuais, sem inventar retratos.
+- **Inteligência e movimentos:** apoio de meio-campistas na área quando o time perde, pontas atacando o segundo poste, centroavantes recuando sob marcação e passes mais seguros quando há pressão.
+- **Animações sincronizadas com lances reais:** impacto visual breve em chutes, defesas e duelos (desativado em reduzir movimento), sem mexer em placares ou inventar momentos.
+- Android **9.9.0** (versionCode 101), atualização web offline e testes CI.
+
+[Ver changelog v9.9.0](CHANGELOG-v9.9.0.md).
 
 ## Novo na v9.8.1
 

@@ -48,9 +48,11 @@ jobs:
           node tests/v970.test.cjs
           node tests/v980.test.cjs
           node tests/v981.test.cjs
+          node tests/v990.test.cjs
           node --check web/neo-coach-v980.js
           node --check web/neo-squads-v980.js
           node --check web/neo-match-v981.js
+          node --check web/neo-round-v990.js
           node --check web/neo-v930.js
           node --check web/neo-broadcast-v920.js
           node --check web/mobile-upgrade.js

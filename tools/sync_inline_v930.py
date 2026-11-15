@@ -85,5 +85,12 @@ if 'neo-match-v981.js' not in updated:
 if 'neo-match-v981.css' not in updated:
     if updated.count('</head>') != 1: raise RuntimeError('Cannot attach match styling')
     updated=updated.replace('</head>','<link rel="stylesheet" href="neo-match-v981.css?v=9.8.1">\n</head>')
+# v9.9: gallery expansion, real-data Team of the Round and adaptive football.
+if 'neo-round-v990.js' not in updated:
+    if updated.count('</body>') != 1: raise RuntimeError('Cannot attach 9.9 gameplay')
+    updated=updated.replace('</body>','<script defer src="neo-round-v990.js?v=9.9.0"></script>\n</body>')
+if 'neo-v990.css' not in updated:
+    if updated.count('</head>') != 1: raise RuntimeError('Cannot attach 9.9 styles')
+    updated=updated.replace('</head>','<link rel="stylesheet" href="neo-v990.css?v=9.9.0">\n</head>')
 html.write_text(updated,encoding='utf-8')
 print('Inline game modules synchronized:',counts)
