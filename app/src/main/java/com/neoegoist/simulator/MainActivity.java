@@ -48,7 +48,7 @@ public final class MainActivity extends Activity {
     private static final int REQUEST_EXPORT = 1502;
     private static final String HOST = "appassets.androidplatform.net";
     private static final String HOME = "https://" + HOST + "/index.html";
-    private static final String BUNDLED_WEB_VERSION = "8.4.0";
+    private static final String BUNDLED_WEB_VERSION = "8.6.0";
     private static final String UPDATE_HOST = "a94330028-cell.github.io";
     private static final String UPDATE_PREFIX = "/Blue-lock-neo/updates/";
     private static final String MANIFEST_URL = "https://" + UPDATE_HOST + UPDATE_PREFIX + "latest.json";
@@ -108,17 +108,41 @@ public final class MainActivity extends Activity {
         });
         webView.setWebChromeClient(new WebChromeClient() {
             @Override public boolean onShowFileChooser(WebView view, ValueCallback<Uri[]> callback, FileChooserParams params) {
+                // Android Storage Access Framework: no broad photo permission required.
+                // Supports images, ZIP/JSON backups and multiple file selections in WebView.
                 if (fileCallback != null) fileCallback.onReceiveValue(null);
                 fileCallback = callback;
                 try {
-                    Intent intent = params.createIntent();
+                    String[] accepts = params.getAcceptTypes();
+                    String accept = accepts == null ? "" : String.join(",", accepts).toLowerCase(Locale.ROOT);
+                    boolean image = accept.contains("image/");
+                    boolean zip = accept.contains("zip") || accept.contains(".zip");
+                    boolean json = accept.contains("json") || accept.contains(".json");
+                    String mime = image && !zip && !json ? "image/*" :
+                        zip && !image && !json ? "application/zip" :
+                        json && !image && !zip ? "application/json" : "*/*";
+                    Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                     intent.addCategory(Intent.CATEGORY_OPENABLE);
-                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    startActivityForResult(intent, REQUEST_PICK);
+                    intent.setType(mime);
+                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+                    intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, params.getMode() == FileChooserParams.MODE_OPEN_MULTIPLE);
+                    if ("*/*".equals(mime)) {
+                        intent.putExtra(Intent.EXTRA_MIME_TYPES,
+                            new String[]{"image/png","image/jpeg","image/webp","image/gif","application/zip","application/json"});
+                    }
+                    startActivityForResult(Intent.createChooser(intent, "Selecionar arquivos"), REQUEST_PICK);
                 } catch (Exception e) {
-                    fileCallback.onReceiveValue(null);
-                    fileCallback = null;
-                    Toast.makeText(MainActivity.this, "Não foi possível abrir a galeria", Toast.LENGTH_LONG).show();
+                    // Some devices ship a different documents provider. Keep a fallback.
+                    try {
+                        Intent fallback = params.createIntent();
+                        fallback.addCategory(Intent.CATEGORY_OPENABLE);
+                        fallback.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        startActivityForResult(fallback, REQUEST_PICK);
+                    } catch (Exception second) {
+                        if (fileCallback != null) fileCallback.onReceiveValue(null);
+                        fileCallback = null;
+                        toast("Não foi possível abrir Arquivos. Instale/ative um gerenciador de arquivos no Android.");
+                    }
                 }
                 return true;
             }
@@ -402,7 +426,26 @@ public final class MainActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_PICK) {
             if (fileCallback != null) {
-                fileCallback.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(resultCode, data));
+                Uri[] results = null;
+                if (resultCode == RESULT_OK && data != null) {
+                    if (data.getClipData() != null) {
+                        int count = Math.min(150, data.getClipData().getItemCount());
+                        results = new Uri[count];
+                        for (int i = 0; i < count; i++) results[i] = data.getClipData().getItemAt(i).getUri();
+                    } else if (data.getData() != null) {
+                        results = new Uri[]{data.getData()};
+                    } else {
+                        results = WebChromeClient.FileChooserParams.parseResult(resultCode, data);
+                    }
+                    if (results != null) {
+                        for (Uri uri : results) {
+                            if (uri == null) continue;
+                            try { getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION); }
+                            catch (SecurityException ignored) { /* Temporary grant remains valid. */ }
+                        }
+                    }
+                }
+                fileCallback.onReceiveValue(results);
                 fileCallback = null;
             }
         } else if (requestCode == REQUEST_EXPORT) {
