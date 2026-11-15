@@ -13,6 +13,7 @@ function classifyEvent(text){
   if(/(?:defende|espalma|grande defesa|defesa incrível|defesa milagrosa|goleiro salva|milagre do goleiro|segura firme)/i.test(s))return {kind:'save',label:'🧤 DEFESA!',duration:2100};
   if(/(?:intercepta|desarma|rouba a bola|bloqueia o chute|corta a jogada|corte providencial)/i.test(s))return {kind:'defense',label:'🛡️ DEFESA!',duration:1700};
   if(/(?:na trave|quase gol|chuta|finaliza|bate pro gol|bomba de fora|na área)/i.test(s))return {kind:'shot',label:'🎯 CHANCE!',duration:1650};
+  if(/(?:assistência|passe magistral|passe decisivo|lançamento perfeito|lançamento preciso)/i.test(s))return {kind:'pass',label:'🎯 PASSE DECISIVO!',duration:1550};
   return null;
 }
 function report(game,round=0){
