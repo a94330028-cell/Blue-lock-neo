@@ -88,7 +88,9 @@ public final class MainActivity extends Activity {
         settings.setJavaScriptCanOpenWindowsAutomatically(false);
         settings.setMediaPlaybackRequiresUserGesture(false);
         settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
-        settings.setCacheMode(WebSettings.LOAD_DEFAULT);
+        // Local game files must never remain stale after installing an APK or web update.
+        // This bypasses the resource cache, not localStorage/IndexedDB (saves and portraits).
+        settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         webView.addJavascriptInterface(new AndroidBridge(), "BlueLockAndroid");
 
         webView.setWebViewClient(new WebViewClient() {
