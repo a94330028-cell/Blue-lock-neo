@@ -3,7 +3,8 @@
 'use strict';
 const $=id=>document.getElementById(id);
 const mobile=()=>window.matchMedia('(max-width:700px)').matches;
-// Same six destinations on Android and desktop. Legacy pages live in Mais.
+// v9.1.2: same six destinations on Android and desktop.
+// The former Números/Arsenal/Galeria screens remain accessible through Mais.
 const tabNames={
  match:['🎮','Jogar'],league:['🏆','Liga'],records:['📜','Recordes'],
  ranking:['👑','Ranking'],squads:['👥','Jogadores'],more:['⚙️','Mais']
@@ -24,11 +25,12 @@ function makeNav(){
   b.addEventListener('click',()=>openTab(id));bar.append(b);buttons.set(id,b);
  }
  document.body.append(bar);
- // Use original navigation handlers: they pause matches and render each screen.
+ // Use original navigation handlers: they pause the match correctly and render each screen.
  function openTab(id){
   const source=document.querySelector('.nav button[data-tab="'+id+'"]');
   if(!source)return;
-  source.click();sync();window.scrollTo({top:0,behavior:'instant'});
+  source.click();sync();
+  window.scrollTo({top:0,behavior:'instant'});
  }
  function sync(){
   const active=document.querySelector('.nav button[data-tab].active')?.dataset.tab||'match';
@@ -41,6 +43,7 @@ function makeNav(){
  const nav=document.querySelector('.nav');
  if(nav)new MutationObserver(sync).observe(nav,{attributes:true,attributeFilter:['class'],subtree:true});
  sync();
+ // Useful for smoke tests and cross-section links. The original screen IDs remain unchanged.
  window.NeoMobile={openTab,toast,sync};
 }
 function neutralAvatar(name){
@@ -166,6 +169,7 @@ async function extractZipImages(file){
 }
 function boot(){
  makeNav();setupGalleryTools();beautifyCards();
+ if(!document.getElementById("neo920-script")){const script=document.createElement("script");script.id="neo920-script";script.src="./neo-broadcast-v920.js?v=9.2.0";script.onerror=()=>toast("Falha ao carregar a transmissão v9.2. Reabra o jogo após atualizar.");document.body.appendChild(script);}
  const gallery=$('portraitGallery');
  if(gallery)new MutationObserver(beautifyCards).observe(gallery,{childList:true});
  // Use the existing import/storage system. The enhancements only improve its navigation.
