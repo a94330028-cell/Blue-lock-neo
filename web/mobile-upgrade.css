@@ -1,0 +1,79 @@
+/* Blue Lock NEO Mobile Edition 8.6 — responsive app shell, no gameplay changes. */
+:root{--neo-ink:#080f20;--neo-glass:#14223a;--neo-line:#294467;--neo-blue:#1595ff;--neo-soft:#a7bfda}
+html{-webkit-tap-highlight-color:transparent;scroll-behavior:smooth}
+button,a,summary{touch-action:manipulation}
+button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid #5fd8ff;outline-offset:2px}
+.neo-mobile-bottom{display:none}
+.neo-gallery-toolbar{display:flex;align-items:center;gap:9px;justify-content:space-between;flex-wrap:wrap;margin:12px 0}
+.neo-gallery-toolbar strong{font-size:12px;color:#e9f7ff}
+.neo-gallery-toolbar small{display:block;color:#a2bbd5;font-size:11px;line-height:1.5}
+.neo-gallery-toolbar .button{min-height:40px}
+.neo-image-status{display:flex;align-items:center;gap:8px;margin:10px 0;padding:10px 12px;border:1px solid #365476;border-radius:12px;background:linear-gradient(120deg,#112841,#101b30);font-size:11px;color:#d8ecff}
+.neo-image-status b{color:#76dcff}
+.neo-extra-options{margin-top:5px;border-radius:11px;border:1px solid #2d4564;background:#101d32}
+.neo-extra-options summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:center;min-height:39px;color:#d6eaff;font-size:12px;font-weight:850}
+.neo-extra-options summary::-webkit-details-marker{display:none}
+.neo-extra-options summary::after{content:'⌄';margin-left:10px;color:#6fcaff}
+.neo-extra-options[open] summary::after{content:'⌃'}
+.neo-extra-content{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;padding:9px}
+.neo-extra-content .button{min-height:39px;white-space:normal!important;font-size:10px!important;max-width:100%;padding:7px 5px!important;margin:0!important;text-align:center}
+.portrait-card.neo-card-ready .portrait-actions{display:block}
+.portrait-card.neo-card-ready .neo-main-action{display:block!important;width:100%;min-height:43px;font-weight:900!important}
+.neo-import-help{font-size:11px;color:#a8c6e5;line-height:1.55;padding:9px 12px;border-radius:10px;border:1px solid #233f5b;background:#0e1d30}
+.neo-image-actions{display:flex;gap:8px;flex-wrap:wrap}
+.neo-image-actions .button{flex:1 1 145px}
+.neo-top-note{color:#a7c0d8;font-size:11px;line-height:1.4}
+@media(max-width:700px){
+ html,body{max-width:100%;overflow-x:hidden}
+ body{background:#07111f!important;padding-bottom:calc(78px + env(safe-area-inset-bottom,0px))!important}
+ .site-header{position:sticky!important;top:0;z-index:80;background:rgba(7,17,31,.96)!important;backdrop-filter:blur(16px);border-bottom:1px solid #294565;padding:9px 12px!important}
+ .site-header .branding{gap:9px;min-width:0}.site-header .brand-icon{width:35px;height:35px;font-size:20px}
+ .site-header .eyebrow{font-size:8px;letter-spacing:1.3px}
+ .site-header h1{font-size:clamp(15px,4.3vw,20px)!important;letter-spacing:.3px;line-height:1.1}
+ .site-header h1 small{font-size:9px}
+ .site-header .header-meta{display:none!important}
+ .site-header .app-install-bar{display:none!important}
+ .shell{padding:10px 9px!important;min-width:0}
+ .shell>.nav{position:absolute!important;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+ .tab-content{padding-bottom:8px}
+ .card,.hero-card{border-radius:16px!important;margin-bottom:10px!important}
+ .hero-card{padding:15px!important}
+ .hero-card h2{font-size:clamp(18px,5vw,24px)!important;line-height:1.2}
+ .hero-card p{font-size:11px;line-height:1.55}
+ .neo-mobile-bottom{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:150;padding:7px 7px calc(6px + env(safe-area-inset-bottom,0px));background:rgba(9,20,37,.97);border-top:1px solid #284467;box-shadow:0 -13px 40px #020a1d9e;backdrop-filter:blur(18px);gap:3px;align-items:stretch}
+ .neo-mobile-bottom>button{color:#8eaac5;background:transparent;border:0;border-radius:12px;display:flex;flex:1;min-width:0;flex-direction:column;justify-content:center;align-items:center;gap:3px;min-height:52px;padding:5px 1px;font-size:9px;font-weight:850;letter-spacing:.1px}
+ .neo-mobile-bottom>button span{font-size:19px;line-height:1}
+ .neo-mobile-bottom>button.active{background:linear-gradient(165deg,#153d66,#124e79);color:#f5fbff;box-shadow:inset 0 0 0 1px #358acd}
+ .neo-mobile-menu{position:fixed;z-index:149;bottom:calc(70px + env(safe-area-inset-bottom,0px));left:10px;right:10px;display:none;padding:10px;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;border:1px solid #44688c;background:#101e33;border-radius:18px;box-shadow:0 0 30px #000a}
+ .neo-mobile-menu.open{display:grid}
+ .neo-mobile-menu button{border:1px solid #3b5472;background:#172b46;color:#dfecff;min-height:44px;border-radius:10px;font-weight:750}
+ .gallery-tools,.portraits-feature{padding:12px!important}
+ .gallery-tools .gallery-filters{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ .gallery-tools .gallery-filters label:has(#gallerySearch){grid-column:1/-1}
+ .gallery-tools select,.gallery-tools input{max-width:100%;width:100%;min-height:42px}
+ .gallery-meta{display:block}.gallery-meta span{display:block;line-height:1.5}
+ .manga-gallery-tools{gap:7px!important}.manga-gallery-tools .button{min-height:40px;font-size:11px!important;flex:1 1 145px!important}
+ .manga-help{display:none!important}
+ .portrait-tools{display:grid!important;grid-template-columns:1fr 1fr;gap:8px}
+ .portrait-tools button{min-width:0;min-height:42px;padding:6px 7px!important;font-size:10px!important}
+ #portraitNotice{grid-column:1/-1;font-size:11px;line-height:1.5;overflow-wrap:anywhere}
+ .portrait-grid{display:grid!important;grid-template-columns:1fr!important;gap:10px!important}
+ .portrait-card.neo-card-ready{display:grid;grid-template-columns:106px minmax(0,1fr);grid-template-rows:auto auto auto;column-gap:11px;align-items:start;min-width:0;border-radius:16px!important;padding:11px!important;background:linear-gradient(145deg,#152a45,#0d1a2e)!important;border:1px solid #2c4c72!important;min-height:166px}
+ .portrait-card.neo-card-ready>.portrait-card-photo{grid-row:1/4;grid-column:1;display:block;width:106px!important;height:130px!important;object-fit:cover;object-position:center 28%;border:2px solid #208fe0;border-radius:12px;cursor:pointer}
+ .portrait-card.neo-card-ready>.gallery-tag{grid-column:2;grid-row:2;display:inline-flex!important;align-self:start;max-width:100%;width:max-content;border-radius:7px;font-size:9px;padding:4px 6px;margin:3px 0!important;white-space:normal;overflow-wrap:anywhere}
+ .portrait-card.neo-card-ready>.portrait-card-info{grid-column:2;grid-row:1;min-width:0;margin:0;padding:0}
+ .portrait-card.neo-card-ready>.portrait-card-info strong{font-size:14px;line-height:1.25;overflow-wrap:anywhere}
+ .portrait-card.neo-card-ready>.portrait-card-info small{font-size:10px;line-height:1.5;margin-top:4px}
+ .portrait-card.neo-card-ready>.portrait-actions{grid-column:1/-1;grid-row:4;margin-top:8px;width:100%;min-width:0}
+ .portrait-card.neo-card-ready .portrait-actions .neo-main-action{width:100%!important;padding:9px 12px!important}
+ .portrait-card.neo-card-ready .neo-extra-content{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .portraits-feature>.card-head{align-items:center;gap:8px}
+ .portraits-feature>.card-head h2{font-size:14px!important}
+ .portraits-feature .section-subtitle{font-size:8px;white-space:nowrap}
+ .portrait-disclaimer{font-size:10px;line-height:1.55}
+ .match-layout{min-width:0}.match-card{min-width:0}
+ .modal-inner{max-width:calc(100vw - 20px)!important;border-radius:18px!important}
+}
+@media(max-width:370px){.neo-mobile-bottom>button{font-size:8px}.portrait-card.neo-card-ready{grid-template-columns:91px minmax(0,1fr);gap:8px}.portrait-card.neo-card-ready>.portrait-card-photo{width:91px!important;height:118px!important}.gallery-tools .gallery-filters{grid-template-columns:1fr}}
+@media(min-width:701px){.neo-mobile-bottom,.neo-mobile-menu{display:none!important}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
