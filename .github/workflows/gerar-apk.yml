@@ -44,11 +44,13 @@ jobs:
         run: |
           node tests/navigation-v912.test.js
           node tests/broadcast-v920.test.js
-          node tests/balance-v930.test.js
+          node tests/balance-v940.test.js
           node --check web/neo-v930.js
           node --check web/neo-broadcast-v920.js
           node --check web/mobile-upgrade.js
           node --check web/engine.js
+          node --check web/neo-v940.js
+          node --check web/systems/progression.js
       - name: Preparar ferramenta de assinatura para o mantenedor
         shell: bash
         run: |

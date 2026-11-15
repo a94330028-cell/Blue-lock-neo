@@ -373,7 +373,7 @@ class Match {
     const index=this.players.indexOf(slot);this.players[index]=master;
     const remaining=this.fullTimeEnd-this.time;
     const baseDuration=Masters.WINDOW_SECONDS;
-    const duration=Math.min(remaining,baseDuration+(this.score[side]<this.score[1-side]?120:0));
+    const duration=Math.min(remaining,baseDuration);
     const record={side,master:cfg.name,out:slot.name,minute:Math.floor(this.time/60),start:this.time,until:this.time+duration,plannedSeconds:duration,ended:false,philosophy:cfg.philosophy};
     this.masterStates[side]={original:hidden,player:master,record,prior:{press:this.pressing[side],build:this.buildUp[side]}};
     this.masterHidden.push(hidden);this.masterEntries.push(record);this.stats.masterEntries[side]++;
@@ -384,7 +384,7 @@ class Match {
   }
   _updateMasters(atStoppage=false){for(let side=0;side<2;side++){
     const state=this.masterStates[side];if(!state||this.time<state.record.until)continue;
-    if(!atStoppage){state.readyExit=true;continue;}
+    // Hard 45-minute cap: exit on this tick, not at an unknown later stoppage.
     const current=state.player,pos=this.players.indexOf(current);if(pos<0){this.masterStates[side]=null;continue;}
     const old=state.original;old.x=current.x;old.y=current.y;old.vx=current.vx;old.vy=current.vy;old.decision=.4;
     if(this.ball.owner===current){this.ball.owner=old;this.ball.lastTouch=old;this.ball.by=null;}
@@ -1877,7 +1877,7 @@ class Match {
   }
   finish(){if(this.finished)return;this.time=this.fullTimeEnd;this._updateMasters(true);this.finished=true;this.phase='finished';this.log('🏁 Fim de jogo!','finish');}
   runToEnd(){let i=0;while(!this.finished&&i++<14000)this.step(TICK);if(!this.finished)this.finish();return this.result();}
-  result(){return {home:this.teams[0].id,away:this.teams[1].id,score:[...this.score],gameplayPreset:this.gameplayPreset,weather:this.weather,autoGameplan:!!this.autoGameplan,planNames:[...(this.planNames||[])],modernPatterns:[this.modernPattern(0),this.modernPattern(1)],specialMoments:this.specialMoments.map(m=>({...m})),shapeHistory:(this.shapeHistory||[[],[]]).map(h=>h.map(x=>({...x}))),tacticalSettings:{pressing:[...this.pressing],attackWidth:[...this.attackWidth],buildUp:[...this.buildUp],stance:[...this.tactics],crosses:[...this.crossPreference],corners:[...this.setPieceStyle]},stats:JSON.parse(JSON.stringify(this.stats)),players:[...this.retiredPlayers,...this.masterHidden,...this.players].map(p=>({name:p.name,side:p.side,role:p.role,attributes:p.attributes,ovr:p.attributes?.ovr||75,isMaster:!!p.isMaster,goals:p.goals,assists:p.assists,shots:p.shots,dribblesWon:p.dribblesWon||0,saves:p.saves||0,passes:p.pases||0,flowCount:p.flowCount||0,abilityUses:{...(p.abilityUses||{})},tackles:p.tackles||0,interceptions:p.interceptions||0,shotBlocks:p.shotBlocks||0,aerialWins:p.aerialWins||0,duelsWon:p.duelsWon||0,keyPasses:p.keyPasses||0,runs:p.runCount,overlaps:p.overlapCount,distance:Math.round(p.distanceCovered),rating:+p.rating.toFixed(1)})),masterEntries:this.masterEntries.map(r=>({...r})),substitutions:this.subRecords.map(s=>({...s})),cards:this.cardRecords.map(c=>({...c})),shots:this.shotMap.map(s=>({...s})),events:this.keyEvents.map(e=>({...e})),goalRecords:this.goalRecords.map(r=>({...r,score:[...r.score]})),abilityHistory:this.abilityHistory.map(a=>({...a})),duelHistory:this.duelHistory.map(d=>({...d})),seed:this.seed};}
+  result(){return {home:this.teams[0].id,away:this.teams[1].id,score:[...this.score],gameplayPreset:this.gameplayPreset,weather:this.weather,autoGameplan:!!this.autoGameplan,planNames:[...(this.planNames||[])],modernPatterns:[this.modernPattern(0),this.modernPattern(1)],specialMoments:this.specialMoments.map(m=>({...m})),shapeHistory:(this.shapeHistory||[[],[]]).map(h=>h.map(x=>({...x}))),tacticalSettings:{pressing:[...this.pressing],attackWidth:[...this.attackWidth],buildUp:[...this.buildUp],stance:[...this.tactics],crosses:[...this.crossPreference],corners:[...this.setPieceStyle]},stats:JSON.parse(JSON.stringify(this.stats)),players:[...this.retiredPlayers,...this.masterHidden,...this.players].map(p=>({name:p.name,side:p.side,role:p.role,attributes:p.attributes,ovr:p.attributes?.ovr||75,isMaster:!!p.isMaster,goals:p.goals,assists:p.assists,shots:p.shots,dribblesWon:p.dribblesWon||0,saves:Math.max(p.saves||0,p.i===0?this.shotMap.filter(s=>s.outcome==='saved'&&s.savedBy===p.name&&s.side!==p.side).length:0),passes:p.pases||0,flowCount:p.flowCount||0,abilityUses:{...(p.abilityUses||{})},tackles:p.tackles||0,interceptions:p.interceptions||0,shotBlocks:p.shotBlocks||0,aerialWins:p.aerialWins||0,duelsWon:p.duelsWon||0,keyPasses:p.keyPasses||0,runs:p.runCount,overlaps:p.overlapCount,distance:Math.round(p.distanceCovered),rating:+p.rating.toFixed(1)})),masterEntries:this.masterEntries.map(r=>({...r})),substitutions:this.subRecords.map(s=>({...s})),cards:this.cardRecords.map(c=>({...c})),shots:this.shotMap.map(s=>({...s})),events:this.keyEvents.map(e=>({...e})),goalRecords:this.goalRecords.map(r=>({...r,score:[...r.score]})),abilityHistory:this.abilityHistory.map(a=>({...a})),duelHistory:this.duelHistory.map(d=>({...d})),seed:this.seed};}
 }
 function recordFixture(season,fixture,match){
   if(fixture.result)return false;

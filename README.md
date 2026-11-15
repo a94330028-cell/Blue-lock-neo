@@ -1,4 +1,17 @@
-# Blue Lock NEO 9.3.0 — Mestre Striker & Defesa
+# Blue Lock NEO 9.4.0 — Mercado por posição e interface compacta
+
+## Atualização v9.4.0
+
+- Interface limpa: sem placar duplicado, análises e câmera recolhidas, apenas quatro recordes visíveis até escolher Ver todos.
+- Ranking: goleiros, zagueiros, laterais, volantes, meias centrais, meias ofensivos, pontas, atacantes, artilheiros, assistentes, defesa, passadores e mercado.
+- Cards mostram jogador, clube, posição, OVR e preço; top 6 por padrão, opção top 15.
+- Preços maiores por OVR/posição, com valorização extra de ações reais de goleiros, defensores e atacantes.
+- Defesas: estatísticas individuais e recuperação de jogos antigos somente quando os dados foram registrados no histórico.
+- Master Strikers atuam **até 45 minutos** por entrada, com possibilidade de segunda participação mais curta.
+- Android v9.4.0 / versionCode 96. Os saves e os 87 retratos permanecem.
+
+Leia [CHANGELOG-v9.4.0.md](CHANGELOG-v9.4.0.md).
+
 
 ## ⭐ v9.3.0 — escala profissional, mestres e defesa competitiva
 
