@@ -27,8 +27,7 @@ function setup(){
  '<div class="ego-pulse"><div class="ego-pulse-top"><b>🔥 MOMENTO DO JOGO</b><span id="egoPulseText">Aguardando a partida</span></div><div class="ego-pulse-meter"><span id="egoPulseHome" style="width:50%"></span><span id="egoPulseAway" style="width:50%"></span></div></div>'+
  '<div class="ego-live-story"><div class="ego-story-title"><span>◉ LANCE MAIS RECENTE</span><span id="egoEventKind">AO VIVO</span></div><div id="egoStory">Selecione os times e prepare a partida para acompanhar os lances.</div></div>'+
  '<div class="ego-feedback" id="egoFeedback" role="status" aria-live="polite"></div>';
- const first=match.querySelector('.scoreboard')||match.querySelector('.broadcast-scoreboard')||match.firstElementChild;
- if(first)first.insertAdjacentElement('beforebegin',panel);else match.prepend(panel);
+ match.insertBefore(panel,match.firstElementChild);
  by('egoPlay').addEventListener('click',()=>execButton('play'));
  by('egoCamera').addEventListener('click',()=>execButton('cameraMode'));
  by('egoCinema').addEventListener('click',()=>execButton('stadiumMode'));
