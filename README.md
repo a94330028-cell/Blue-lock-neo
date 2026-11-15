@@ -1,4 +1,12 @@
-# Blue Lock NEO 9.9.0 — Seleção da Rodada, galeria completa e futebol inteligente
+# Blue Lock NEO 9.9.1 — Ícone Kaiser NEO e atualização visual
+
+## 🖼️ v9.9.1 — Novo ícone oficial do aplicativo
+
+- Ícones do site instalável (192 e 512 px) substituídos pela arte do **Kaiser NEO**, com fundo azul-neon.
+- Favicon do navegador atualizado e manifesto com nomes novos para evitar o cache do ícone anterior.
+- Recursos `mipmap` do Android alterados (mdpi até xxxhdpi). Para mudar o ícone na tela inicial do Android nativo, é preciso **instalar um APK recompilado** com a mesma assinatura do app atual; a atualização web não altera o ícone nativo.
+- Sem alterações nos saves, nas imagens de jogadores ou no motor do jogo.
+
 
 ## 🏅 v9.9.0 — time da rodada mutável (sem criação de equipes)
 

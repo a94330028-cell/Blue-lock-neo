@@ -92,5 +92,12 @@ if 'neo-round-v990.js' not in updated:
 if 'neo-v990.css' not in updated:
     if updated.count('</head>') != 1: raise RuntimeError('Cannot attach 9.9 styles')
     updated=updated.replace('</head>','<link rel="stylesheet" href="neo-v990.css?v=9.9.0">\n</head>')
+# v9.9.1: New Kaiser icon for tab favicon and Android/PWA homescreen.
+# Preserve existing manifest link and change its URL to force a fresh browser fetch.
+updated=updated.replace('href="manifest.webmanifest"','href="manifest.webmanifest?v=9.9.1"')
+updated=updated.replace('href="./manifest.webmanifest"','href="./manifest.webmanifest?v=9.9.1"')
+if 'kaiser-192.png?v=9.9.1' not in updated:
+    if updated.count('</head>') != 1: raise RuntimeError('Cannot install Kaiser site favicon')
+    updated=updated.replace('</head>','<link rel="icon" type="image/png" href="./icons/favicon-32.png?v=9.9.1">\n<link rel="apple-touch-icon" href="./icons/kaiser-192.png?v=9.9.1">\n</head>')
 html.write_text(updated,encoding='utf-8')
 print('Inline game modules synchronized:',counts)
