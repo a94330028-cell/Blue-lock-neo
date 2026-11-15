@@ -7,7 +7,8 @@ on:
       - 'app/**'
       - 'packed/**'
       - 'portrait-pack/**'
-      - 'web/VERSION'
+      - 'web/**'
+      - 'tests/**'
       - 'tools/assemble_web.py'
       - 'build.gradle'
       - 'settings.gradle'
@@ -38,8 +39,13 @@ jobs:
           test -n "$SDKMANAGER"
           yes | "$SDKMANAGER" --licenses >/dev/null || true
           "$SDKMANAGER" 'platforms;android-35' 'build-tools;35.0.0'
-      - name: Verificar navegação Android v9.1.2
-        run: node tests/navigation-v912.test.js
+      - name: Testar navegação, atualização e simulação v9.2
+        run: |
+          node tests/navigation-v912.test.js
+          node tests/broadcast-v920.test.js
+          node --check web/neo-broadcast-v920.js
+          node --check web/mobile-upgrade.js
+          node --check web/engine.js
       - name: Preparar ferramenta de assinatura para o mantenedor
         shell: bash
         run: |
