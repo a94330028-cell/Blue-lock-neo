@@ -43,6 +43,12 @@ if 'window.NeoPortraitUI=Object.freeze' not in updated:
     if updated.count(bridge_marker)!=1:raise RuntimeError('Portrait bridge requires exactly one game script marker')
     updated=updated.replace(bridge_marker,bridge+bridge_marker)
 if any(v!=1 for v in counts.values()):raise RuntimeError('Inline sync must replace each module exactly once: '+str(counts))
+# The repository's canonical HTML predates 9.6, so add the player helper
+# BEFORE positioning historic teams in front of it. Repeated runs are idempotent.
+if 'neo-player-data-v960.js' not in updated:
+    player_marker='<script defer src="mobile-upgrade.js'
+    if updated.count(player_marker)!=1:raise RuntimeError('Cannot insert player data before mobile UI')
+    updated=updated.replace(player_marker,'<script defer src="neo-player-data-v960.js?v=9.7.0"></script>\n'+player_marker)
 if 'neo-historic-teams-v970.js' not in updated:
     marker='<script defer src="neo-player-data-v960.js'
     if updated.count(marker)!=1:raise RuntimeError('Historical teams need to load before the player registry')
