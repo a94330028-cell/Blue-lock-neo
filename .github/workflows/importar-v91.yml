@@ -1,0 +1,106 @@
+name: Importar Blue Lock NEO v9.1 e preparar APK
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'release-stage/**'
+      - '.github/workflows/importar-v91.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  importar-e-compilar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Restaurar código-fonte da v9.1
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,base64,zipfile
+          parts=sorted(Path('release-stage').glob('part-*.txt'))
+          assert len(parts)==36, f'Pacote incompleto: {len(parts)}/36 partes'
+          encoded=''.join(p.read_text(encoding='ascii').strip() for p in parts)
+          data=base64.b64decode(encoded,validate=True)
+          actual=hashlib.sha256(data).hexdigest()
+          expected='f6bfe4b6bd15e0a372bd5e70f02c3dc501ab69203ce23179d37b3d2d31cf9658'
+          assert actual==expected, f'SHA256 divergente: {actual}'
+          dest=Path('/tmp/blue-lock-v91.zip')
+          dest.write_bytes(data)
+          with zipfile.ZipFile(dest) as z:
+              bad=[n for n in z.namelist() if n.startswith('/') or '..' in Path(n).parts]
+              assert not bad, f'Caminhos inválidos: {bad}'
+              z.extractall('.')
+          print('Pacote validado e extraído; arquivos preservados.')
+          PY
+          mkdir -p app/src/main/assets/site
+          rsync -a --delete --exclude='updates/' web/ app/src/main/assets/site/
+          python3 tools/gerar_atualizacao.py
+          node tests/neo-v91.test.js
+      - name: Publicar código-fonte v9.1 na branch principal
+        shell: bash
+        run: |
+          rm -rf release-stage
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if git diff --cached --quiet; then
+            echo 'Código atualizado já corresponde à v9.1.'
+          else
+            git commit -m 'feat: Blue Lock NEO v9.1 Chronicles completo'
+            git push origin HEAD:main
+          fi
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - name: Instalar Android SDK 35
+        run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+      - name: Compilar APK de teste
+        run: gradle :app:assembleDebug --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Blue-Lock-NEO-v9.1-APK-TESTE
+          path: app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 30
+      - name: Preparar assinatura privada (somente com secrets configurados)
+        env:
+          KEYSTORE_B64: ${{ secrets.BL_KEYSTORE_BASE64 }}
+          STORE_PASS: ${{ secrets.BL_SIGNING_STORE_PASSWORD }}
+          KEY_NAME: ${{ secrets.BL_SIGNING_KEY_ALIAS }}
+          KEY_PASS: ${{ secrets.BL_SIGNING_KEY_PASSWORD }}
+        shell: bash
+        run: |
+          if [ -z "$KEYSTORE_B64" ] || [ -z "$STORE_PASS" ] || [ -z "$KEY_NAME" ] || [ -z "$KEY_PASS" ]; then
+            echo 'BUILD_SIGNED=0' >> "$GITHUB_ENV"
+            echo 'Assinatura ainda não configurada. Não publique APK debug como atualização sobre a v9.0.'
+          else
+            printf '%s' "$KEYSTORE_B64" | base64 --decode > "$RUNNER_TEMP/blue-lock-release.p12"
+            echo "BL_SIGNING_FILE=$RUNNER_TEMP/blue-lock-release.p12" >> "$GITHUB_ENV"
+            echo 'BUILD_SIGNED=1' >> "$GITHUB_ENV"
+          fi
+      - name: Compilar APK assinado para atualização
+        if: env.BUILD_SIGNED == '1'
+        env:
+          BL_SIGNING_STORE_PASSWORD: ${{ secrets.BL_SIGNING_STORE_PASSWORD }}
+          BL_SIGNING_KEY_ALIAS: ${{ secrets.BL_SIGNING_KEY_ALIAS }}
+          BL_SIGNING_KEY_PASSWORD: ${{ secrets.BL_SIGNING_KEY_PASSWORD }}
+        run: gradle :app:assembleRelease --no-daemon
+      - uses: actions/upload-artifact@v4
+        if: env.BUILD_SIGNED == '1'
+        with:
+          name: Blue-Lock-NEO-v9.1-APK-ASSINADO
+          path: app/build/outputs/apk/release/app-release.apk
+          retention-days: 30
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Blue-Lock-NEO-v9.1-SITE-PUBLICAR
+          path: web/
+          retention-days: 7
