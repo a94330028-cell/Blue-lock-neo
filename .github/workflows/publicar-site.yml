@@ -26,7 +26,9 @@ jobs:
           python-version: '3.12'
       - name: Reconstruir jogo e pacote de atualização
         run: |
-          python tools/assemble_web.py
+          test -f web/index.html
+          test -f web/neo-ego-v91.js
+          test "$(cat web/VERSION)" = '9.1.0'
           python tools/gerar_atualizacao.py
       - name: Disponibilizar site completo (mesmo antes de habilitar Pages)
         uses: actions/upload-artifact@v4
