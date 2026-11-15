@@ -594,7 +594,7 @@ function applyManualGameplan(){
 function prepare(homeId=$('home').value,awayId=$('away').value,fixture=null){
   if(homeId===awayId){alert('Escolha duas equipes diferentes.');return;}
   playing=false;replaying=false;replayIndex=0;replayFrame=0;lastCommentaryId=null;renderReplayDirector();accumulator=0;lastFrame=0;lastEventId=0;lastCameraMatch=null;finishedRecorded=false;lastHudTeamsKey='';lastGoalHudKey='';lastSkillHudKey='';lastHeavyUiAt=0;lastEgoUiAt=0;lastRunsUiAt=0;lastUiMatch=null;matchFixture=fixture;entranceShown=false;lastBroadcastGoalCount=0;const intro=$('teamIntro');if(intro){intro.classList.remove('show');intro.innerHTML='';}
-  match=new Match(homeId,awayId,Math.floor(Math.random()*0xffffffff),E.Progression.ensure(season));
+  match=new Match(homeId,awayId,Math.floor(Math.random()*0xffffffff),E.Progression.ensure(season),season);
   stageState={match:null,key:'',lastKey:'',start:0,duration:0,event:null};lastBroadcastDangerAt=-1e6;
   if($('autoGameplan').checked)match.rollGameplan();
   else applyManualGameplan();
@@ -1689,7 +1689,7 @@ function renderRecords(){
   if(!all.length&&totalGoals>0)$('goalHistory').innerHTML='<p class="hint">Sua temporada anterior conserva os totais; o histórico minuto a minuto só será preenchido nos jogos disputados nesta versão.</p>';
 }
 async function runFixture(f){
-  const sim=new Match(f.home,f.away,Math.floor(Math.random()*0xffffffff),E.Progression.ensure(season));
+  const sim=new Match(f.home,f.away,Math.floor(Math.random()*0xffffffff),E.Progression.ensure(season),season);
   sim.rollGameplan(); // Every simulated fixture has its own independent strategy draw.
   let ticks=0;
   // Yield every ~13 virtual seconds: do not block touch interactions on Android.

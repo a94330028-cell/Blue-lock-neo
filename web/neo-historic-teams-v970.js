@@ -4,7 +4,7 @@
 'use strict';
 const R={
  mu08:{id:'mu08',year:2008,country:'Inglaterra',name:'Manchester United 2008',short:'MAN UTD 08',crest:'MU',color:'#ea424c',dark:'#821722',accent:'#ffe1a5',atk:94,def:92,pas:91,style:'build',formationName:'4-3-3 (simulação)',
- starters:[['Edwin van der Sar','GOL',1,88],['Wes Brown','LD',6,83],['Rio Ferdinand','ZAG',5,90],['Nemanja Vidić','ZAG',15,89],['Patrice Evra','LE',3,87],['Michael Carrick','VOL',16,86],['Paul Scholes','MC',18,88],['Owen Hargreaves','MEI',4,84],['Cristiano Ronaldo','PD',7,90],['Wayne Rooney','CA',10,89],['Carlos Tévez','PE',32,88]],
+ starters:[['Edwin van der Sar','GOL',1,88],['Wes Brown','LD',6,83],['Rio Ferdinand','ZAG',5,90],['Nemanja Vidić','ZAG',15,89],['Patrice Evra','LE',3,87],['Michael Carrick','VOL',16,86],['Paul Scholes','MC',18,88],['Owen Hargreaves','MC',4,84],['Cristiano Ronaldo','PD',7,90],['Wayne Rooney','CA',10,89],['Carlos Tévez','PE',32,88]],
  reserves:[['Ryan Giggs','MEI',11,86],['Nani','PD',17,83],['Ji-Sung Park','PE',13,83],['Anderson','MC',8,82],['Darren Fletcher','VOL',24,82],['John O\'Shea','ZAG',22,81],['Gary Neville','LD',2,82],['Gerard Pique','ZAG',19,81],['Tomasz Kuszczak','GOL',29,79],['Ben Foster','GOL',12,78],['Louis Saha','CA',9,81],['Mikaël Silvestre','LE',27,79]]},
  fla19:{id:'fla19',year:2019,country:'Brasil',name:'Flamengo 2019',short:'FLA 19',crest:'FLA',color:'#e8324f',dark:'#771724',accent:'#ffe0e2',atk:91,def:88,pas:92,style:'build',formationName:'4-3-3 (simulação)',
  starters:[['Diego Alves','GOL',1,84],['Rafinha','LD',13,84],['Rodrigo Caio','ZAG',3,85],['Pablo Marí','ZAG',4,86],['Filipe Luis','LE',16,87],['Willian Arão','VOL',5,85],['Gerson','MC',8,85],['Giorgian de Arrascaeta','MEI',14,89],['Éverton Ribeiro','PD',7,88],['Gabriel Barbosa','CA',9,89],['Bruno Henrique','PE',27,89]],
@@ -23,7 +23,7 @@ function install(E){
  if(!E?.registerTeam)throw Error('Atualize o motor para habilitar os clubes históricos.');
  for(const t of teams){
   E.registerTeam({...t,players:t.starters.map(v=>v[0]),reserves:t.reserves.map(v=>v[0]),master:null,
-   formation:E.DEFAULT_FORMATION.map(v=>({...v}))});
+   formation:E.DEFAULT_FORMATION.map((v,i)=>({...v,role:t.starters[i][1]}))});
   for(const [name,role,number,ovr] of [...t.starters,...t.reserves])E.Attr.registerPlayerRatings(name,ovr,{club:t.id,role,number,historic:true});
  }
  return teams.length;

@@ -39,7 +39,7 @@ function toSavedDetails(result){
 }
 function playNext(E,cup,seed){
  const next=nextUnplayed(cup);if(!next)return null;
- const game=next.game,m=new E.Match(game.home,game.away,(seed??Math.floor(Math.random()*4294967295))>>>0);
+ const game=next.game,m=new E.Match(game.home,game.away,(seed??Math.floor(Math.random()*4294967295))>>>0,null,cup);
  m.rollGameplan();const result=m.runToEnd();game.result=[...result.score];game.details=toSavedDetails(result);
  return {round:next.round,home:game.home,away:game.away,score:game.result,details:game.details};
 }

@@ -1,4 +1,4 @@
-# Blue Lock NEO v9.7.0 — Criador de jogadores, elencos e copas personalizadas
+# Blue Lock NEO v9.8.0 — Técnico IA e escalações visuais
 
 ## 🆕 v9.7.0: seu personagem e quatro clubes históricos
 

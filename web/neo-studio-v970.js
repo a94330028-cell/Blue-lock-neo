@@ -139,6 +139,7 @@ function renderCup(){const box=$('neo970-active-cups');if(!box)return;
  $('neo970-choose-cup').addEventListener('change',e=>{activeId=e.target.value;localStorage.setItem('neo970-active-cup',activeId);renderCup()});
 }
 function refreshExternal(){
+ window.NeoSquads980?.render?.();
  window.NeoMarket96?.showRanking?.();
  if($('neo970-photo-list'))renderPhotos();
  if($('neo970-my-players'))renderCreated();

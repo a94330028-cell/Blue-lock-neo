@@ -65,5 +65,17 @@ if 'neo-player-data-v960.js' not in updated:
     if updated.count(marker)!=1:raise RuntimeError('Cannot insert player data helper before mobile UI')
     updated=updated.replace(marker,'<script defer src="neo-player-data-v960.js?v=9.6.0"></script>\n'+marker)
 updated=updated.replace('neo-player-data-v960.js?v=9.6.0','neo-player-data-v960.js?v=9.7.0')
+# v9.8: coaching logic is loaded before historic clubs and before user pages.
+if 'neo-coach-v980.js' not in updated:
+    anchor='<script defer src="neo-historic-teams-v970.js'
+    if updated.count(anchor)!=1:raise RuntimeError('Coach needs the historic teams script anchor')
+    updated=updated.replace(anchor,'<script defer src="neo-coach-v980.js?v=9.8.0"></script>\n'+anchor)
+if 'neo-squads-v980.js' not in updated:
+    anchor='<script defer src="neo-studio-v970.js?v=9.7.0"></script>'
+    if updated.count(anchor)!=1:raise RuntimeError('Squad screen needs its studio script anchor')
+    updated=updated.replace(anchor,anchor+'\n<script defer src="neo-squads-v980.js?v=9.8.0"></script>')
+if 'neo-squads-v980.css' not in updated:
+    if updated.count('</head>')!=1:raise RuntimeError('Could not find page head')
+    updated=updated.replace('</head>','<link rel="stylesheet" href="neo-squads-v980.css?v=9.8.0">\n</head>')
 html.write_text(updated,encoding='utf-8')
 print('Inline game modules synchronized:',counts)

@@ -306,9 +306,15 @@ const GAMEPLAN_TEMPLATES=Object.freeze([
 ]);
 
 class Match {
-  constructor(homeId='bm', awayId='px', seed=Date.now(), careerPlayers=null) {
+  constructor(homeId='bm', awayId='px', seed=Date.now(), careerPlayers=null, seasonContext=null) {
     if(!teamById(homeId)||!teamById(awayId)||homeId===awayId)throw new Error('Escolha duas equipes diferentes.');
-    this.seed=seed>>>0;this.rand=mulberry32(this.seed);this.teams=[teamById(homeId),teamById(awayId)];this.gameplayPreset='authentic';this.weather='clear';this.pressing=['balanced','balanced'];this.attackWidth=['normal','normal'];this.buildUp=['balanced','balanced'];this.half=1;this.halftimeDone=false;this.firstKickoffSide=0;this.addedTimeFirst=60+Math.floor(this.random()*121);this.addedTimeSecond=120+Math.floor(this.random()*121);this.firstHalfEnd=45*60+this.addedTimeFirst;this.fullTimeEnd=90*60+this.addedTimeSecond;
+    this.seed=seed>>>0;this.rand=mulberry32(this.seed);this.teams=[teamById(homeId),teamById(awayId)];
+    // Pre-match coaching uses only genuine results; clones prevent league roster mutation.
+    const Coach=(typeof globalThis!=='undefined'?globalThis.NeoCoach980:null);
+    this.coachPlans=this.teams.map(t=>Coach?.planLineup?.(t,seasonContext,Attr)||null);
+    this.teams=this.teams.map((t,i)=>this.coachPlans[i]?.changes.length?{...t,players:this.coachPlans[i].players.slice(),reserves:this.coachPlans[i].reserves.slice(),formation:(t.formation||DEFAULT_FORMATION).map(x=>({...x}))}:t);
+    this.startingLineups=this.teams.map(t=>t.players.map((name,i)=>({name,role:(t.formation||DEFAULT_FORMATION)[i]?.role||'MC',slot:i})));
+    this.coachDecisions=[];this.gameplayPreset='authentic';this.weather='clear';this.pressing=['balanced','balanced'];this.attackWidth=['normal','normal'];this.buildUp=['balanced','balanced'];this.half=1;this.halftimeDone=false;this.firstKickoffSide=0;this.addedTimeFirst=60+Math.floor(this.random()*121);this.addedTimeSecond=120+Math.floor(this.random()*121);this.firstHalfEnd=45*60+this.addedTimeFirst;this.fullTimeEnd=90*60+this.addedTimeSecond;
     this.careerPlayers=careerPlayers?.players||careerPlayers||{};this.careerLinks=careerPlayers?.links||{};this.careerRivals=careerPlayers?.rivals||{};this.masterStates=[null,null];this.pendingMasters=[false,false];this.masterEntries=[];this.masterRoll=[0,0];this.masterHidden=[];
     this.tactics=['balanced','balanced'];this.crossPreference=['mixed','mixed'];this.autoSubs=true;this.autoCoach=true;this.coachLocked=[false,false];this.subsUsed=[0,0];this.subWindowsUsed=[0,0];this.benchUsed=[[],[]];this.subRecords=[];this.retiredPlayers=[];this.pendingSubs=[null,null];this.lastCoachCheck=-180;this.setPieceStyle=['mixed','mixed'];this.lastSetPiece=null;this.cardRecords=[];this.time=0;this.phase='play';this.wait=0;this.nextKick=0;this.events=[];this.keyEvents=[];this.lastAction='';this.goalFlash=0;
     this.stats={shots:[0,0],onTarget:[0,0],passes:[0,0],completed:[0,0],possession:[0,0],tackles:[0,0],saves:[0,0],fouls:[0,0],offsides:[0,0],corners:[0,0],yellows:[0,0],xg:[0,0],runs:[0,0],overlaps:[0,0],boxRuns:[0,0],crosses:[0,0],crossLow:[0,0],crossDriven:[0,0],crossHigh:[0,0],cutbacks:[0,0],headers:[0,0],aerialWins:[0,0],dribbles:[0,0],dribblesWon:[0,0],oneTwos:[0,0],interceptions:[0,0],throughBalls:[0,0],keyPasses:[0,0],switches:[0,0],substitutions:[0,0],freeKicks:[0,0],directFreeKickShots:[0,0],goalKicks:[0,0],throwIns:[0,0],penalties:[0,0],penaltiesScored:[0,0],redCards:[0,0],advantages:[0,0],backpasses:[0,0],keeperDelays:[0,0],cornerShots:[0,0],heavyTouches:[0,0],counterAttacks:[0,0],pressingRecoveries:[0,0],invertedRuns:[0,0],halfSpaceRuns:[0,0],blindsideRuns:[0,0],thirdManRuns:[0,0],counterPressWaves:[0,0],restDefenceRecoveries:[0,0],carries:[0,0],progressiveCarries:[0,0],specialMoves:[0,0],specialMovesWon:[0,0],recycles:[0,0],sweeperRecoveries:[0,0],shotBlocks:[0,0],pressuredPasses:[0,0],setPieceRoutines:[0,0],flowAwakenings:[0,0],visionReads:[0,0],masterEntries:[0,0],defenderAttacks:[0,0],boxEntries:[0,0],boxShots:[0,0],longShots:[0,0],legendaryGoals:[0,0],keeperParries:[0,0],boxCombinations:[0,0],unionPlays:[0,0],soloRuns:[0,0],duelsWon:[0,0],abilityActivations:[0,0]};
@@ -1450,26 +1456,55 @@ class Match {
         }
       }
       // Automatic coach reacts to the score but respects manually chosen tactics.
-      if(this.autoCoach&&!this.coachLocked[s]&&min>=74){
+      if(this.autoCoach&&!this.coachLocked[s]){
         const lead=this.score[s]-this.score[1-s];
-        const desired=lead<0?'attack':lead>=2&&min>=81?'defend':'balanced';
-        if(this.tactics[s]!==desired){this.tactics[s]=desired;this.log(`🧠 ${this.teams[s].short} muda a estratégia para ${desired==='attack'?'atacar':desired==='defend'?'segurar a vantagem':'equilibrar o jogo'}!`,'coach');}
+        // Adapt earlier when trailing badly, instead of waiting until minute 74.
+        const urgency=lead<=-2&&min>=34||lead===-1&&min>=49;
+        const desired=urgency?'attack':lead>=2&&min>=77?'defend':lead===0&&min>=78?'attack':this.tactics[s];
+        if(this.tactics[s]!==desired){
+          this.tactics[s]=desired;
+          if(urgency){this.pressing[s]='high';this.buildUp[s]='direct';this.attackWidth[s]='wide';}
+          if(lead>=2&&min>=77){this.pressing[s]='balanced';this.buildUp[s]='patient';}
+          const reason=lead<0?'reagir à desvantagem':lead>0?'segurar a vantagem':'buscar a vitória';
+          this.coachDecisions.push({side:s,minute:Math.floor(min),type:'tactic',stance:desired,reason});
+          this.log(`🧠 ${this.teams[s].short}: técnico muda a estratégia para ${desired==='attack'?'ATACAR':desired==='defend'?'DEFENDER':'EQUILIBRAR'} — ${reason}!`,'coach');
+        }
       }
       // Cinco trocas distribuídas por até três janelas (intervalo não consumiria janela).
       const used=this.subWindowsUsed[s]||0;
       if(!this.autoSubs||this.subsUsed[s]>=5||used>=3||this.pendingSubs[s])continue;
-      const thresholds=[58,72,84];if(min<thresholds[used])continue;
-      const options=this.players.filter(p=>p.side===s&&p.i!==0&&p!==this.ball.owner);
-      options.sort((a,b)=>(a.stamina+(PLAYER_STYLES[a.name]?13:0))-(b.stamina+(PLAYER_STYLES[b.name]?13:0)));
+      const lead=this.score[s]-this.score[1-s];
+      const thresholds=lead<=-2?[39,57,73]:lead<0?[48,64,78]:[61,74,85];
+      if(min<thresholds[used])continue;
+      const options=this.players.filter(p=>p.side===s&&p.i!==0&&p!==this.ball.owner&&!p.isMaster);
+      // A poor-performing forward/midfielder is considered earlier while losing.
+      const urgency=lead<0;
+      options.sort((a,b)=>{
+        const grade=p=>p.rating*4+p.stamina*.10+(PLAYER_STYLES[p.name]?4:0)-(urgency&&roleGroup(p.role)==='F'?7:0);
+        return grade(a)-grade(b);
+      });
       const planned=[],reserved=new Set(this.benchUsed[s]),maxBatch=Math.min(5-this.subsUsed[s],used===2?1:2);
       for(const p of options){
         if(planned.length>=maxBatch)break;
-        if(p.stamina>96&&used>=1)continue;
+        if(!urgency&&p.stamina>93&&used>=1)continue;
         const group=roleGroup(p.role);
-        const reserve=this.teams[s].reserves.find(name=>!reserved.has(name)&&(BENCH_ROLE_HINTS[name]||'M')===group);
+        const Coach=(typeof globalThis!=='undefined'?globalThis.NeoCoach980:null);
+        const candidates=this.teams[s].reserves.filter(name=>!reserved.has(name)&&(Coach?.compatible?.(p.role,Coach?.reserveRole?.(this.teams[s],name)||BENCH_ROLE_HINTS[name]||'MC')??roleGroup(Coach?.reserveRole?.(this.teams[s],name)||BENCH_ROLE_HINTS[name]||'MC')===group));
+        const reserve=candidates.sort((a,b)=>{
+          const role=Coach?.reserveRole?.(this.teams[s],a)||p.role;
+          const ra=Attr.generate(a,role,p.i,this.careerPlayers[a+'|'+this.teams[s].id])?.ovr||70;
+          const role2=Coach?.reserveRole?.(this.teams[s],b)||p.role;
+          const rb=Attr.generate(b,role2,p.i,this.careerPlayers[b+'|'+this.teams[s].id])?.ovr||70;
+          return rb-ra;
+        })[0];
         if(reserve){planned.push({id:p.id,reserve});reserved.add(reserve);}
       }
-      if(planned.length){this.pendingSubs[s]=planned;this.log(`🔄 ${this.teams[s].short} prepara ${planned.length} troca(s) para a próxima parada.`, 'coach');}
+      if(planned.length){
+        this.pendingSubs[s]=planned;
+        const reason=lead<0?'time está perdendo':lead>0?'manter o resultado':'buscar vantagem';
+        this.coachDecisions.push({side:s,minute:Math.floor(min),type:'substitution-plan',count:planned.length,reason});
+        this.log(`🔄 Técnico de ${this.teams[s].short} prepara ${planned.length} troca(s): ${reason}.`, 'coach');
+      }
     }
   }
   _setRestart(side,x,y,reason){
@@ -1919,7 +1954,7 @@ class Match {
   }
   finish(){if(this.finished)return;this.time=this.fullTimeEnd;this._updateMasters(true);this.finished=true;this.phase='finished';this.log('🏁 Fim de jogo!','finish');}
   runToEnd(){let i=0;while(!this.finished&&i++<14000)this.step(TICK);if(!this.finished)this.finish();return this.result();}
-  result(){return {home:this.teams[0].id,away:this.teams[1].id,score:[...this.score],gameplayPreset:this.gameplayPreset,weather:this.weather,autoGameplan:!!this.autoGameplan,planNames:[...(this.planNames||[])],modernPatterns:[this.modernPattern(0),this.modernPattern(1)],specialMoments:this.specialMoments.map(m=>({...m})),shapeHistory:(this.shapeHistory||[[],[]]).map(h=>h.map(x=>({...x}))),tacticalSettings:{pressing:[...this.pressing],attackWidth:[...this.attackWidth],buildUp:[...this.buildUp],stance:[...this.tactics],crosses:[...this.crossPreference],corners:[...this.setPieceStyle]},stats:JSON.parse(JSON.stringify(this.stats)),players:[...this.retiredPlayers,...this.masterHidden,...this.players].map(p=>({name:p.name,side:p.side,role:p.role,attributes:p.attributes,ovr:p.attributes?.ovr||75,isMaster:!!p.isMaster,goals:p.goals,assists:p.assists,shots:p.shots,dribblesWon:p.dribblesWon||0,saves:Math.max(p.saves||0,p.i===0?this.shotMap.filter(s=>s.outcome==='saved'&&s.savedBy===p.name&&s.side!==p.side).length:0),passes:p.pases||0,flowCount:p.flowCount||0,abilityUses:{...(p.abilityUses||{})},tackles:p.tackles||0,interceptions:p.interceptions||0,shotBlocks:p.shotBlocks||0,aerialWins:p.aerialWins||0,duelsWon:p.duelsWon||0,keyPasses:p.keyPasses||0,runs:p.runCount,overlaps:p.overlapCount,distance:Math.round(p.distanceCovered),rating:+p.rating.toFixed(1)})),masterEntries:this.masterEntries.map(r=>({...r})),substitutions:this.subRecords.map(s=>({...s})),cards:this.cardRecords.map(c=>({...c})),shots:this.shotMap.map(s=>({...s})),events:this.keyEvents.map(e=>({...e})),goalRecords:this.goalRecords.map(r=>({...r,score:[...r.score]})),abilityHistory:this.abilityHistory.map(a=>({...a})),duelHistory:this.duelHistory.map(d=>({...d})),seed:this.seed};}
+  result(){return {home:this.teams[0].id,away:this.teams[1].id,score:[...this.score],startingLineups:this.startingLineups.map(rows=>rows.map(p=>({...p}))),coachPlans:this.coachPlans.map(x=>x?{reason:x.reason,form:x.form,changes:x.changes}:null),coachDecisions:this.coachDecisions.map(x=>({...x})),gameplayPreset:this.gameplayPreset,weather:this.weather,autoGameplan:!!this.autoGameplan,planNames:[...(this.planNames||[])],modernPatterns:[this.modernPattern(0),this.modernPattern(1)],specialMoments:this.specialMoments.map(m=>({...m})),shapeHistory:(this.shapeHistory||[[],[]]).map(h=>h.map(x=>({...x}))),tacticalSettings:{pressing:[...this.pressing],attackWidth:[...this.attackWidth],buildUp:[...this.buildUp],stance:[...this.tactics],crosses:[...this.crossPreference],corners:[...this.setPieceStyle]},stats:JSON.parse(JSON.stringify(this.stats)),players:[...this.retiredPlayers,...this.masterHidden,...this.players].map(p=>({name:p.name,side:p.side,role:p.role,attributes:p.attributes,ovr:p.attributes?.ovr||75,isMaster:!!p.isMaster,goals:p.goals,assists:p.assists,shots:p.shots,dribblesWon:p.dribblesWon||0,saves:Math.max(p.saves||0,p.i===0?this.shotMap.filter(s=>s.outcome==='saved'&&s.savedBy===p.name&&s.side!==p.side).length:0),passes:p.pases||0,flowCount:p.flowCount||0,abilityUses:{...(p.abilityUses||{})},tackles:p.tackles||0,interceptions:p.interceptions||0,shotBlocks:p.shotBlocks||0,aerialWins:p.aerialWins||0,duelsWon:p.duelsWon||0,keyPasses:p.keyPasses||0,runs:p.runCount,overlaps:p.overlapCount,distance:Math.round(p.distanceCovered),rating:+p.rating.toFixed(1)})),masterEntries:this.masterEntries.map(r=>({...r})),substitutions:this.subRecords.map(s=>({...s})),cards:this.cardRecords.map(c=>({...c})),shots:this.shotMap.map(s=>({...s})),events:this.keyEvents.map(e=>({...e})),goalRecords:this.goalRecords.map(r=>({...r,score:[...r.score]})),abilityHistory:this.abilityHistory.map(a=>({...a})),duelHistory:this.duelHistory.map(d=>({...d})),seed:this.seed};}
 }
 function recordFixture(season,fixture,match){
   if(fixture.result)return false;
