@@ -83,7 +83,7 @@ for item in items:
     if not slug or name in seen_names or filename in seen_paths:
         raise SystemExit('Retrato duplicado: ' + name)
     payload = base64.b64decode(data.split(',', 1)[1], validate=True)
-    if not payload.startswith(b'\\xff\\xd8\\xff') or len(payload) > 1000000:
+    if not payload.startswith(bytes([0xff, 0xd8, 0xff])) or len(payload) > 1000000:
         raise SystemExit('JPEG inválido: ' + name)
     (image_dir / filename).write_bytes(payload)
     seen_names.add(name)
