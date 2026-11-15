@@ -1,15 +1,47 @@
 #!/usr/bin/env python3
-"""Reconstrói o jogo completo a partir de partes compactadas versionadas no Git."""
+"""Reconstrói o jogo base e acrescenta a edição mobile preservando os dados do jogo."""
 from pathlib import Path
 import base64, gzip, hashlib
-ROOT=Path(__file__).resolve().parent.parent
-PARTS=sorted((ROOT/'packed').glob('part-*.txt'))
-if len(PARTS)!=8: raise SystemExit(f'Esperadas 8 partes, recebidas {len(PARTS)}')
-encoded=''.join(p.read_text(encoding='ascii').strip() for p in PARTS)
-raw=gzip.decompress(base64.b64decode(encoded,validate=True))
-actual=hashlib.sha256(raw).hexdigest()
-expected=(ROOT/'packed'/'sha256.txt').read_text().strip()
-if actual!=expected: raise SystemExit('ERRO: integridade do jogo não confere; compilação abortada')
-(ROOT/'web').mkdir(parents=True,exist_ok=True)
-(ROOT/'web'/'index.html').write_bytes(raw)
-print(f'Jogo reconstruído: {len(raw):,} bytes; SHA-256 {actual}')
+
+ROOT = Path(__file__).resolve().parent.parent
+WEB = ROOT / 'web'
+PARTS = sorted((ROOT / 'packed').glob('part-*.txt'))
+if len(PARTS) != 8:
+    raise SystemExit(f'Esperadas 8 partes do jogo, recebidas {len(PARTS)}')
+
+encoded = ''.join(p.read_text(encoding='ascii').strip() for p in PARTS)
+raw = gzip.decompress(base64.b64decode(encoded, validate=True))
+actual = hashlib.sha256(raw).hexdigest()
+expected = (ROOT / 'packed' / 'sha256.txt').read_text().strip()
+if actual != expected:
+    raise SystemExit('ERRO: integridade do jogo base não confere; compilação abortada')
+
+html = raw.decode('utf-8')
+if '</head>' not in html.lower() or '</body>' not in html.lower():
+    raise SystemExit('HTML original sem estrutura esperada')
+
+# Aplicar somente reparos localizados: nenhuma partida, estatística ou habilidade é apagada.
+repairs = {
+    "reader.onerror=()=>reject(Error('Não foi possível ler o arquivo. Confira a permissão de fotos do navegador.'));":
+        "reader.onerror=()=>reject(Error('Falha de leitura ('+(reader.error?.name||'arquivo sem acesso')+'). No Android, escolha a imagem pelo seletor de Documentos/Arquivos e tente novamente.'));",
+}
+for before, after in repairs.items():
+    if before in html:
+        html = html.replace(before, after)
+        print('Correção de leitura de imagem aplicada')
+    else:
+        print('Nota: versão do jogo usa implementação diferente do leitor de imagens')
+
+# A edição mobile fica em arquivos próprios para facilitar atualizações e reversões.
+css = '<link rel="stylesheet" href="mobile-upgrade.css?v=8.6.0">'
+script = '<script defer src="mobile-upgrade.js?v=8.6.0"></script>'
+if 'mobile-upgrade.css' not in html:
+    html = html.replace('</head>', css + '\n</head>', 1)
+if 'mobile-upgrade.js' not in html:
+    html = html.replace('</body>', script + '\n</body>', 1)
+# Versão da interface, sem alterar IDs nem saves persistidos.
+html = html.replace('NEO EGOIST SIMULATOR 8.4', 'NEO EGOIST SIMULATOR 8.6')
+WEB.mkdir(parents=True, exist_ok=True)
+(WEB / 'index.html').write_text(html, encoding='utf-8')
+print(f'Jogo base íntegro: {len(raw):,} bytes; SHA-256 {actual}')
+print('Interface mobile 8.6 e diagnósticos de fotos incluídos')
