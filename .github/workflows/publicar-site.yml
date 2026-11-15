@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - 'packed/**'
+      - 'portrait-pack/**'
       - 'web/**'
       - 'tools/**'
       - '.github/workflows/publicar-site.yml'
