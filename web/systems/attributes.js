@@ -73,6 +73,12 @@ function tuneToTarget(stats,role,index,target){
   if(!choice)break;stats[choice]+=diff>0?1:-1;
  }
 }
+const EXTRA_RATINGS=Object.create(null);
+function registerPlayerRatings(name,ovr,meta={}){
+ if(typeof name!=='string'||!name.trim())return false;
+ const v=Math.max(60,Math.min(90,Math.round(Number(ovr)||74)));
+ EXTRA_RATINGS[name]={ovr:v,meta:{...meta}};return true;
+}
 const MASTER_NAMES=['Noel Noa','Lavinho','Chris Prince','Marc Snuffy','Julian Loki'];
 const hash=s=>{let n=2166136261;for(let i=0;i<s.length;i++)n=Math.imul(n^s.charCodeAt(i),16777619);return n>>>0;};
 const bound=n=>Math.max(0,Math.min(100,Math.round(n)));
@@ -81,6 +87,14 @@ function overall(stats,role,index){const weights=ROLE_WEIGHTS[roleClass(role,ind
 function generate(name,role,index=1,experience){const h=hash(name),type=roleClass(role,index),base=MASTER_NAMES.includes(name)?93:76;const stats={};KEYS.forEach((k,i)=>{const delta=(((h>>((i%4)*7))^(h*(i+11)))%17+17)%17-8;stats[k]=bound(base+delta+(type==='GK'&&k==='reflexes'?11:0)+(type==='DEF'&&['tackling','defense'].includes(k)?10:0)+(type==='WING'&&['speed','dribbling'].includes(k)?8:0)+(type==='ST'&&k==='finishing'?10:0));});
  Object.assign(stats,PROFILES[name]||{});
  if(TARGET_OVR[name])tuneToTarget(stats,role,index,TARGET_OVR[name]);
+ if(EXTRA_RATINGS[name]){
+  const extra=EXTRA_RATINGS[name],style=extra.meta?.style;
+  const special={finalizador:['finishing','accuracy','positioning'],criador:['passing','vision','control'],
+   marcador:['defense','tackling','positioning'],veloz:['speed','acceleration','dribbling'],
+   goleiro:['reflexes','positioning','control']};
+  if(extra.meta?.custom&&special[style])for(const k of special[style])stats[k]=bound(stats[k]+8);
+  tuneToTarget(stats,role,index,extra.ovr);
+ }
  if(experience?.boosts)for(const [key,v] of Object.entries(experience.boosts))if(KEYS.includes(key))stats[key]=bound(stats[key]+v);
  // Carreiras antigas e treinos também respeitam a escala dos dois patamares.
  const isMaster=MASTER_NAMES.includes(name);
@@ -90,5 +104,5 @@ function generate(name,role,index=1,experience){const h=hash(name),type=roleClas
  if(isMaster&&overall(stats,role,index)<96)tuneToTarget(stats,role,index,96);
  stats.ovr=overall(stats,role,index);return stats;}
 function effective(p,key,multiplier=1){let value=p?.attributes?.[key]??70;const fatigue=Math.max(.66,Math.min(1,p?.stamina/100??1));const flow=p?.flowUntil>p?.matchTime?1.10:1;return Math.max(0,value*multiplier*(.83+.17*fatigue)*flow);}
-return {KEYS,LABELS,PROFILES,TARGET_OVR,MASTER_NAMES,roleClass,generate,overall,effective,hash,bound};
+return {KEYS,LABELS,PROFILES,TARGET_OVR,MASTER_NAMES,registerPlayerRatings,EXTRA_RATINGS,roleClass,generate,overall,effective,hash,bound};
 });

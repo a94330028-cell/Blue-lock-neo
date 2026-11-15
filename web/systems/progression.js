@@ -69,7 +69,7 @@ function mvpRanking(season,limit=5){
  return scored.sort((a,b)=>b.mvpPoints-a.mvpPoints||num(b.games)-num(a.games)||num(b.goals)-num(a.goals)||String(a.name).localeCompare(String(b.name))).slice(0,Math.max(1,Math.min(20,limit)));
 }
 function ensure(season){if(!season.career||typeof season.career!=='object')season.career={players:{},history:[],version:1};const c=season.career;c.links=c.links||{};c.rivals=c.rivals||{};c.stories=c.stories||[];return c;}
-function row(career,name,club){const id=key(name,club);return career.players[id]||(career.players[id]={name,club,games:0,goals:0,assists:0,dribbles:0,tackles:0,interceptions:0,shotBlocks:0,aerialWins:0,duelsWon:0,keyPasses:0,saves:0,cleanSheets:0,wins:0,passes:0,impact:0,ratingSum:0,score:0,value:0,change:0,boosts:{},unlocked:[],abilityUses:{},history:[],flowCount:0,masterApps:0});}
+function row(career,name,club){const id=key(name,club);return career.players[id]||(career.players[id]={name,club,games:0,goals:0,assists:0,shots:0,runs:0,overlaps:0,distance:0,draws:0,losses:0,dribbles:0,tackles:0,interceptions:0,shotBlocks:0,aerialWins:0,duelsWon:0,keyPasses:0,saves:0,cleanSheets:0,wins:0,passes:0,impact:0,ratingSum:0,score:0,value:0,change:0,boosts:{},unlocked:[],abilityUses:{},history:[],flowCount:0,masterApps:0});}
 function verifiedKeeperSaves(details,p){
  if(!/^(GOL|GK)$/.test(p?.role||''))return Math.max(0,num(p?.saves));
  const shots=(details?.shots||[]).filter(s=>s.outcome==='saved'&&s.savedBy===p.name&&s.side!==p.side).length;
@@ -111,6 +111,7 @@ function record(season,fixture,match,round){const career=ensure(season);const r=
    +Math.max(-2,Math.min(2,((p.rating||6)-6)*.8));const scoreGain=contribution+(result>0?.95:result<0?-.28:.12);
  entry.abilityUses=entry.abilityUses||{};
  for(const [id,count] of Object.entries(p.abilityUses||{}))if(Abilities.get(id)&&Number.isFinite(count))entry.abilityUses[id]=(entry.abilityUses[id]||0)+Math.max(0,Math.floor(count));
+ entry.shots=(entry.shots||0)+(p.shots||0);entry.runs=(entry.runs||0)+(p.runs||0);entry.overlaps=(entry.overlaps||0)+(p.overlaps||0);entry.distance=(entry.distance||0)+(p.distance||0);entry.draws=(entry.draws||0)+(result===0?1:0);entry.losses=(entry.losses||0)+(result<0?1:0);
  entry.games++;entry.goals+=p.goals||0;entry.assists+=p.assists||0;entry.dribbles+=p.dribblesWon||0;entry.tackles+=p.tackles||0;
  entry.interceptions=(entry.interceptions||0)+(p.interceptions||0);
  entry.shotBlocks=(entry.shotBlocks||0)+(p.shotBlocks||0);

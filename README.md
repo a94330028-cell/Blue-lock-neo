@@ -1,4 +1,18 @@
-# Blue Lock NEO 9.5.0 — Ranking único e MVP da liga
+# Blue Lock NEO v9.7.0 — Criador de jogadores, elencos e copas personalizadas
+
+## 🆕 v9.7.0: seu personagem e quatro clubes históricos
+
+- **Manchester United 2008, Flamengo 2019, Sport Recife 2015 e Mirassol 2025** adicionados ao motor de amistosos e campeonatos, com 11 titulares, reservas, posições e overalls fictícios. A Liga Neo Egoísta original de cinco equipes permanece intacta.
+- **Criador de jogador** em Mais: escolha nome, equipe, posição, número, pé dominante, estilo e OVR inicial de 60 a 85. O novo jogador entra em uma vaga real do time selecionado; o titular deslocado vira reserva.
+- **Campeonatos personalizados:** escolha 2–9 equipes (inclusive misturando Blue Lock e times históricos), partida única ou ida e volta; tabela, J/V/E/D, GP/GC, pontos e campeão; os confrontos utilizam o motor do jogo e não alteram a temporada NEL.
+- **Fotos uma a uma:** nova área “📸 Novos elencos” em Jogadores. O usuário importa fotos JPG, PNG ou WebP individualmente; **não há fotos genéricas inventadas** para os clubes históricos. Armazenamento de imagens em IndexedDB com backups existentes.
+- **Kaiser:** retrato enviado pelo usuário adicionado aos arquivos do aplicativo. Fotos personalizadas já escolhidas pelo usuário continuam prioritárias.
+- **Fichas clicáveis** com nomes, fotos, passes, desarmes, interceptações, finalizações, gols, assistências, defesas, habilidades e histórico. Estatísticas antigas ausentes não são inventadas.
+- **Android 9.7.0 / versionCode 98**; APK estável requer o mesmo certificado utilizado nas versões anteriores; nunca publique a chave privada no GitHub.
+- **Testes:** `node tests/v970.test.cjs`, além da bateria de compatibilidade dos módulos e compilação do APK.
+
+[Changelog da v9.7](CHANGELOG-v9.7.0.md)
+
 
 ## Novo na v9.5.0
 - **Preços reajustados:** atletas comuns ficam abaixo de ¥ 400 milhões, em vez de passar de ¥ 1 bilhão. O jogo recalcula as ofertas a partir dos dados existentes, sem apagar saves.

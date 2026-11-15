@@ -221,7 +221,49 @@ function mulberry32(seed) { let a=seed>>>0;return function(){a=(a+0x6D2B79F5)|0;
 const clamp=(x,lo,hi)=>Math.max(lo,Math.min(hi,x));
 const length=(dx,dy)=>Math.hypot(dx,dy);
 const distance=(a,b)=>length(a.x-b.x,a.y-b.y);
-const teamById=id=>TEAMS.find(t=>t.id===id);
+// External squads are exhibition/cup-only; the original Neo Egoist schedule
+// continues to use the five immutable league teams (TEAMS).
+const EXTRA_TEAMS=[];
+const userCreatedPlayers=new Map();
+const teamById=id=>TEAMS.find(t=>t.id===id)||EXTRA_TEAMS.find(t=>t.id===id);
+const allTeams=()=>[...TEAMS,...EXTRA_TEAMS];
+function registerTeam(team){
+ if(!team||!/^[a-z][a-z0-9-]{2,18}$/.test(team.id||'')||!Array.isArray(team.players)||team.players.length!==11||!Array.isArray(team.reserves))throw Error('Elenco incompleto: 11 titulares e reservas obrigatórios.');
+ if(teamById(team.id))return teamById(team.id);
+ const fresh={...team,players:team.players.slice(),reserves:team.reserves.slice(),formation:team.formation||DEFAULT_FORMATION};
+ EXTRA_TEAMS.push(fresh);return fresh;
+}
+function unregisterCreatedPlayer(id){
+ const entry=userCreatedPlayers.get(id);if(!entry)return false;
+ const t=teamById(entry.club);if(t){
+   if(t.players[entry.slot]===entry.name)t.players[entry.slot]=entry.replaced;
+   if(entry.previousRole&&t.formation?.[entry.slot])t.formation[entry.slot].role=entry.previousRole;
+   const index=t.reserves.indexOf(entry.replaced);if(index>=0)t.reserves.splice(index,1);
+ }
+ userCreatedPlayers.delete(id);return true;
+}
+function registerCreatedPlayer(input){
+ const name=String(input?.name||'').trim(),club=String(input?.club||'').trim();
+ const role=String(input?.role||'MEI').toUpperCase(),t=teamById(club);
+ if(!t||name.length<2||name.length>36||!['GOL','ZAG','LD','LE','VOL','MC','MEI','PD','PE','CA'].includes(role))return null;
+ const id=name+'|'+club;if(userCreatedPlayers.has(id))return userCreatedPlayers.get(id);
+ if(allTeams().some(team=>[...team.players,...team.reserves,team.master].includes(name)))return null;
+ const choice=t.formation||DEFAULT_FORMATION;
+ const wanted=Attr.roleClass(role,role==='GOL'?0:1);
+ let slot=choice.findIndex((f,i)=>i===0?wanted==='GK':Attr.roleClass(f.role,i)===wanted&&!userCreatedPlayersHasSlot(t.id,i));
+ if(slot<0)slot=choice.findIndex((f,i)=>i>0&&!userCreatedPlayersHasSlot(t.id,i));
+ if(slot<0)return null;
+ const replaced=t.players[slot],previousRole=choice[slot].role;
+ // Make the new position influence actual football decisions, not just the profile.
+ if(t.formation===DEFAULT_FORMATION)t.formation=t.formation.map(f=>({...f}));
+ t.formation[slot].role=role;
+ t.players[slot]=name;t.reserves.push(replaced);
+ const data={id,name,club,slot,replaced,previousRole,role,number:Math.max(1,Math.min(99,Number(input.number)||10)),foot:input.foot||'destro',style:input.style||'equilibrado',ovr:Math.max(60,Math.min(90,Number(input.ovr)||74))};
+ userCreatedPlayers.set(id,data);Attr.registerPlayerRatings(name,data.ovr,{role,style:data.style,custom:true});return data;
+}
+function userCreatedPlayersHasSlot(club,slot){return [...userCreatedPlayers.values()].some(p=>p.club===club&&p.slot===slot);}
+function listCreatedPlayers(){return [...userCreatedPlayers.values()].map(p=>({...p}));}
+
 const has=(p,key)=>(SKILLS[p.name]||[]).some(v=>v.id===key);
 const minLabel=t=>`${Math.min(90,Math.max(0,Math.floor(t/60)))}'`;
 function rankQuality(t,axis){return (t[axis]-75)/25;}
@@ -1915,6 +1957,6 @@ function migrateLegacySeason(legacy){
   season.scorers={...legacy.scorers};season.assists={...legacy.assists};season.goalLog=[];return season;
 }
 function lerp(a,b,t){return a+(b-a)*t;}
-return {PITCH,TICK,GAME_RATE,MAX_SECONDS,TEAMS,COUNTRY_KITS,SKILLS,PLAYER_STYLES,GAMEPLAN_TEMPLATES,Attr,Abilities,Masters,Progression,avatarTheme,avatarHTML,avatarSVG,REAL_PORTRAITS,Match,createSchedule,standings,teamById,recordFixture,migrateLegacySeason,FORMATIONS,DEFAULT_FORMATION};
+return {PITCH,TICK,GAME_RATE,MAX_SECONDS,TEAMS,EXTRA_TEAMS,allTeams,registerTeam,registerCreatedPlayer,unregisterCreatedPlayer,listCreatedPlayers,COUNTRY_KITS,SKILLS,PLAYER_STYLES,GAMEPLAN_TEMPLATES,Attr,Abilities,Masters,Progression,avatarTheme,avatarHTML,avatarSVG,REAL_PORTRAITS,Match,createSchedule,standings,teamById,recordFixture,migrateLegacySeason,FORMATIONS,DEFAULT_FORMATION};
 });
 

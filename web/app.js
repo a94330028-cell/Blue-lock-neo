@@ -352,6 +352,9 @@ async function importPortraitBackup(file){
 const avatarCache=Object.create(null);
 function portraitUrl(name,color='#3aa8ff'){
   const mode=portraitStyle(name);
+  // O retrato do Kaiser foi enviado pelo próprio usuário. Uma foto customizada
+  // posterior continua tendo prioridade sobre esta imagem embarcada.
+  if(name==='Michael Kaiser'&&!['custom','manga'].includes(mode))return 'assets/kaiser-retrato-enviado.jpg';
   if(mode==='premium')return ORIGINAL_ART[name]||portraitIdentity(name,color);
   if(mode==='official'&&OFFICIAL_MANGA[name])return OFFICIAL_MANGA[name].image;
   if(mode==='wiki'&&WIKI_PORTRAITS[name])return WIKI_PORTRAITS[name].image;
@@ -381,6 +384,20 @@ function portrait(name,t,cls='mini-avatar'){
  const first=remote?fallback:url;
  return `<img class="${cls}" data-portrait="1" data-player-name="${encodeURIComponent(name)}" data-fallback="${esc(fallback)}" ${remote?`data-online-src="${esc(remote)}"`:''} src="${esc(first)}" alt="${esc(name)}" loading="lazy" decoding="async">`;
 }
+window.NeoPortraitUI=Object.freeze({
+ html:(name,club,cls='neo960-avatar')=>portrait(name,club,cls),
+ url:(name,color)=>portraitUrl(name,color)
+});
+window.NeoPortraitManager=Object.freeze({
+ saveFile:async(name,file)=>{
+  if(typeof name!=='string'||!name.trim()||!(file instanceof Blob))throw Error('Imagem inválida.');
+  if(file.size>8*1024*1024||!['image/jpeg','image/png','image/webp'].includes(file.type))throw Error('Escolha JPG, PNG ou WebP (até 8 MB).');
+  await portraitStorageReady;
+  await putPortraitBlob('custom',name,file);
+  refreshPortraits();
+ },
+ current:name=>portraitUrl(name)
+});
 // Load only the players who actually appear in the match, rather than requesting all 87 at launch.
 const defaultAvatar=makePortraitImage('Jogador','#3aa8ff');
 function cachedPortrait(name,color){return avatarCache[name]||(avatarCache[name]=makePortraitImage(name,color));}
