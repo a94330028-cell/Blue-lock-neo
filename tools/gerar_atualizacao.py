@@ -15,7 +15,7 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parent.parent
 WEB = ROOT / "web"
-HOST = "https://blue-lock-neo-simulator.netlify.app"
+HOST = "https://a94330028-cell.github.io/Blue-lock-neo"
 VERSION = (WEB / "VERSION").read_text(encoding="utf-8").strip()
 if not re.fullmatch(r"\d{1,4}\.\d{1,4}\.\d{1,4}", VERSION):
     raise SystemExit("web/VERSION inválida. Ex.: 8.5.0")
