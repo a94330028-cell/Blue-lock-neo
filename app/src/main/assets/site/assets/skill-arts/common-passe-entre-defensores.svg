@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="460" viewBox="0 0 360 460" role="img" aria-label="Arte original Passe Entre Defensores">
+<defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#071a31"/><stop offset="0.68" stop-color="#112f42"/><stop offset="1" stop-color="#071321"/></linearGradient>
+<radialGradient id="orb"><stop stop-color="#67c6ff" stop-opacity=".40"/><stop offset="1" stop-color="#67c6ff" stop-opacity="0"/></radialGradient></defs>
+<rect width="360" height="460" rx="22" fill="url(#bg)"/><rect x="10" y="10" width="340" height="440" rx="15" fill="none" stroke="#67c6ff" stroke-opacity=".52" stroke-width="2"/>
+<circle cx="180" cy="208" r="142" fill="url(#orb)"/><circle cx="180" cy="208" r="83" fill="none" stroke="#67c6ff" stroke-opacity=".7" stroke-width="2" stroke-dasharray="9 11"/>
+<g transform="rotate(7 180 209)"><path d="M156 310 l32 32 m0 -32 l-32 32" stroke="#67c6ff" stroke-width="2" opacity=".52"/><path d="M85 214 l32 32 m0 -32 l-32 32" stroke="#67c6ff" stroke-width="2" opacity=".52"/><path d="M104 87 l32 32 m0 -32 l-32 32" stroke="#67c6ff" stroke-width="2" opacity=".52"/><path d="M247 85 l32 32 m0 -32 l-32 32" stroke="#67c6ff" stroke-width="2" opacity=".52"/><path d="M291 250 l32 32 m0 -32 l-32 32" stroke="#67c6ff" stroke-width="2" opacity=".52"/><path d="M80 209 L280 209 M180 102 L180 311" stroke="#67c6ff" stroke-opacity=".22" stroke-width="2"/></g>
+<text x="180" y="240" fill="#ffffff" text-anchor="middle" font-weight="bold" font-family="Arial,sans-serif" font-size="78">➶</text>
+<text x="30" y="45" fill="#67c6ff" font-family="Arial,sans-serif" font-weight="bold" font-size="14" letter-spacing="2">COMUM  •  021</text>
+<text x="180" y="376" fill="#f7fcff" font-size="20" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold">Passe Entre Defensores</text>
+<text x="180" y="419" fill="#67c6ff" font-size="12" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" letter-spacing="1">PASSE   •   +7.5%</text>
+</svg>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 480" role="img" aria-label="Giro de Recepção">
+ <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0c1835"/><stop offset="1" stop-color="#131024"/></linearGradient><radialGradient id="l"><stop stop-color="#67aeff" stop-opacity=".29"/><stop offset="1" stop-color="#67aeff" stop-opacity="0"/></radialGradient></defs>
+ <rect x="0" y="0" width="440" height="480" rx="22" fill="url(#g)"/><circle cx="136" cy="144" r="195" fill="url(#l)"/>
+ <g stroke="#67aeff" stroke-width="2" fill="none" opacity=".42"><circle cx="220" cy="184" r="156"/><circle cx="220" cy="184" r="132"/><path d="M40 350 L400 350"/></g>
+ <g stroke="#67aeff" fill="none"><path d="M173.1,89.1 l-3.4,-11.5" stroke-width="2" opacity="0.18"/><path d="M299.8,107.2 l15.5,-20.9" stroke-width="3" opacity="0.22"/><path d="M360.6,114.1 l17.1,-12.2" stroke-width="4" opacity="0.27"/><path d="M64.0,240.1 l-29.5,14.8" stroke-width="2" opacity="0.32"/><path d="M344.4,151.5 l15.8,-6.2" stroke-width="3" opacity="0.36"/><path d="M365.4,153.1 l15.2,-4.9" stroke-width="4" opacity="0.40"/><path d="M373.2,156.8 l34.7,-9.5" stroke-width="2" opacity="0.45"/></g><g color="#67aeff" stroke="#67aeff" fill="none" transform="translate(6 -5) rotate(-4 220 185)"><path d="M87 152 L198 92 L302 162 L365 240 M200 90 L200 248" stroke-width="11"/><circle cx="200" cy="168" r="60" fill="none" stroke-width="8"/></g>
+ <text x="220" y="36" fill="#67aeff" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="bold" letter-spacing="3">RARA</text>
+ <path d="M45 345 L395 345" stroke="#67aeff" stroke-width="2" opacity=".6"/>
+ <g font-family="Arial,sans-serif"><text x="220" y="395" fill="#f8fdff" font-size="20" font-weight="800" letter-spacing=".2" text-anchor="middle">Giro de Recepção</text><text x="220" y="459" text-anchor="middle" fill="#67aeff" font-size="14" letter-spacing="2">CONTROLE • BLUE LOCK NEO</text></g>
+ <rect x="7" y="7" width="426" height="466" rx="18" fill="none" stroke="#67aeff" stroke-width="3" opacity=".7"/>
+ </svg>

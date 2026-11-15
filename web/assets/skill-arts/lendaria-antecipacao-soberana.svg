@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 480" role="img" aria-label="Antecipação Soberana">
+ <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0c1835"/><stop offset="1" stop-color="#131024"/></linearGradient><radialGradient id="l"><stop stop-color="#f9be59" stop-opacity=".29"/><stop offset="1" stop-color="#f9be59" stop-opacity="0"/></radialGradient></defs>
+ <rect x="0" y="0" width="440" height="480" rx="22" fill="url(#g)"/><circle cx="205" cy="174" r="195" fill="url(#l)"/>
+ <g stroke="#f9be59" stroke-width="2" fill="none" opacity=".42"><circle cx="220" cy="184" r="156"/><circle cx="220" cy="184" r="132"/><path d="M40 350 L400 350"/></g>
+ <g stroke="#f9be59" fill="none"><path d="M338.6,131.3 l21.0,-13.5" stroke-width="2" opacity="0.18"/><path d="M78.8,215.1 l-30.7,9.0" stroke-width="3" opacity="0.22"/><path d="M122.6,112.4 l-22.9,-26.4" stroke-width="4" opacity="0.27"/><path d="M195.0,90.0 l-5.1,-35.6" stroke-width="2" opacity="0.32"/><path d="M83.5,135.1 l-27.0,-15.2" stroke-width="3" opacity="0.36"/><path d="M272.6,98.5 l15.3,-33.7" stroke-width="4" opacity="0.40"/><path d="M321.3,266.0 l8.9,9.5" stroke-width="2" opacity="0.45"/></g><g color="#f9be59" stroke="#f9be59" fill="none" transform="translate(5 -1) rotate(-6 220 185)"><path d="M215 57 L354 101 L334 242 L215 313 L96 242 L76 101 Z" stroke-width="11" fill="none"/><path d="M150 180 L191 222 L291 128" stroke-width="16" fill="none"/></g>
+ <text x="220" y="36" fill="#f9be59" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="bold" letter-spacing="3">LENDÁRIA</text>
+ <path d="M45 345 L395 345" stroke="#f9be59" stroke-width="2" opacity=".6"/>
+ <g font-family="Arial,sans-serif"><text x="220" y="395" fill="#f8fdff" font-size="20" font-weight="800" letter-spacing=".2" text-anchor="middle">Antecipação Soberana</text><text x="220" y="459" text-anchor="middle" fill="#f9be59" font-size="14" letter-spacing="2">DEFESA • BLUE LOCK NEO</text></g>
+ <rect x="7" y="7" width="426" height="466" rx="18" fill="none" stroke="#f9be59" stroke-width="3" opacity=".7"/>
+ </svg>

@@ -1,0 +1,31 @@
+{
+  "id": "./",
+  "name": "Blue Lock NEO — Simulador da Liga Egoísta",
+  "short_name": "Blue Lock NEO",
+  "description": "Simulador de futebol 2D e gerenciamento de retratos personalizados.",
+  "lang": "pt-BR",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#07111f",
+  "theme_color": "#07111f",
+  "orientation": "any",
+  "categories": [
+    "games",
+    "sports"
+  ],
+  "icons": [
+    {
+      "src": "./icons/neo-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icons/neo-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

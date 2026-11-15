@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 480" role="img" aria-label="Corte Ilusório">
+ <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0c1835"/><stop offset="1" stop-color="#131024"/></linearGradient><radialGradient id="l"><stop stop-color="#b88aff" stop-opacity=".29"/><stop offset="1" stop-color="#b88aff" stop-opacity="0"/></radialGradient></defs>
+ <rect x="0" y="0" width="440" height="480" rx="22" fill="url(#g)"/><circle cx="124" cy="108" r="195" fill="url(#l)"/>
+ <g stroke="#b88aff" stroke-width="2" fill="none" opacity=".42"><circle cx="220" cy="184" r="156"/><circle cx="220" cy="184" r="132"/><path d="M40 350 L400 350"/></g>
+ <g stroke="#b88aff" fill="none"><path d="M383.0,205.0 l19.8,3.0" stroke-width="2" opacity="0.18"/><path d="M368.6,195.2 l16.0,1.2" stroke-width="3" opacity="0.22"/><path d="M129.7,70.5 l-15.0,-29.4" stroke-width="4" opacity="0.27"/><path d="M360.9,190.9 l14.0,0.5" stroke-width="2" opacity="0.32"/><path d="M73.4,110.3 l-15.0,-11.6" stroke-width="3" opacity="0.36"/><path d="M130.6,283.8 l-11.5,18.8" stroke-width="4" opacity="0.40"/><path d="M316.8,101.5 l21.1,-25.4" stroke-width="2" opacity="0.45"/></g><g color="#b88aff" stroke="#b88aff" fill="none" transform="translate(-6 7) rotate(-4 220 185)"><path d="M100 230 C230 22 285 320 380 108 M332 115 L380 108 L369 159" stroke-width="13" fill="none"/><circle cx="210" cy="160" r="27" stroke-width="8" fill="none"/></g>
+ <text x="220" y="36" fill="#b88aff" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="bold" letter-spacing="3">ÉPICA</text>
+ <path d="M45 345 L395 345" stroke="#b88aff" stroke-width="2" opacity=".6"/>
+ <g font-family="Arial,sans-serif"><text x="220" y="395" fill="#f8fdff" font-size="20" font-weight="800" letter-spacing=".2" text-anchor="middle">Corte Ilusório</text><text x="220" y="459" text-anchor="middle" fill="#b88aff" font-size="14" letter-spacing="2">DRIBLE • BLUE LOCK NEO</text></g>
+ <rect x="7" y="7" width="426" height="466" rx="18" fill="none" stroke="#b88aff" stroke-width="3" opacity=".7"/>
+ </svg>

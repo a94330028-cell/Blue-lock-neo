@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 480" role="img" aria-label="Labirinto do Universo">
+ <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0c1835"/><stop offset="1" stop-color="#131024"/></linearGradient><radialGradient id="l"><stop stop-color="#ffe99d" stop-opacity=".29"/><stop offset="1" stop-color="#ffe99d" stop-opacity="0"/></radialGradient></defs>
+ <rect x="0" y="0" width="440" height="480" rx="22" fill="url(#g)"/><circle cx="118" cy="137" r="195" fill="url(#l)"/>
+ <g stroke="#ffe99d" stroke-width="2" fill="none" opacity=".42"><circle cx="220" cy="184" r="156"/><circle cx="220" cy="184" r="132"/><path d="M40 350 L400 350"/></g>
+ <g stroke="#ffe99d" fill="none"><path d="M50.5,259.0 l-22.0,13.8" stroke-width="2" opacity="0.18"/><path d="M161.2,55.8 l-5.2,-18.3" stroke-width="3" opacity="0.22"/><path d="M329.7,280.4 l16.9,19.7" stroke-width="4" opacity="0.27"/><path d="M97.7,296.1 l-9.0,12.0" stroke-width="2" opacity="0.32"/><path d="M350.9,100.1 l19.2,-17.5" stroke-width="3" opacity="0.36"/><path d="M72.3,141.1 l-30.0,-13.8" stroke-width="4" opacity="0.40"/><path d="M351.2,223.9 l16.8,6.5" stroke-width="2" opacity="0.45"/></g><g color="#ffe99d" stroke="#ffe99d" fill="none" transform="translate(-7 -2) rotate(1 220 185)"><path d="M100 230 C230 22 285 320 380 108 M332 115 L380 108 L369 159" stroke-width="13" fill="none"/><circle cx="210" cy="160" r="27" stroke-width="8" fill="none"/></g>
+ <text x="220" y="36" fill="#ffe99d" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="bold" letter-spacing="3">DIVINA</text>
+ <path d="M45 345 L395 345" stroke="#ffe99d" stroke-width="2" opacity=".6"/>
+ <g font-family="Arial,sans-serif"><text x="220" y="395" fill="#f8fdff" font-size="20" font-weight="800" letter-spacing=".2" text-anchor="middle">Labirinto do Universo</text><text x="220" y="459" text-anchor="middle" fill="#ffe99d" font-size="14" letter-spacing="2">DRIBLE • BLUE LOCK NEO</text></g>
+ <rect x="7" y="7" width="426" height="466" rx="18" fill="none" stroke="#ffe99d" stroke-width="3" opacity=".7"/>
+ </svg>

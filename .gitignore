@@ -1,9 +1,17 @@
-app/build/
-app/src/main/assets/site/
-.gradle/
-.idea/
-*.iml
-local.properties
 .netlify/
-web/index.html
-web/updates/*.zip
+.gradle/
+**/build/
+local.properties
+*.keystore
+*.jks
+
+# Android signing keys (NEVER upload)
+*.jks
+*.keystore
+keystore.properties
+android-release-key.txt
+
+# Stable Android signing credentials are private, never in GitHub
+*.p12
+*ASSINATURA-PRIVADA*
+*SENHA-DA-CHAVE*

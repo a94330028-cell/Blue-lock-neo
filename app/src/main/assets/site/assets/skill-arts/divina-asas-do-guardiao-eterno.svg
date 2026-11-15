@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 480" role="img" aria-label="Asas do Guardião Eterno">
+ <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0c1835"/><stop offset="1" stop-color="#131024"/></linearGradient><radialGradient id="l"><stop stop-color="#ffe99d" stop-opacity=".29"/><stop offset="1" stop-color="#ffe99d" stop-opacity="0"/></radialGradient></defs>
+ <rect x="0" y="0" width="440" height="480" rx="22" fill="url(#g)"/><circle cx="196" cy="178" r="195" fill="url(#l)"/>
+ <g stroke="#ffe99d" stroke-width="2" fill="none" opacity=".42"><circle cx="220" cy="184" r="156"/><circle cx="220" cy="184" r="132"/><path d="M40 350 L400 350"/></g>
+ <g stroke="#ffe99d" fill="none"><path d="M245.1,288.4 l7.3,35.2" stroke-width="2" opacity="0.18"/><path d="M348.4,263.0 l29.5,24.0" stroke-width="3" opacity="0.22"/><path d="M202.7,61.3 l-1.4,-20.0" stroke-width="4" opacity="0.27"/><path d="M68.9,150.7 l-36.7,-13.1" stroke-width="2" opacity="0.32"/><path d="M298.6,99.0 l18.3,-27.5" stroke-width="3" opacity="0.36"/><path d="M86.7,283.2 l-20.5,21.9" stroke-width="4" opacity="0.40"/><path d="M103.8,128.6 l-18.4,-13.8" stroke-width="2" opacity="0.45"/></g><g color="#ffe99d" stroke="#ffe99d" fill="none" transform="translate(-4 2) rotate(3 220 185)"><path d="M82 250 L114 120 L205 178 L278 96 L348 226" stroke-width="14" fill="none"/><circle cx="215" cy="153" r="50" stroke-width="10" fill="none"/><path d="M156 215 L190 270 L265 255" stroke-width="13" fill="none"/></g>
+ <text x="220" y="36" fill="#ffe99d" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="bold" letter-spacing="3">DIVINA</text>
+ <path d="M45 345 L395 345" stroke="#ffe99d" stroke-width="2" opacity=".6"/>
+ <g font-family="Arial,sans-serif"><text x="220" y="395" fill="#f8fdff" font-size="20" font-weight="800" letter-spacing=".2" text-anchor="middle">Asas do Guardião Eterno</text><text x="220" y="459" text-anchor="middle" fill="#ffe99d" font-size="14" letter-spacing="2">GOLEIRO • BLUE LOCK NEO</text></g>
+ <rect x="7" y="7" width="426" height="466" rx="18" fill="none" stroke="#ffe99d" stroke-width="3" opacity=".7"/>
+ </svg>

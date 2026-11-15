@@ -15,7 +15,7 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parent.parent
 WEB = ROOT / "web"
-HOST = "https://a94330028-cell.github.io/Blue-lock-neo"
+HOST = "https://blue-lock-neo-simulator.netlify.app"
 VERSION = (WEB / "VERSION").read_text(encoding="utf-8").strip()
 if not re.fullmatch(r"\d{1,4}\.\d{1,4}\.\d{1,4}", VERSION):
     raise SystemExit("web/VERSION inválida. Ex.: 8.5.0")
@@ -33,7 +33,7 @@ manifest = {
     "url": f"{HOST}/updates/{ARCHIVE.name}",
     "sha256": sha,
     "minAndroidVersion": 85,
-    "changes": "v8.9: 87 retratos de personagens incluídos offline e exportação de fotos corrigida"
+    "changes": "Correções, novidades e atualizações da Liga Neo Egoísta"
 }
 (DEST / "latest.json").write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 print(f"Pacote: {ARCHIVE} ({ARCHIVE.stat().st_size} bytes)")

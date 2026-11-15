@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 480" role="img" aria-label="Pique na Meia-Lua">
+ <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0c1835"/><stop offset="1" stop-color="#131024"/></linearGradient><radialGradient id="l"><stop stop-color="#67aeff" stop-opacity=".29"/><stop offset="1" stop-color="#67aeff" stop-opacity="0"/></radialGradient></defs>
+ <rect x="0" y="0" width="440" height="480" rx="22" fill="url(#g)"/><circle cx="322" cy="178" r="195" fill="url(#l)"/>
+ <g stroke="#67aeff" stroke-width="2" fill="none" opacity=".42"><circle cx="220" cy="184" r="156"/><circle cx="220" cy="184" r="132"/><path d="M40 350 L400 350"/></g>
+ <g stroke="#67aeff" fill="none"><path d="M279.4,312.1 l6.1,16.9" stroke-width="2" opacity="0.18"/><path d="M57.1,109.3 l-23.7,-16.7" stroke-width="3" opacity="0.22"/><path d="M192.7,52.1 l-1.6,-13.9" stroke-width="4" opacity="0.27"/><path d="M273.4,57.5 l6.0,-19.1" stroke-width="2" opacity="0.32"/><path d="M90.3,83.0 l-11.6,-13.8" stroke-width="3" opacity="0.36"/><path d="M344.7,85.1 l18.0,-20.2" stroke-width="4" opacity="0.40"/><path d="M205.6,57.0 l-0.6,-12.0" stroke-width="2" opacity="0.45"/></g><g color="#67aeff" stroke="#67aeff" fill="none" transform="translate(2 -5) rotate(7 220 185)"><path d="M68 275 Q158 207 211 106 L264 186 L372 82 M330 94 L372 82 L354 127" stroke-width="11" fill="none"/><circle cx="210" cy="105" r="24" fill="none" stroke-width="9"/></g>
+ <text x="220" y="36" fill="#67aeff" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="bold" letter-spacing="3">RARA</text>
+ <path d="M45 345 L395 345" stroke="#67aeff" stroke-width="2" opacity=".6"/>
+ <g font-family="Arial,sans-serif"><text x="220" y="395" fill="#f8fdff" font-size="20" font-weight="800" letter-spacing=".2" text-anchor="middle">Pique na Meia-Lua</text><text x="220" y="459" text-anchor="middle" fill="#67aeff" font-size="14" letter-spacing="2">MOVIMENTAÇÃO • BLUE LOCK NEO</text></g>
+ <rect x="7" y="7" width="426" height="466" rx="18" fill="none" stroke="#67aeff" stroke-width="3" opacity=".7"/>
+ </svg>

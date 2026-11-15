@@ -13,13 +13,16 @@ android {
         applicationId 'com.neoegoist.simulator'
         minSdk 24
         targetSdk 35
-        versionCode 89
-        versionName '8.9.0'
+        versionCode 91
+        versionName '9.1.0'
     }
     signingConfigs {
         stableRelease {
             if (hasSigning) {
                 storeFile file(keyFile)
+                storeType 'pkcs12'
+                storeType 'pkcs12'
+                storeType 'pkcs12'
                 storePassword keyPassword
                 keyAlias keyAliasName
                 keyPassword keyAliasPassword
@@ -38,17 +41,3 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
 }
-
-// Copia a versão web autopreservada para o APK na compilação.
-// Não é necessário duplicar as 754 artes em pastas do repositório.
-tasks.register('assembleWeb', Exec) {
-    workingDir rootDir
-    commandLine 'python3', 'tools/assemble_web.py'
-}
-tasks.register('prepareEmbeddedSite', Copy) {
-    dependsOn 'assembleWeb'
-    from("${rootDir}/web")
-    into("${projectDir}/src/main/assets/site")
-    exclude('updates/**')
-}
-tasks.named('preBuild') { dependsOn('prepareEmbeddedSite') }

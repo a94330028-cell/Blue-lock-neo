@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="460" viewBox="0 0 360 460" role="img" aria-label="Arte original Passe de Apoio Curto">
+<defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#071a31"/><stop offset="0.68" stop-color="#112f42"/><stop offset="1" stop-color="#071321"/></linearGradient>
+<radialGradient id="orb"><stop stop-color="#67c6ff" stop-opacity=".40"/><stop offset="1" stop-color="#67c6ff" stop-opacity="0"/></radialGradient></defs>
+<rect width="360" height="460" rx="22" fill="url(#bg)"/><rect x="10" y="10" width="340" height="440" rx="15" fill="none" stroke="#67c6ff" stroke-opacity=".52" stroke-width="2"/>
+<circle cx="180" cy="208" r="111" fill="url(#orb)"/><circle cx="180" cy="208" r="72" fill="none" stroke="#67c6ff" stroke-opacity=".7" stroke-width="2" stroke-dasharray="8 11"/>
+<g transform="rotate(6 180 209)"><path d="M180 209 Q261 215 237 265" fill="none" stroke="#67c6ff" opacity=".48" stroke-width="2"/><path d="M180 209 Q191 229 167 279" fill="none" stroke="#67c6ff" opacity=".48" stroke-width="2"/><path d="M180 209 Q104 195 80 245" fill="none" stroke="#67c6ff" opacity=".48" stroke-width="2"/><path d="M180 209 Q145 100 121 150" fill="none" stroke="#67c6ff" opacity=".48" stroke-width="2"/><path d="M180 209 Q218 87 194 137" fill="none" stroke="#67c6ff" opacity=".48" stroke-width="2"/><path d="M180 209 Q305 123 281 173" fill="none" stroke="#67c6ff" opacity=".48" stroke-width="2"/><path d="M80 209 L280 209 M180 102 L180 311" stroke="#67c6ff" stroke-opacity=".22" stroke-width="2"/></g>
+<text x="180" y="240" fill="#ffffff" text-anchor="middle" font-weight="bold" font-family="Arial,sans-serif" font-size="78">➶</text>
+<text x="30" y="45" fill="#67c6ff" font-family="Arial,sans-serif" font-weight="bold" font-size="14" letter-spacing="2">COMUM  •  015</text>
+<text x="180" y="376" fill="#f7fcff" font-size="20" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold">Passe de Apoio Curto</text>
+<text x="180" y="419" fill="#67c6ff" font-size="12" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" letter-spacing="1">PASSE   •   +6.0%</text>
+</svg>

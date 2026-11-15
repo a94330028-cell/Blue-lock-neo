@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 480" role="img" aria-label="Arco da Ruptura">
+ <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0c1835"/><stop offset="1" stop-color="#131024"/></linearGradient><radialGradient id="l"><stop stop-color="#b88aff" stop-opacity=".29"/><stop offset="1" stop-color="#b88aff" stop-opacity="0"/></radialGradient></defs>
+ <rect x="0" y="0" width="440" height="480" rx="22" fill="url(#g)"/><circle cx="129" cy="148" r="195" fill="url(#l)"/>
+ <g stroke="#b88aff" stroke-width="2" fill="none" opacity=".42"><circle cx="220" cy="184" r="156"/><circle cx="220" cy="184" r="132"/><path d="M40 350 L400 350"/></g>
+ <g stroke="#b88aff" fill="none"><path d="M143.5,61.5 l-10.7,-26.9" stroke-width="2" opacity="0.18"/><path d="M106.2,299.4 l-11.2,16.6" stroke-width="3" opacity="0.22"/><path d="M370.2,104.4 l21.5,-16.3" stroke-width="4" opacity="0.27"/><path d="M292.8,289.6 l7.5,14.1" stroke-width="2" opacity="0.32"/><path d="M124.8,289.5 l-16.8,27.2" stroke-width="3" opacity="0.36"/><path d="M30.2,230.7 l-31.3,10.6" stroke-width="4" opacity="0.40"/><path d="M370.7,155.8 l36.5,-10.5" stroke-width="2" opacity="0.45"/></g><g color="#b88aff" stroke="#b88aff" fill="none" transform="translate(-1 5) rotate(-6 220 185)"><path d="M65 220 Q190 56 338 126 L382 110 M340 125 L356 83" stroke-width="12" fill="none"/><circle cx="70" cy="225" r="24" stroke-width="10" fill="none"/><circle cx="332" cy="130" r="14" stroke-width="7" fill="none"/></g>
+ <text x="220" y="36" fill="#b88aff" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="bold" letter-spacing="3">ÉPICA</text>
+ <path d="M45 345 L395 345" stroke="#b88aff" stroke-width="2" opacity=".6"/>
+ <g font-family="Arial,sans-serif"><text x="220" y="395" fill="#f8fdff" font-size="20" font-weight="800" letter-spacing=".2" text-anchor="middle">Arco da Ruptura</text><text x="220" y="459" text-anchor="middle" fill="#b88aff" font-size="14" letter-spacing="2">PASSE • BLUE LOCK NEO</text></g>
+ <rect x="7" y="7" width="426" height="466" rx="18" fill="none" stroke="#b88aff" stroke-width="3" opacity=".7"/>
+ </svg>

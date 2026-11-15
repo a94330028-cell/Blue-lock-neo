@@ -1,3 +1,2 @@
 [build]
-  command = "python3 tools/assemble_web.py && python3 tools/gerar_atualizacao.py"
   publish = "web"

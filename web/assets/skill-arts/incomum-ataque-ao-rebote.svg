@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 480" role="img" aria-label="Ataque ao Rebote">
+ <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0c1835"/><stop offset="1" stop-color="#131024"/></linearGradient><radialGradient id="l"><stop stop-color="#69d6a2" stop-opacity=".29"/><stop offset="1" stop-color="#69d6a2" stop-opacity="0"/></radialGradient></defs>
+ <rect x="0" y="0" width="440" height="480" rx="22" fill="url(#g)"/><circle cx="200" cy="84" r="195" fill="url(#l)"/>
+ <g stroke="#69d6a2" stroke-width="2" fill="none" opacity=".42"><circle cx="220" cy="184" r="156"/><circle cx="220" cy="184" r="132"/><path d="M40 350 L400 350"/></g>
+ <g stroke="#69d6a2" fill="none"><path d="M362.5,155.9 l34.5,-10.4" stroke-width="2" opacity="0.18"/><path d="M359.4,172.1 l37.6,-5.5" stroke-width="3" opacity="0.22"/><path d="M139.8,303.0 l-8.3,18.2" stroke-width="4" opacity="0.27"/><path d="M385.5,178.2 l24.9,-1.8" stroke-width="2" opacity="0.32"/><path d="M76.9,125.1 l-18.5,-11.9" stroke-width="3" opacity="0.36"/><path d="M128.3,92.9 l-16.2,-25.2" stroke-width="4" opacity="0.40"/><path d="M183.7,306.1 l-4.9,26.6" stroke-width="2" opacity="0.45"/></g><g color="#69d6a2" stroke="#69d6a2" fill="none" transform="translate(5 -2) rotate(-2 220 185)"><path d="M68 275 Q158 207 211 106 L264 186 L372 82 M330 94 L372 82 L354 127" stroke-width="11" fill="none"/><circle cx="210" cy="105" r="24" fill="none" stroke-width="9"/></g>
+ <text x="220" y="36" fill="#69d6a2" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="bold" letter-spacing="3">INCOMUM</text>
+ <path d="M45 345 L395 345" stroke="#69d6a2" stroke-width="2" opacity=".6"/>
+ <g font-family="Arial,sans-serif"><text x="220" y="395" fill="#f8fdff" font-size="20" font-weight="800" letter-spacing=".2" text-anchor="middle">Ataque ao Rebote</text><text x="220" y="459" text-anchor="middle" fill="#69d6a2" font-size="14" letter-spacing="2">MOVIMENTAÇÃO • BLUE LOCK NEO</text></g>
+ <rect x="7" y="7" width="426" height="466" rx="18" fill="none" stroke="#69d6a2" stroke-width="3" opacity=".7"/>
+ </svg>

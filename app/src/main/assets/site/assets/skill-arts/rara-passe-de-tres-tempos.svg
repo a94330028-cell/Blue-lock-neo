@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 480" role="img" aria-label="Passe de Três Tempos">
+ <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0c1835"/><stop offset="1" stop-color="#131024"/></linearGradient><radialGradient id="l"><stop stop-color="#67aeff" stop-opacity=".29"/><stop offset="1" stop-color="#67aeff" stop-opacity="0"/></radialGradient></defs>
+ <rect x="0" y="0" width="440" height="480" rx="22" fill="url(#g)"/><circle cx="246" cy="77" r="195" fill="url(#l)"/>
+ <g stroke="#67aeff" stroke-width="2" fill="none" opacity=".42"><circle cx="220" cy="184" r="156"/><circle cx="220" cy="184" r="132"/><path d="M40 350 L400 350"/></g>
+ <g stroke="#67aeff" fill="none"><path d="M169.3,84.1 l-7.7,-24.8" stroke-width="2" opacity="0.18"/><path d="M318.8,88.4 l11.3,-15.3" stroke-width="3" opacity="0.22"/><path d="M362.7,112.5 l21.1,-15.2" stroke-width="4" opacity="0.27"/><path d="M49.9,245.5 l-13.4,6.8" stroke-width="2" opacity="0.32"/><path d="M389.0,139.0 l28.8,-11.4" stroke-width="3" opacity="0.36"/><path d="M394.9,146.4 l31.4,-10.1" stroke-width="4" opacity="0.40"/><path d="M290.0,64.8 l13.4,-31.2" stroke-width="2" opacity="0.45"/></g><g color="#67aeff" stroke="#67aeff" fill="none" transform="translate(-4 4) rotate(-5 220 185)"><path d="M65 220 Q190 56 338 126 L382 110 M340 125 L356 83" stroke-width="12" fill="none"/><circle cx="70" cy="225" r="24" stroke-width="10" fill="none"/><circle cx="332" cy="130" r="14" stroke-width="7" fill="none"/></g>
+ <text x="220" y="36" fill="#67aeff" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="bold" letter-spacing="3">RARA</text>
+ <path d="M45 345 L395 345" stroke="#67aeff" stroke-width="2" opacity=".6"/>
+ <g font-family="Arial,sans-serif"><text x="220" y="395" fill="#f8fdff" font-size="20" font-weight="800" letter-spacing=".2" text-anchor="middle">Passe de Três Tempos</text><text x="220" y="459" text-anchor="middle" fill="#67aeff" font-size="14" letter-spacing="2">PASSE • BLUE LOCK NEO</text></g>
+ <rect x="7" y="7" width="426" height="466" rx="18" fill="none" stroke="#67aeff" stroke-width="3" opacity=".7"/>
+ </svg>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 480" role="img" aria-label="Assistência do Predador">
+ <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0c1835"/><stop offset="1" stop-color="#131024"/></linearGradient><radialGradient id="l"><stop stop-color="#f9be59" stop-opacity=".29"/><stop offset="1" stop-color="#f9be59" stop-opacity="0"/></radialGradient></defs>
+ <rect x="0" y="0" width="440" height="480" rx="22" fill="url(#g)"/><circle cx="181" cy="147" r="195" fill="url(#l)"/>
+ <g stroke="#f9be59" stroke-width="2" fill="none" opacity=".42"><circle cx="220" cy="184" r="156"/><circle cx="220" cy="184" r="132"/><path d="M40 350 L400 350"/></g>
+ <g stroke="#f9be59" fill="none"><path d="M383.4,123.9 l18.5,-9.9" stroke-width="2" opacity="0.18"/><path d="M374.1,159.0 l15.5,-3.9" stroke-width="3" opacity="0.22"/><path d="M406.4,164.8 l23.7,-3.9" stroke-width="4" opacity="0.27"/><path d="M393.6,171.5 l27.8,-3.4" stroke-width="2" opacity="0.32"/><path d="M87.3,134.7 l-25.9,-15.2" stroke-width="3" opacity="0.36"/><path d="M380.4,177.5 l31.9,-2.6" stroke-width="4" opacity="0.40"/><path d="M325.5,74.5 l14.2,-20.6" stroke-width="2" opacity="0.45"/></g><g color="#f9be59" stroke="#f9be59" fill="none" transform="translate(6 0) rotate(6 220 185)"><path d="M65 220 Q190 56 338 126 L382 110 M340 125 L356 83" stroke-width="12" fill="none"/><circle cx="70" cy="225" r="24" stroke-width="10" fill="none"/><circle cx="332" cy="130" r="14" stroke-width="7" fill="none"/></g>
+ <text x="220" y="36" fill="#f9be59" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="bold" letter-spacing="3">LENDÁRIA</text>
+ <path d="M45 345 L395 345" stroke="#f9be59" stroke-width="2" opacity=".6"/>
+ <g font-family="Arial,sans-serif"><text x="220" y="395" fill="#f8fdff" font-size="20" font-weight="800" letter-spacing=".2" text-anchor="middle">Assistência do Predador</text><text x="220" y="459" text-anchor="middle" fill="#f9be59" font-size="14" letter-spacing="2">PASSE • BLUE LOCK NEO</text></g>
+ <rect x="7" y="7" width="426" height="466" rx="18" fill="none" stroke="#f9be59" stroke-width="3" opacity=".7"/>
+ </svg>

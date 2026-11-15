@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 480" role="img" aria-label="Passe da Eternidade">
+ <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0c1835"/><stop offset="1" stop-color="#131024"/></linearGradient><radialGradient id="l"><stop stop-color="#ff7c9c" stop-opacity=".29"/><stop offset="1" stop-color="#ff7c9c" stop-opacity="0"/></radialGradient></defs>
+ <rect x="0" y="0" width="440" height="480" rx="22" fill="url(#g)"/><circle cx="184" cy="102" r="195" fill="url(#l)"/>
+ <g stroke="#ff7c9c" stroke-width="2" fill="none" opacity=".42"><circle cx="220" cy="184" r="156"/><circle cx="220" cy="184" r="132"/><path d="M40 350 L400 350"/></g>
+ <g stroke="#ff7c9c" fill="none"><path d="M103.2,283.9 l-20.1,24.9" stroke-width="2" opacity="0.18"/><path d="M283.1,286.8 l15.5,32.5" stroke-width="3" opacity="0.22"/><path d="M253.0,71.0 l4.0,-17.5" stroke-width="4" opacity="0.27"/><path d="M89.8,131.8 l-20.3,-12.8" stroke-width="2" opacity="0.32"/><path d="M48.7,208.0 l-26.6,4.8" stroke-width="3" opacity="0.36"/><path d="M71.9,266.8 l-22.7,18.1" stroke-width="4" opacity="0.40"/><path d="M362.5,119.8 l15.1,-9.8" stroke-width="2" opacity="0.45"/></g><g color="#ff7c9c" stroke="#ff7c9c" fill="none" transform="translate(4 3) rotate(7 220 185)"><path d="M65 220 Q190 56 338 126 L382 110 M340 125 L356 83" stroke-width="12" fill="none"/><circle cx="70" cy="225" r="24" stroke-width="10" fill="none"/><circle cx="332" cy="130" r="14" stroke-width="7" fill="none"/></g>
+ <text x="220" y="36" fill="#ff7c9c" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="bold" letter-spacing="3">MÍTICA</text>
+ <path d="M45 345 L395 345" stroke="#ff7c9c" stroke-width="2" opacity=".6"/>
+ <g font-family="Arial,sans-serif"><text x="220" y="395" fill="#f8fdff" font-size="20" font-weight="800" letter-spacing=".2" text-anchor="middle">Passe da Eternidade</text><text x="220" y="459" text-anchor="middle" fill="#ff7c9c" font-size="14" letter-spacing="2">PASSE • BLUE LOCK NEO</text></g>
+ <rect x="7" y="7" width="426" height="466" rx="18" fill="none" stroke="#ff7c9c" stroke-width="3" opacity=".7"/>
+ </svg>

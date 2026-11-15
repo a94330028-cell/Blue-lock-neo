@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 480" role="img" aria-label="Rastro do Caçador">
+ <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0c1835"/><stop offset="1" stop-color="#131024"/></linearGradient><radialGradient id="l"><stop stop-color="#b88aff" stop-opacity=".29"/><stop offset="1" stop-color="#b88aff" stop-opacity="0"/></radialGradient></defs>
+ <rect x="0" y="0" width="440" height="480" rx="22" fill="url(#g)"/><circle cx="286" cy="130" r="195" fill="url(#l)"/>
+ <g stroke="#b88aff" stroke-width="2" fill="none" opacity=".42"><circle cx="220" cy="184" r="156"/><circle cx="220" cy="184" r="132"/><path d="M40 350 L400 350"/></g>
+ <g stroke="#b88aff" fill="none"><path d="M395.0,144.4 l17.1,-5.8" stroke-width="2" opacity="0.18"/><path d="M405.4,165.1 l28.6,-4.7" stroke-width="3" opacity="0.22"/><path d="M369.1,175.2 l22.9,-2.5" stroke-width="4" opacity="0.27"/><path d="M408.3,175.9 l33.9,-2.8" stroke-width="2" opacity="0.32"/><path d="M70.3,123.2 l-29.6,-18.7" stroke-width="3" opacity="0.36"/><path d="M389.7,180.2 l17.0,-0.9" stroke-width="4" opacity="0.40"/><path d="M323.9,81.5 l16.4,-22.7" stroke-width="2" opacity="0.45"/></g><g color="#b88aff" stroke="#b88aff" fill="none" transform="translate(6 -4) rotate(7 220 185)"><path d="M68 275 Q158 207 211 106 L264 186 L372 82 M330 94 L372 82 L354 127" stroke-width="11" fill="none"/><circle cx="210" cy="105" r="24" fill="none" stroke-width="9"/></g>
+ <text x="220" y="36" fill="#b88aff" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="bold" letter-spacing="3">ÉPICA</text>
+ <path d="M45 345 L395 345" stroke="#b88aff" stroke-width="2" opacity=".6"/>
+ <g font-family="Arial,sans-serif"><text x="220" y="395" fill="#f8fdff" font-size="20" font-weight="800" letter-spacing=".2" text-anchor="middle">Rastro do Caçador</text><text x="220" y="459" text-anchor="middle" fill="#b88aff" font-size="14" letter-spacing="2">MOVIMENTAÇÃO • BLUE LOCK NEO</text></g>
+ <rect x="7" y="7" width="426" height="466" rx="18" fill="none" stroke="#b88aff" stroke-width="3" opacity=".7"/>
+ </svg>

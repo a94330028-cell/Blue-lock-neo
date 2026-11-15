@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="460" viewBox="0 0 360 460" role="img" aria-label="Arte original Chute de Segunda Bola">
+<defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#071a31"/><stop offset="0.68" stop-color="#112f42"/><stop offset="1" stop-color="#071321"/></linearGradient>
+<radialGradient id="orb"><stop stop-color="#ffba69" stop-opacity=".40"/><stop offset="1" stop-color="#ffba69" stop-opacity="0"/></radialGradient></defs>
+<rect width="360" height="460" rx="22" fill="url(#bg)"/><rect x="10" y="10" width="340" height="440" rx="15" fill="none" stroke="#ffba69" stroke-opacity=".52" stroke-width="2"/>
+<circle cx="180" cy="208" r="112" fill="url(#orb)"/><circle cx="180" cy="208" r="73" fill="none" stroke="#ffba69" stroke-opacity=".7" stroke-width="2" stroke-dasharray="9 11"/>
+<g transform="rotate(7 180 209)"><path d="M267 213 l20 -22 l20 22 l-20 22 Z" fill="none" stroke="#ffba69" opacity=".65" stroke-width="2"/><path d="M235 320 l20 -22 l20 22 l-20 22 Z" fill="none" stroke="#ffba69" opacity=".65" stroke-width="2"/><path d="M125 353 l20 -22 l20 22 l-20 22 Z" fill="none" stroke="#ffba69" opacity=".65" stroke-width="2"/><path d="M73 251 l20 -22 l20 22 l-20 22 Z" fill="none" stroke="#ffba69" opacity=".65" stroke-width="2"/><path d="M94 171 l20 -22 l20 22 l-20 22 Z" fill="none" stroke="#ffba69" opacity=".65" stroke-width="2"/><path d="M139 90 l20 -22 l20 22 l-20 22 Z" fill="none" stroke="#ffba69" opacity=".65" stroke-width="2"/><path d="M213 141 l20 -22 l20 22 l-20 22 Z" fill="none" stroke="#ffba69" opacity=".65" stroke-width="2"/><path d="M80 209 L280 209 M180 102 L180 311" stroke="#ffba69" stroke-opacity=".22" stroke-width="2"/></g>
+<text x="180" y="240" fill="#ffffff" text-anchor="middle" font-weight="bold" font-family="Arial,sans-serif" font-size="78">◎</text>
+<text x="30" y="45" fill="#ffba69" font-family="Arial,sans-serif" font-weight="bold" font-size="14" letter-spacing="2">COMUM  •  010</text>
+<text x="180" y="376" fill="#f7fcff" font-size="20" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold">Chute de Segunda Bola</text>
+<text x="180" y="419" fill="#ffba69" font-size="12" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" letter-spacing="1">CHUTE   •   +12.0%</text>
+</svg>

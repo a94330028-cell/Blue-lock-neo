@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 480" role="img" aria-label="Escudo da Singularidade">
+ <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0c1835"/><stop offset="1" stop-color="#131024"/></linearGradient><radialGradient id="l"><stop stop-color="#ff7c9c" stop-opacity=".29"/><stop offset="1" stop-color="#ff7c9c" stop-opacity="0"/></radialGradient></defs>
+ <rect x="0" y="0" width="440" height="480" rx="22" fill="url(#g)"/><circle cx="127" cy="133" r="195" fill="url(#l)"/>
+ <g stroke="#ff7c9c" stroke-width="2" fill="none" opacity=".42"><circle cx="220" cy="184" r="156"/><circle cx="220" cy="184" r="132"/><path d="M40 350 L400 350"/></g>
+ <g stroke="#ff7c9c" fill="none"><path d="M191.5,298.5 l-5.1,34.6" stroke-width="2" opacity="0.18"/><path d="M312.4,265.9 l24.2,28.0" stroke-width="3" opacity="0.22"/><path d="M223.0,71.6 l1.4,-29.0" stroke-width="4" opacity="0.27"/><path d="M58.5,137.0 l-34.6,-15.8" stroke-width="2" opacity="0.32"/><path d="M315.7,95.5 l16.5,-21.4" stroke-width="3" opacity="0.36"/><path d="M84.7,273.9 l-14.5,13.8" stroke-width="4" opacity="0.40"/><path d="M351.8,210.9 l22.3,5.6" stroke-width="2" opacity="0.45"/></g><g color="#ff7c9c" stroke="#ff7c9c" fill="none" transform="translate(2 6) rotate(8 220 185)"><path d="M215 57 L354 101 L334 242 L215 313 L96 242 L76 101 Z" stroke-width="11" fill="none"/><path d="M150 180 L191 222 L291 128" stroke-width="16" fill="none"/></g>
+ <text x="220" y="36" fill="#ff7c9c" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="bold" letter-spacing="3">MÍTICA</text>
+ <path d="M45 345 L395 345" stroke="#ff7c9c" stroke-width="2" opacity=".6"/>
+ <g font-family="Arial,sans-serif"><text x="220" y="395" fill="#f8fdff" font-size="20" font-weight="800" letter-spacing=".2" text-anchor="middle">Escudo da Singularidade</text><text x="220" y="459" text-anchor="middle" fill="#ff7c9c" font-size="14" letter-spacing="2">DEFESA • BLUE LOCK NEO</text></g>
+ <rect x="7" y="7" width="426" height="466" rx="18" fill="none" stroke="#ff7c9c" stroke-width="3" opacity=".7"/>
+ </svg>

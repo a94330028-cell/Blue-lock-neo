@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 480" role="img" aria-label="Voleio do Fim de Jogo">
+ <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0c1835"/><stop offset="1" stop-color="#131024"/></linearGradient><radialGradient id="l"><stop stop-color="#ff7c9c" stop-opacity=".29"/><stop offset="1" stop-color="#ff7c9c" stop-opacity="0"/></radialGradient></defs>
+ <rect x="0" y="0" width="440" height="480" rx="22" fill="url(#g)"/><circle cx="208" cy="89" r="195" fill="url(#l)"/>
+ <g stroke="#ff7c9c" stroke-width="2" fill="none" opacity=".42"><circle cx="220" cy="184" r="156"/><circle cx="220" cy="184" r="132"/><path d="M40 350 L400 350"/></g>
+ <g stroke="#ff7c9c" fill="none"><path d="M357.8,200.1 l27.8,3.6" stroke-width="2" opacity="0.18"/><path d="M384.6,194.7 l33.9,2.2" stroke-width="3" opacity="0.22"/><path d="M119.5,292.2 l-13.9,21.9" stroke-width="4" opacity="0.27"/><path d="M32.1,182.8 l-23.0,-0.7" stroke-width="2" opacity="0.32"/><path d="M388.9,190.2 l32.0,0.8" stroke-width="3" opacity="0.36"/><path d="M125.0,72.3 l-9.1,-16.7" stroke-width="4" opacity="0.40"/><path d="M51.4,239.6 l-34.5,15.9" stroke-width="2" opacity="0.45"/></g><g color="#ff7c9c" stroke="#ff7c9c" fill="none" transform="translate(-2 -3) rotate(-5 220 185)"><path d="M80 270 L215 170 L365 85 M210 168 L280 212 L385 128" stroke-width="13" stroke-linecap="round"/><circle cx="215" cy="170" r="32" fill="none" stroke-width="10"/></g>
+ <text x="220" y="36" fill="#ff7c9c" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="bold" letter-spacing="3">MÍTICA</text>
+ <path d="M45 345 L395 345" stroke="#ff7c9c" stroke-width="2" opacity=".6"/>
+ <g font-family="Arial,sans-serif"><text x="220" y="395" fill="#f8fdff" font-size="20" font-weight="800" letter-spacing=".2" text-anchor="middle">Voleio do Fim de Jogo</text><text x="220" y="459" text-anchor="middle" fill="#ff7c9c" font-size="14" letter-spacing="2">CHUTE • BLUE LOCK NEO</text></g>
+ <rect x="7" y="7" width="426" height="466" rx="18" fill="none" stroke="#ff7c9c" stroke-width="3" opacity=".7"/>
+ </svg>

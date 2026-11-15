@@ -1,0 +1,698 @@
+[
+  {
+    "name": "Gin Gagamaru",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Gin%20Gagamaru%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/gin-gagamaru.webp"
+  },
+  {
+    "name": "Ranze Kurona",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Ranze%20Kurona%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/ranze-kurona.webp"
+  },
+  {
+    "name": "Mensah",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Mensah%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/mensah.webp"
+  },
+  {
+    "name": "Birkenstock",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Birkenstock%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/birkenstock.webp"
+  },
+  {
+    "name": "Kenyu Yukimiya",
+    "official_reference_verified": true,
+    "image_url": "https://shonenmagazine.com/assets/uploads/2024/01/chara_yukimiya_on.png",
+    "publisher_source": "https://shonenmagazine.com/special_page/bluelock/",
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Kenyu%20Yukimiya%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/kenyu-yukimiya.webp"
+  },
+  {
+    "name": "Jingo Raichi",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Jingo%20Raichi%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/jingo-raichi.webp"
+  },
+  {
+    "name": "Yo Hiori",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Yo%20Hiori%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/yo-hiori.webp"
+  },
+  {
+    "name": "Alexis Ness",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Alexis%20Ness%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/alexis-ness.webp"
+  },
+  {
+    "name": "Michael Kaiser",
+    "official_reference_verified": true,
+    "image_url": "https://bluelock-kc.com/wallpaper/michael/wallpaper.jpg",
+    "publisher_source": "https://bluelock-kc.com/wallpaper/michael/",
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Michael%20Kaiser%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/michael-kaiser.webp"
+  },
+  {
+    "name": "Yoichi Isagi",
+    "official_reference_verified": true,
+    "image_url": "https://shonenmagazine.com/assets/uploads/2024/01/chara_isagi_on.png",
+    "publisher_source": "https://shonenmagazine.com/special_page/bluelock/",
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Yoichi%20Isagi%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/yoichi-isagi.webp"
+  },
+  {
+    "name": "Rensuke Kunigami",
+    "official_reference_verified": true,
+    "image_url": "https://shonenmagazine.com/assets/uploads/2024/01/chara_kunigami_on.png",
+    "publisher_source": "https://shonenmagazine.com/special_page/bluelock/",
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Rensuke%20Kunigami%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/rensuke-kunigami.webp"
+  },
+  {
+    "name": "Bachman",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Bachman%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/bachman.webp"
+  },
+  {
+    "name": "Teppei Neru",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Teppei%20Neru%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/teppei-neru.webp"
+  },
+  {
+    "name": "Theo Sachs",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Theo%20Sachs%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/theo-sachs.webp"
+  },
+  {
+    "name": "Jin Kiyora",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Jin%20Kiyora%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/jin-kiyora.webp"
+  },
+  {
+    "name": "Erik Gesner",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Erik%20Gesner%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/erik-gesner.webp"
+  },
+  {
+    "name": "Benedict Grim",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Benedict%20Grim%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/benedict-grim.webp"
+  },
+  {
+    "name": "Gurimu Igarashi",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Gurimu%20Igarashi%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/gurimu-igarashi.webp"
+  },
+  {
+    "name": "Noel Noa",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Noel%20Noa%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/noel-noa.webp"
+  },
+  {
+    "name": "Moro",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Moro%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/moro.webp"
+  },
+  {
+    "name": "Ruiz",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Ruiz%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/ruiz.webp"
+  },
+  {
+    "name": "Urzaiz",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Urzaiz%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/urzaiz.webp"
+  },
+  {
+    "name": "Miroku Darai",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Miroku%20Darai%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/miroku-darai.webp"
+  },
+  {
+    "name": "Haru Hayate",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Haru%20Hayate%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/haru-hayate.webp"
+  },
+  {
+    "name": "Bos",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Bos%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/bos.webp"
+  },
+  {
+    "name": "So",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20So%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/so.webp"
+  },
+  {
+    "name": "Ignacio Lara",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Ignacio%20Lara%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/ignacio-lara.webp"
+  },
+  {
+    "name": "Eita Otoya",
+    "official_reference_verified": true,
+    "image_url": "https://shonenmagazine.com/assets/uploads/2024/01/chara_otoya_on.png",
+    "publisher_source": "https://shonenmagazine.com/special_page/bluelock/",
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Eita%20Otoya%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/eita-otoya.webp"
+  },
+  {
+    "name": "Picasso",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Picasso%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/picasso.webp"
+  },
+  {
+    "name": "Meguru Bachira",
+    "official_reference_verified": true,
+    "image_url": "https://shonenmagazine.com/assets/uploads/2024/01/chara_bachira_on.png",
+    "publisher_source": "https://shonenmagazine.com/special_page/bluelock/",
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Meguru%20Bachira%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/meguru-bachira.webp"
+  },
+  {
+    "name": "Gomez",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Gomez%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/gomez.webp"
+  },
+  {
+    "name": "Espresso",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Espresso%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/espresso.webp"
+  },
+  {
+    "name": "Aiki Himizu",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Aiki%20Himizu%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/aiki-himizu.webp"
+  },
+  {
+    "name": "Itsuki Wakatsuki",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Itsuki%20Wakatsuki%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/itsuki-wakatsuki.webp"
+  },
+  {
+    "name": "Shizuka Haiji",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Shizuka%20Haiji%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/shizuka-haiji.webp"
+  },
+  {
+    "name": "Tetsu Sokura",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Tetsu%20Sokura%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/tetsu-sokura.webp"
+  },
+  {
+    "name": "Teru Kitsunezato",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Teru%20Kitsunezato%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/teru-kitsunezato.webp"
+  },
+  {
+    "name": "Lavinho",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Lavinho%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/lavinho.webp"
+  },
+  {
+    "name": "Rook",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Rook%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/rook.webp"
+  },
+  {
+    "name": "Damon",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Damon%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/damon.webp"
+  },
+  {
+    "name": "Busby",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Busby%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/busby.webp"
+  },
+  {
+    "name": "Kazuma Nio",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Kazuma%20Nio%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/kazuma-nio.webp"
+  },
+  {
+    "name": "Young",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Young%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/young.webp"
+  },
+  {
+    "name": "Reo Mikage",
+    "official_reference_verified": true,
+    "image_url": "https://shonenmagazine.com/assets/uploads/2024/01/chara_reo_on.png",
+    "publisher_source": "https://shonenmagazine.com/special_page/bluelock/",
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Reo%20Mikage%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/reo-mikage.webp"
+  },
+  {
+    "name": "Reiji Hiiragi",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Reiji%20Hiiragi%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/reiji-hiiragi.webp"
+  },
+  {
+    "name": "Hyoma Chigiri",
+    "official_reference_verified": true,
+    "image_url": "https://shonenmagazine.com/assets/uploads/2024/01/chara_chigiri_on.png",
+    "publisher_source": "https://shonenmagazine.com/special_page/bluelock/",
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Hyoma%20Chigiri%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/hyoma-chigiri.webp"
+  },
+  {
+    "name": "Agi",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Agi%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/agi.webp"
+  },
+  {
+    "name": "Seishiro Nagi",
+    "official_reference_verified": true,
+    "image_url": "https://shonenmagazine.com/assets/uploads/2024/01/chara_nagi_on.png",
+    "publisher_source": "https://shonenmagazine.com/special_page/bluelock/",
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Seishiro%20Nagi%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/seishiro-nagi.webp"
+  },
+  {
+    "name": "Hajime Nishioka",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Hajime%20Nishioka%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/hajime-nishioka.webp"
+  },
+  {
+    "name": "Driver",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Driver%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/driver.webp"
+  },
+  {
+    "name": "Swift",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Swift%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/swift.webp"
+  },
+  {
+    "name": "Arthur",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Arthur%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/arthur.webp"
+  },
+  {
+    "name": "Kairu Saramadara",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Kairu%20Saramadara%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/kairu-saramadara.webp"
+  },
+  {
+    "name": "Junichi Wanima",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Junichi%20Wanima%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/junichi-wanima.webp"
+  },
+  {
+    "name": "Taiga Tsunzaki",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Taiga%20Tsunzaki%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/taiga-tsunzaki.webp"
+  },
+  {
+    "name": "Chris Prince",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Chris%20Prince%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/chris-prince.webp"
+  },
+  {
+    "name": "Renoir",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Renoir%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/renoir.webp"
+  },
+  {
+    "name": "Chapa",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Chapa%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/chapa.webp"
+  },
+  {
+    "name": "Gabin",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Gabin%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/gabin.webp"
+  },
+  {
+    "name": "Michelin",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Michelin%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/michelin.webp"
+  },
+  {
+    "name": "Aoshi Tokimitsu",
+    "official_reference_verified": true,
+    "image_url": "https://shonenmagazine.com/assets/uploads/2024/01/chara_aoshi_on.png",
+    "publisher_source": "https://shonenmagazine.com/special_page/bluelock/",
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Aoshi%20Tokimitsu%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/aoshi-tokimitsu.webp"
+  },
+  {
+    "name": "Tabito Karasu",
+    "official_reference_verified": true,
+    "image_url": "https://shonenmagazine.com/assets/uploads/2024/01/chara_karasu_on.png",
+    "publisher_source": "https://shonenmagazine.com/special_page/bluelock/",
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Tabito%20Karasu%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/tabito-karasu.webp"
+  },
+  {
+    "name": "Nijiro Nanase",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Nijiro%20Nanase%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/nijiro-nanase.webp"
+  },
+  {
+    "name": "Charles Chevalier",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Charles%20Chevalier%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/charles-chevalier.webp"
+  },
+  {
+    "name": "Zantetsu Tsurugi",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Zantetsu%20Tsurugi%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/zantetsu-tsurugi.webp"
+  },
+  {
+    "name": "Rin Itoshi",
+    "official_reference_verified": true,
+    "image_url": "https://shonenmagazine.com/assets/uploads/2024/01/chara_itoshi_on.png",
+    "publisher_source": "https://shonenmagazine.com/special_page/bluelock/",
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Rin%20Itoshi%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/rin-itoshi.webp"
+  },
+  {
+    "name": "Ryusei Shido",
+    "official_reference_verified": true,
+    "image_url": "https://shonenmagazine.com/assets/uploads/2024/01/chara_shidou_on.png",
+    "publisher_source": "https://shonenmagazine.com/special_page/bluelock/",
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Ryusei%20Shido%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/ryusei-shido.webp"
+  },
+  {
+    "name": "Kento Cho",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Kento%20Cho%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/kento-cho.webp"
+  },
+  {
+    "name": "Haruhiko Yuzu",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Haruhiko%20Yuzu%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/haruhiko-yuzu.webp"
+  },
+  {
+    "name": "Akira Endoji",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Akira%20Endoji%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/akira-endoji.webp"
+  },
+  {
+    "name": "Julian Loki",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Julian%20Loki%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/julian-loki.webp"
+  },
+  {
+    "name": "Canali",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Canali%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/canali.webp"
+  },
+  {
+    "name": "Oliver Aiku",
+    "official_reference_verified": true,
+    "image_url": "https://shonenmagazine.com/assets/uploads/2024/01/chara_oliver_on.png",
+    "publisher_source": "https://shonenmagazine.com/special_page/bluelock/",
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Oliver%20Aiku%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/oliver-aiku.webp"
+  },
+  {
+    "name": "Don Lorenzo",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Don%20Lorenzo%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/don-lorenzo.webp"
+  },
+  {
+    "name": "Jyubei Aryu",
+    "official_reference_verified": true,
+    "image_url": "https://shonenmagazine.com/assets/uploads/2024/01/chara_aryu_on.png",
+    "publisher_source": "https://shonenmagazine.com/special_page/bluelock/",
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Jyubei%20Aryu%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/jyubei-aryu.webp"
+  },
+  {
+    "name": "Ikki Niko",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Ikki%20Niko%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/ikki-niko.webp"
+  },
+  {
+    "name": "Drago",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Drago%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/drago.webp"
+  },
+  {
+    "name": "Rico",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Rico%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/rico.webp"
+  },
+  {
+    "name": "Shuto Sendo",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Shuto%20Sendo%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/shuto-sendo.webp"
+  },
+  {
+    "name": "Peron",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Peron%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/peron.webp"
+  },
+  {
+    "name": "Shoei Baro",
+    "official_reference_verified": true,
+    "image_url": "https://shonenmagazine.com/assets/uploads/2024/01/chara_barou_on.png",
+    "publisher_source": "https://shonenmagazine.com/special_page/bluelock/",
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Shoei%20Baro%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/shoei-baro.webp"
+  },
+  {
+    "name": "Shingen Tanaka",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Shingen%20Tanaka%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/shingen-tanaka.webp"
+  },
+  {
+    "name": "Gen Fukaku",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Gen%20Fukaku%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/gen-fukaku.webp"
+  },
+  {
+    "name": "Abdi",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Abdi%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/abdi.webp"
+  },
+  {
+    "name": "Kyohei Shiguma",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Kyohei%20Shiguma%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/kyohei-shiguma.webp"
+  },
+  {
+    "name": "Yukio Ishikari",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Yukio%20Ishikari%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/yukio-ishikari.webp"
+  },
+  {
+    "name": "Marc Snuffy",
+    "official_reference_verified": false,
+    "image_url": null,
+    "publisher_source": null,
+    "pinterest_search": "https://www.pinterest.com/search/pins/?q=Blue%20Lock%20Marc%20Snuffy%20manga%20panel",
+    "offline_fallback": "assets/original-portraits/marc-snuffy.webp"
+  }
+]

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 480" role="img" aria-label="Passe Cirúrgico Duplo">
+ <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0c1835"/><stop offset="1" stop-color="#131024"/></linearGradient><radialGradient id="l"><stop stop-color="#b88aff" stop-opacity=".29"/><stop offset="1" stop-color="#b88aff" stop-opacity="0"/></radialGradient></defs>
+ <rect x="0" y="0" width="440" height="480" rx="22" fill="url(#g)"/><circle cx="288" cy="85" r="195" fill="url(#l)"/>
+ <g stroke="#b88aff" stroke-width="2" fill="none" opacity=".42"><circle cx="220" cy="184" r="156"/><circle cx="220" cy="184" r="132"/><path d="M40 350 L400 350"/></g>
+ <g stroke="#b88aff" fill="none"><path d="M385.2,141.9 l33.7,-12.8" stroke-width="2" opacity="0.18"/><path d="M372.4,166.8 l37.4,-6.8" stroke-width="3" opacity="0.22"/><path d="M155.5,284.9 l-14.9,35.0" stroke-width="4" opacity="0.27"/><path d="M66.6,196.4 l-38.8,3.5" stroke-width="2" opacity="0.32"/><path d="M255.7,71.5 l6.7,-27.2" stroke-width="3" opacity="0.36"/><path d="M135.0,102.3 l-21.5,-32.5" stroke-width="4" opacity="0.40"/><path d="M184.7,309.1 l-6.7,38.4" stroke-width="2" opacity="0.45"/></g><g color="#b88aff" stroke="#b88aff" fill="none" transform="translate(-2 1) rotate(-6 220 185)"><path d="M65 220 Q190 56 338 126 L382 110 M340 125 L356 83" stroke-width="12" fill="none"/><circle cx="70" cy="225" r="24" stroke-width="10" fill="none"/><circle cx="332" cy="130" r="14" stroke-width="7" fill="none"/></g>
+ <text x="220" y="36" fill="#b88aff" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="bold" letter-spacing="3">ÉPICA</text>
+ <path d="M45 345 L395 345" stroke="#b88aff" stroke-width="2" opacity=".6"/>
+ <g font-family="Arial,sans-serif"><text x="220" y="395" fill="#f8fdff" font-size="20" font-weight="800" letter-spacing=".2" text-anchor="middle">Passe Cirúrgico Duplo</text><text x="220" y="459" text-anchor="middle" fill="#b88aff" font-size="14" letter-spacing="2">PASSE • BLUE LOCK NEO</text></g>
+ <rect x="7" y="7" width="426" height="466" rx="18" fill="none" stroke="#b88aff" stroke-width="3" opacity=".7"/>
+ </svg>

@@ -1,0 +1,24 @@
+/* EGO BROADCAST 9.1 — details and transparent, record-based tracking */
+.neo91-card{border:1px solid #3e6684;background:linear-gradient(145deg,#0e243d,#152942 55%,#131d35);margin:14px 0;border-radius:16px;overflow:hidden}
+.neo91-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.neo91-head h2{font-size:17px;margin:0;color:#e8f7ff}.neo91-head .neo91-eyebrow{font-size:9px;letter-spacing:1.2px;color:#f5c56a;font-weight:950}
+.neo91-muted{font-size:11px;color:#a6c3d8;line-height:1.6}.neo91-card h3{font-size:13px;margin:19px 0 9px}
+.neo91-metrics{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:12px 0 14px}
+.neo91-metrics article{padding:12px 5px;text-align:center;border-radius:10px;border:1px solid #365b76;background:#0c2039}
+.neo91-metrics strong{display:block;color:#fdd27e;font-size:20px;font-weight:950;font-variant-numeric:tabular-nums}
+.neo91-metrics small{display:block;color:#a7bdd2;font-size:10px;margin-top:6px}
+.neo91-awards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.neo91-award{display:flex;align-items:center;gap:10px;padding:12px 9px;border:1px solid #335a81;border-radius:10px;background:#0b213b}
+.neo91-award>span{font-size:23px}.neo91-award div{display:flex;flex-direction:column;min-width:0;gap:3px}
+.neo91-award small{font-size:10px;color:#dbbd85}.neo91-award b{font-size:13px;color:#fff;white-space:normal;line-height:1.25}.neo91-award em{font-style:normal;font-size:10px;color:#94b5d2}
+.neo91-challenges{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.neo91-challenge{padding:11px 9px;background:#102640;border:1px solid #3b5b78;border-radius:11px;display:flex;align-items:center;gap:9px}
+.neo91-challenge.is-done{border-color:#5d927c}.neo91-challenge>strong{flex:none;margin-left:auto;color:#ffda93;font-size:11px;white-space:nowrap}
+.neo91-challenge .neo91-icon{font-size:22px;flex:none}.neo91-challenge div{min-width:0;flex:1}.neo91-challenge b{display:block;font-size:11px}.neo91-challenge small{display:block;font-size:9px;color:#a5bdd2;line-height:1.4;margin:4px 0}
+.neo91-meter{height:4px;border-radius:10px;background:#324661;overflow:hidden}.neo91-meter i{display:block;height:100%;background:linear-gradient(90deg,#1cb4b4,#ecd171)}
+.neo91-stack{display:grid;gap:7px}.neo91-story,.neo91-rival,.neo91-shot,.neo91-archive{display:flex;gap:9px;align-items:center;background:#0e233b;border:1px solid #294968;border-radius:9px;padding:11px;font-size:11px;line-height:1.45}
+.neo91-story>span,.neo91-shot>span{font-size:20px}.neo91-story div,.neo91-shot div{min-width:0;flex:1}
+.neo91-story small,.neo91-shot small,.neo91-rival small,.neo91-archive small{display:block;font-size:10px;color:#90b5d2;margin-top:5px}
+.neo91-rival,.neo91-archive{align-items:stretch;flex-direction:column;gap:0}.neo91-rival b,.neo91-archive b{font-size:11px}
+@media(max-width:700px){.neo91-awards,.neo91-challenges{grid-template-columns:1fr}.neo91-metrics{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.neo91-metrics article{padding:10px 4px}.neo91-metrics strong{font-size:17px}.neo91-metrics small{font-size:9px}.neo91-card{padding:12px}}
+@media(prefers-reduced-motion:reduce){.neo91-card *{animation:none!important;transition:none!important}}

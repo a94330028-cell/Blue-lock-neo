@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="460" viewBox="0 0 360 460" role="img" aria-label="Arte original Finta de Ombro">
+<defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#071a31"/><stop offset="0.68" stop-color="#112f42"/><stop offset="1" stop-color="#071321"/></linearGradient>
+<radialGradient id="orb"><stop stop-color="#be98ff" stop-opacity=".40"/><stop offset="1" stop-color="#be98ff" stop-opacity="0"/></radialGradient></defs>
+<rect width="360" height="460" rx="22" fill="url(#bg)"/><rect x="10" y="10" width="340" height="440" rx="15" fill="none" stroke="#be98ff" stroke-opacity=".52" stroke-width="2"/>
+<circle cx="180" cy="208" r="148" fill="url(#orb)"/><circle cx="180" cy="208" r="89" fill="none" stroke="#be98ff" stroke-opacity=".7" stroke-width="2" stroke-dasharray="10 11"/>
+<g transform="rotate(3 180 209)"><path d="M232 319 l32 32 m0 -32 l-32 32" stroke="#be98ff" stroke-width="2" opacity=".52"/><path d="M131 290 l32 32 m0 -32 l-32 32" stroke="#be98ff" stroke-width="2" opacity=".52"/><path d="M94 218 l32 32 m0 -32 l-32 32" stroke="#be98ff" stroke-width="2" opacity=".52"/><path d="M73 127 l32 32 m0 -32 l-32 32" stroke="#be98ff" stroke-width="2" opacity=".52"/><path d="M153 54 l32 32 m0 -32 l-32 32" stroke="#be98ff" stroke-width="2" opacity=".52"/><path d="M263 90 l32 32 m0 -32 l-32 32" stroke="#be98ff" stroke-width="2" opacity=".52"/><path d="M303 214 l32 32 m0 -32 l-32 32" stroke="#be98ff" stroke-width="2" opacity=".52"/><path d="M80 209 L280 209 M180 102 L180 311" stroke="#be98ff" stroke-opacity=".22" stroke-width="2"/></g>
+<text x="180" y="240" fill="#ffffff" text-anchor="middle" font-weight="bold" font-family="Arial,sans-serif" font-size="78">↝</text>
+<text x="30" y="45" fill="#be98ff" font-family="Arial,sans-serif" font-weight="bold" font-size="14" letter-spacing="2">COMUM  •  029</text>
+<text x="180" y="376" fill="#f7fcff" font-size="20" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold">Finta de Ombro</text>
+<text x="180" y="419" fill="#be98ff" font-size="12" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" letter-spacing="1">DRIBLE   •   +6.0%</text>
+</svg>

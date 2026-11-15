@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 480" role="img" aria-label="Troca de Corredor">
+ <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0c1835"/><stop offset="1" stop-color="#131024"/></linearGradient><radialGradient id="l"><stop stop-color="#69d6a2" stop-opacity=".29"/><stop offset="1" stop-color="#69d6a2" stop-opacity="0"/></radialGradient></defs>
+ <rect x="0" y="0" width="440" height="480" rx="22" fill="url(#g)"/><circle cx="152" cy="135" r="195" fill="url(#l)"/>
+ <g stroke="#69d6a2" stroke-width="2" fill="none" opacity=".42"><circle cx="220" cy="184" r="156"/><circle cx="220" cy="184" r="132"/><path d="M40 350 L400 350"/></g>
+ <g stroke="#69d6a2" fill="none"><path d="M262.2,61.1 l4.1,-15.5" stroke-width="2" opacity="0.18"/><path d="M343.3,117.7 l22.2,-17.1" stroke-width="3" opacity="0.22"/><path d="M200.3,307.7 l-1.1,13.0" stroke-width="4" opacity="0.27"/><path d="M73.0,220.9 l-32.2,11.0" stroke-width="2" opacity="0.32"/><path d="M307.9,286.7 l6.6,10.1" stroke-width="3" opacity="0.36"/><path d="M90.5,92.2 l-17.6,-19.1" stroke-width="4" opacity="0.40"/><path d="M27.5,152.0 l-27.1,-7.2" stroke-width="2" opacity="0.45"/></g><g color="#69d6a2" stroke="#69d6a2" fill="none" transform="translate(-3 -3) rotate(9 220 185)"><path d="M68 275 Q158 207 211 106 L264 186 L372 82 M330 94 L372 82 L354 127" stroke-width="11" fill="none"/><circle cx="210" cy="105" r="24" fill="none" stroke-width="9"/></g>
+ <text x="220" y="36" fill="#69d6a2" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="bold" letter-spacing="3">INCOMUM</text>
+ <path d="M45 345 L395 345" stroke="#69d6a2" stroke-width="2" opacity=".6"/>
+ <g font-family="Arial,sans-serif"><text x="220" y="395" fill="#f8fdff" font-size="20" font-weight="800" letter-spacing=".2" text-anchor="middle">Troca de Corredor</text><text x="220" y="459" text-anchor="middle" fill="#69d6a2" font-size="14" letter-spacing="2">MOVIMENTAÇÃO • BLUE LOCK NEO</text></g>
+ <rect x="7" y="7" width="426" height="466" rx="18" fill="none" stroke="#69d6a2" stroke-width="3" opacity=".7"/>
+ </svg>

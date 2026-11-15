@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 480" role="img" aria-label="Olhos do Estrategista">
+ <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0c1835"/><stop offset="1" stop-color="#131024"/></linearGradient><radialGradient id="l"><stop stop-color="#f9be59" stop-opacity=".29"/><stop offset="1" stop-color="#f9be59" stop-opacity="0"/></radialGradient></defs>
+ <rect x="0" y="0" width="440" height="480" rx="22" fill="url(#g)"/><circle cx="156" cy="145" r="195" fill="url(#l)"/>
+ <g stroke="#f9be59" stroke-width="2" fill="none" opacity=".42"><circle cx="220" cy="184" r="156"/><circle cx="220" cy="184" r="132"/><path d="M40 350 L400 350"/></g>
+ <g stroke="#f9be59" fill="none"><path d="M75.2,129.7 l-10.4,-6.1" stroke-width="2" opacity="0.18"/><path d="M254.2,85.7 l6.8,-25.1" stroke-width="3" opacity="0.22"/><path d="M321.2,98.6 l13.5,-16.1" stroke-width="4" opacity="0.27"/><path d="M352.4,113.4 l15.1,-11.5" stroke-width="2" opacity="0.32"/><path d="M368.3,125.1 l14.7,-8.5" stroke-width="3" opacity="0.36"/><path d="M378.1,133.8 l14.5,-6.8" stroke-width="4" opacity="0.40"/><path d="M238.4,296.4 l1.8,11.9" stroke-width="2" opacity="0.45"/></g><g color="#f9be59" stroke="#f9be59" fill="none" transform="translate(6 3) rotate(9 220 185)"><path d="M58 189 Q211 31 382 189 Q211 341 58 189 Z" stroke-width="11" fill="none"/><circle cx="220" cy="189" r="56" stroke-width="10" fill="none"/><circle cx="220" cy="189" r="23" fill="currentColor"/></g>
+ <text x="220" y="36" fill="#f9be59" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="bold" letter-spacing="3">LENDÁRIA</text>
+ <path d="M45 345 L395 345" stroke="#f9be59" stroke-width="2" opacity=".6"/>
+ <g font-family="Arial,sans-serif"><text x="220" y="395" fill="#f8fdff" font-size="20" font-weight="800" letter-spacing=".2" text-anchor="middle">Olhos do Estrategista</text><text x="220" y="459" text-anchor="middle" fill="#f9be59" font-size="14" letter-spacing="2">VISÃO • BLUE LOCK NEO</text></g>
+ <rect x="7" y="7" width="426" height="466" rx="18" fill="none" stroke="#f9be59" stroke-width="3" opacity=".7"/>
+ </svg>

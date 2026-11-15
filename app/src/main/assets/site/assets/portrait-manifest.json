@@ -1,0 +1,524 @@
+[
+  {
+    "name": "Gin Gagamaru",
+    "file": "assets/original-portraits/gin-gagamaru.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Ranze Kurona",
+    "file": "assets/original-portraits/ranze-kurona.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Mensah",
+    "file": "assets/original-portraits/mensah.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Birkenstock",
+    "file": "assets/original-portraits/birkenstock.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Kenyu Yukimiya",
+    "file": "assets/original-portraits/kenyu-yukimiya.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Jingo Raichi",
+    "file": "assets/original-portraits/jingo-raichi.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Yo Hiori",
+    "file": "assets/original-portraits/yo-hiori.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Alexis Ness",
+    "file": "assets/original-portraits/alexis-ness.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Michael Kaiser",
+    "file": "assets/original-portraits/michael-kaiser.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Yoichi Isagi",
+    "file": "assets/original-portraits/yoichi-isagi.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Rensuke Kunigami",
+    "file": "assets/original-portraits/rensuke-kunigami.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Bachman",
+    "file": "assets/original-portraits/bachman.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Teppei Neru",
+    "file": "assets/original-portraits/teppei-neru.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Theo Sachs",
+    "file": "assets/original-portraits/theo-sachs.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Jin Kiyora",
+    "file": "assets/original-portraits/jin-kiyora.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Erik Gesner",
+    "file": "assets/original-portraits/erik-gesner.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Benedict Grim",
+    "file": "assets/original-portraits/benedict-grim.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Gurimu Igarashi",
+    "file": "assets/original-portraits/gurimu-igarashi.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Noel Noa",
+    "file": "assets/original-portraits/noel-noa.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Moro",
+    "file": "assets/original-portraits/moro.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Ruiz",
+    "file": "assets/original-portraits/ruiz.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Urzaiz",
+    "file": "assets/original-portraits/urzaiz.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Miroku Darai",
+    "file": "assets/original-portraits/miroku-darai.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Haru Hayate",
+    "file": "assets/original-portraits/haru-hayate.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Bos",
+    "file": "assets/original-portraits/bos.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "So",
+    "file": "assets/original-portraits/so.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Ignacio Lara",
+    "file": "assets/original-portraits/ignacio-lara.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Eita Otoya",
+    "file": "assets/original-portraits/eita-otoya.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Picasso",
+    "file": "assets/original-portraits/picasso.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Meguru Bachira",
+    "file": "assets/original-portraits/meguru-bachira.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Gomez",
+    "file": "assets/original-portraits/gomez.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Espresso",
+    "file": "assets/original-portraits/espresso.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Aiki Himizu",
+    "file": "assets/original-portraits/aiki-himizu.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Itsuki Wakatsuki",
+    "file": "assets/original-portraits/itsuki-wakatsuki.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Shizuka Haiji",
+    "file": "assets/original-portraits/shizuka-haiji.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Tetsu Sokura",
+    "file": "assets/original-portraits/tetsu-sokura.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Teru Kitsunezato",
+    "file": "assets/original-portraits/teru-kitsunezato.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Lavinho",
+    "file": "assets/original-portraits/lavinho.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Rook",
+    "file": "assets/original-portraits/rook.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Damon",
+    "file": "assets/original-portraits/damon.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Busby",
+    "file": "assets/original-portraits/busby.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Kazuma Nio",
+    "file": "assets/original-portraits/kazuma-nio.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Young",
+    "file": "assets/original-portraits/young.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Reo Mikage",
+    "file": "assets/original-portraits/reo-mikage.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Reiji Hiiragi",
+    "file": "assets/original-portraits/reiji-hiiragi.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Hyoma Chigiri",
+    "file": "assets/original-portraits/hyoma-chigiri.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Agi",
+    "file": "assets/original-portraits/agi.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Seishiro Nagi",
+    "file": "assets/original-portraits/seishiro-nagi.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Hajime Nishioka",
+    "file": "assets/original-portraits/hajime-nishioka.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Driver",
+    "file": "assets/original-portraits/driver.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Swift",
+    "file": "assets/original-portraits/swift.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Arthur",
+    "file": "assets/original-portraits/arthur.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Kairu Saramadara",
+    "file": "assets/original-portraits/kairu-saramadara.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Junichi Wanima",
+    "file": "assets/original-portraits/junichi-wanima.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Taiga Tsunzaki",
+    "file": "assets/original-portraits/taiga-tsunzaki.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Chris Prince",
+    "file": "assets/original-portraits/chris-prince.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Renoir",
+    "file": "assets/original-portraits/renoir.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Chapa",
+    "file": "assets/original-portraits/chapa.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Gabin",
+    "file": "assets/original-portraits/gabin.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Michelin",
+    "file": "assets/original-portraits/michelin.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Aoshi Tokimitsu",
+    "file": "assets/original-portraits/aoshi-tokimitsu.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Tabito Karasu",
+    "file": "assets/original-portraits/tabito-karasu.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Nijiro Nanase",
+    "file": "assets/original-portraits/nijiro-nanase.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Charles Chevalier",
+    "file": "assets/original-portraits/charles-chevalier.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Zantetsu Tsurugi",
+    "file": "assets/original-portraits/zantetsu-tsurugi.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Rin Itoshi",
+    "file": "assets/original-portraits/rin-itoshi.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Ryusei Shido",
+    "file": "assets/original-portraits/ryusei-shido.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Kento Cho",
+    "file": "assets/original-portraits/kento-cho.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Haruhiko Yuzu",
+    "file": "assets/original-portraits/haruhiko-yuzu.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Akira Endoji",
+    "file": "assets/original-portraits/akira-endoji.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Julian Loki",
+    "file": "assets/original-portraits/julian-loki.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Canali",
+    "file": "assets/original-portraits/canali.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Oliver Aiku",
+    "file": "assets/original-portraits/oliver-aiku.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Don Lorenzo",
+    "file": "assets/original-portraits/don-lorenzo.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Jyubei Aryu",
+    "file": "assets/original-portraits/jyubei-aryu.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Ikki Niko",
+    "file": "assets/original-portraits/ikki-niko.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Drago",
+    "file": "assets/original-portraits/drago.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Rico",
+    "file": "assets/original-portraits/rico.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Shuto Sendo",
+    "file": "assets/original-portraits/shuto-sendo.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Peron",
+    "file": "assets/original-portraits/peron.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Shoei Baro",
+    "file": "assets/original-portraits/shoei-baro.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Shingen Tanaka",
+    "file": "assets/original-portraits/shingen-tanaka.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Gen Fukaku",
+    "file": "assets/original-portraits/gen-fukaku.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Abdi",
+    "file": "assets/original-portraits/abdi.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Kyohei Shiguma",
+    "file": "assets/original-portraits/kyohei-shiguma.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Yukio Ishikari",
+    "file": "assets/original-portraits/yukio-ishikari.webp",
+    "type": "original-art",
+    "source": "generated"
+  },
+  {
+    "name": "Marc Snuffy",
+    "file": "assets/original-portraits/marc-snuffy.webp",
+    "type": "original-art",
+    "source": "generated"
+  }
+]

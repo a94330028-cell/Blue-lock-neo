@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
-import android.view.View;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -48,10 +47,9 @@ public final class MainActivity extends Activity {
     private static final int REQUEST_EXPORT = 1502;
     private static final String HOST = "appassets.androidplatform.net";
     private static final String HOME = "https://" + HOST + "/index.html";
-    private static final String BUNDLED_WEB_VERSION = "8.9.0";
-    private static final String UPDATE_HOST = "a94330028-cell.github.io";
-    private static final String UPDATE_PREFIX = "/Blue-lock-neo/updates/";
-    private static final String MANIFEST_URL = "https://" + UPDATE_HOST + UPDATE_PREFIX + "latest.json";
+    private static final String BUNDLED_WEB_VERSION = "9.1.0";
+    private static final String UPDATE_HOST = "blue-lock-neo-simulator.netlify.app";
+    private static final String MANIFEST_URL = "https://" + UPDATE_HOST + "/updates/latest.json";
     private static final String PREFS = "blue_lock_neo_android";
     private static final String PREF_WEB_VERSION = "installed_web_version";
     private static final long MAX_PACKAGE_BYTES = 32L * 1024 * 1024;
@@ -108,41 +106,17 @@ public final class MainActivity extends Activity {
         });
         webView.setWebChromeClient(new WebChromeClient() {
             @Override public boolean onShowFileChooser(WebView view, ValueCallback<Uri[]> callback, FileChooserParams params) {
-                // Android Storage Access Framework: no broad photo permission required.
-                // Supports images, ZIP/JSON backups and multiple file selections in WebView.
                 if (fileCallback != null) fileCallback.onReceiveValue(null);
                 fileCallback = callback;
                 try {
-                    String[] accepts = params.getAcceptTypes();
-                    String accept = accepts == null ? "" : String.join(",", accepts).toLowerCase(Locale.ROOT);
-                    boolean image = accept.contains("image/");
-                    boolean zip = accept.contains("zip") || accept.contains(".zip");
-                    boolean json = accept.contains("json") || accept.contains(".json");
-                    String mime = image && !zip && !json ? "image/*" :
-                        zip && !image && !json ? "application/zip" :
-                        json && !image && !zip ? "application/json" : "*/*";
-                    Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                    Intent intent = params.createIntent();
                     intent.addCategory(Intent.CATEGORY_OPENABLE);
-                    intent.setType(mime);
-                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
-                    intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, params.getMode() == FileChooserParams.MODE_OPEN_MULTIPLE);
-                    if ("*/*".equals(mime)) {
-                        intent.putExtra(Intent.EXTRA_MIME_TYPES,
-                            new String[]{"image/png","image/jpeg","image/webp","image/gif","application/zip","application/json"});
-                    }
-                    startActivityForResult(Intent.createChooser(intent, "Selecionar arquivos"), REQUEST_PICK);
+                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    startActivityForResult(intent, REQUEST_PICK);
                 } catch (Exception e) {
-                    // Some devices ship a different documents provider. Keep a fallback.
-                    try {
-                        Intent fallback = params.createIntent();
-                        fallback.addCategory(Intent.CATEGORY_OPENABLE);
-                        fallback.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                        startActivityForResult(fallback, REQUEST_PICK);
-                    } catch (Exception second) {
-                        if (fileCallback != null) fileCallback.onReceiveValue(null);
-                        fileCallback = null;
-                        toast("Não foi possível abrir Arquivos. Instale/ative um gerenciador de arquivos no Android.");
-                    }
+                    fileCallback.onReceiveValue(null);
+                    fileCallback = null;
+                    Toast.makeText(MainActivity.this, "Não foi possível abrir a galeria", Toast.LENGTH_LONG).show();
                 }
                 return true;
             }
@@ -261,7 +235,7 @@ public final class MainActivity extends Activity {
     private static boolean isTrustedUrl(String value) {
         try {
             URL url = new URL(value);
-            return "https".equals(url.getProtocol()) && UPDATE_HOST.equals(url.getHost()) && url.getPort() == -1 && url.getPath().startsWith(UPDATE_PREFIX) && url.getUserInfo() == null;
+            return "https".equals(url.getProtocol()) && UPDATE_HOST.equals(url.getHost()) && url.getPort() == -1;
         } catch (Exception ignored) { return false; }
     }
     private static HttpURLConnection connectTrusted(String urlText) throws IOException {
@@ -287,7 +261,7 @@ public final class MainActivity extends Activity {
         } finally { connection.disconnect(); }
     }
 
-    private static final class BuildVersion { static final int CODE = 86; }
+    private static final class BuildVersion { static final int CODE = 91; }
 
     private void installUpdate(UpdateInfo info) {
         if (updateBusy) return;
@@ -315,8 +289,8 @@ public final class MainActivity extends Activity {
                 staging = new File(base, ".staging-" + UUID.randomUUID());
                 if (!staging.mkdir()) throw new IOException("Falha ao preparar conteúdo");
                 unpack(temporaryZip, staging);
-                if (!new File(staging, "index.html").isFile() )
-                    throw new IOException("Conteúdo incompleto (index.html ausente)");
+                if (!new File(staging, "index.html").isFile() || !new File(staging, "app.js").isFile() || !new File(staging, "engine.js").isFile())
+                    throw new IOException("Conteúdo incompleto");
                 File destination = new File(base, info.version);
                 if (!destination.exists() && !staging.renameTo(destination)) throw new IOException("Não foi possível ativar atualização");
                 if (destination.isDirectory()) {
@@ -402,48 +376,23 @@ public final class MainActivity extends Activity {
         runOnUiThread(() -> Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show());
     }
 
-    private void notifyBackupResult(boolean success, String message) {
-        runOnUiThread(() -> {
-            if (webView == null) return;
-            String script = "window.dispatchEvent(new CustomEvent('neo-backup-result',{detail:{success:" +
-                (success ? "true" : "false") + ",message:" + JSONObject.quote(message) + "}}));";
-            webView.evaluateJavascript(script, null);
-        });
-    }
-
     private final class AndroidBridge {
         @JavascriptInterface public String getInstalledVersion() { return getCurrentWebVersion(); }
         @JavascriptInterface public void checkForUpdates() { MainActivity.this.checkForUpdates(true); }
         @JavascriptInterface public void restoreBundledVersion() { resetWebUpdate(); }
-        @JavascriptInterface public boolean saveJson(String suggestedName, String content) {
-            // Não informar que o arquivo está salvo antes da resposta do seletor Android.
-            if (content == null || content.isEmpty() || content.length() > 32 * 1024 * 1024) {
-                notifyBackupResult(false, "Backup excedeu o limite de 32 MB ou está vazio.");
-                return false;
-            }
-            final String safeName = suggestedName == null ? "blue-lock-backup.json" :
-                suggestedName.replaceAll("[^A-Za-z0-9_.-]", "_");
+        @JavascriptInterface public void saveJson(String suggestedName, String content) {
+            if (content == null || content.length() > 32 * 1024 * 1024) return;
+            final String safeName = suggestedName == null ? "blue-lock-backup.json" : suggestedName.replaceAll("[^A-Za-z0-9_.-]", "_");
             final byte[] bytes = content.getBytes(StandardCharsets.UTF_8);
             runOnUiThread(() -> {
-                if (pendingExport != null) {
-                    notifyBackupResult(false, "Termine ou cancele a exportação anterior.");
-                    return;
-                }
                 pendingExport = bytes;
                 Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
-                intent.addCategory(Intent.CATEGORY_OPENABLE);
                 intent.setType("application/json");
-                intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
                 intent.putExtra(Intent.EXTRA_TITLE, safeName);
-                try {
-                    startActivityForResult(intent, REQUEST_EXPORT);
-                } catch (Exception e) {
-                    pendingExport = null;
-                    toast("Não foi possível abrir a tela de salvamento do Android");
-                    notifyBackupResult(false, "O gerenciador de arquivos não abriu: " + e.getClass().getSimpleName());
-                }
+                try { startActivityForResult(intent, REQUEST_EXPORT); }
+                catch (Exception e) { pendingExport = null; toast("Não foi possível exportar backup"); }
             });
-            return true;
         }
     }
 
@@ -451,49 +400,18 @@ public final class MainActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_PICK) {
             if (fileCallback != null) {
-                Uri[] results = null;
-                if (resultCode == RESULT_OK && data != null) {
-                    if (data.getClipData() != null) {
-                        int count = Math.min(150, data.getClipData().getItemCount());
-                        results = new Uri[count];
-                        for (int i = 0; i < count; i++) results[i] = data.getClipData().getItemAt(i).getUri();
-                    } else if (data.getData() != null) {
-                        results = new Uri[]{data.getData()};
-                    } else {
-                        results = WebChromeClient.FileChooserParams.parseResult(resultCode, data);
-                    }
-                    if (results != null) {
-                        for (Uri uri : results) {
-                            if (uri == null) continue;
-                            try { getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION); }
-                            catch (SecurityException ignored) { /* Temporary grant remains valid. */ }
-                        }
-                    }
-                }
-                fileCallback.onReceiveValue(results);
+                fileCallback.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(resultCode, data));
                 fileCallback = null;
             }
         } else if (requestCode == REQUEST_EXPORT) {
-            try {
-                if (resultCode != RESULT_OK || data == null || data.getData() == null) {
-                    notifyBackupResult(false, "Exportação cancelada. Suas fotos continuam no aplicativo.");
-                } else if (pendingExport == null) {
-                    notifyBackupResult(false, "Os dados da exportação não estão mais disponíveis.");
-                } else {
-                    try (OutputStream stream = getContentResolver().openOutputStream(data.getData())) {
-                        if (stream == null) throw new IOException("Sem acesso ao arquivo escolhido");
-                        stream.write(pendingExport);
-                        stream.flush();
-                    }
-                    toast("Backup salvo no local escolhido!");
-                    notifyBackupResult(true, "Backup salvo! Encontre o JSON na pasta que você escolheu.");
-                }
-            } catch (Exception e) {
-                toast("Falha ao salvar backup");
-                notifyBackupResult(false, "Falha ao gravar arquivo: " + e.getClass().getSimpleName());
-            } finally {
-                pendingExport = null;
+            if (resultCode == RESULT_OK && data != null && data.getData() != null && pendingExport != null) {
+                try (OutputStream stream = getContentResolver().openOutputStream(data.getData())) {
+                    if (stream == null) throw new IOException("Sem saída de arquivo");
+                    stream.write(pendingExport);
+                    toast("Backup salvo!");
+                } catch (Exception e) { toast("Falha ao salvar backup"); }
             }
+            pendingExport = null;
         }
     }
     @Override public void onBackPressed() {

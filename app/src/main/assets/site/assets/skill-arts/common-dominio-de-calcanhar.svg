@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="460" viewBox="0 0 360 460" role="img" aria-label="Arte original Domínio de Calcanhar">
+<defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#071a31"/><stop offset="0.68" stop-color="#112f42"/><stop offset="1" stop-color="#071321"/></linearGradient>
+<radialGradient id="orb"><stop stop-color="#94eece" stop-opacity=".40"/><stop offset="1" stop-color="#94eece" stop-opacity="0"/></radialGradient></defs>
+<rect width="360" height="460" rx="22" fill="url(#bg)"/><rect x="10" y="10" width="340" height="440" rx="15" fill="none" stroke="#94eece" stroke-opacity=".52" stroke-width="2"/>
+<circle cx="180" cy="208" r="149" fill="url(#orb)"/><circle cx="180" cy="208" r="90" fill="none" stroke="#94eece" stroke-opacity=".7" stroke-width="2" stroke-dasharray="11 11"/>
+<g transform="rotate(-6 180 209)"><path d="M180 209 Q276 225 252 275" fill="none" stroke="#94eece" opacity=".48" stroke-width="2"/><path d="M180 209 Q211 240 187 290" fill="none" stroke="#94eece" opacity=".48" stroke-width="2"/><path d="M180 209 Q163 213 139 263" fill="none" stroke="#94eece" opacity=".48" stroke-width="2"/><path d="M180 209 Q100 169 76 219" fill="none" stroke="#94eece" opacity=".48" stroke-width="2"/><path d="M180 209 Q109 72 85 122" fill="none" stroke="#94eece" opacity=".48" stroke-width="2"/><path d="M180 209 Q196 61 172 111" fill="none" stroke="#94eece" opacity=".48" stroke-width="2"/><path d="M180 209 Q250 98 226 148" fill="none" stroke="#94eece" opacity=".48" stroke-width="2"/><path d="M180 209 Q267 153 243 203" fill="none" stroke="#94eece" opacity=".48" stroke-width="2"/><path d="M80 209 L280 209 M180 102 L180 311" stroke="#94eece" stroke-opacity=".22" stroke-width="2"/></g>
+<text x="180" y="240" fill="#ffffff" text-anchor="middle" font-weight="bold" font-family="Arial,sans-serif" font-size="78">◇</text>
+<text x="30" y="45" fill="#94eece" font-family="Arial,sans-serif" font-weight="bold" font-size="14" letter-spacing="2">COMUM  •  051</text>
+<text x="180" y="376" fill="#f7fcff" font-size="20" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold">Domínio de Calcanhar</text>
+<text x="180" y="419" fill="#94eece" font-size="12" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" letter-spacing="1">CONTROLE   •   +10.5%</text>
+</svg>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 480" role="img" aria-label="Muralha do Juízo">
+ <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0c1835"/><stop offset="1" stop-color="#131024"/></linearGradient><radialGradient id="l"><stop stop-color="#ffe99d" stop-opacity=".29"/><stop offset="1" stop-color="#ffe99d" stop-opacity="0"/></radialGradient></defs>
+ <rect x="0" y="0" width="440" height="480" rx="22" fill="url(#g)"/><circle cx="173" cy="87" r="195" fill="url(#l)"/>
+ <g stroke="#ffe99d" stroke-width="2" fill="none" opacity=".42"><circle cx="220" cy="184" r="156"/><circle cx="220" cy="184" r="132"/><path d="M40 350 L400 350"/></g>
+ <g stroke="#ffe99d" fill="none"><path d="M405.1,217.5 l16.6,3.8" stroke-width="2" opacity="0.18"/><path d="M380.0,200.0 l13.9,1.6" stroke-width="3" opacity="0.22"/><path d="M130.3,64.1 l-5.6,-11.7" stroke-width="4" opacity="0.27"/><path d="M395.7,194.1 l13.0,0.7" stroke-width="2" opacity="0.32"/><path d="M375.8,192.1 l13.0,0.6" stroke-width="3" opacity="0.36"/><path d="M126.8,285.4 l-6.4,10.2" stroke-width="4" opacity="0.40"/><path d="M312.0,277.8 l9.6,12.8" stroke-width="2" opacity="0.45"/></g><g color="#ffe99d" stroke="#ffe99d" fill="none" transform="translate(-2 5) rotate(-7 220 185)"><path d="M215 57 L354 101 L334 242 L215 313 L96 242 L76 101 Z" stroke-width="11" fill="none"/><path d="M150 180 L191 222 L291 128" stroke-width="16" fill="none"/></g>
+ <text x="220" y="36" fill="#ffe99d" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="bold" letter-spacing="3">DIVINA</text>
+ <path d="M45 345 L395 345" stroke="#ffe99d" stroke-width="2" opacity=".6"/>
+ <g font-family="Arial,sans-serif"><text x="220" y="395" fill="#f8fdff" font-size="20" font-weight="800" letter-spacing=".2" text-anchor="middle">Muralha do Juízo</text><text x="220" y="459" text-anchor="middle" fill="#ffe99d" font-size="14" letter-spacing="2">DEFESA • BLUE LOCK NEO</text></g>
+ <rect x="7" y="7" width="426" height="466" rx="18" fill="none" stroke="#ffe99d" stroke-width="3" opacity=".7"/>
+ </svg>
