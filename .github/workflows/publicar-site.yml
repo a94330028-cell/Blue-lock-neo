@@ -57,32 +57,3 @@ jobs:
           echo '### Hospedagem: falta habilitar GitHub Pages' >> "$GITHUB_STEP_SUMMARY"
           echo 'Em Settings > Pages, selecione **GitHub Actions** como fonte.' >> "$GITHUB_STEP_SUMMARY"
           echo 'O site completo já está anexado na execução em Artifacts > Site-Blue-Lock-NEO.' >> "$GITHUB_STEP_SUMMARY"
- web/VERSION
-          python tools/gerar_atualizacao.py
-      - name: Disponibilizar site completo (mesmo antes de habilitar Pages)
-        uses: actions/upload-artifact@v4
-        with:
-          name: Site-Blue-Lock-NEO
-          path: web/
-          retention-days: 14
-      - name: Configurar GitHub Pages
-        id: configure_pages
-        uses: actions/configure-pages@v5
-        continue-on-error: true
-        with:
-          enablement: true
-      - name: Enviar arquivos para GitHub Pages
-        if: steps.configure_pages.outcome == 'success'
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: web
-      - name: Publicar no GitHub Pages
-        id: deployment
-        if: steps.configure_pages.outcome == 'success'
-        uses: actions/deploy-pages@v4
-      - name: Mostrar instrução se Pages ainda não estiver habilitado
-        if: steps.configure_pages.outcome != 'success'
-        run: |
-          echo '### Hospedagem: falta habilitar GitHub Pages' >> "$GITHUB_STEP_SUMMARY"
-          echo 'Em Settings > Pages, selecione **GitHub Actions** como fonte.' >> "$GITHUB_STEP_SUMMARY"
-          echo 'O site completo já está anexado na execução em Artifacts > Site-Blue-Lock-NEO.' >> "$GITHUB_STEP_SUMMARY"
