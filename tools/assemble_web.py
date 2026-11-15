@@ -39,15 +39,20 @@ for before, after in repairs.items():
         print('Nota: versão do jogo usa implementação diferente do leitor de imagens')
 
 # A edição mobile fica em arquivos próprios para facilitar atualizações e reversões.
-css = '<link rel="stylesheet" href="mobile-upgrade.css?v=8.6.0">'
-script = '<script defer src="mobile-upgrade.js?v=8.6.0"></script>'
-if 'mobile-upgrade.css' not in html:
-    html = html.replace('</head>', css + '\n</head>', 1)
-if 'mobile-upgrade.js' not in html:
-    html = html.replace('</body>', script + '\n</body>', 1)
+extras = (
+    ('mobile-upgrade.css', '<link rel="stylesheet" href="mobile-upgrade.css?v=8.7.0">', '</head>'),
+    ('matchday-plus.css', '<link rel="stylesheet" href="matchday-plus.css?v=8.7.0">', '</head>'),
+    ('mobile-upgrade.js', '<script defer src="mobile-upgrade.js?v=8.7.0"></script>', '</body>'),
+    ('matchday-plus.js', '<script defer src="matchday-plus.js?v=8.7.0"></script>', '</body>'),
+)
+for filename, tag, marker in extras:
+    if not (WEB / filename).is_file():
+        raise SystemExit(f'Arquivo da interface ausente: {filename}')
+    if filename not in html:
+        html = html.replace(marker, tag + '\n' + marker, 1)
 # Versão da interface, sem alterar IDs nem saves persistidos.
-html = html.replace('NEO EGOIST SIMULATOR 8.4', 'NEO EGOIST SIMULATOR 8.6')
+html = html.replace('NEO EGOIST SIMULATOR 8.4', 'NEO EGOIST SIMULATOR 8.7')
 WEB.mkdir(parents=True, exist_ok=True)
 (WEB / 'index.html').write_text(html, encoding='utf-8')
 print(f'Jogo base íntegro: {len(raw):,} bytes; SHA-256 {actual}')
-print('Interface mobile 8.6 e diagnósticos de fotos incluídos')
+print('Interface mobile 8.7 e diagnósticos de fotos incluídos')
