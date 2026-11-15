@@ -33,7 +33,7 @@ manifest = {
     "url": f"{HOST}/updates/{ARCHIVE.name}",
     "sha256": sha,
     "minAndroidVersion": 85,
-    "changes": "Correções, novidades e atualizações da Liga Neo Egoísta"
+    "changes": "EGO Broadcast v8.7, painel de partida ao vivo, melhorias mobile e retratos"
 }
 (DEST / "latest.json").write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 print(f"Pacote: {ARCHIVE} ({ARCHIVE.stat().st_size} bytes)")
