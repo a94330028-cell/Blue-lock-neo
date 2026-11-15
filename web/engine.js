@@ -392,7 +392,7 @@ class Match {
     this.duelHistory.push({minute:Math.floor(this.time/60),time:+this.time.toFixed(1),attacker:attacker.name,defender:defender.name,winner:winner.name,kind,side:winner.side});
     if(this.duelHistory.length>160)this.duelHistory.shift();
   }
-  log(text,type='info',player=null){const e={id:++this.seq,minute:Math.min(90,Math.floor(this.time/60)),text,type,player};this.events.unshift(e);if(this.events.length>70)this.events.length=70;if(['goal','card','penalty','corner','freeKick','halftime'].includes(type))this.keyEvents.push(e);this.lastAction=text;}
+  log(text,type='info',player=null){const e={id:++this.seq,minute:Math.min(90,Math.floor(this.time/60)),text,type,player};this.events.unshift(e);if(this.events.length>180)this.events.length=180;if(['goal','card','penalty','corner','freeKick','halftime'].includes(type))this.keyEvents.push(e);this.lastAction=text;}
   kickoff(side){
     this._applyPendingSubs();
     // Every kickoff resets each team wholly to its OWN half.
@@ -1801,7 +1801,7 @@ class Match {
       this.wait-=dt;if(this.wait<=0){if(this.phase==='goal')this.kickoff(this.nextKick);else this._performRestart();}
       return;
     }
-    this.time=Math.min(this.fullTimeEnd,this.time+dt*GAME_RATE);this._updateMasters();
+    this.time=Math.min(this.fullTimeEnd,this.time+dt*(Number.isFinite(this.gameRate)&&this.gameRate>0?this.gameRate:GAME_RATE));this._updateMasters();
     if(!this.halftimeDone&&this.time>=this.firstHalfEnd){
       this.halftimeDone=true;this.time=this.firstHalfEnd;this.half=1;this.phase='halftime';this.wait=1.65;
       this.ball.owner=null;this.ball.mode='dead';this.ball.vx=this.ball.vy=0;
@@ -1886,5 +1886,4 @@ function migrateLegacySeason(legacy){
 function lerp(a,b,t){return a+(b-a)*t;}
 return {PITCH,TICK,GAME_RATE,MAX_SECONDS,TEAMS,COUNTRY_KITS,SKILLS,PLAYER_STYLES,GAMEPLAN_TEMPLATES,Attr,Abilities,Masters,Progression,avatarTheme,avatarHTML,avatarSVG,REAL_PORTRAITS,Match,createSchedule,standings,teamById,recordFixture,migrateLegacySeason,FORMATIONS,DEFAULT_FORMATION};
 });
-
 
