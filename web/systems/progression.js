@@ -14,43 +14,59 @@ const STAR_POTENTIAL=Object.freeze({
 });
 const num=(v,def=0)=>Number.isFinite(Number(v))?Number(v):def;
 const between=(n,lo,hi)=>Math.max(lo,Math.min(hi,n));
-// Mercado fictício: OVR/posição determinam uma avaliação inicial e lances reais
-// alteram o preço ao longo da temporada. Não criar defesas ou gols artificiais.
+// Valores fictícios de leilão, em ienes. Reescala sem alterar saves antigos:
+// estimativas são recalculadas dos atributos e das ações já registradas.
 function baseValue(ovr=75,role='MC'){
- const skill=between(num(ovr,75),60,99),keeper=/^(GOL|GK)$/.test(role);
- const back=/^(ZAG|CB|LD|LE|RB|LB|VOL|CDM|ALA|LWB|RWB)$/.test(role);
- const master=skill>90;
- const score=60+Math.pow(between((skill-65)/25,0,1),1.62)*770;
- const factor=keeper?1.22:back?1.15:1.05;
- const millions=master?1550+(skill-90)*140:score*factor;
- return Math.round(between(millions,65,2850)*10)*100000;
+ const skill=between(num(ovr,75),60,99),pos=(role||'MC').toUpperCase();
+ if(skill>90)return Math.round((340+(skill-90)*23)*1e6/100000)*100000;
+ const keeper=/^(GOL|GK)$/.test(pos),back=/^(ZAG|CB|LD|LE|RB|LB|VOL|CDM|ALA|LWB|RWB)$/.test(pos);
+ const striker=/^(CA|ST|CF|SA|PD|PE|RW|LW)$/.test(pos);
+ const factor=keeper?.91:back?1.02:striker?1.07:1.0;
+ const level=between((skill-60)/30,0,1);
+ const millions=(30+Math.pow(level,1.75)*206)*factor;
+ return Math.round(between(millions,25,260)*1e6/100000)*100000;
 }
 function estimateValue(player,ovr,role){
- const games=Math.max(0,num(player?.games)),position=role||player?.role||'MC';
- const keeper=/^(GOL|GK)$/.test(position);
- const defender=/^(ZAG|CB|LD|LE|RB|LB|VOL|CDM|ALA|LWB|RWB)$/.test(position);
- const base=baseValue(ovr??player?.ovr??75,position);
- const goals=Math.max(0,num(player?.goals)),assists=Math.max(0,num(player?.assists));
- const saves=Math.max(0,num(player?.saves)),tackles=Math.max(0,num(player?.tackles));
- const dribbles=Math.max(0,num(player?.dribbles));
- const interceptions=Math.max(0,num(player?.interceptions));
- const shotBlocks=Math.max(0,num(player?.shotBlocks));
- const aerialWins=Math.max(0,num(player?.aerialWins));
- const duelsWon=Math.max(0,num(player?.duelsWon));
- const keyPasses=Math.max(0,num(player?.keyPasses));
- const cleanSheets=Math.max(0,num(player?.cleanSheets));
- const passing=Math.max(0,num(player?.passes));
- const rating=games?num(player?.ratingSum)/games:6;
- const success=Math.max(0,num(player?.wins));
- const production=goals*(keeper?12:defender?23:24)+assists*(keeper?10:defender?17:16)
-  +saves*(keeper?8.5:.10)+tackles*(defender?5.8:1.3)
-  +interceptions*(defender?6.3:1.6)+shotBlocks*(defender?8.2:1.5)
-  +aerialWins*(defender?3.3:1.0)+duelsWon*(defender?2.3:.7)
-  +keyPasses*(defender?4.2:4.3)+dribbles*(keeper?.3:defender?1.8:2.2)
-  +cleanSheets*(keeper?27:defender?16:1.8)+passing*(keeper?.06:defender?.09:.11)
-  +Math.max(0,rating-6)*games*(defender?6.0:keeper?5.7:4.8)
-  +success*(defender?4:3);
- return Math.round(between(base+between(production,0,1500)*1e6,base,3e9)/100000)*100000;
+ const games=Math.max(0,num(player?.games)),pos=role||player?.role||'MC',keeper=/^(GOL|GK)$/.test(pos);
+ const defender=/^(ZAG|CB|LD|LE|RB|LB|VOL|CDM|ALA|LWB|RWB)$/.test(pos);
+ const base=baseValue(ovr??player?.ovr??75,pos);
+ const goals=Math.max(0,num(player?.goals)),assists=Math.max(0,num(player?.assists)),saves=Math.max(0,num(player?.saves));
+ const tackles=Math.max(0,num(player?.tackles)),interceptions=Math.max(0,num(player?.interceptions));
+ const blocks=Math.max(0,num(player?.shotBlocks)),air=Math.max(0,num(player?.aerialWins));
+ const duels=Math.max(0,num(player?.duelsWon)),keyPasses=Math.max(0,num(player?.keyPasses));
+ const clean=Math.max(0,num(player?.cleanSheets)),wins=Math.max(0,num(player?.wins));
+ const passes=Math.max(0,num(player?.passes)),rating=games?num(player?.ratingSum)/games:6;
+ // Ações registradas mexem em milhões, não centenas de milhões por jogo.
+ const millions=goals*4.8+assists*3.4+saves*(keeper?.52:.02)
+  +tackles*(defender?.48:.16)+interceptions*(defender?.60:.18)
+  +blocks*(defender?.78:.16)+air*(defender?.27:.08)
+  +duels*(defender?.15:.06)+keyPasses*.40
+  +clean*(keeper?2.0:defender?1.3:.15)
+  +wins*.43+passes*.013+Math.max(0,rating-6)*games*.38;
+ const maxValue=(num(ovr)>90?720:395)*1e6;
+ return Math.round(between(base+between(millions,0,160)*1e6,base,maxValue)/100000)*100000;
+}
+// Top 5 do MVP do campeonato, exclusivamente de partidas realmente salvas.
+// O preço de mercado NÃO entra na votação de melhor jogador.
+function mvpRanking(season,limit=5){
+ const career=season?.career?.players||{};
+ const scored=Object.values(career).filter(p=>p&&!p.isMaster&&num(p.games)>0)
+ .map(p=>{
+  const games=Math.max(1,num(p.games)),keeper=/^(GOL|GK)$/.test(p.role||'');
+  const defender=/^(ZAG|CB|LD|LE|RB|LB|VOL|CDM|ALA|LWB|RWB)$/.test(p.role||'');
+  const rating=between(num(p.ratingSum,6*games)/games,0,10);
+  const goals=num(p.goals),assists=num(p.assists),saves=num(p.saves),clean=num(p.cleanSheets);
+  const defensive=num(p.tackles)*.34+num(p.interceptions)*.42+num(p.shotBlocks)*.54+num(p.aerialWins)*.12;
+  const creativity=num(p.keyPasses)*.31+num(p.dribbles)*.15;
+  const contributions=goals*3.1+assists*2.35+(keeper?saves*.27+clean*1.7:0)
+    +(defender?defensive:defensive*.46)+creativity;
+  const performance=contributions/games;
+  const consistency=Math.max(0,rating-6)*1.12+Math.min(1,num(p.wins)/games)*.7;
+  const sample=Math.min(1,games/6)*1.35;
+  const mvpPoints=Math.round((performance+consistency+sample)*100)/100;
+  return {...p,mvpPoints,avgRating:Math.round(rating*10)/10};
+ });
+ return scored.sort((a,b)=>b.mvpPoints-a.mvpPoints||num(b.games)-num(a.games)||num(b.goals)-num(a.goals)||String(a.name).localeCompare(String(b.name))).slice(0,Math.max(1,Math.min(20,limit)));
 }
 function ensure(season){if(!season.career||typeof season.career!=='object')season.career={players:{},history:[],version:1};const c=season.career;c.links=c.links||{};c.rivals=c.rivals||{};c.stories=c.stories||[];return c;}
 function row(career,name,club){const id=key(name,club);return career.players[id]||(career.players[id]={name,club,games:0,goals:0,assists:0,dribbles:0,tackles:0,interceptions:0,shotBlocks:0,aerialWins:0,duelsWon:0,keyPasses:0,saves:0,cleanSheets:0,wins:0,passes:0,impact:0,ratingSum:0,score:0,value:0,change:0,boosts:{},unlocked:[],abilityUses:{},history:[],flowCount:0,masterApps:0});}
@@ -143,5 +159,5 @@ function record(season,fixture,match,round){const career=ensure(season);const r=
  if(career.stories.length>90)career.stories=career.stories.slice(-90);
  career.history.push({round,fixture:fixture.home+'-'+fixture.away,score:[...r.score]});if(career.history.length>200)career.history.shift();return career;}
 function rank(season,filter='all'){const career=ensure(season),data=Object.values(career.players);for(const p of data)if(p.role)p.ovr=Attr.generate(p.name,p.role,p.role==='GOL'?0:1,p).ovr;return data.filter(p=>filter==='all'||p.club===filter).sort((a,b)=>b.score-a.score||b.goals-a.goals||a.name.localeCompare(b.name));}
-return {ensure,record,rank,key,baseValue,estimateValue,verifiedKeeperSaves,reconcileGoalkeepers};
+return {ensure,record,rank,key,baseValue,estimateValue,mvpRanking,verifiedKeeperSaves,reconcileGoalkeepers};
 });

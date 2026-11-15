@@ -1,4 +1,15 @@
-# Blue Lock NEO 9.4.0 — Mercado por posição e interface compacta
+# Blue Lock NEO 9.5.0 — Ranking único e MVP da liga
+
+## Novo na v9.5.0
+- **Preços reajustados:** atletas comuns ficam abaixo de ¥ 400 milhões, em vez de passar de ¥ 1 bilhão. O jogo recalcula as ofertas a partir dos dados existentes, sem apagar saves.
+- **Um único ranking de mercado**, com o filtro por posições. O pódio e o ranking antigos deixam de aparecer como listas duplicadas.
+- **🏆 MVP atual + Top 5 da temporada** dentro do mesmo painel, calculados exclusivamente pelas atuações registradas: gols, assistências, criação, desarmes, defesas e regularidade. **O preço não entra na escolha do MVP.**
+- **Momentos memoráveis preservados em um painel recolhido**, para não ocupar a página inteira.
+- **Android 9.5.0**, versionCode 97. Compatível com a assinatura estável das versões v9.0 a v9.4, caso os APKs anteriores tenham sido instalados com o mesmo certificado.
+- Conteúdo offline, 87 retratos e dados da temporada preservados.
+
+Veja [CHANGELOG-v9.5.0.md](CHANGELOG-v9.5.0.md).
+
 
 ## Atualização v9.4.0
 
