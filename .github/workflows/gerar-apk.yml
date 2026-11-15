@@ -6,6 +6,7 @@ on:
     paths:
       - 'app/**'
       - 'packed/**'
+      - 'portrait-pack/**'
       - 'web/VERSION'
       - 'tools/assemble_web.py'
       - 'build.gradle'
