@@ -1,0 +1,43 @@
+/* NEO EGOIST / MATCHDAY v8.7 — responsive broadcast board */
+.ego-broadcast-deck{position:relative;overflow:hidden;margin:0 0 17px;padding:15px 18px 16px;border-radius:20px;background:radial-gradient(ellipse at 50% -80%,#1d6090 1%,#13233b 55%,#0b1729 100%);border:1px solid #315777;box-shadow:0 15px 32px #0005;color:#edf7ff}
+.ego-broadcast-deck::before{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(117deg,transparent 0 45px,#4aa8ff06 46px 47px),linear-gradient(90deg,transparent,#009bff0a,transparent)}
+.ego-broadcast-deck>*{position:relative;z-index:1}
+.ego-topline{display:flex;align-items:center;gap:8px;letter-spacing:2px;font-size:10px;font-weight:950;color:#a6deff}
+.ego-kicker b{color:#eef8ff}
+.ego-round{margin-left:auto;letter-spacing:1px;color:#81a5c8;font-weight:700;font-size:9px}
+.ego-live-dot{width:8px;height:8px;background:#54efad;border-radius:50%;box-shadow:0 0 0 4px #1aff6a19,0 0 12px #24f9aa;animation:neoBroadcastBlink 1.8s ease-in-out infinite}
+.ego-board{display:grid;grid-template-columns:minmax(0,1fr) minmax(115px,28%) minmax(0,1fr);align-items:center;gap:10px;margin:14px 0 13px;padding:6px 0 11px;border-bottom:1px solid #3b608250}
+.ego-team{min-width:0;display:flex;flex-direction:column;gap:5px}.ego-team small{color:#85afce;font-size:9px;letter-spacing:1.2px;font-weight:800}.ego-team strong{font-size:clamp(16px,2.4vw,27px);font-weight:1000;letter-spacing:-.5px;line-height:1.2;overflow-wrap:anywhere}.ego-away{text-align:right}
+.ego-score-zone{text-align:center}.ego-score{font-size:clamp(27px,4.5vw,51px);font-weight:1000;letter-spacing:-1px;white-space:nowrap;line-height:1.05;text-shadow:0 2px 20px #0075e850}.ego-score span{color:#3bc9ff}
+.ego-clock-row{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px;font-variant-numeric:tabular-nums;font-weight:850;font-size:10px;color:#c6eaff}.ego-clock-row span+span{background:#1c4060;border:1px solid #42759a;border-radius:5px;font-size:8px;padding:3px 5px;white-space:nowrap}
+.ego-actions{display:grid;grid-template-columns:1.25fr 1fr 1fr 1fr;gap:8px}
+.ego-actions button{display:flex;align-items:center;justify-content:center;min-height:44px;padding:10px 7px;border:1px solid #3f5e80;border-radius:11px;background:linear-gradient(135deg,#152f4c,#142741);color:#d9eeff;font-weight:850;font-size:11px;white-space:normal;cursor:pointer;transition:background .2s,border-color .2s}
+.ego-actions button:first-child,.ego-actions button.ego-btn-active{border-color:#1baaff;background:linear-gradient(120deg,#0f66ae,#167fe3);color:white}
+.ego-actions button:disabled{opacity:.55;cursor:not-allowed}
+.ego-actions button:active{transform:scale(.98)}
+.ego-pulse{margin:14px 0 0}.ego-pulse-top{display:flex;justify-content:space-between;gap:8px;color:#a9c4dc;font-size:10px}.ego-pulse-top b{color:#d7efff;font-size:10px}.ego-pulse-top span{text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:65%}
+.ego-pulse-meter{display:flex;width:100%;height:6px;overflow:hidden;border-radius:20px;margin-top:9px;background:#203855}
+.ego-pulse-meter #egoPulseHome{background:linear-gradient(90deg,#118dfc,#63d9ff);transition:width .5s ease}.ego-pulse-meter #egoPulseAway{background:linear-gradient(90deg,#f49f3d,#ffcf6c);transition:width .5s ease}
+.ego-live-story{margin-top:12px;border:1px solid #365574;border-radius:12px;background:#07182bbd;padding:10px 12px;min-height:70px}
+.ego-story-title{display:flex;justify-content:space-between;gap:6px;font-size:9px;letter-spacing:1.1px;font-weight:900;color:#88b8e0}
+.ego-story-title span+span{color:#69dcff}
+#egoStory{font-size:12px;color:#e7f7ff;line-height:1.5;font-weight:700;margin-top:6px;overflow-wrap:anywhere}
+.ego-feedback:empty{display:none}.ego-feedback{font-size:10px;margin-top:8px;color:#9bd9ff}
+.ego-goal-flash{animation:neoBroadcastGoal 1.2s ease-out}.ego-story-in{animation:neoStory .32s ease-out}
+@keyframes neoBroadcastGoal{0%,25%{box-shadow:inset 0 0 65px #70f6fc88,0 0 20px #18e6ff55}100%{box-shadow:0 15px 32px #0005}}
+@keyframes neoBroadcastBlink{50%{opacity:.45}}
+@keyframes neoStory{from{opacity:.45;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:700px){
+.ego-broadcast-deck{margin:-1px 0 12px;padding:14px 12px;border-radius:15px;border-color:#326188;background:radial-gradient(ellipse at 50% -90%,#1976a7 0%,#172b48 60%,#09182b 100%)}
+.ego-kicker{font-size:9px;letter-spacing:1.4px}.ego-round{font-size:7px;letter-spacing:0}
+.ego-board{grid-template-columns:minmax(0,1fr) 94px minmax(0,1fr);gap:5px;margin:14px 0 10px}
+.ego-team small{font-size:8px}.ego-team strong{font-size:clamp(12px,3.7vw,16px);line-height:1.22}
+.ego-score{font-size:30px}.ego-clock-row{gap:3px;font-size:9px;flex-wrap:wrap}.ego-clock-row span+span{font-size:7px;padding:2px}
+.ego-actions{grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+.ego-actions button{min-width:0;font-size:9px;min-height:42px;padding:6px 3px;border-radius:9px}
+.ego-pulse{margin-top:13px}.ego-pulse-top{font-size:9px}.ego-pulse-top b{font-size:9px}
+.ego-live-story{padding:9px 10px;min-height:64px}#egoStory{font-size:11px}
+#match .scoreboard{margin-top:8px}
+}
+@media(max-width:360px){.ego-kicker b,.ego-round{display:none}.ego-board{grid-template-columns:minmax(0,1fr) 82px minmax(0,1fr)}.ego-score{font-size:26px}.ego-actions button{font-size:8px}}
+@media(prefers-reduced-motion:reduce){.ego-live-dot,.ego-goal-flash,.ego-story-in{animation:none!important}.ego-pulse-meter span{transition:none!important}}
