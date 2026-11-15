@@ -1,12 +1,5 @@
 name: Importar Blue Lock NEO v9.1 e preparar APK
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'release-stage/**'
-      - 'app/**'
-      - 'web/**'
-      - '.github/workflows/importar-v91.yml'
   workflow_dispatch:
 permissions:
   contents: write
