@@ -14,5 +14,5 @@ for(const label of labels)assert.ok(js.includes("'"+label+"'"),'Missing mobile l
 for(const id of [...expected,'stats','arsenal','gallery'])assert.ok(html.includes('id="'+id+'"'),'Missing actual destination: '+id);
 for(const id of ['stats','arsenal','gallery'])assert.ok(html.includes('data-neo-open="'+id+'"'),'Legacy screen must remain accessible in More: '+id);
 assert.ok(js.includes("['stats','arsenal','gallery'].includes(active)?'more':active"),'Legacy panels should keep More selected');
-assert.match(fs.readFileSync('web/VERSION','utf8').trim(),/^\\d+\\.\\d+\\.\\d+$/);
-console.log('OK: bottom navigation, screen switching targets, legacy access and version 9.1.2');
+assert.match(fs.readFileSync('web/VERSION','utf8').trim(),/^\d+\.\d+\.\d+$/);
+console.log('OK: bottom navigation, screen switching targets, legacy access and valid semantic version');
