@@ -48,7 +48,7 @@ public final class MainActivity extends Activity {
     private static final int REQUEST_EXPORT = 1502;
     private static final String HOST = "appassets.androidplatform.net";
     private static final String HOME = "https://" + HOST + "/index.html";
-    private static final String BUNDLED_WEB_VERSION = "8.7.0";
+    private static final String BUNDLED_WEB_VERSION = "8.8.0";
     private static final String UPDATE_HOST = "a94330028-cell.github.io";
     private static final String UPDATE_PREFIX = "/Blue-lock-neo/updates/";
     private static final String MANIFEST_URL = "https://" + UPDATE_HOST + UPDATE_PREFIX + "latest.json";
