@@ -19,6 +19,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Sincronizar versão web offline no APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f web/index.html
+          mkdir -p app/src/main/assets/site
+          rsync -a --exclude='/updates/' --exclude='/.nojekyll' --exclude='/_headers' --exclude='/service-worker.js' web/ app/src/main/assets/site/
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -89,6 +96,15 @@ jobs:
           BL_SIGNING_KEY_ALIAS: ${{ secrets.BL_SIGNING_KEY_ALIAS }}
           BL_SIGNING_KEY_PASSWORD: ${{ secrets.BL_SIGNING_KEY_PASSWORD }}
         run: gradle :app:assembleRelease --no-daemon
+      - name: Compilar release sem assinatura para assinatura local segura
+        if: env.BUILD_SIGNED != '1'
+        run: gradle :app:assembleRelease --no-daemon
+      - uses: actions/upload-artifact@v4
+        if: env.BUILD_SIGNED != '1'
+        with:
+          name: Blue-Lock-NEO-RELEASE-SEM-ASSINATURA
+          path: app/build/outputs/apk/release/app-release-unsigned.apk
+          retention-days: 14
       - uses: actions/upload-artifact@v4
         if: env.BUILD_SIGNED == '1'
         with:
