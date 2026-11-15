@@ -4,7 +4,7 @@
   'use strict';
   if (window.NeoBroadcast92) return;
   const VERSION='9.2.0', HOST='https://a94330028-cell.github.io/Blue-lock-neo/';
-  const MODES=Object.freeze({classic:{label:'Clássica',rate:18,mins:5},long:{label:'Estendida',rate:9,mins:10},cinema:{label:'Cinematográfica',rate:6,mins:15},epic:{label:'Épica',rate:4.5,mins:20}});
+  const MODES=Object.freeze({classic:{label:'Clássica',rate:18,physics:1,mins:5},long:{label:'Estendida',rate:12,physics:.75,mins:10},cinema:{label:'Cinematográfica',rate:10,physics:.60,mins:15},epic:{label:'Épica',rate:9,physics:.50,mins:20}});
   const $=id=>document.getElementById(id);
   const APP_KEY='neo-broadcast-mode-v92', HISTORY_KEY='neo-broadcast-history-v92';
   const toNum=x=>Number.isFinite(Number(x))?Number(x):0;
@@ -184,7 +184,7 @@
         if(current!==this){current=this;snapshots=[];lastSnapshotAt=-1000;}
         this.gameRate=MODES[mode].rate;
       }
-      const result=original.call(this,dt);
+      const result=original.call(this,live?dt*MODES[mode].physics:dt);
       if(live){
         if(this.time-lastSnapshotAt>=45||!snapshots.length)collectSnapshot(this);
         const now=performance.now();if(now-lastRendered>=360||this.finished){renderMatch(this);lastRendered=now;}
