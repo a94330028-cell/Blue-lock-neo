@@ -3,7 +3,11 @@
 'use strict';
 const $=id=>document.getElementById(id);
 const mobile=()=>window.matchMedia('(max-width:700px)').matches;
-const tabNames={match:['⚽','Jogar'],league:['🏆','Liga'],stats:['📊','Números'],arsenal:['✦','Arsenal'],gallery:['👥','Jogadores'],squads:['🛡️','Elencos'],records:['🥇','Recordes'],ranking:['⚡','Ranking']};
+// Same six destinations on Android and desktop. Legacy pages live in Mais.
+const tabNames={
+ match:['🎮','Jogar'],league:['🏆','Liga'],records:['📜','Recordes'],
+ ranking:['👑','Ranking'],squads:['👥','Jogadores'],more:['⚙️','Mais']
+};
 function toast(message){
  let el=$('neo-mobile-toast');
  if(!el){el=document.createElement('div');el.id='neo-mobile-toast';el.setAttribute('role','status');Object.assign(el.style,{position:'fixed',bottom:'calc(85px + env(safe-area-inset-bottom,0px))',left:'16px',right:'16px',zIndex:'250',maxWidth:'540px',margin:'auto',padding:'13px 15px',borderRadius:'12px',background:'#163855',border:'1px solid #427da7',boxShadow:'0 10px 26px #0009',color:'#eef9ff',fontSize:'12px',fontWeight:'750'});document.body.appendChild(el);}
@@ -11,31 +15,33 @@ function toast(message){
 }
 function makeNav(){
  if($('neoMobileNav'))return;
- const bar=document.createElement('nav');bar.id='neoMobileNav';bar.className='neo-mobile-bottom';bar.setAttribute('aria-label','Navegação do aplicativo');
- for(const id of ['match','league','stats','arsenal','gallery']){
+ const bar=document.createElement('nav');bar.id='neoMobileNav';bar.className='neo-mobile-bottom';bar.setAttribute('aria-label','Navegação principal — Blue Lock NEO');
+ const ids=['match','league','records','ranking','squads','more'];
+ const buttons=new Map();
+ for(const id of ids){
   const b=document.createElement('button');b.type='button';b.dataset.neoTab=id;
-  b.innerHTML='<span aria-hidden="true">'+tabNames[id][0]+'</span>'+tabNames[id][1];
-  b.addEventListener('click',()=>openTab(id));bar.append(b);
+  b.innerHTML='<span aria-hidden="true">'+tabNames[id][0]+'</span><b>'+tabNames[id][1]+'</b>';
+  b.addEventListener('click',()=>openTab(id));bar.append(b);buttons.set(id,b);
  }
- const more=document.createElement('button');more.type='button';more.id='neoMobileMore';more.innerHTML='<span aria-hidden="true">☷</span>Mais';
- more.setAttribute('aria-expanded','false');bar.append(more);
- const menu=document.createElement('div');menu.className='neo-mobile-menu';menu.id='neoMobileMenu';menu.setAttribute('role','group');menu.setAttribute('aria-label','Outras seções');
- for(const id of ['squads','records','ranking']){
-  const b=document.createElement('button');b.textContent=tabNames[id][0]+' '+tabNames[id][1];b.type='button';b.addEventListener('click',()=>openTab(id));menu.append(b);
+ document.body.append(bar);
+ // Use original navigation handlers: they pause matches and render each screen.
+ function openTab(id){
+  const source=document.querySelector('.nav button[data-tab="'+id+'"]');
+  if(!source)return;
+  source.click();sync();window.scrollTo({top:0,behavior:'instant'});
  }
- for(const [original,label] of [['checkNativeUpdate','⬇️ Buscar atualização'],['restoreBundledGame','↩️ Restaurar versão inicial']]){
-  const source=$(original);if(!source||source.hidden)continue;
-  const b=document.createElement('button');b.textContent=label;b.type='button';b.addEventListener('click',()=>{source.click();closeMenu();});menu.append(b);
+ function sync(){
+  const active=document.querySelector('.nav button[data-tab].active')?.dataset.tab||'match';
+  const selected=['stats','arsenal','gallery'].includes(active)?'more':active;
+  for(const [id,b] of buttons){
+   b.classList.toggle('active',id===selected);
+   if(id===selected)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
+  }
  }
- more.addEventListener('click',()=>{const open=menu.classList.toggle('open');more.classList.toggle('active',open);more.setAttribute('aria-expanded',String(open));});
- document.body.append(bar,menu);
- document.addEventListener('click',e=>{if(!bar.contains(e.target)&&!menu.contains(e.target))closeMenu();});
- function closeMenu(){menu.classList.remove('open');more.classList.remove('active');more.setAttribute('aria-expanded','false');}
- function openTab(id){closeMenu();const source=document.querySelector('.nav [data-tab="'+id+'"]');if(source)source.click();sync();window.scrollTo({top:0,behavior:'instant'});}
- function sync(){const active=document.querySelector('.nav [data-tab].active')?.dataset.tab||'match';bar.querySelectorAll('[data-neo-tab]').forEach(b=>{b.classList.toggle('active',b.dataset.neoTab===active);if(b.dataset.neoTab===active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});more.classList.toggle('active',!['match','league','stats','arsenal','gallery'].includes(active));}
- const nav=document.querySelector('.nav');if(nav)new MutationObserver(sync).observe(nav,{attributes:true,attributeFilter:['class'],subtree:true});
+ const nav=document.querySelector('.nav');
+ if(nav)new MutationObserver(sync).observe(nav,{attributes:true,attributeFilter:['class'],subtree:true});
  sync();
- window.NeoMobile={openTab,toast};
+ window.NeoMobile={openTab,toast,sync};
 }
 function neutralAvatar(name){
  const initials=(name||'?').trim().split(/\s+/).slice(0,2).map(s=>s.slice(0,1).toUpperCase()).join('');
