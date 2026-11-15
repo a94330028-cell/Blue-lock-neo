@@ -287,7 +287,7 @@ public final class MainActivity extends Activity {
         } finally { connection.disconnect(); }
     }
 
-    private static final class BuildVersion { static final int CODE = 85; }
+    private static final class BuildVersion { static final int CODE = 86; }
 
     private void installUpdate(UpdateInfo info) {
         if (updateBusy) return;
