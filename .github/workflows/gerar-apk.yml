@@ -12,7 +12,7 @@ on:
       - 'settings.gradle'
       - '.github/workflows/gerar-apk.yml'
 permissions:
-  contents: read
+  contents: write
 jobs:
   android:
     runs-on: ubuntu-latest
@@ -40,6 +40,32 @@ jobs:
           name: Blue-Lock-NEO-APK-TESTE
           path: app/build/outputs/apk/debug/app-debug.apk
           retention-days: 30
+      - name: Preparar download direto do APK
+        id: release_info
+        run: |
+          VERSION="$(cat web/VERSION | tr -d '\\r\\n')"
+          test -n "$VERSION"
+          mkdir -p release
+          cp app/build/outputs/apk/debug/app-debug.apk "release/Blue-Lock-NEO-v${VERSION}-Android-TESTE.apk"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+      - name: Publicar APK diretamente no GitHub Releases
+        if: github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.release_info.outputs.version }}
+          name: Blue Lock NEO v${{ steps.release_info.outputs.version }} — Mobile Edition
+          prerelease: true
+          make_latest: false
+          body: |
+            APK instalável do simulador Blue Lock NEO.
+
+            Abra o arquivo .apk diretamente no Android para instalar.
+            Esta é uma compilação de TESTE (assinatura debug).
+            Para atualizar uma instalação de teste anterior talvez seja necessário desinstalá-la.
+            Exporte os backups do jogo antes de reinstalar.
+            O código-fonte e o histórico completo permanecem no repositório.
+          files: release/*.apk
+          fail_on_unmatched_files: true
       - name: Preparar assinatura estável (opcional, recomendado)
         env:
           KEYSTORE_B64: ${{ secrets.BL_KEYSTORE_BASE64 }}
