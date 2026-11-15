@@ -10,6 +10,7 @@ on:
       - 'web/**'
       - 'tests/**'
       - 'tools/assemble_web.py'
+      - 'tools/sync_inline_v930.py'
       - 'build.gradle'
       - 'settings.gradle'
       - '.github/workflows/gerar-apk.yml'
