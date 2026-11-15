@@ -13,15 +13,13 @@ android {
         applicationId 'com.neoegoist.simulator'
         minSdk 24
         targetSdk 35
-        versionCode 91
-        versionName '9.1.0'
+        versionCode 92
+        versionName '9.1.1'
     }
     signingConfigs {
         stableRelease {
             if (hasSigning) {
                 storeFile file(keyFile)
-                storeType 'pkcs12'
-                storeType 'pkcs12'
                 storeType 'pkcs12'
                 storePassword keyPassword
                 keyAlias keyAliasName
