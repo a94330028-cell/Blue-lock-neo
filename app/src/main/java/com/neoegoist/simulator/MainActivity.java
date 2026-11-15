@@ -402,23 +402,48 @@ public final class MainActivity extends Activity {
         runOnUiThread(() -> Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show());
     }
 
+    private void notifyBackupResult(boolean success, String message) {
+        runOnUiThread(() -> {
+            if (webView == null) return;
+            String script = "window.dispatchEvent(new CustomEvent('neo-backup-result',{detail:{success:" +
+                (success ? "true" : "false") + ",message:" + JSONObject.quote(message) + "}}));";
+            webView.evaluateJavascript(script, null);
+        });
+    }
+
     private final class AndroidBridge {
         @JavascriptInterface public String getInstalledVersion() { return getCurrentWebVersion(); }
         @JavascriptInterface public void checkForUpdates() { MainActivity.this.checkForUpdates(true); }
         @JavascriptInterface public void restoreBundledVersion() { resetWebUpdate(); }
-        @JavascriptInterface public void saveJson(String suggestedName, String content) {
-            if (content == null || content.length() > 32 * 1024 * 1024) return;
-            final String safeName = suggestedName == null ? "blue-lock-backup.json" : suggestedName.replaceAll("[^A-Za-z0-9_.-]", "_");
+        @JavascriptInterface public boolean saveJson(String suggestedName, String content) {
+            // Não informar que o arquivo está salvo antes da resposta do seletor Android.
+            if (content == null || content.isEmpty() || content.length() > 32 * 1024 * 1024) {
+                notifyBackupResult(false, "Backup excedeu o limite de 32 MB ou está vazio.");
+                return false;
+            }
+            final String safeName = suggestedName == null ? "blue-lock-backup.json" :
+                suggestedName.replaceAll("[^A-Za-z0-9_.-]", "_");
             final byte[] bytes = content.getBytes(StandardCharsets.UTF_8);
             runOnUiThread(() -> {
+                if (pendingExport != null) {
+                    notifyBackupResult(false, "Termine ou cancele a exportação anterior.");
+                    return;
+                }
                 pendingExport = bytes;
                 Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
-                intent.setType("application/json");
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.setType("application/json");
+                intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                 intent.putExtra(Intent.EXTRA_TITLE, safeName);
-                try { startActivityForResult(intent, REQUEST_EXPORT); }
-                catch (Exception e) { pendingExport = null; toast("Não foi possível exportar backup"); }
+                try {
+                    startActivityForResult(intent, REQUEST_EXPORT);
+                } catch (Exception e) {
+                    pendingExport = null;
+                    toast("Não foi possível abrir a tela de salvamento do Android");
+                    notifyBackupResult(false, "O gerenciador de arquivos não abriu: " + e.getClass().getSimpleName());
+                }
             });
+            return true;
         }
     }
 
@@ -449,14 +474,26 @@ public final class MainActivity extends Activity {
                 fileCallback = null;
             }
         } else if (requestCode == REQUEST_EXPORT) {
-            if (resultCode == RESULT_OK && data != null && data.getData() != null && pendingExport != null) {
-                try (OutputStream stream = getContentResolver().openOutputStream(data.getData())) {
-                    if (stream == null) throw new IOException("Sem saída de arquivo");
-                    stream.write(pendingExport);
-                    toast("Backup salvo!");
-                } catch (Exception e) { toast("Falha ao salvar backup"); }
+            try {
+                if (resultCode != RESULT_OK || data == null || data.getData() == null) {
+                    notifyBackupResult(false, "Exportação cancelada. Suas fotos continuam no aplicativo.");
+                } else if (pendingExport == null) {
+                    notifyBackupResult(false, "Os dados da exportação não estão mais disponíveis.");
+                } else {
+                    try (OutputStream stream = getContentResolver().openOutputStream(data.getData())) {
+                        if (stream == null) throw new IOException("Sem acesso ao arquivo escolhido");
+                        stream.write(pendingExport);
+                        stream.flush();
+                    }
+                    toast("Backup salvo no local escolhido!");
+                    notifyBackupResult(true, "Backup salvo! Encontre o JSON na pasta que você escolheu.");
+                }
+            } catch (Exception e) {
+                toast("Falha ao salvar backup");
+                notifyBackupResult(false, "Falha ao gravar arquivo: " + e.getClass().getSimpleName());
+            } finally {
+                pendingExport = null;
             }
-            pendingExport = null;
         }
     }
     @Override public void onBackPressed() {
