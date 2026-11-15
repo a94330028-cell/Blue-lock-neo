@@ -33,7 +33,7 @@ manifest = {
     "url": f"{HOST}/updates/{ARCHIVE.name}",
     "sha256": sha,
     "minAndroidVersion": 85,
-    "changes": "v8.8: exportação de fotos corrigida no Android, backup de retratos preservado"
+    "changes": "v8.9: 87 retratos de personagens incluídos offline e exportação de fotos corrigida"
 }
 (DEST / "latest.json").write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 print(f"Pacote: {ARCHIVE} ({ARCHIVE.stat().st_size} bytes)")
