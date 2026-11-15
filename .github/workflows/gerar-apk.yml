@@ -43,7 +43,7 @@ jobs:
       - name: Preparar download direto do APK
         id: release_info
         run: |
-          VERSION="$(cat web/VERSION | tr -d '\\r\\n')"
+          VERSION="$(cat web/VERSION)"
           test -n "$VERSION"
           mkdir -p release
           cp app/build/outputs/apk/debug/app-debug.apk "release/Blue-Lock-NEO-v${VERSION}-Android-TESTE.apk"
