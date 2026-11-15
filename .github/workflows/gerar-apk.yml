@@ -38,6 +38,19 @@ jobs:
           test -n "$SDKMANAGER"
           yes | "$SDKMANAGER" --licenses >/dev/null || true
           "$SDKMANAGER" 'platforms;android-35' 'build-tools;35.0.0'
+      - name: Verificar navegação Android v9.1.2
+        run: node tests/navigation-v912.test.js
+      - name: Preparar ferramenta de assinatura para o mantenedor
+        shell: bash
+        run: |
+          set -euo pipefail
+          find "${ANDROID_HOME:-/usr/local/lib/android/sdk}/build-tools" -name apksigner.jar -type f -print -quit | xargs -r -I{} cp "{}" "${RUNNER_TEMP}/neo-apksigner.jar"
+          test -s "${RUNNER_TEMP}/neo-apksigner.jar"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Android-APKSIGNER-public-tool
+          path: ${{ runner.temp }}/neo-apksigner.jar
+          retention-days: 2
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.7'
