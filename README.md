@@ -1,4 +1,17 @@
-# Blue Lock NEO 9.1 — EGO Broadcast: Chronicles
+# Blue Lock NEO 9.1.1 — Atualizador GitHub Pages
+
+## 🔄 Atualizador GitHub Pages — v9.1.1
+
+**Esta etapa está publicada e a compilação Android passou no GitHub Actions.** A partir do APK **9.1.1** (`versionCode 92`), o aplicativo consulta diretamente o GitHub Pages:
+
+- Site: https://a94330028-cell.github.io/Blue-lock-neo/
+- Manifesto de updates: https://a94330028-cell.github.io/Blue-lock-neo/updates/latest.json
+- Código-fonte: `app/src/main/java/com/neoegoist/simulator/MainActivity.java`
+- Gerador de pacotes: `tools/gerar_atualizacao.py`
+
+O APK 9.1.1 está assinado com a mesma chave privada estável usada nos APKs 9.0/9.1 anteriores. A chave não foi colocada neste repositório. **O APK gerado automaticamente pelo GitHub Actions, sem os quatro Secrets BL_*, é uma versão de TESTE; não atualiza o APK com assinatura estável.** Para a atualização inicial da instalação 9.0/9.1, utilize o APK 9.1.1 de assinatura estável fornecido separadamente pelo mantenedor. A partir dele, futuras atualizações somente do conteúdo web poderão chegar pelo botão "Atualizar" quando um número maior for publicado no GitHub Pages.
+
+Publicar no GitHub Pages **não atualiza o APK 9.1**, que ainda aponta para a Netlify. A mudança de servidor exige a instalação única da versão 9.1.1. Mantenha um backup de partidas, saves e retratos antes de atualizar.
 
 Simulador de futebol 2D para Web e APK Android offline, baseado na Liga Neo Egoísta. Projeto de fã não oficial.
 
