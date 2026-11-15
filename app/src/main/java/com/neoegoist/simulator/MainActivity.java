@@ -133,7 +133,11 @@ public final class MainActivity extends Activity {
     }
     private String getCurrentWebVersion() {
         String version = preferences().getString(PREF_WEB_VERSION, BUNDLED_WEB_VERSION);
-        return isVersion(version) ? version : BUNDLED_WEB_VERSION;
+        if (isVersion(version) && compareVersion(version, BUNDLED_WEB_VERSION) > 0) {
+            File installed = new File(new File(getFilesDir(), "web-updates"), version);
+            if (installed.isDirectory() && new File(installed, "index.html").isFile()) return version;
+        }
+        return BUNDLED_WEB_VERSION;
     }
     private static boolean isVersion(String s) {
         return s != null && s.matches("[0-9]{1,4}\\.[0-9]{1,4}\\.[0-9]{1,4}");
