@@ -36,7 +36,7 @@ jobs:
           import pathlib,hashlib,struct
           for f in sorted(pathlib.Path('web/assets/updates').glob('file_*.png')):
               raw=f.read_bytes()
-              if raw[:8]!=b'\\x89PNG\\r\\n\\x1a\\n':
+              if raw[:8].hex()!='89504e470d0a1a0a':
                   print(f.name,'não é PNG')
                   continue
               width,height=struct.unpack('>II',raw[16:24])
