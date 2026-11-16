@@ -60,6 +60,18 @@ class UpdateAnnouncementTests(unittest.TestCase):
                 with self.assertRaises(announce.AnnouncementError):
                     announce.load_changelog(file)
 
+    def test_new_changelog_has_new_delivery_id_even_without_public_version_bump(self):
+        first = announce.announcement_identity(self.data, self.version)
+        self.assertEqual(first["version"], self.version)
+        self.assertRegex(first["build"], r"^\\d+\\.\\d+\\.\\d+$")
+        altered = copy.deepcopy(self.data)
+        altered["releases"][0]["novidades"].append("Novo comportamento registrado e validado.")
+        newer = announce.announcement_identity(altered, self.version)
+        self.assertNotEqual(first["id"], newer["id"])
+        self.assertEqual(first["id"], announce.announcement_identity(self.data, self.version)["id"])
+        self.assertEqual(len(first["digest"]), 16)
+        self.assertIn("build-", first["id"])
+
     def test_media_missing_or_altered_blocks(self):
         with tempfile.TemporaryDirectory() as d:
             with self.assertRaises(announce.AnnouncementError):
