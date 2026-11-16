@@ -36,7 +36,12 @@
         "Partidas passam a armazenar amostras do domínio territorial, decisões táticas observadas e defesas de alto perigo comprovadas.",
         "Universo NEO recolhível: ranking, observadores, prêmios apenas após temporada encerrada, linha do tempo e Hall da Fama.",
         "Seleção Mundial NEO experimental em amistosos: elenco automático com atletas disponíveis, respeitando posições e evitando jogadores duplicados do adversário.",
-        "Copa Mundial NEO de clubes: usa o sistema de torneios já existente, sem criar placares ou campeões antecipadamente."
+        "Copa Mundial NEO de clubes: usa o sistema de torneios já existente, sem criar placares ou campeões antecipadamente.",
+        "Pacote Ego 19–30 (conteúdo 10.6.11): três níveis de domínio de habilidades realmente ativadas e especialização contextual por atributo.",
+        "Improvisação sob pressão, reações em cadeia e química entre jogadores construídas a partir de passes concluídos, sem ignorar impedimentos.",
+        "Finalizações com instinto de rebote, corridas em novos setores, respostas a contra-ataques e disputa de protagonismo entre companheiros em lances reais.",
+        "Evolução por derrotas documentadas, leitura dos rivais após duelos e momentos curtos de genialidade condicionados a Flow, energia e pressão.",
+        "Histórico recolhível na aba Recordes com os 12 sistemas, disponível no site e no conteúdo atualizável do aplicativo Android."
       ],
       "correcoes": [
         "Transferências não modificam os elencos-base do repositório e não deixam atletas duplicados nem equipes com menos de 11 titulares.",
@@ -62,7 +67,8 @@
         "Mercado Neo funciona no campeonato da temporada e não modifica os elencos de outras Copas já configuradas.",
         "As notícias automáticas usam somente dados realmente registrados, não resultados fabricados.",
         "O APK Android sem assinatura de distribuição não pode atualizar um aplicativo assinado por outra chave.",
-        "As 55 ideias seguem no roadmap: recursos não testados integralmente permanecem parciais; a Seleção Mundial NEO ainda não representa seleções nacionais oficiais."
+        "As 55 ideias seguem no roadmap: recursos não testados integralmente permanecem parciais; a Seleção Mundial NEO ainda não representa seleções nacionais oficiais.",
+        "Este pacote aprofunda as ideias 19–30 do roteiro; elas permanecem parciais até validação completa em partidas longas, equilíbrio e dispositivos variados."
       ]
     },
     {
