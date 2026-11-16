@@ -7,12 +7,14 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.ImageDecoder;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.Base64;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.webkit.JavascriptInterface;
@@ -446,18 +448,30 @@ public final class MainActivity extends Activity {
                     if (input == null) throw new IOException("A galeria não forneceu o arquivo.");
                     BitmapFactory.decodeStream(input, null, bounds);
                 }
-                if (bounds.outWidth <= 0 || bounds.outHeight <= 0)
-                    throw new IOException("Formato de foto não suportado. Selecione JPG ou PNG.");
+                // Decode common JPEG/PNG with BitmapFactory, including providers that
+                // do not report a MIME type. ImageDecoder supports newer HEIC/WebP photos.
                 BitmapFactory.Options opts = new BitmapFactory.Options();
                 opts.inPreferredConfig = Bitmap.Config.ARGB_8888;
                 int sample = 1;
-                while (bounds.outWidth / sample > 1024 || bounds.outHeight / sample > 1024) sample *= 2;
+                if (bounds.outWidth > 0 && bounds.outHeight > 0) {
+                    while (bounds.outWidth / sample > 1024 || bounds.outHeight / sample > 1024) sample *= 2;
+                }
                 opts.inSampleSize = sample;
                 try (InputStream input = getContentResolver().openInputStream(uri)) {
                     if (input == null) throw new IOException("O acesso à foto foi negado.");
                     bitmap = BitmapFactory.decodeStream(input, null, opts);
                 }
-                if (bitmap == null) throw new IOException("Não foi possível decodificar a foto.");
+                if (bitmap == null && Build.VERSION.SDK_INT >= 28) {
+                    final ImageDecoder.Source source = ImageDecoder.createSource(getContentResolver(), uri);
+                    bitmap = ImageDecoder.decodeBitmap(source, (decoder, info, src) -> {
+                        int divisor = 1;
+                        final int width = info.getSize().getWidth();
+                        final int height = info.getSize().getHeight();
+                        while (width / divisor > 1024 || height / divisor > 1024) divisor *= 2;
+                        decoder.setTargetSampleSize(divisor);
+                    });
+                }
+                if (bitmap == null) throw new IOException("Não foi possível decodificar esta imagem. Selecione JPG, PNG, WebP ou uma foto salva no aparelho.");
                 final int side = Math.min(bitmap.getWidth(), bitmap.getHeight());
                 final int left = (bitmap.getWidth() - side) / 2;
                 final int top = (bitmap.getHeight() - side) / 2;
