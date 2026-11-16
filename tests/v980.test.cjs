@@ -45,5 +45,5 @@ const js=fs.readFileSync(path.join(root,'neo-squads-v980.js'),'utf8');
 const css=fs.readFileSync(path.join(root,'neo-squads-v980.css'),'utf8');
 for(const kw of ['neo980-pitch','neo980-select','neo980-coach-card','neo980-ovr','data-neo960-profile','NeoPortraitUI','E.allTeams','neo980-bench'])assert.ok(js.includes(kw),kw);
 for(const kw of ['.neo980-pitch','.neo980-player','.neo980-headshot','.neo980-ovr','.neo980-coach-changes'])assert.ok(css.includes(kw),kw);
-assert.equal(fs.readFileSync(path.join(root,'VERSION'),'utf8').trim(),'1.6.0');
+assert.equal(fs.readFileSync(path.join(root,'VERSION'),'utf8').trim(),'1.7.0');
 console.log('PASS v9.8: coaching driven by losing streaks, early subs, preserved XI positions, OVR pitch and 9 club rosters');
