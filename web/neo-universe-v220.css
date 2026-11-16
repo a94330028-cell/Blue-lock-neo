@@ -1,0 +1,28 @@
+/* Blue Lock NEO — compact Living Universe (collapsed by default). */
+.neo-legacy{margin:12px 0;border:1px solid #287cbd;background:linear-gradient(145deg,#102d4e,#07182d);border-radius:13px;overflow:hidden;color:#eaf6ff;box-shadow:0 9px 22px #0003}
+.neo-legacy>summary{list-style:none;cursor:pointer;padding:12px 15px;font-size:13px;font-weight:900;letter-spacing:.3px;background:linear-gradient(95deg,#154e7f,#0d2545);display:flex;align-items:center;justify-content:space-between;gap:9px;outline-offset:-3px}
+.neo-legacy>summary::-webkit-details-marker{display:none}
+.neo-legacy>summary:after{content:"▾";font-size:17px;color:#69ccff}
+.neo-legacy[open]>summary:after{transform:rotate(180deg)}
+.neo-legacy>summary:focus-visible{outline:3px solid #66cdff}
+.neo-legacy-body{padding:12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:9px}
+.neo-legacy-note{color:#99bdd9;font-size:11px;line-height:1.45;margin:5px 0}
+.neo-legacy-body>.neo-legacy-note{grid-column:1/-1}
+.neo-legacy-group{min-width:0;padding:12px;border-radius:11px;border:1px solid #2b4e73;background:linear-gradient(155deg,#10253d,#0a1a2e);max-height:380px;overflow:auto}
+.neo-legacy-group h3{margin:0 0 10px;font-size:13px;color:#b5eaff;letter-spacing:.3px}
+.neo-legacy-group p{font-size:11px;line-height:1.45;margin:8px 0;overflow-wrap:anywhere}
+.neo-legacy-list p{border-bottom:1px solid #1f4362;padding:4px 0;margin:3px 0}
+.neo-legacy-award{color:#ffdd97!important;font-weight:800}
+.neo-legacy-picker{max-width:100%;width:100%;font-size:12px;padding:8px;border-radius:8px;border:1px solid #30628f;background:#0b203a;color:white}
+.neo-legacy-timeline{border-left:2px solid #2398d8;padding-left:9px}
+.neo-legacy-match{padding:8px;border:1px solid #2a5174;border-radius:8px;margin-bottom:6px;background:#0a2037}
+.neo-legacy-match summary{font-size:11px;font-weight:850;cursor:pointer;color:#e0f3ff}
+.neo-legacy-match>div{padding:6px 0}
+.neo-legacy-world-btn{padding:9px 12px;background:#0879c2;border:1px solid #49c2ff;border-radius:8px;color:white;font-weight:900;font-size:12px;cursor:pointer}
+.neo-legacy-world-btn:disabled{opacity:.45;cursor:not-allowed}
+@media(max-width:640px){
+ .neo-legacy>summary{padding:11px 10px;font-size:11px}
+ .neo-legacy-body{grid-template-columns:1fr;padding:7px}
+ .neo-legacy-group{max-height:250px;padding:9px}
+}
+@media(prefers-reduced-motion:reduce){.neo-legacy *{animation:none!important;transition:none!important}}
