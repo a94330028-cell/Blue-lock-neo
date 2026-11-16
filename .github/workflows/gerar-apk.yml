@@ -56,6 +56,9 @@ jobs:
           node tests/v1000.test.cjs
           node tests/v1030.test.cjs
           node tests/v1040.test.cjs
+          node tests/v1050.test.cjs
+          node --check web/neo-clubs-v1050.js
+          node --check web/neo-photo-recovery-v1050.js
           node --check web/neo-football-v1010.js
           node --check web/neo-insights-v1020.js
           node --check web/neo-tournament-v1030.js
