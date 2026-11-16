@@ -62,7 +62,7 @@ assert.ok(read('web/index.html').includes('neo-evolution-v120.js'));
 assert.ok(read('web/index.html').includes('neo-evolution-v120.css'));
 const worker=read('web/service-worker.js');
 assert.ok(worker.includes('./neo-evolution-v120.js')&&worker.includes('./neo-evolution-v120.css'));
-assert.ok(worker.includes('blue-lock-neo-v1.8.0-living-career'));
+assert.ok(worker.includes('blue-lock-neo-v1.9.0-universe'));
 const changelog=JSON.parse(read('CHANGELOG.json'));
 assert.equal(changelog.current_version,'1.8.0');
 assert.equal(read('web/VERSION').trim(),'1.8.0');
