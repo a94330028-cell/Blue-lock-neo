@@ -98,9 +98,17 @@ const server=http.createServer((req,res)=>{
       'mobile market must restore real valuation rows');
     assert.ok(await page.$eval('#neoRefUxHub .neo-ux-leading',el=>el.textContent.includes('¥')),
       'market values must be shown in yen');
+    assert.ok(await page.$eval('#neoRefUxHub .neo-ux-podium',el=>el.querySelectorAll('.neo-ux-podium-card').length>=1),
+      'market uses the same large podium as every ranking');
+    await page.click('#neoRefUxHub [data-neo-ux-back="1"]');
+    assert.ok(await page.$eval('#neoRefUxHub .neo-ux-rank-tabs',el=>el.getBoundingClientRect().height>0),
+      'market back opens the unified ranking');
+    await page.click('#neoRefUxHub [data-neo-ux-rank="assists"]');
+    assert.ok(await page.$eval('#neoRefUxHub .neo-ux-rank-meta',el=>el.textContent.includes('atletas classificados')),
+      'assists use the same ranking layout');
     await page.click('#neoRefUxHub [data-neo-ux-back="1"]');
     assert.ok(await page.evaluate(()=>!document.body.classList.contains('neo-ux-open')),
-      'mobile user can return from market');
+      'ranking close goes back to mobile home');
    }
    // Ranking V10: simulate ONE legitimate fixture at representative PC/mobile sizes.
    // No fabricated match stats or external images.
@@ -132,6 +140,7 @@ const server=http.createServer((req,res)=>{
     const portraits=await page.$$eval('#neo250-podium .neo250-champion img[data-portrait]',imgs=>imgs.map(img=>({
       hasName:!!img.getAttribute('data-player-name'),fit:getComputedStyle(img).objectFit,
       alt:img.alt})));
+    console.log('PODIUM PORTRAITS',width+'x'+height,JSON.stringify(portraits));
     assert.equal(portraits.length,3,'podium shows three existing registered player portraits');
     assert.ok(portraits.every(p=>p.hasName&&p.fit==='contain'&&p.alt));
     const podiumVisibility=await page.$eval('#neo250-podium .neo250-position-1',el=>({
