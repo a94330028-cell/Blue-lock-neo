@@ -6,7 +6,7 @@ A regra do projeto é: **primeiro validar, depois passar para o próximo bloco**
 
 - Testes positivos e negativos: **12 de 12 aprovados** no [workflow #43904207200](https://github.com/a94330028-cell/Blue-lock-neo/actions/runs/43904207200).
 - Simulação com sementes fixas: 3 partidas completas e resultados repetíveis, sem alteração dos elencos-base.
-- Navegador Chromium real: 1366×768, 1600×900 e 390×844, **sem exceções JavaScript**; carregamento da temporada, Recordes e alternância da escalação foram verificados.
+- Navegador Chromium real: 1366×768, 1600×900 e 390×844, **sem exceções JavaScript**; carregamento da temporada, Recordes e alternância da escalação foram verificados. A [execução #43905647806](https://github.com/a94330028-cell/Blue-lock-neo/actions/runs/43905647806) confirmou também que salvar e recarregar a página preserva os dados no navegador em todas as três resoluções.
 - Compilações de site e APK: passaram no mesmo commit de referência.
 - Correções aplicadas: conclusão real de passes, recuperação real de posse e reinício do jogo, ponte da temporada salva.
 
