@@ -1,13 +1,13 @@
-# Blue Lock NEO 10.0.0 — evolução tática e correção da galeria
+# Blue Lock NEO 10.0.1 — evolução tática e correção da galeria
 
-## v10.0.0 — O que mudou
+## v10.0.1 — O que mudou
 - **Android / galeria:** a importação pelo navegador tenta abrir a imagem via Blob URL quando FileReader falha. Retratos dos clubes históricos passam a ser convertidos para JPEG real, copiado para IndexedDB, em vez de armazenar um arquivo temporário do provedor Android.
 - **Galeria compacta:** botões menores na versão móvel, opções existentes preservadas.
 - **Partidas:** cada clube original pode usar planos automáticos fiéis à sua identidade (Bastard: construção; PXG: transição; Manshine: velocidade; Barcha: posse/drible; Ubers: bloco defensivo). Os controles manuais não são substituídos.
 - **Raio-X ao vivo:** finalizações, defesas, chutes na área, cruzamentos e duelos exibidos somente quando o motor registra os lances.
 - **Prêmios parciais:** artilharia, assistências, goleiros, defensores e melhor média calculados apenas das partidas de liga já salvas.
 - **Recordes:** arquivo de jogos concluídos com gols e lances que constam das súmulas; não inventa replays em vídeo nem altera resultados.
-- **Offline:** módulo 10.0 incluído no cache. Versão de conteúdo 10.0.0, **núcleo Android ainda 9.9.4**.
+- **Offline:** módulo 10.0 incluído no cache. Versão de conteúdo 10.0.1, **núcleo Android ainda 9.9.4**.
 
 ### Atenção ao atualizar o APK
 O seletor *nativo* de imagens da v9.9.4 precisa de APK Android recompilado. O APK atualmente publicado no GitHub Releases é de **teste (assinatura debug)**; ele não pode substituir com segurança um APK de assinatura diferente. Nunca desinstale o app nem limpe os dados para tentar corrigir imagens: isso pode apagar o IndexedDB e as temporadas. Faça backup das fotos e dos saves antes de experimentar qualquer instalação. A atualização **do site** pode ser recebida pelo botão Atualizar sem trocar o APK, mas o leitor nativo só fica disponível em um APK compatível com a assinatura já instalada.
