@@ -214,8 +214,9 @@ def build_payloads(data, version):
             for i, part in enumerate(split_lines(items)):
                 fields.append({"name": label if i == 0 else label + " (continuação)", "value": part, "inline": False})
     footer = "BLUE LOCK NEO • OFFICIAL UPDATE SYSTEM"
+    identity = announcement_identity(data, version)
     description = ("**⚡ UMA NOVA ATUALIZAÇÃO CHEGOU!**\n"
-                   "O Blue Lock NEO recebeu novidades documentadas. Veja os detalhes abaixo.")
+                   "Conteúdo **" + identity["build"] + "** · novidades verificadas do Blue Lock NEO.")
     image = SITE_URL + data["media"]["banner"]["path"]
     avatar = SITE_URL + data["media"]["avatar"]["path"]
     embeds, current = [], None
