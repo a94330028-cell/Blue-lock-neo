@@ -22,7 +22,7 @@ function state(m){
  if(!m._neo230) m._neo230={events:[],losses:Object.create(null),wins:Object.create(null),
    chemistry:Object.create(null),completions:0,launched:[],recentAbility:[null,null],
    recentShot:[null,null],conflicts:Object.create(null),genius:0,innovations:0,
-   lastEvent:Object.create(null),counters:0};
+   lastEvent:Object.create(null),counters:0,turnovers:[-9999,-9999],lastOwner:null};
  return m._neo230;
 }
 function event(m,idea,p,message,other=''){
@@ -51,7 +51,7 @@ function skillTier(m,p,ability){
 function launched(m,p,q){
  if(!m||!physical(p)||!physical(q)||!positive(p,q))return false;
  if(m.ball?.mode!=='pass'||m.ball.by!==p||m.ball.to!==q)return false;
- const s=state(m);s.launched.push({from:p.name,to:q.name,side:p.side,at:N(m.time),done:false});
+ const s=state(m);s.launched.push({from:p.name,to:q.name,side:p.side,at:N(m.time),token:m.lastPass||null,done:false});
  if(s.launched.length>8)s.launched.shift();
  return true;
 }
@@ -61,7 +61,7 @@ function observeReception(m){
  let success=false;
  for(const x of s.launched){
   if(x.done)continue;
-  if(N(m.time)-x.at>95){x.done=true;continue;}
+  if(N(m.time)-x.at>95||x.token&&m.lastPass!==x.token){x.done=true;continue;}
   // An opponent interception, loose-ball restart or unrelated carry ends the opportunity.
   if(m.ball.mode!=='pass'&&m.ball.mode!=='carry'){x.done=true;continue;}
   if(m.ball.mode==='carry'&&(receiver?.name!==x.to||receiver?.side!==x.side)){
@@ -100,6 +100,20 @@ function improvise(m,p){
  if(ok){state(m).innovations++;event(m,20,p,'Improviso técnico: passe legal para escapar da pressão',q.name);}
  return ok;
 }
+// Counter-attacks require a real change of ball ownership, never a kickoff.
+function observeTurnover(m,previousSide,previousPhase){
+ if(!m)return false;
+ const s=state(m),now=m.ball?.owner?.side;
+ if(previousPhase!=='play'||m.phase!=='play'){
+  s.lastOwner=Number.isInteger(now)?now:null;return false;
+ }
+ const prev=Number.isInteger(previousSide)?previousSide:s.lastOwner;
+ if(!Number.isInteger(now)){if(Number.isInteger(prev))s.lastOwner=prev;return false;}
+ if(Number.isInteger(prev)&&prev!==now){
+  s.turnovers[now]=N(m.time);s.lastOwner=now;return true;
+ }
+ s.lastOwner=now;return false;
+}
 // 23: each activated real weapon influences only its own relevant action.
 function weaponFactor(m,p,stat){
  const a=weapon(m,p);if(!a||!p||a.stat!==stat)return 1;
@@ -135,7 +149,7 @@ function adaptableRun(m,p,owner,original){
 // 26: counter-attack initiative exists only immediately after a real turnover.
 function counterRun(m,p,owner,original){
  if(!m||!physical(p)||!physical(owner)||p.side!==owner.side||!attacker(p)||N(p.stamina)<37)return original;
- const age=N(m.time)-N(m.lastTurnover?.[p.side]??-999);
+ const age=N(m.time)-N(state(m).turnovers[p.side]);
  if(age<0||age>=9||N(m.progress?.(p.side,owner.x))<350)return original;
  if(['check','support','drop-off','decoy','third-man'].includes(original)){
   event(m,26,p,'Contra-ataque de Ego após recuperar a posse');
@@ -162,7 +176,7 @@ function shotCompetition(m,p){
 function lessonFactor(m,p,stat){
  if(!p||!['vision','control','tackling','positioning','passing'].includes(stat))return 1;
  const record=career(m,p)?.neo230;
- if(N(record?.defeatLessons)<2||N(m.score?.[p.side])>=N(m.score?.[1-p.side]))return 1;
+ if(N(record?.defeatLessons)<2||m?.phase!=='play')return 1;
  return 1.013;
 }
 function adaptationFactor(m,p,stat){
@@ -219,7 +233,8 @@ function report(m){
 function recordSeason(season,fixture,match,round){
  const d=fixture?.details;if(!season||season.schema!==2||!Array.isArray(d?.players)||
   !Array.isArray(d?.score)||!Array.isArray(fixture.result)||
-  !d.score.every((g,i)=>g===fixture.result[i]))return false;
+  d.score.length!==2||fixture.result.length!==2||
+  !d.score.every((g,i)=>Number.isInteger(g)&&g>=0&&g===fixture.result[i]))return false;
  const c=season.career;if(!c?.players)return false;
  c.neo230Recorded=c.neo230Recorded||{};
  const stamp=round+'|'+fixture.home+'|'+fixture.away;
@@ -282,7 +297,12 @@ function adapt(engine){
  }
  if(typeof proto.step==='function'){
   const old=proto.step;
-  proto.step=function(dt){const res=old.call(this,dt);observeReception(this);return res;};
+  proto.step=function(dt){
+   const previousSide=this.ball?.owner?.side,previousPhase=this.phase;
+   const res=old.call(this,dt);
+   observeTurnover(this,previousSide,previousPhase);
+   observeReception(this);return res;
+  };
  }
  if(typeof proto._ownerDecision==='function'){
   const old=proto._ownerDecision;
@@ -379,7 +399,7 @@ function mount(win){
  }
  if(doc.readyState==='loading')doc.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 }
-return {state,event,skillTier,launched,observeReception,chemistry,improvise,weaponFactor,instinct,
+return {state,event,skillTier,launched,observeReception,observeTurnover,chemistry,improvise,weaponFactor,instinct,
  adaptableRun,counterRun,shotCompetition,lessonFactor,adaptationFactor,competitionFactor,
  genius,multiplier,onDuel,onWeapon,report,recordSeason,adapt,mount};
 });
