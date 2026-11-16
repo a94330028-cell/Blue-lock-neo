@@ -2241,6 +2241,9 @@ window.addEventListener('appinstalled',()=>{neoDeferredInstall=null;neoAppMessag
 document.getElementById('installApp')?.addEventListener('click',neoInstallApp);
 document.getElementById('keepPortraits')?.addEventListener('click',neoProtectPortraits);
 window.NeoAppStorage={report:neoStorageReport,protect:neoProtectPortraits};
+// Read-only match reference for verified live commentary (no game controls).
+window.NeoMatchBridge=Object.freeze({getMatch:()=>match});
+
 if(!window.BlueLockAndroid && 'serviceWorker' in navigator && location.protocol!=='file:' && !location.pathname.endsWith('/jogar-offline.html')){
   window.addEventListener('load',()=>{
     navigator.serviceWorker.register('./service-worker.js',{scope:'./'})
