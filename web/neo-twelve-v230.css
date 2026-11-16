@@ -1,0 +1,15 @@
+/* Compact backlog 19–30: never forces a tall panel into the match page. */
+.neo230-compact{margin:11px 0;border:1px solid #326b9c;border-radius:12px;overflow:hidden;background:linear-gradient(130deg,#102d4b,#08192d);box-shadow:0 7px 22px #0003;color:#e8f7ff}
+.neo230-compact>summary{padding:12px 14px;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;color:#c6eeff;font-size:13px;font-weight:900;letter-spacing:.25px;background:linear-gradient(95deg,#124274,#102b4b)}
+.neo230-compact>summary::-webkit-details-marker{display:none}
+.neo230-compact>summary:after{content:"▾";color:#75cfff;font-size:17px}
+.neo230-compact[open]>summary:after{transform:rotate(180deg)}
+.neo230-compact>summary:focus-visible,.neo230-match>summary:focus-visible{outline:2px solid #79d6ff;outline-offset:-3px}
+.neo230-content{padding:11px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));gap:9px;max-height:450px;overflow-y:auto}
+.neo230-content>p{grid-column:1/-1;margin:2px 0 6px;color:#aac8df;font-size:11px;line-height:1.5}
+.neo230-match{border:1px solid #2a5378;border-radius:9px;background:#0b233d;min-width:0;padding:7px 9px;align-self:start}
+.neo230-match>summary{cursor:pointer;color:#eaf6ff;font-size:12px;font-weight:800;line-height:1.4}
+.neo230-timeline{max-height:205px;overflow:auto;padding:6px 0 0}
+.neo230-timeline p{font-size:11px;line-height:1.45;color:#b8d6ec;padding:5px 0;margin:0;border-top:1px solid #244664;overflow-wrap:anywhere}
+@media(max-width:700px){.neo230-compact>summary{padding:10px;font-size:12px}.neo230-content{max-height:300px;grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.neo230-compact *{transition:none!important;animation:none!important}}
