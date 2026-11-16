@@ -63,7 +63,7 @@ class UpdateAnnouncementTests(unittest.TestCase):
     def test_new_changelog_has_new_delivery_id_even_without_public_version_bump(self):
         first = announce.announcement_identity(self.data, self.version)
         self.assertEqual(first["version"], self.version)
-        self.assertRegex(first["build"], r"^\\d+\\.\\d+\\.\\d+$")
+        self.assertRegex(first["build"], r"^\d+\.\d+\.\d+$")
         altered = copy.deepcopy(self.data)
         altered["releases"][0]["novidades"].append("Novo comportamento registrado e validado.")
         newer = announce.announcement_identity(altered, self.version)
