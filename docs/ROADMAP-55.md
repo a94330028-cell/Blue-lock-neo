@@ -86,6 +86,32 @@ Este lote adiciona duas camadas testáveis sem substituir o motor: `web/neo-adva
 
 **Estado de aceite:** este marco integra funcionalidades parciais de vários itens, mas **não conclui automaticamente 19–55**. Continuam necessárias verificações de todas as competências por item, partidas completas, balanceamento, melhorias de câmera e narração, banco inteligente, Seleção Mundial competitiva e validação de compatibilidade de APK assinado.
 
+## Lote de continuidade — 12 ideias 19–30 (conteúdo Android 10.6.11)
+
+Os doze itens abaixo receberam mecanismos adicionais em `web/neo-twelve-v230.js`, com
+relatórios compactos na aba Recordes (`web/neo-twelve-v230.css`) e testes de regressão
+(`tests/v230.test.cjs`). **Esta integração amplia a implementação, mas não declara os
+12 itens totalmente concluídos** sem testes prolongados, balanceamento e validação visual.
+
+- **19 — Evolução de habilidades:** três níveis de domínio com experiência registrada e efeitos pequenos somente durante uma arma realmente ativa.
+- **20 — Jogadas improvisadas:** passes de escape sob pressão usando posse, rotas seguras e impedimento real.
+- **21 — Reações em cadeia:** combinações após passes recebidos e ativações reais de armas em contextos diferentes.
+- **22 — Química:** contagem de conexões ao receber o passe, não apenas ao lançá-lo; modifica a preferência de passe.
+- **23 — Armas especializadas:** impacto de atributos limitado ao tipo de habilidade realmente ativada, preservando energia e recargas originais.
+- **24 — Instinto artilheiro:** leitura de rebotes confirmados e técnicas de finalização dentro da área, sem gol garantido.
+- **25 — Flexibilidade de posições:** movimentos temporários baseados em participação real anterior, sem alterar permanentemente a formação.
+- **26 — Contra-ataques de Ego:** corridas de ruptura logo após uma recuperação real da posse.
+- **27 — Conflitos entre companheiros:** disputas por protagonismo deduzidas de finalizações verdadeiras e motivação curta, sem sabotar equipes.
+- **28 — Evolução por derrotas:** lições persistidas somente de atuações documentadas em derrotas.
+- **29 — IA adaptativa:** pequenos ajustes de marcação ao enfrentar rivais que venceram duelos reais anteriores.
+- **30 — Genialidade:** janela curta mediante Flow, habilidade ativada, pressão e energia suficientes; resultado sempre decidido pelo motor original.
+
+**Garantias do lote:** partidas determinísticas com semente fixa; registro idempotente por
+confronto; eventos limitados para não inflar saves ou páginas; sem remoção de fotos,
+jogadores criados ou dados de temporadas; cache offline atualizado. Permanecem pendentes
+melhorias de personalização profunda das rivalidades, avaliação de 20 rodadas completas
+e testes visuais em celulares e monitores de diferentes tamanhos.
+
 ## Critérios obrigatórios de aceite
 
 1. As mecânicas precisam alterar decisões ou estatísticas reais, não apenas gerar mensagens ou efeitos.
