@@ -22,9 +22,10 @@
   if(['CA','ST','CF','SA'].includes(r))return 'ST';return 'CM';
  };
  let selected='all',expanded=false,allPlayers=false,searchTerm='';
- function state(){try{const s=JSON.parse(localStorage.getItem('neo-season-v2')||'null');if(s?.schema!==2)return null;E.Progression.reconcileGoalkeepers(s);return s;}catch(e){return null}}
- // Inclui titulares, reservas, 5 mestres e atletas de temporadas salvas.
- function market(s){return D.roster(E,s)}
+ function state(){try{const s=JSON.parse(localStorage.getItem('neo-season-v2')||'null');if(s?.schema!==2)return null;E.Progression.reconcileGoalkeepers(s);E.Progression.reconcileBids(s);return s;}catch(e){return null}}
+ // O ranking da Liga mostra apenas Bastard, Barcha, Manshine, PXG e Ubers.
+ // Escalações XI, clubes históricos e copas são outros modos, não entram no leilão da Liga.
+ function market(s){return D.roster(E,s,{scope:'league'})}
  function clubOf(p){return E.teamById(p?.club)||{id:p?.club||'',short:p?.club||'CLUBE',name:p?.club||'Clube',color:'#61b9e9'};}
  function photo(p,cls='neo960-avatar'){
   const t=clubOf(p);
