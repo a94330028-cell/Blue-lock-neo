@@ -104,6 +104,18 @@ function setupGalleryTools(){
   const p=document.createElement('div');p.className='neo-image-status';p.id='neoImageSummary';p.setAttribute('role','status');
   const list=filters.querySelector('.gallery-meta');if(list)list.insertAdjacentElement('afterend',p);else filters.append(p);
  }
+ if(tools&&!$('neoExportShortcut')){
+  const shortcut=document.createElement('button');shortcut.type='button';
+  shortcut.id='neoExportShortcut';shortcut.className='button ghost';
+  shortcut.textContent='📤 Exportar retratos';
+  shortcut.setAttribute('aria-label','Exportar backup das imagens enviadas');
+  tools.insertBefore(shortcut,tools.querySelector('details'));
+  shortcut.addEventListener('click',()=>{
+   const original=$('exportPortraits');
+   if(original)original.click();
+   else toast('Backup indisponível nesta versão. Atualize os arquivos do jogo.');
+  });
+ }
  if(tools&&!$('neoZipButton')){
   const button=document.createElement('button');button.type='button';button.id='neoZipButton';button.className='button ghost';button.textContent='📦 Importar imagens ZIP';tools.insertBefore(button,tools.querySelector('details'));
   const chooser=document.createElement('input');chooser.type='file';chooser.accept='.zip,application/zip,application/x-zip-compressed';chooser.style.display='none';chooser.id='neoZipInput';document.body.append(chooser);
