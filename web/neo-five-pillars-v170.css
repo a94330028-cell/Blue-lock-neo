@@ -1,0 +1,23 @@
+/* Blue Lock NEO 1.6 — compact, accessible Five Pillars journal. */
+#neo170-five-pillars{margin:15px 0 18px;padding:13px;border:1px solid #398bc1;border-radius:16px;
+ background:radial-gradient(ellipse at 95% 0%,#18517e 0%,transparent 54%),
+ linear-gradient(150deg,#10253d,#081629 85%);box-shadow:0 14px 34px #02102091;color:#eaf7ff}
+.neo170-title{display:flex;align-items:baseline;gap:8px;justify-content:space-between;flex-wrap:wrap;
+ padding-bottom:10px;border-bottom:1px solid #3976a1;margin-bottom:11px}
+.neo170-title strong{font-size:15px;letter-spacing:.035em;color:#dbfaff;font-weight:950}
+.neo170-title small{font-size:9px;letter-spacing:.06em;color:#92bedb;font-weight:800}
+.neo170-select{display:block;width:100%;height:42px;margin-bottom:11px;padding:8px 11px;
+ border-radius:10px;border:1px solid #53aee0;background:#0c2946;color:#f2fcff;font:600 12px system-ui}
+.neo170-select:focus-visible{outline:2px solid #aaf7ff;outline-offset:2px}
+.neo170-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.neo170-pillar{padding:10px;border:1px solid #366a94;border-radius:11px;
+ background:linear-gradient(110deg,#133958,#102b49);min-width:0}
+.neo170-pillar strong{font-size:12px;font-weight:900;color:#9aebff}
+.neo170-pillar p{font-size:11px;line-height:1.5;color:#d8edfc;margin:5px 0 0;overflow-wrap:anywhere}
+.neo170-history{border:1px solid #285475;border-radius:10px;padding:10px;margin-top:10px;background:#0b2340}
+.neo170-history strong{font-size:11px;color:#9fe7f8}
+.neo170-history p{font-size:10px;line-height:1.5;color:#c5dff1;margin:8px 0 0}
+.neo170-empty{font-size:11px;color:#aec9dd;line-height:1.55}
+@media(max-width:480px){#neo170-five-pillars{padding:10px}.neo170-grid{grid-template-columns:1fr}
+ .neo170-title strong{font-size:13px}}
+@media(prefers-reduced-motion:reduce){#neo170-five-pillars *{transition:none!important;animation:none!important}}
