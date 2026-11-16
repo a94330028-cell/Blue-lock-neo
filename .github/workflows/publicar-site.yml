@@ -52,6 +52,7 @@ jobs:
           node tests/v1051.test.cjs
           node tests/v1060.test.cjs
           node tests/v110.test.cjs
+          node tests/v120.test.cjs
           python3 -m unittest discover -s tests -p test_neo_announcer.py
           python3 tools/neo_update_announcement.py validate
           python tools/gerar_atualizacao.py
