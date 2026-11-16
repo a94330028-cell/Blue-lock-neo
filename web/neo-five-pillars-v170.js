@@ -51,8 +51,7 @@ function identity(player,career){
     ['conductor',num(attrs.passing)+num(attrs.vision)*.20],
     ['wildcard',num(attrs.ego)+num(attrs.dribbling)*.15]
    ];
-   const seed=hash(n);
-   weights.sort((a,b)=>b[1]-a[1]||((seed%6)-3)||a[0].localeCompare(b[0]));
+   weights.sort((a,b)=>b[1]-a[1]||((hash(n+'|'+a[0])%13)-(hash(n+'|'+b[0])%13))||a[0].localeCompare(b[0]));
    type=weights[0][0];
   }
  }
@@ -258,6 +257,8 @@ function adapt(engine){
    if(!p)return out;
    p._neo170EgoPeak=Math.max(num(p._neo170EgoPeak),num(p.ego));
    if(num(p.flowCount)>prior){
+    // Core game resets Ego to 25 when Flow starts; preserve the actual threshold peak.
+    p._neo170EgoPeak=Math.max(num(p._neo170EgoPeak),88);
     const id=getIdentity(this,p);
     note(this,p,'flow',id.flowName+' ativado por '+String(reason||'desempenho')+'.');
    }
