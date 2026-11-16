@@ -173,7 +173,18 @@
    const target=$('neo990-xi');
    if(!xi.players.length){target.innerHTML='<p class="neo990-empty">A seleção será formada quando uma rodada inteira terminar com súmulas de jogadores disponíveis.</p>';return;}
    const starters=xi.players.map((p,i)=>'<button type="button" class="neo990-player" data-profile="'+encodeURIComponent(p.name+'|'+p.club)+'">'+photo(p.name,p.club)+'<span><b>'+esc(p.name)+'</b><small>'+esc(E.teamById(p.club)?.short||p.club)+' · '+esc(p.slot)+(p.adapted?' (adaptado)':'')+'</small></span><strong>'+p.score.toFixed(1)+'</strong></button>').join('');
-   target.innerHTML='<div class="neo990-team-summary"><b>4-3-3 · Melhor XI</b><small>'+xi.candidateCount+' atletas avaliados · pontuação por posição e ações reais</small></div><div class="neo990-grid">'+starters+'</div><details class="neo990-bench"><summary>Banco e destaques ('+xi.reserves.length+')</summary>'+xi.reserves.map(p=>'<div>'+photo(p.name,p.club)+'<span>'+esc(p.name)+' · '+esc(p.role)+'</span><b>'+p.score.toFixed(1)+'</b></div>').join('')+'</details>';
+   const spots=win.NeoPitch1040?.layout({formationName:'4-3-3',formation:E.DEFAULT_FORMATION},E.DEFAULT_FORMATION)||
+     E.DEFAULT_FORMATION.map(f=>({lane:Math.max(10,Math.min(90,f.y*100)),depth:Math.max(18,Math.min(91,(1-f.x)*100))}));
+   const pitchPlayers=xi.players.map((p,i)=>{
+     const spot=spots[i]||{lane:50,depth:50};
+     return '<button type="button" class="neo990-pitch-player" data-profile="'+encodeURIComponent(p.name+'|'+p.club)+'" style="--lane:'+spot.lane+'%;--depth:'+spot.depth+'%" title="'+esc(p.name)+' · '+esc(p.slot)+' · '+p.score.toFixed(1)+'" aria-label="Abrir ficha de '+esc(p.name)+', posição '+esc(p.slot)+'">'+
+       photo(p.name,p.club)+'<span class="neo990-position">'+esc(p.slot)+'</span><span class="neo990-name">'+esc(p.name)+'</span><strong class="neo990-score">'+p.score.toFixed(1)+'</strong></button>';
+   }).join('');
+   const pitch='<div class="neo990-xi-pitch" role="group" aria-label="Seleção do Campeonato em campo, formação 4-3-3"><div class="neo980-pitch-markings"><span class="neo980-center-circle"></span><span class="neo980-penalty neo980-penalty-top"></span><span class="neo980-penalty neo980-penalty-bottom"></span></div><span class="neo980-goal goal-top"></span><span class="neo980-goal goal-bottom"></span>'+pitchPlayers+'</div>';
+   target.innerHTML='<div class="neo990-team-summary"><b>4-3-3 · Melhor XI</b><small>'+xi.candidateCount+' atletas avaliados · posições corretas, retratos e notas no campo</small></div>'+
+      pitch+'<p class="neo990-xi-caption">⬆ Ataque · 🧤 Goleiro na base · Toque em um atleta para abrir sua ficha</p>'+
+      '<details class="neo990-xi-list"><summary>☷ Ver escalação em lista</summary><div class="neo990-grid">'+starters+'</div></details>'+
+      '<details class="neo990-bench"><summary>Banco e destaques ('+xi.reserves.length+')</summary>'+xi.reserves.map(p=>'<div>'+photo(p.name,p.club)+'<span>'+esc(p.name)+' · '+esc(p.role)+'</span><b>'+p.score.toFixed(1)+'</b></div>').join('')+'</details>';
    if(xi.players.length===11){const team=registerDynamicTeam(E,xi);updateFriendly(team);}
   }
   if(doc.readyState==='loading')doc.addEventListener('DOMContentLoaded',()=>{injectGallery();render(true);}, {once:true});
