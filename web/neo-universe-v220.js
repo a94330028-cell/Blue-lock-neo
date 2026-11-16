@@ -268,9 +268,9 @@ function mount(win){
     }
    }
    home.value=opponentId;away.value=WORLD_ID;
-   home.dispatchEvent(new win.Event('change',{bubbles:true}));
-   away.dispatchEvent(new win.Event('change',{bubbles:true}));
-   mundial.append(make('p','neo-legacy-note','WORLD XI pronto: '+selected.roster.verifiedCount+' atletas baseados em atuações oficiais. Abra Partida para jogar.'));
+   const prepare=doc.getElementById('prepare');
+   if(prepare)prepare.click();
+   mundial.append(make('p','neo-legacy-note','WORLD XI escalado com '+selected.roster.verifiedCount+' atletas com partidas oficiais. Pronto para começar.'));
    const matchTab=doc.querySelector('.nav button[data-tab="match"]');matchTab?.click();
   });
   mundial.append(exhibition);
