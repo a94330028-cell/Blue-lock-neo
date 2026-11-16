@@ -26,7 +26,7 @@ function startLocalSite(){
    }catch(_){response.writeHead(400).end();}
   });
   server.on('error',reject);
-  server.listen(0,'127.0.0.1',()=>resolve('http://127.0.0.1:'+server.address().port+'/'));
+  server.listen(43819,'127.0.0.1',()=>resolve('http://127.0.0.1:'+server.address().port+'/'));
  });
 }
 function openGame(origin){
@@ -46,5 +46,8 @@ function initUpdater(){
  autoUpdater.on('error',e=>console.warn('Update:',e.message));
  autoUpdater.checkForUpdatesAndNotify().catch(e=>console.warn('Update check:',e.message));
 }
-app.whenReady().then(async()=>{try{const origin=await startLocalSite();openGame(origin);initUpdater();}catch(error){dialog.showErrorBox('Blue Lock NEO','Falha ao iniciar: '+error.message);app.quit();}});
+const singleInstance = app.requestSingleInstanceLock();
+if (!singleInstance) app.quit();
+else app.on('second-instance',()=>{ if(window){if(window.isMinimized())window.restore();window.focus();} });
+if(singleInstance) app.whenReady().then(async()=>{try{const origin=await startLocalSite();openGame(origin);initUpdater();}catch(error){dialog.showErrorBox('Blue Lock NEO','Falha ao iniciar: '+error.message);app.quit();}});
 app.on('window-all-closed',()=>{if(server)server.close();if(process.platform!=='darwin')app.quit();});
