@@ -512,6 +512,8 @@ function clampCam(v,min,max){return Math.max(min,Math.min(max,v));}
 function cameraView(ball){
   if(!cameraFollow||!ball){cameraActualZoom=1;return {zoom:1,x:PITCH.cx,y:PITCH.cy};}
   const cinematic=$('cinematicCamera')?.checked!==false;
+  // Camera cues come from the actual game engine; never from scripted or fake goals.
+  const neoCue=!replaying?window.NeoMatchPulseV240?.cameraCue?.(match):null;
   const speed=Math.hypot(ball.vx||0,ball.vy||0);
   const fx=match?.skillEffects?.slice(-1)[0];
   const activeSkill=!!fx&&match.time>=fx.start&&match.time<fx.until&&
@@ -522,14 +524,17 @@ function cameraView(ball){
     if(ball.mode==='air'||(ball.mode==='pass'&&speed>400))zoomTarget-=.18;
     if(ball.mode==='shot')zoomTarget-=.14;
     if(activeSkill)zoomTarget+=.08;
+    if(neoCue?.kind==='shot')zoomTarget-=.055;
+    if(neoCue?.kind==='skill')zoomTarget+=.045;
     if(ball.owner&&Math.abs(ball.x-(ball.owner.side===0?PITCH.right:PITCH.left))<410)zoomTarget+=.03;
   }
   zoomTarget=clampCam(zoomTarget,1.08,2.75);
   cameraActualZoom+=(zoomTarget-cameraActualZoom)*(cinematic?.10:.29);
   const zoom=cameraActualZoom,halfW=PITCH.width/(2*zoom),halfH=PITCH.height/(2*zoom);
   const directionalLead=ball.owner?(ball.owner.side===0?92:-92):clampCam((ball.vx||0)*.24,-155,155);
-  const targetX=clampCam(ball.x+(cinematic?directionalLead:directionalLead*.46),halfW,PITCH.width-halfW);
-  const targetY=clampCam(ball.y+(ball.vy||0)*(cinematic?.10:.035),halfH,PITCH.height-halfH);
+  const focal=neoCue?.kind==='skill'&&Number.isFinite(neoCue.x)&&Number.isFinite(neoCue.y)?neoCue:ball;
+  const targetX=clampCam(focal.x+(cinematic?directionalLead:directionalLead*.46),halfW,PITCH.width-halfW);
+  const targetY=clampCam(focal.y+(ball.vy||0)*(cinematic?.10:.035),halfH,PITCH.height-halfH);
   if(lastCameraMatch!==match){cameraX=targetX;cameraY=targetY;cameraActualZoom=zoomTarget;lastCameraMatch=match;}
   const smooth=cinematic?.087:.15;
   cameraX+=(targetX-cameraX)*smooth;cameraY+=(targetY-cameraY)*smooth;
