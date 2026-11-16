@@ -1,4 +1,14 @@
-# Blue Lock NEO 9.9.2 — Galeria compacta e correção de fotos Android
+# Blue Lock NEO 9.9.3 — Galeria sem ficha gigante e busca correta de imagens
+
+## ✅ v9.9.3 — Pesquisa de fotos e comportamento da Galeria
+
+- **Pinterest dos clubes históricos:** a pesquisa usa nome do jogador + clube + ano + futebol; não inclui mais “Blue Lock manga panel” para Manchester United 2008, Flamengo 2019, Sport Recife 2015 e Mirassol 2025.
+- **Pinterest dos jogadores Blue Lock:** continua usando o título e a referência ao mangá.
+- **Galeria:** clicar em um retrato, nome ou card **não abre mais a ficha gigante de estatísticas**. As opções normais de imagem continuam: Trocar, Original, Premium, Mangá, Restaurar etc.
+- **Ranking e Jogadores:** fichas detalhadas permanecem acessíveis nesses locais.
+- **Pesquisa compacta:** mantém resultados por nome e equipe, abrindo o card de imagem ao selecionar.
+- Atualização web offline v9.9.3; Android versionCode 104. Sem alterar temporadas ou fotos salvas.
+
 
 ## ✅ v9.9.2 — Pesquisa e importação de imagens corrigidas
 

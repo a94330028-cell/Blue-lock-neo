@@ -37,6 +37,7 @@ jobs:
           node tests/v990.test.cjs
           node tests/kaiser-icon-v991.test.cjs
           node tests/gallery-v992.test.cjs
+          node tests/gallery-v993.test.cjs
           python tools/gerar_atualizacao.py
       - name: Disponibilizar site completo (mesmo antes de habilitar Pages)
         uses: actions/upload-artifact@v4

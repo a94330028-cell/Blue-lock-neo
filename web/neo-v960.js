@@ -156,13 +156,16 @@
  function attachProfiles(){
   document.addEventListener('click',e=>{
    const close=e.target.closest('[data-neo960-close]');if(close){closeProfile();return}
+   // Gallery is for choosing or changing portraits, never for the statistics modal.
+   // Leave gallery photos, buttons, search results and historical-roster rows alone.
+   if(e.target.closest('#portraitGallery, #neo970-new-squads, #gallery .portrait-card, .portrait-card, .neo970-photo-row, [data-gallery-player]'))return;
    const target=e.target.closest('[data-neo960-profile]');if(target){
     const key=decodeURIComponent(target.dataset.neo960Profile||''),split=key.lastIndexOf('|');
     if(split>=0)openProfile(key.slice(0,split),key.slice(split+1));return;
    }
    // As outras listagens de jogadores também levam à ficha, quando reconhecíveis.
    if(e.target.closest('button,a,[data-portrait-edit],[data-manga-edit],[data-portrait-style]'))return;
-   const line=e.target.closest('#ranking .career-row,#ranking .record-row,#records .record-row,#squads .roster-player,#gallery .portrait-card');
+   const line=e.target.closest('#ranking .career-row,#ranking .record-row,#records .record-row,#squads .roster-player');
    if(!line)return;
    const img=line.querySelector('img[data-player-name]');const raw=img?.dataset.playerName;
    if(!raw)return;let name;try{name=decodeURIComponent(raw)}catch(_){return}
