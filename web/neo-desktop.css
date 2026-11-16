@@ -82,3 +82,86 @@ body{background:radial-gradient(circle at 65% 0%,#17548066,transparent 50%),line
  .score-center{min-width:115px;padding:0 7px}
  .score-digit{font-size:37px!important}
 }
+
+
+/* 2026 PC visual pass: tighter dashboard, less vertical scrolling, accessible drill-downs. */
+@media (min-width:1100px) {
+ html {scroll-padding-top:86px}
+ body {background-color:#050e1d!important}
+ .site-header{min-height:62px!important;padding:8px clamp(15px,2vw,30px)!important;box-shadow:0 5px 22px #0008!important}
+ .branding .brand-icon{width:40px!important;height:40px!important;font-size:22px!important}
+ .site-header h1{font-size:clamp(16px,1.35vw,21px)!important}
+ .site-header .eyebrow{font-size:9px!important}
+ .header-meta{padding:6px 9px!important}
+ .app-install-bar{gap:5px!important}
+ .app-install-bar .button{min-height:32px!important;padding:5px 9px!important;font-size:10px!important}
+ .shell{grid-template-columns:clamp(180px,13.5vw,218px) minmax(0,1fr)!important;gap:0 14px!important;padding:12px clamp(12px,1.6vw,30px) 26px!important}
+ .shell>.nav{top:78px!important;min-height:0!important;max-height:calc(100vh - 88px)!important;padding:11px 8px!important;gap:4px!important;border-radius:13px!important}
+ .shell>.nav:before{font-size:9px!important;letter-spacing:.8px!important;padding:7px 7px 9px!important}
+ .shell>.nav button{font-size:12px!important;min-height:38px!important;padding:7px 9px!important;border-radius:8px!important}
+ .card{padding:12px!important;border-radius:12px!important}
+ .card+.card{margin-top:8px!important}
+ .card h2{font-size:14px}
+ #match::before{display:none!important}
+ .neo-pc-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:40px;margin-bottom:9px;padding:7px 12px;border:1px solid #236ca7;border-radius:10px;background:linear-gradient(100deg,#0c3156,#0a1c35 75%,#112b49);box-shadow:inset 0 0 22px #147fee13,0 8px 22px #0003}
+ .neo-pc-toolbar-title{display:flex;align-items:center;gap:10px;min-width:0}
+ .neo-pc-toolbar-title strong{font-size:12px;font-weight:950;letter-spacing:1px;color:#d2f0ff}
+ .neo-pc-toolbar-title small{color:#82a8cc;font-size:10px}
+ .neo-pc-led{width:8px;height:8px;border-radius:50%;background:#16d8ff;box-shadow:0 0 10px #16cfff;flex:none}
+ .neo-pc-density{padding:7px 10px;color:#bceaff;border:1px solid #2d7fbc;background:#112d50;border-radius:8px;font-size:11px;font-weight:800;white-space:nowrap;cursor:pointer}
+ .neo-pc-density:hover{background:#1a4776}
+ .match-layout{grid-template-columns:minmax(0,2.8fr) minmax(250px,1fr)!important;gap:12px!important}
+ .match-main .match-card:before{font-size:10px!important;padding:0 0 7px!important;margin-bottom:8px!important}
+ .match-setup{padding:7px 9px!important;margin-bottom:7px!important}
+ .match-setup select{padding:6px 7px!important;font-size:12px!important}
+ .scoreboard{padding:9px 10px!important;margin:6px 0 10px!important;border-radius:10px}
+ .score-digit{font-size:clamp(35px,3vw,50px)!important;letter-spacing:1px!important}
+ .score-center{min-width:110px!important;padding:0 8px!important}
+ .score-team{font-size:12px!important}
+ .match-time{margin-top:2px!important;font-size:11px!important}
+ .pitch-wrap{border-radius:9px!important}
+ #pitch{max-height:52vh!important}
+ .match-controls{padding:8px!important;margin-top:9px!important;gap:6px!important}
+ .match-controls .button{min-height:33px!important;padding:6px 9px!important;font-size:11px!important}
+ .match-controls label{font-size:10px!important}
+ .match-controls select{padding:5px 6px!important}
+ .action-theater{margin-block:8px!important}
+ .action-theater #actionStage{max-height:190px!important;width:100%!important;object-fit:contain}
+ .live-commentary,.live-duel,.match-banner{font-size:11px!important}
+ .two-col.under-pitch{margin-top:9px!important;gap:9px!important}
+ .under-pitch .card{padding:10px!important}
+ .events{height:165px!important;padding:5px 8px!important}
+ .event{padding:7px 3px!important;font-size:11px!important}
+ .match-side .card{margin-bottom:8px!important;padding:11px!important}
+ .match-side .card .hint{font-size:11px!important;margin:5px 0 8px!important}
+ .match-side .card-head{margin-bottom:8px!important;padding-bottom:7px!important}
+ .match-side .card-head h2{font-size:12px!important}
+ .neo-pc-analyses,.neo-pc-side-extra{display:block;min-width:0;border:1px solid #28618d;border-radius:10px;background:linear-gradient(140deg,#10283f,#08182b);margin:8px 0;overflow:hidden}
+ .neo-pc-analyses>summary,.neo-pc-side-extra>summary{cursor:pointer;list-style:none;user-select:none;padding:11px 13px;font-weight:900;font-size:12px;letter-spacing:.2px;color:#bdeaff;display:flex;justify-content:space-between;align-items:center}
+ .neo-pc-analyses>summary::-webkit-details-marker,.neo-pc-side-extra>summary::-webkit-details-marker{display:none}
+ .neo-pc-analyses>summary:after,.neo-pc-side-extra>summary:after{content:"▾";font-size:15px;color:#5ebeff;transition:transform .15s}
+ .neo-pc-analyses[open]>summary:after,.neo-pc-side-extra[open]>summary:after{transform:rotate(180deg)}
+ .neo-pc-analyses>summary:hover,.neo-pc-side-extra>summary:hover{background:#153b5d}
+ .neo-pc-analyses>section,.neo-pc-side-extra>section{margin:8px!important}
+ .neo-pc-analyses>summary:focus-visible,.neo-pc-side-extra>summary:focus-visible{outline:2px solid #7ae1ff;outline-offset:-3px}
+ .neo-pc-side-extra .card{margin:8px!important}
+ .neo190-panel,.neo91-card,.hero-card{margin-block:10px!important}
+}
+@media (min-width:1100px) and (max-width:1350px){
+ .match-layout{grid-template-columns:minmax(0,1fr)!important}
+ .match-side{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important;align-items:start}
+ .neo-pc-side-extra{grid-column:1/-1}
+}
+@media (min-width:1100px) and (max-height:730px){
+ .site-header{min-height:56px!important}
+ #pitch{max-height:45vh!important}
+ .events{height:125px!important}
+ .shell>.nav{top:69px!important;max-height:calc(100vh - 77px)!important}
+}
+@media (min-width:1100px) and (max-width:1190px){
+ .shell{grid-template-columns:170px minmax(0,1fr)!important;gap:10px!important;padding:10px!important}
+ .neo-pc-toolbar-title small{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+ .neo-pc-analyses>summary:after,.neo-pc-side-extra>summary:after{transition:none!important}
+}
