@@ -21,10 +21,12 @@ assert.ok(page.includes('neo-updates-v1060.js'), 'real page loads history script
 assert.ok(page.includes('neo-updates-v1060.css'), 'real page loads history styles');
 assert.ok(fs.existsSync('web/CHANGELOG.json'), 'changelog mirrored into site build');
 assert.deepEqual(JSON.parse(read('web/CHANGELOG.json')),data,'site and bot share identical changelog');
-assert.ok(script.includes("SEEN_KEY='neo-updates-last-seen'"),'unread state separate from player saves');
+assert.ok(script.includes("SEEN_KEY='neo-updates-last-seen-official-v1'"),'stable 1.0 unread state is separate from player saves');
 assert.ok(script.includes("doc.getElementById('more')"),'updates accessible from More on mobile');
 assert.ok(script.includes("fetch(SOURCE,{cache:'no-store'})"),'updates read actual version history');
 assert.ok(script.includes('preview.onerror'), 'missing image gracefully hidden');
+assert.ok(script.includes('neo1060-copy'),'first launch includes sharing its release notes');
+assert.ok(U.formatRelease(data).includes('v1.0.0'),'copy includes the public launch number');
 assert.ok(style.includes('@media(max-width:420px)'),'mobile layout included');
 assert.ok(!script.includes("localStorage.clear("),'user saves never deleted');
 const worker=read('web/service-worker.js');
