@@ -63,7 +63,7 @@ function beautifyCards(){
   const extra=document.createElement('div');extra.className='neo-extra-content';
   while(actions.firstChild)extra.appendChild(actions.firstChild);
   details.append(summary,extra);
-  const primary=document.createElement('button');primary.type='button';primary.className='button primary neo-main-action';primary.textContent='📷 Trocar imagem de '+name.split(' ')[0];primary.dataset.portraitEdit=encoded;
+  const primary=document.createElement('button');primary.type='button';primary.className='button primary neo-main-action';primary.textContent='📷 Trocar imagem';primary.setAttribute('aria-label','Trocar imagem de '+name);primary.dataset.portraitEdit=encoded;
   actions.append(primary,details);card.classList.add('neo-card-ready');
   const badge=card.querySelector('.gallery-tag');
   const photo=card.querySelector('img.portrait-card-photo');
@@ -180,6 +180,12 @@ function boot(){
   }else document.body.appendChild(addon);
  }
 
+ if(!document.getElementById('neo1000-script')){
+  const addon=document.createElement('script');addon.id='neo1000-script';
+  addon.src='./neo-v1000.js?v=10.0.0';
+  addon.onerror=()=>toast('Não foi possível carregar o Raio-X e as premiações. Atualize o aplicativo.');
+  document.body.appendChild(addon);
+ }
  const gallery=$('portraitGallery');
  if(gallery)new MutationObserver(beautifyCards).observe(gallery,{childList:true});
  // Use the existing import/storage system. The enhancements only improve its navigation.
