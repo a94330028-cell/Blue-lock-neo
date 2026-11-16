@@ -17,6 +17,7 @@
       const compact = !match.classList.toggle('neo-pc-expanded');
       btn.setAttribute('aria-pressed', String(compact));
       btn.textContent = compact ? '▣ Visão compacta: ligada' : '▤ Visão expandida';
+      match.querySelectorAll('.neo-pc-analyses, .neo-pc-side-extra').forEach(panel => { panel.open = !compact; });
     });
 
     // Put secondary analytical cards inside an accordion, without rebuilding their content.
