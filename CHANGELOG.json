@@ -31,7 +31,12 @@
         "Transferências automáticas opcionais, avaliadas com estatísticas reais a cada quatro rodadas completas.",
         "Central de campeonatos: Neo League e Copas dos Egoístas existentes, com partidas disputadas e campeões confirmados.",
         "Recordes da temporada: gols, assistências, goleiros, maior goleada e total de partidas reais.",
-        "Jornal Neo: notícias de resultados oficiais, goleadas, gols individuais, evolução, rivalidades e negociações concluídas."
+        "Jornal Neo: notícias de resultados oficiais, goleadas, gols individuais, evolução, rivalidades e negociações concluídas.",
+        "Atualização de conteúdo 10.6.10: comportamentos táticos de improvisação sob pressão, leituras após duelos reais e instinto de finalização com limites.",
+        "Partidas passam a armazenar amostras do domínio territorial, decisões táticas observadas e defesas de alto perigo comprovadas.",
+        "Universo NEO recolhível: ranking, observadores, prêmios apenas após temporada encerrada, linha do tempo e Hall da Fama.",
+        "Seleção Mundial NEO experimental em amistosos: elenco automático com atletas disponíveis, respeitando posições e evitando jogadores duplicados do adversário.",
+        "Copa Mundial NEO de clubes: usa o sistema de torneios já existente, sem criar placares ou campeões antecipadamente."
       ],
       "correcoes": [
         "Transferências não modificam os elencos-base do repositório e não deixam atletas duplicados nem equipes com menos de 11 titulares.",
@@ -56,7 +61,8 @@
       "importantes": [
         "Mercado Neo funciona no campeonato da temporada e não modifica os elencos de outras Copas já configuradas.",
         "As notícias automáticas usam somente dados realmente registrados, não resultados fabricados.",
-        "O APK Android sem assinatura de distribuição não pode atualizar um aplicativo assinado por outra chave."
+        "O APK Android sem assinatura de distribuição não pode atualizar um aplicativo assinado por outra chave.",
+        "As 55 ideias seguem no roadmap: recursos não testados integralmente permanecem parciais; a Seleção Mundial NEO ainda não representa seleções nacionais oficiais."
       ]
     },
     {
