@@ -57,15 +57,25 @@ function dangerTarget(m,defender,target,phase){
  const side=defender.side;
  const territory=m.progress?.(side,m.ball?.x);
  if(!Number.isFinite(territory)||territory>770)return target;
- const enemies=(m.players||[]).filter(p=>p&&p.side!==side&&p.i!==0&&valid(p));
- if(!enemies.length)return target;
- const scored=enemies.map(p=>({p,threat:num(p.goals)*2.7+num(p.shots)*.35+num(p.dribblesWon)*.6+Math.max(0,num(p.rating)-6)*.35}));
- scored.sort((a,b)=>b.threat-a.threat||a.p.id-b.p.id);
- const star=scored[0];
- if(star.threat<2.5||Math.abs(star.p.y-576)>300)return target;
- const defenders=(m.players||[]).filter(p=>p&&p.side===side&&p.i!==0&&deepRole(p.role)&&valid(p));
- defenders.sort((a,b)=>dist(a,star.p)-dist(b,star.p)||a.id-b.id);
- if(defenders[0]!==defender)return target; // only ONE defender marks the star
+ // Cache the tactical evaluation for this simulation tick. Important for Turbo 40x.
+ const cached=m._neo120ThreatCache?.[side];
+ let marker,star;
+ if(cached&&cached.at===m.time){marker=cached.marker;star=cached.star;}
+ else{
+  const enemies=(m.players||[]).filter(p=>p&&p.side!==side&&p.i!==0&&valid(p));
+  const scored=enemies.map(p=>({p,threat:num(p.goals)*2.7+num(p.shots)*.35+num(p.dribblesWon)*.6+Math.max(0,num(p.rating)-6)*.35}));
+  scored.sort((a,b)=>b.threat-a.threat||num(a.p.id)-num(b.p.id));
+  star=scored[0]||null;
+  marker=null;
+  if(star&&star.threat>=2.5&&Math.abs(star.p.y-576)<=300){
+   const defenders=(m.players||[]).filter(p=>p&&p.side===side&&p.i!==0&&deepRole(p.role)&&valid(p));
+   defenders.sort((a,b)=>dist(a,star.p)-dist(b,star.p)||num(a.id)-num(b.id));
+   marker=defenders[0]||null;
+  }
+  if(!m._neo120ThreatCache)m._neo120ThreatCache=[null,null];
+  m._neo120ThreatCache[side]={at:m.time,marker,star};
+ }
+ if(!marker||marker!==defender||!star)return target; // one marker, never teleport
  const t=star.p,dx=clamp(t.x-target.x,-75,75),dy=clamp(t.y-target.y,-95,95);
  return {x:clamp(target.x+dx*.28,75,1845),y:clamp(target.y+dy*.28,45,1105)};
 }
