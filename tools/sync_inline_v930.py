@@ -209,5 +209,11 @@ if 'neo-living-career-v190.js' not in updated:
 if 'neo-living-career-v190.css' not in updated:
     if updated.count('</head>')!=1:raise RuntimeError('Unable to attach Living Career styles')
     updated=updated.replace('</head>','<link rel="stylesheet" href="neo-living-career-v190.css?v=1.8.0">\n</head>')
+# Desktop layout is shared by the GitHub Pages site and Windows package.
+# The CSS is activated only on wide screens; Android remains unchanged.
+if 'neo-desktop.css' not in updated:
+    if updated.count('</head>') != 1:
+        raise RuntimeError('Unable to attach desktop layout')
+    updated = updated.replace('</head>', '<link rel="stylesheet" href="neo-desktop.css?v=1.8.0">\n</head>')
 html.write_text(updated,encoding='utf-8')
 print('Inline game modules synchronized:',counts)
