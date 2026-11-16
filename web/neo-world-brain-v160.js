@@ -70,8 +70,8 @@ function coverShape(match,p,target,phase){
  // Cache the covering defender per team and tick so Turbo 40x only
  // sorts the defence once during each physics step.
  const key=p.side,store=match._neo160Cover||(match._neo160Cover=[null,null]);
- let second=store[key]?.time===match.time?store[key].second:null;
- if(store[key]?.time!==match.time){
+ let second=store[key]&&store[key].time===match.time?store[key].second:null;
+ if(!store[key]||store[key].time!==match.time){
   const defendersOnSide=(match.players||[]).filter(q=>q&&q.side===p.side&&q.i!==0&&defenders(q)&&finite(q));
   const ball={x:b.x,y:b.y};
   defendersOnSide.sort((a,z)=>dist(a,ball)-dist(z,ball)||val(a.id)-val(z.id));
