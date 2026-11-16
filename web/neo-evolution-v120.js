@@ -13,7 +13,7 @@ const num=x=>Number.isFinite(Number(x))?Number(x):0;
 const valid=p=>p&&Number.isFinite(p.x)&&Number.isFinite(p.y);
 const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
 const deepRole=r=>/^(ZAG|CB|LD|LE|RB|LB|VOL|CDM|ALA|LWB|RWB)$/i.test(String(r||''));
-const key=(a,b,sep)=>[a,b].sort((x,y)=>x.localeCompare(y)).join(sep);
+const key=(a,b,sep)=>[a,b].sort().join(sep);
 function careerEntry(m,p){return m?.careerPlayers?.[p?.name+'|'+m?.teams?.[p?.side]?.id]||null;}
 function partnerChemistry(m,a,b){
  if(!m||!a||!b||a.side!==b.side||a===b)return 0;
@@ -55,7 +55,8 @@ function dangerTarget(m,defender,target,phase){
  if(!m||!defender||!target||!valid(target)||!valid(defender)||!deepRole(defender.role))return target;
  if(defender.i===0||defender.run||m.phase!=='play'||!['block','transition-defense'].includes(phase))return target;
  const side=defender.side;
- if((m.progress?.(side,m.ball?.x)||Infinity)>770)return target;
+ const territory=m.progress?.(side,m.ball?.x);
+ if(!Number.isFinite(territory)||territory>770)return target;
  const enemies=(m.players||[]).filter(p=>p&&p.side!==side&&p.i!==0&&valid(p));
  if(!enemies.length)return target;
  const scored=enemies.map(p=>({p,threat:num(p.goals)*2.7+num(p.shots)*.35+num(p.dribblesWon)*.6+Math.max(0,num(p.rating)-6)*.35}));
@@ -103,6 +104,10 @@ function progressRecordedMatch(engine,season,fixture,match,round){
  const c=season?.career,details=match?.result?.();
  if(!c?.players||!details||!Array.isArray(details.players))return;
  const eventKey=round+'|'+fixture.home+'|'+fixture.away;
+ // Guard against a repeated fixture result: avoid double counting duels or mastery.
+ c.evolutionRecorded=c.evolutionRecorded||{};
+ if(c.evolutionRecorded[eventKey])return;
+ c.evolutionRecorded[eventKey]=true;
  for(const p of details.players){
   if(p.isMaster||![0,1].includes(p.side)||!p.name)continue;
   const club=p.side===0?fixture.home:fixture.away;
@@ -130,10 +135,11 @@ function progressRecordedMatch(engine,season,fixture,match,round){
  }
  // Only genuine in-match duels can increase the rivalry level.
  const seen=new Set();
+ c.rivals=c.rivals||{};
  for(const d of details.duelHistory||[]){
   if(!d?.attacker||!d?.defender||d.attacker===d.defender)continue;
-  const pair=key(d.attacker,d.defender,' × '),ledger=c.rivals?.[pair];
-  if(!ledger)continue;
+  const pair=key(d.attacker,d.defender,' × ');
+  const ledger=c.rivals[pair]||(c.rivals[pair]={names:[d.attacker,d.defender].sort(),duels:0,actualDuels:0,level:1});
   const stamp=[d.time,d.attacker,d.defender,d.kind,d.winner].join('|');
   if(seen.has(stamp))continue;seen.add(stamp);
   ledger.actualDuels=Math.min(10000,num(ledger.actualDuels)+1);
@@ -143,6 +149,7 @@ function progressRecordedMatch(engine,season,fixture,match,round){
   }
  }
  if(c.stories?.length>90)c.stories=c.stories.slice(-90);
+ const keys=Object.keys(c.evolutionRecorded);if(keys.length>250)for(const k of keys.slice(0,keys.length-250))delete c.evolutionRecorded[k];
 }
 function adapt(engine){
  const p=engine?.Match?.prototype;if(!p||p._neo120Evolution)return false;
