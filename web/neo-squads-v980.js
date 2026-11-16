@@ -18,8 +18,9 @@ function portrait(name,t){
 function rating(name,t,role,slot,season){return C.overall(E.Attr,t,name,role,slot,season)}
 function player(t,name,role,index,season,style={}){
  const ovr=rating(name,t,role,index,season),isGK=index===0,pos=labels[role]||role;
- const xy={x:Math.max(4,Math.min(96,Number(style.x||0)*100)),y:Math.max(5,Math.min(95,Number(style.y||0)*100))};
- const coords=isGK||style.x!=null?`style="--lane:${xy.y}%;--depth:${Math.min(93,Math.max(7,(1-Number(style.x))*100)).toFixed(1)}%"`:'';
+ const left=Number.isFinite(Number(style.lane))?Number(style.lane):Number(style.y??.5)*100;
+ const top=Number.isFinite(Number(style.depth))?Number(style.depth):(1-Number(style.x??.45))*100;
+ const coords=`style="--lane:${Math.max(10,Math.min(90,left)).toFixed(1)}%;--depth:${Math.max(18,Math.min(91,top)).toFixed(1)}%"`;
  return `<button type="button" class="neo980-player" ${coords} data-neo960-profile="${profileKey(name,t.id)}" title="${esc(name)} · ${esc(pos)} · ${ovr} OVR" aria-label="Abrir ficha de ${esc(name)}, ${esc(pos)}, ${ovr} overall">
  ${portrait(name,t)}<span class="neo980-role">${esc(role)}</span><span class="neo980-player-name">${esc(name)}</span><b class="neo980-ovr">${ovr}</b></button>`;
 }
@@ -28,6 +29,7 @@ function render(){
  const root=$('neo980-squad-area');if(!root)return;
  const t=teams().find(x=>x.id===selected)||teams()[0];if(!t)return;
  const s=context(t),plan=C.planLineup(t,s,E.Attr),form=plan.form,f=t.formation||E.DEFAULT_FORMATION;
+ const spots=window.NeoPitch1040?.layout(t,f)||null;
  const formationLabel=esc(t.formationName||'4-3-3');
  const summary=form.played===0?'Sem jogos registrados: técnico mantém a formação inicial.'
  :form.underPressure?`Últimos 3 jogos: ${form.lossesLast3} derrota(s). ${plan.reason}.`
@@ -37,7 +39,7 @@ function render(){
  <label class="neo980-selector">Escolher equipe<select id="neo980-select">${select}</select></label>
  <div class="neo980-team-header"><span class="neo980-crest" style="--team:${esc(t.color||'#47b8ff')}">${esc(t.crest||t.short?.slice(0,2)||'FC')}</span><div><strong>${esc(t.name)}</strong><small>${formationLabel} · ${esc(t.country||'')}${t.master?' · Master Striker: '+esc(t.master):''}</small></div><span class="neo980-ai-live">IA ATIVA</span></div>
  <div class="neo980-pitch" role="group" aria-label="Escalação visual: ${esc(t.name)}, ${formationLabel}"><div class="neo980-pitch-markings"><span class="neo980-center-circle"></span><span class="neo980-penalty neo980-penalty-top"></span><span class="neo980-penalty neo980-penalty-bottom"></span></div><span class="neo980-goal goal-top"></span><span class="neo980-goal goal-bottom"></span>
- ${plan.players.map((name,i)=>player(t,name,f[i]?.role||E.DEFAULT_FORMATION[i]?.role||'MC',i,s,f[i]||E.DEFAULT_FORMATION[i])).join('')}
+ ${plan.players.map((name,i)=>player(t,name,f[i]?.role||E.DEFAULT_FORMATION[i]?.role||'MC',i,s,spots?.[i]||f[i]||E.DEFAULT_FORMATION[i])).join('')}
  </div><div class="neo980-pitch-caption">⬆ Ataque · OVR calculado para a posição de cada jogador · 🧤 goleiro na base</div>
  <div class="neo980-coach-card"><div class="neo980-coach-title"><span>🧠 Técnico inteligente</span><b>${form.underPressure?'REVENDO TIME':'ANALISANDO'}</b></div><p>${esc(summary)}</p>${plan.changes.length?`<div class="neo980-coach-changes">${plan.changes.map(x=>`<span>🔄 ${esc(x.out)} <b>→</b> ${esc(x.in)} <small>${esc(x.role)}</small></span>`).join('')}</div>`:''}<small>Se houver sequência de derrotas, o técnico avalia reservas da mesma posição. Durante o jogo, ajusta pressão e substituições conforme o placar. Mudanças não alteram seus dados salvos.</small></div>
  <details class="neo980-reserves"><summary>🪑 Banco de reservas <span>${plan.reserves.length} jogadores</span></summary><div class="neo980-bench">${plan.reserves.map((name,i)=>{const role=C.reserveRole(t,name),o=rating(name,t,role,11+i,s);return `<button class="neo980-bench-row" type="button" data-neo960-profile="${profileKey(name,t.id)}" aria-label="Ver ficha de ${esc(name)}">${portrait(name,t)}<span><b>${esc(name)}</b><small>${esc(labels[role]||role)}</small></span><strong>${o} OVR</strong></button>`}).join('')||'<p>Nenhum reserva cadastrado.</p>'}</div></details>
