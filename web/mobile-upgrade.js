@@ -213,5 +213,16 @@ function boot(){
  if(gallery)new MutationObserver(beautifyCards).observe(gallery,{childList:true});
  // Use the existing import/storage system. The enhancements only improve its navigation.
 }
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
+function bootWithReference(){
+ boot();
+ // An independently versioned mobile presentation layer: do not replace game logic.
+ if(document.getElementById('neo-reference-mobile-script'))return;
+ const addon=document.createElement('script');
+ addon.id='neo-reference-mobile-script';
+ addon.src='./neo-reference-mobile.js?v=20261116a';
+ addon.defer=true;
+ addon.onerror=()=>console.warn('A nova interface mobile não pôde ser carregada; navegação original preservada.');
+ document.body.appendChild(addon);
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bootWithReference,{once:true});else bootWithReference();
 })();
