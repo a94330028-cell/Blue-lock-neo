@@ -17,5 +17,5 @@ assert.equal(V.report({...game,details:{stats:{shots:[0,0]}}},1).goals.length,0,
 const sync=fs.readFileSync('tools/sync_inline_v930.py','utf8');
 assert.ok(sync.includes('neo-match-v981.js?v=9.8.1'));
 assert.ok(sync.includes('neo-match-v981.css?v=9.8.1'));
-assert.equal(fs.readFileSync('web/VERSION','utf8').trim(),'1.7.0');
+assert.equal(fs.readFileSync('web/VERSION','utf8').trim(),'1.8.0');
 console.log('PASS 9.8.1: event-based cinematic cues, real recaps and offline linking');
