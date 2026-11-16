@@ -8,15 +8,16 @@ on:
       - 'web/**'
       - 'tools/**'
       - 'tests/**'
+      - 'CHANGELOG.json'
       - '.github/workflows/publicar-site.yml'
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 concurrency:
   group: blue-lock-pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 jobs:
   pages:
     runs-on: ubuntu-latest
@@ -45,6 +46,8 @@ jobs:
           node tests/v1040.test.cjs
           node tests/v1050.test.cjs
           node tests/v1051.test.cjs
+          python3 -m unittest discover -s tests -p test_neo_announcer.py
+          python3 tools/neo_update_announcement.py validate
           python tools/gerar_atualizacao.py
       - name: Disponibilizar site completo (mesmo antes de habilitar Pages)
         uses: actions/upload-artifact@v4
@@ -73,3 +76,20 @@ jobs:
           echo '### Hospedagem: falta habilitar GitHub Pages' >> "$GITHUB_STEP_SUMMARY"
           echo 'Em Settings > Pages, selecione **GitHub Actions** como fonte.' >> "$GITHUB_STEP_SUMMARY"
           echo 'O site completo já está anexado na execução em Artifacts > Site-Blue-Lock-NEO.' >> "$GITHUB_STEP_SUMMARY"
+      - name: Validar artes oficiais somente após deploy confirmado
+        id: neo_media
+        if: steps.deployment.outcome == 'success'
+        continue-on-error: true
+        run: python3 tools/neo_update_announcement.py validate --require-media
+      - name: Anunciar atualização no Discord sem enviar em push ou build falho
+        if: steps.deployment.outcome == 'success' && steps.neo_media.outcome == 'success'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: python3 tools/neo_update_announcement.py publish
+      - name: Registrar motivo do bloqueio de anúncio
+        if: steps.deployment.outcome == 'success' && steps.neo_media.outcome != 'success'
+        run: |
+          echo '### NEO UPDATE BOT: anúncio não enviado' >> "$GITHUB_STEP_SUMMARY"
+          echo 'As imagens originais ainda não foram verificadas. O site foi publicado; o webhook permanece bloqueado.' >> "$GITHUB_STEP_SUMMARY"
