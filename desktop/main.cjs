@@ -50,9 +50,9 @@ async function initUpdater(){
   const response=await fetch('https://api.github.com/repos/a94330028-cell/Blue-lock-neo/releases?per_page=100',{headers:{'Accept':'application/vnd.github+json','User-Agent':'Blue-Lock-NEO-Desktop'}});
   if(!response.ok)throw new Error('GitHub releases HTTP '+response.status);
   const releases=await response.json();
-  const desktopReleases=releases.filter(release=>!release.draft&&release.assets&&release.assets.some(asset=>asset.name==='latest.yml')&&/^v\d+\.\d+\.\d+$/.test(release.tag_name));
+  const desktopReleases=releases.filter(release=>!release.draft&&release.assets&&release.assets.some(asset=>asset.name==='latest.yml')&&/^desktop-v\d+\.\d+\.\d+$/.test(release.tag_name));
   desktopReleases.sort((a,b)=>{
-   const av=a.tag_name.slice(1).split('.').map(Number),bv=b.tag_name.slice(1).split('.').map(Number);
+   const av=a.tag_name.slice('desktop-v'.length).split('.').map(Number),bv=b.tag_name.slice('desktop-v'.length).split('.').map(Number);
    for(let i=0;i<3;i++){if(av[i]!==bv[i])return bv[i]-av[i];}return 0;
   });
   if(!desktopReleases.length)return;
