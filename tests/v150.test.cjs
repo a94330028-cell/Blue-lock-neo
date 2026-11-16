@@ -70,7 +70,7 @@ assert.ok(!source.includes('localStorage.clear('));
 assert.ok(read('web/index.html').includes('neo-ascension-v150.js'));
 assert.ok(read('web/index.html').includes('neo-ascension-v150.css'));
 assert.ok(read('web/service-worker.js').includes('./neo-ascension-v150.js'));
-assert.ok(read('web/service-worker.js').includes('blue-lock-neo-v1.9.0-universe'));
+assert.ok(read('web/service-worker.js').includes('blue-lock-neo-v1.9.1-desktop'));
 const changes=JSON.parse(read('CHANGELOG.json'));
 assert.equal(changes.current_version,'1.8.0');
 assert.equal(changes.releases[0].version,'1.8.0');
