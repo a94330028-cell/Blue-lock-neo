@@ -98,7 +98,7 @@ assert.ok(read('web/engine.js').includes('this.neoSeasonContext=seasonContext'))
 assert.ok(read('tools/sync_inline_v930.py').includes('neo-living-career-v190.js'));
 assert.ok(read('web/index.html').includes('neo-living-career-v190.js'));
 assert.ok(read('web/index.html').includes('neo-living-career-v190.css'));
-assert.ok(read('web/service-worker.js').includes('blue-lock-neo-v1.10.0-31to55'));
+assert.ok(read('web/service-worker.js').includes('blue-lock-neo-v1.10.1-reference-mobile'));
 assert.ok(read('web/service-worker.js').includes('./neo-living-career-v190.js'));
 const changelog=JSON.parse(read('CHANGELOG.json'));
 assert.equal(changelog.current_version,'1.8.0');

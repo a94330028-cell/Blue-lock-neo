@@ -109,7 +109,7 @@ assert.ok(read('web/index.html').includes('neo-ego-saga-v180.js'));
 assert.ok(read('web/index.html').includes('neo-ego-saga-v180.css'));
 const worker=read('web/service-worker.js');
 assert.ok(worker.includes('./neo-ego-saga-v180.js'));
-assert.ok(worker.includes('blue-lock-neo-v1.10.0-31to55'));
+assert.ok(worker.includes('blue-lock-neo-v1.10.1-reference-mobile'));
 const releases=JSON.parse(read('CHANGELOG.json'));
 assert.equal(releases.current_version,'1.8.0');
 assert.equal(releases.releases[0].version,'1.8.0');
