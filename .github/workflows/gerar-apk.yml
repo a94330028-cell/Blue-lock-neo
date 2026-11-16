@@ -66,6 +66,7 @@ jobs:
           node tests/v140.test.cjs
           node tests/v150.test.cjs
           node tests/v160.test.cjs
+          node tests/v170.test.cjs
           python3 -m unittest discover -s tests -p test_neo_announcer.py
           python3 tools/neo_update_announcement.py validate
           node --check web/neo-clubs-v1050.js
@@ -83,6 +84,7 @@ jobs:
           node --check web/neo-ego-combat-v140.js
           node --check web/neo-ascension-v150.js
           node --check web/neo-world-brain-v160.js
+          node --check web/neo-five-pillars-v170.js
           node --check web/neo-living-v130.js
           node --check web/neo-player-data-v960.js
           node --check web/systems/progression.js

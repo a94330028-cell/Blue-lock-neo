@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "project": "Blue Lock NEO",
-  "current_version": "1.5.0",
+  "current_version": "1.6.0",
   "site_url": "https://a94330028-cell.github.io/Blue-lock-neo/",
   "media": {
     "banner": {
@@ -20,6 +20,40 @@
     }
   },
   "releases": [
+    {
+      "version": "1.6.0",
+      "date": "2026-11-16",
+      "novidades": [
+        "Cinco Pilares do Ego: identidades individuais de IA derivadas das características, posições e histórico de cada atleta, com perfis diferenciados para personagens principais.",
+        "Ego contextual: jogadas de destaque e partidas decisivas influenciam moderadamente a construção do Ego, sem ativar Flow sem cumprir as regras.",
+        "Flow com assinatura própria de cada atleta e bônus específicos para sua melhor arma e condição física.",
+        "Despertar de técnicas reais: habilidades avançadas realmente usadas durante Flow podem receber um pico curto de domínio, limitado a uma ocorrência por atleta.",
+        "Metavision preditiva: leitura de defensores em movimento para procurar passes seguros, respeitando impedimento e limites de alcance.",
+        "Nova área Cinco Pilares na aba Recordes: personalidade, pico de Ego, Flow, despertares e leituras registrados nas partidas oficiais."
+      ],
+      "correcoes": [
+        "Empates entre perfis de personalidade agora usam um critério determinístico para preservar a identidade dos personagens.",
+        "Pico de Ego respeita o limiar verdadeiro de ativação do Flow, mesmo quando o medidor é reiniciado após despertar.",
+        "Histórico dos cinco pilares não duplica registros de uma mesma partida nem substitui campos existentes da carreira."
+      ],
+      "jogabilidade": [
+        "Visionários e maestros procuram opções mais seguras sob pressão; finalizadores priorizam chutes realmente viáveis na área.",
+        "Corredores, dribladores, predadores e criadores ganham movimentações preferenciais distintas sem romper o motor de física.",
+        "A Metavision usa a posição atual e a velocidade dos adversários, sem prever resultados ou inventar gols.",
+        "Flow e despertares ajustam por períodos curtos apenas os atributos relacionados à especialidade do atleta."
+      ],
+      "visual": [
+        "Novo painel responsivo de cinco pilares e histórico por atleta sem cobrir a quadra."
+      ],
+      "otimizacoes": [
+        "Eventos da partida e histórico do atleta possuem limites de tamanho para uso no celular e no Turbo 40×.",
+        "Mesma instalação e dados existentes preservados; versão pública 1.6.0, atualização interna Android 10.6.7."
+      ],
+      "importantes": [
+        "Esta versão tem foco nas ideias 1 a 5 do planejamento. Os demais itens das 55 ideias continuam em evolução.",
+        "Os históricos novos começam com partidas registradas após a atualização, sem inventar acontecimentos anteriores."
+      ]
+    },
     {
       "version": "1.5.0",
       "date": "2026-11-16",

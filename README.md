@@ -1,3 +1,21 @@
+# Blue Lock NEO 1.6.0 — CINCO PILARES DO EGO
+
+A versão **1.6.0** aprofunda as ideias 1–5 do projeto:
+
+1. **IA individual:** perfis duradouros de jogador, decisões táticas e corridas específicas.
+2. **Ego:** crescimento contextual e registro do verdadeiro pico de Ego.
+3. **Despertar:** evolução rara de uma habilidade já ativada durante Flow, sem desbloqueios artificiais.
+4. **Flow exclusivo:** identidade nominal e bônus relacionados à característica de cada atleta.
+5. **Metavision:** leitura de linhas de passe conforme posição e movimentação atual dos defensores, respeitando impedimento.
+
+O painel **Recordes → Cinco Pilares do Ego** mostra a evolução registrada na temporada. Nenhum sistema novo apaga retratos, dados dos campeonatos ou personagens criados.
+
+Versão pública: **1.6.0** · Build de entrega Android: **10.6.7** para não retroceder em instalações anteriores.
+
+Roadmap completo: [55 ideias](docs/ROADMAP-55.md).
+
+---
+
 # Blue Lock NEO 1.5.0 — WORLD BRAIN
 
 Atualização jogável que aprofunda a simulação de futebol com **goleiros que estudam finalizadores**, **técnicos que adaptam a equipe ao estilo dos jogos**, **recomposição coletiva**, **criação de chances na área** e **Enciclopédia de Egoístas**.
