@@ -48,7 +48,20 @@ function safePortrait(win,player,cls){
  dom.className='neo250-portrait';
  try{
   const html=win.NeoPortraitUI?.html?.(player.name,club,cls);
-  if(html){dom.innerHTML=html;return dom;}
+  if(html){
+   dom.innerHTML=html;
+   const portrait=dom.querySelector('img');
+   if(portrait){
+    // Preserve the registered picture, make the ranking portrait accessible
+    // and keep its complete face visible in both PC and mobile podiums.
+    portrait.setAttribute('data-portrait','1');
+    if(!portrait.getAttribute('data-player-name'))portrait.setAttribute('data-player-name',encodeURIComponent(player.name));
+    if(!portrait.getAttribute('alt'))portrait.setAttribute('alt','Retrato de '+player.name);
+    portrait.classList.add(cls);
+    portrait.style.objectFit='contain';
+   }
+   return dom;
+  }
  }catch(_){}
  const missing=make(win.document,'span','neo250-no-image','Retrato indisponível');
  dom.append(missing);return dom;

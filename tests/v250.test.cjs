@@ -7,6 +7,9 @@ const Universe=require('../web/neo-universe-v220.js');
 const Twelve=require('../web/neo-twelve-v230.js');
 const Pulse=require('../web/neo-match-pulse-v240.js');
 const Spotlight=require('../web/neo-universe-spotlight-v250.js');
+const portraitSource=fs.readFileSync('web/neo-universe-spotlight-v250.js','utf8');
+assert.ok(portraitSource.includes("portrait.setAttribute('data-player-name'")&&portraitSource.includes("portrait.style.objectFit='contain'"),
+  'registered ranking portraits carry accessible identity and face framing');
 assert.equal(Advanced.adapt(E),true);
 assert.equal(Universe.adapt(E),true);
 assert.equal(Twelve.adapt(E),true);
