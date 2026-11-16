@@ -250,5 +250,14 @@ if 'neo-twelve-v230.js' not in updated:
 if 'neo-twelve-v230.css' not in updated:
     if updated.count('</head>') != 1: raise RuntimeError('Cannot add NEO Evolution styles')
     updated = updated.replace('</head>', '<link rel="stylesheet" href="neo-twelve-v230.css?v=1.8.0-12">\n</head>')
+# Match and universe content update (ideas 31-55, visual V10.0).
+for file in ('neo-match-pulse-v240.js','neo-universe-spotlight-v250.js'):
+    if file not in updated:
+        if updated.count('</body>') != 1: raise RuntimeError('No valid document body for '+file)
+        updated = updated.replace('</body>', '<script defer src="'+file+'?v=10.6.12"></script>\n</body>')
+for file in ('neo-match-pulse-v240.css','neo-universe-spotlight-v250.css'):
+    if file not in updated:
+        if updated.count('</head>') != 1: raise RuntimeError('No valid document head for '+file)
+        updated = updated.replace('</head>', '<link rel="stylesheet" href="'+file+'?v=10.6.12">\n</head>')
 html.write_text(updated,encoding='utf-8')
 print('Inline game modules synchronized:',counts)
