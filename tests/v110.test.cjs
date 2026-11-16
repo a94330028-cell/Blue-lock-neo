@@ -52,7 +52,7 @@ assert.ok(read('web/index.html').includes('neo-ai-v110.js'),'AI script is instal
 assert.ok(read('web/index.html').includes('neo-ai-v110.css'),'Turbo style installed in actual shipped HTML');
 const worker=read('web/service-worker.js');
 assert.ok(worker.includes('./neo-ai-v110.js')&&worker.includes('./neo-ai-v110.css'));
-assert.ok(worker.includes('blue-lock-neo-v1.9.0-universe'));
+assert.ok(worker.includes('blue-lock-neo-v1.9.1-desktop'));
 assert.equal(read('web/VERSION').trim(),'1.8.0');
 assert.equal(read('web/UPDATE_BUILD').trim(),'10.6.10');
 const json=JSON.parse(read('CHANGELOG.json'));
