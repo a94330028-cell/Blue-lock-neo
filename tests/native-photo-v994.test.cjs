@@ -21,7 +21,7 @@ assert.ok(app.includes('window.BlueLockAndroid?.pickPortrait'), 'portrait galler
 assert.ok(app.includes("window.addEventListener('neo:native-portrait'"), 'app receives native image');
 assert.ok(app.includes("savePortraitImage('custom',name,data)"), 'native image saves to existing private indexedDB');
 assert.ok(studio.includes('window.BlueLockAndroid?.pickPortrait'), 'historical clubs use native picker too');
-assert.ok(worker.includes('blue-lock-neo-v10.0.1-image-and-tactics'));
-assert.equal(read('web/VERSION').trim(),'10.0.1');
+assert.ok(worker.includes('blue-lock-neo-v10.3.0-image-and-tactics'));
+assert.equal(read('web/VERSION').trim(),'10.3.0');
 assert.ok(gradle.includes('versionCode 105')&&gradle.includes("versionName '9.9.4'"));
 console.log('PASS v9.9.4: native Android photo picker, downsample/encode, both galleries, preserves IndexedDB and versions');

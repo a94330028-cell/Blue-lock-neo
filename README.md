@@ -1,3 +1,18 @@
+# Blue Lock NEO 10.3.0 — Futebol, estatísticas e Copas Eliminatórias
+
+## Conteúdo novo
+
+- **Seleção do Campeonato**: já existe desde v9.9; muda quando uma rodada termina, com os melhores por posição e dados de partidas reais.
+- **10.1 — Campo**: goleiros com ajuste reativo de posicionamento limitado pela velocidade; zagueiros podem apoiar nos minutos finais em desvantagem; pontas com chance maior de cruzar quando há companheiro na área; rivalidades baseadas em duelos reais; sinais cinematográficos opcionais e desativáveis.
+- **10.2 — Recordes**: Raio-X de jogador com gols, assistências, chutes, passes, desarmes, interceptações, defesas, notas e histórico de jogos. Mapa de finalizações usa somente coordenadas reais salvas; sem posição gravada, exibe aviso em vez de inventar um mapa.
+- **10.2 — Hall da Fama**: campeões de temporadas totalmente concluídas são registrados em um histórico local separado.
+- **10.3 — Copas Eliminatórias**: formatos com 2, 4 ou 8 times (8 = 2 grupos de 4 + semifinal + final), semifinais com opção de ida e volta, desempate por pênaltis quando necessário. Placar e estatísticas vêm do motor do jogo, sem substituir a Liga NEO. Até 6 novas copas salvas separadamente.
+- **Segurança**: não redefinir IndexedDB, fotos, campeonatos ou personagens; módulos extras ficam em arquivos separados e entram na atualização offline.
+
+**Como receber:** use o botão Atualizar no aplicativo para instalar o pacote web 10.3.0. A versão binária Android 9.9.4 continua com a mesma assinatura; não desinstale o APK para forçar atualização. A instalação por cima exige assinatura compatível. Exporte um backup antes de alterações importantes.
+
+---
+
 # Blue Lock NEO 10.0.1 — evolução tática e correção da galeria
 
 ## v10.0.1 — O que mudou
