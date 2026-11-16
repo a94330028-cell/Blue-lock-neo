@@ -41,6 +41,7 @@ function duelObservation(match,attacker,defender,winner,kind){
  const loser=winner===attacker?defender:winner===defender?attacker:null;
  if(!loser||!loser.name||!winner.name)return null;
  const all=match._neo180Devours||(match._neo180Devours=Object.create(null));
+ match._neo180Revision=n(match._neo180Revision)+1; // Invalidate cached tactical reads after a genuine duel.
  const id=playerKey(loser)+'|'+playerKey(winner);
  const old=all[id];
  const same=old&&old.until>=match.time;
@@ -72,6 +73,14 @@ function devourBonus(match,p,stat){
  if(!match||!p||!['dribbling','control','tackling','defense','positioning','vision'].includes(stat))return 1;
  const entries=match._neo180Devours;
  if(!entries)return 1;
+ // Cache once per simulation time + duel revision to protect Turbo 40x.
+ const revision=n(match._neo180Revision);
+ const stored=match._neo180ReadCache||(match._neo180ReadCache={tick:match.time,revision,values:Object.create(null)});
+ if(stored.tick!==match.time||stored.revision!==revision){
+  stored.tick=match.time;stored.revision=revision;stored.values=Object.create(null);
+ }
+ const cacheKey=playerKey(p)+':'+stat;
+ if(Object.hasOwn(stored.values,cacheKey))return stored.values[cacheKey];
  let strongest=1;
  for(const v of Object.values(entries)){
   if(!v||v.learner!==p.name||v.loserSide!==p.side||v.until<match.time||v.losses<2||v.adapted)continue;
@@ -82,6 +91,7 @@ function devourBonus(match,p,stat){
    ['tackling','defense','positioning'].includes(stat);
   if(compatible)strongest=Math.max(strongest,1+Math.min(.042,.016+v.losses*.006));
  }
+ stored.values[cacheKey]=strongest;
  return strongest;
 }
 function weaponMultiplier(match,p,stat){
