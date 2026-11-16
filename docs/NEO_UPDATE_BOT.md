@@ -1,6 +1,6 @@
 # Blue Lock NEO — Sistema oficial de anúncios no Discord
 
-**Status:** workflow, painel de versões e validações implementados. O envio para o canal oficial só é habilitado depois de configurar o segredo e publicar as duas imagens exatas deste projeto.
+**Status:** workflow, painel de versões e validações implementados. Os dois PNGs originais já estão publicados no repositório, com os SHA256 verificados. O primeiro anúncio **aguarda somente a configuração do segredo** `DISCORD_WEBHOOK_URL`.
 
 ## Como funciona
 
