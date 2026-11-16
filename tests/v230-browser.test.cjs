@@ -80,6 +80,21 @@ const server=http.createServer((req,res)=>{
     return response.ok&&(await response.text()).includes('function observeTurnover');
    });
    assert.ok(loaded,'new module must be served by the browser');
+   // Verify persistence in a temporary browser profile, never in a real user's save.
+   const sentinel='validated-'+width+'x'+height;
+   const wrote=await page.evaluate(value=>{
+    const season=window.NeoCareerBridge.getSeason();
+    season.validationSentinel=value;
+    return window.NeoCareerBridge.save();
+   },sentinel);
+   assert.equal(wrote,true,'career must be writable in an ephemeral browser profile');
+   await page.reload({waitUntil:'domcontentloaded'});
+   await page.waitForFunction(()=>!!window.NeoCareerBridge?.getSeason?.()?.rounds?.length,null,{timeout:25000});
+   const saved=await page.evaluate(()=>window.NeoCareerBridge.getSeason()?.validationSentinel);
+   assert.equal(saved,sentinel,'the same save must survive a full reload');
+   const persisted=await page.evaluate(()=>JSON.parse(localStorage.getItem('neo-season-v2')||'{}').validationSentinel);
+   assert.equal(persisted,sentinel,'stored season must remain unchanged on page refresh');
+
    if(errors.length)console.error('BROWSER PAGE ERRORS '+width+'x'+height+':\n'+errors.slice(0,3).join('\n'));
    assert.equal(errors.length,0,'browser must not contain uncaught JavaScript errors');
    // Other external portrait sources may be blocked in test environments; record only.
