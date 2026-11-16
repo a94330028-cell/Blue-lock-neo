@@ -25,10 +25,11 @@ assert.equal(cupStats.length,1);assert.equal(cupStats[0].raw.passes,athlete.pass
 global.window={NeoCups970:C};global.localStorage=storage;
 const profile=D.profile(E,null,athlete.name,result.home);assert.ok(profile);assert.ok(profile.totals.passes>=athlete.passes);assert.equal(profile.recordedMatches,1);
 const league=E.createSchedule();assert.equal(league.rounds.length,20);assert.equal(league.rounds.flatMap(r=>r.games).length,40);
-const ranked=D.roster(E,null);assert.ok(ranked.length>=170,'All historical + Blue Lock rosters visible');assert.ok(ranked.some(x=>x.name==='Cristiano Ronaldo'&&x.club==='mu08'));
+const nel=D.roster(E,null);assert.ok(nel.length>=60,'League roster stays available');assert.ok(nel.every(p=>E.TEAMS.some(t=>t.id===p.club)),'Neo League cannot include historical clubs');
+const ranked=D.roster(E,null,{scope:'all'});assert.ok(ranked.length>=170,'Other competition rosters remain available');assert.ok(ranked.some(x=>x.name==='Cristiano Ronaldo'&&x.club==='mu08'));
 assert.ok(fs.existsSync(dir+'/assets/kaiser-retrato-enviado.jpg'));
 const app=fs.readFileSync(dir+'/app.js','utf8');assert.ok(app.includes('assets/kaiser-retrato-enviado.jpg'));assert.ok(app.includes('window.NeoPortraitManager'));
 const html=fs.readFileSync(dir+'/index.html','utf8');for(const marker of ['neo-historic-teams-v970.js','neo-cups-v970.js','neo-studio-v970.js','neo-studio-v970.css','window.NeoPortraitManager','registerCreatedPlayer'])assert.ok(html.includes(marker),marker);
 const ui=fs.readFileSync(dir+'/neo-studio-v970.js','utf8');for(const marker of ['neo970-creator','neo970-photo-list','neo970-cups','neo970-char-name','neo970-char-style','data-neo970-photo','C.playNext','E.registerCreatedPlayer'])assert.ok(ui.includes(marker),marker);
-assert.equal(fs.readFileSync(dir+'/VERSION','utf8').trim(),'10.5.0');
+assert.equal(fs.readFileSync(dir+'/VERSION','utf8').trim(),'10.5.1');
 console.log('PASS v9.7: historical squads, 11 starters, exhibition engine, character creator, cups, player profiles, portraits & original league isolation');

@@ -44,6 +44,7 @@ jobs:
           node tests/v1030.test.cjs
           node tests/v1040.test.cjs
           node tests/v1050.test.cjs
+          node tests/v1051.test.cjs
           python tools/gerar_atualizacao.py
       - name: Disponibilizar site completo (mesmo antes de habilitar Pages)
         uses: actions/upload-artifact@v4

@@ -38,7 +38,7 @@ assert.ok(photoRecovery.includes('NeoPortraitManager.saveFile'),'alternatives us
 assert.ok(worker.includes('./neo-clubs-v1050.js')&&worker.includes('./neo-photo-recovery-v1050.js'));
 assert.ok(worker.includes('./neo-polish-v1050.css'));
 assert.ok(html.includes('neo-clubs-v1050.js')&&html.includes('neo-photo-recovery-v1050.js'));
-assert.equal(read('VERSION').trim(),'10.5.0');
+assert.equal(read('VERSION').trim(),'10.5.1');
 const java=fs.readFileSync('app/src/main/java/com/neoegoist/simulator/MainActivity.java','utf8');
 assert.ok(java.includes('ImageDecoder.decodeBitmap'),'native Android fallback supports modern image formats');
 assert.ok(java.includes('getContentResolver().openInputStream(uri)'),'native android import reads original content provider');
