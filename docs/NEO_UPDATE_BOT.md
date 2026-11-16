@@ -21,15 +21,15 @@ O banner horizontal e o avatar quadrado enviados pelo autor serão servidos pelo
 
 | Uso | Caminho | Dimensões | SHA256 do original |
 | --- | --- | --- | --- |
-| Banner do embed | `web/assets/updates/neo-update-banner.jpg` | 1536 × 614 | `bd56fa4c5ee2c4f6d9cdf259da6c14bae1ab25077d81f9253c7be5fb555f6768` |
-| Avatar do webhook | `web/assets/updates/neo-update-avatar.jpg` | 1536 × 1536 | `7572eea5ed7bf33e8fa1af5c63d4753dd55fb79a3d16a4178c5d508e70e02cbe` |
+| Banner do embed | `web/assets/updates/neo-update-banner.png` | 1983 × 793 | `65e2913e0568591c114e61485eb1d4771f08360fdcfaf3e9f00879eeb83f9a9f` |
+| Avatar do webhook | `web/assets/updates/neo-update-avatar.png` | 1254 × 1254 | `882595c75b8ae95ab4fa9bb058f208181c1101c47028ed17b0ac4270b77c64b9` |
 
-**Importante:** os anexos originais tinham nomes terminados em `.png`, mas seu conteúdo é **JPEG**. Renomeie para os caminhos `.jpg` acima preservando os bytes. O script valida o cabeçalho JPEG e o hash de cada arquivo.
+**Importante:** os anexos originais tinham nomes terminados em `.png`, mas seu conteúdo é **JPEG**. Renomeie para os caminhos `.jpg` acima preservando os bytes. O script valida o cabeçalho PNG e o hash de cada arquivo.
 
 URLs públicas esperadas após um deploy bem-sucedido:
 
-- https://a94330028-cell.github.io/Blue-lock-neo/assets/updates/neo-update-banner.jpg
-- https://a94330028-cell.github.io/Blue-lock-neo/assets/updates/neo-update-avatar.jpg
+- https://a94330028-cell.github.io/Blue-lock-neo/assets/updates/neo-update-banner.png
+- https://a94330028-cell.github.io/Blue-lock-neo/assets/updates/neo-update-avatar.png
 
 Elas não podem ser consideradas disponíveis antes do upload. **A ausência ou modificação de qualquer arte bloqueia o anúncio** e o site continua operando.
 
