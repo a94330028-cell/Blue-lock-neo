@@ -66,7 +66,7 @@ assert.ok(worker.includes('blue-lock-neo-v1.9.0-universe'));
 const changelog=JSON.parse(read('CHANGELOG.json'));
 assert.equal(changelog.current_version,'1.8.0');
 assert.equal(read('web/VERSION').trim(),'1.8.0');
-assert.equal(read('web/UPDATE_BUILD').trim(),'10.6.9');
+assert.equal(read('web/UPDATE_BUILD').trim(),'10.6.10');
 assert.equal(changelog.releases[0].version,'1.8.0');
 assert.ok(changelog.releases.some(r=>r.version==='1.0.0'),'history preserved');
 const gradle=read('app/build.gradle');
