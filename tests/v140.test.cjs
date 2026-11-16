@@ -1,0 +1,73 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs');
+const E=require('../web/engine.js');
+const C=require('../web/neo-ego-combat-v140.js');
+const read=path=>fs.readFileSync(path,'utf8');
+const shooter={name:'Isagi',side:0,role:'CA',i:9,x:700,y:500,stamina:90,attributes:{vision:96,ego:95},flowUntil:240,activeAbility:{id:'abc',until:240}};
+const midfielder={name:'Ness',side:0,role:'MEI',i:7,x:850,y:520,attributes:{vision:80},stamina:75};
+const marked={name:'Kaiser',side:0,role:'CA',i:8,x:920,y:510,stamina:95};
+const defender={name:'Rin',side:1,role:'ZAG',i:3,x:740,y:512,attributes:{ego:89},stamina:92};
+assert.equal(C.flowProfile(shooter).label,'Flow de Finalização');
+assert.equal(C.flowProfile({role:'GOL'}).label,'Flow de Reflexos');
+assert.equal(C.flowProfile({role:'ZAG'}).label,'Flow Defensivo');
+assert.equal(C.flowBonus(shooter,'finishing',150)>1,true);
+assert.equal(C.flowBonus(shooter,'reflexes',150),1);
+assert.equal(C.flowBonus(shooter,'finishing',350),1);
+const m={time:130,phase:'play',teams:[{id:'bm'},{id:'px'}],players:[shooter,midfielder,marked,defender],
+ ball:{owner:shooter},careerPlayers:{'Isagi|bm':{weaponMastery:{abc:3}}},
+ _neo140Abilities:{get(id){return id==='abc'?{id,stat:'finishing',label:'Impacto Azul'}:null;}},
+ safeLane(a,b){return b===marked?23:75;},opponentPressure(q){return q===marked?2:0;},
+ offside:()=>false,log(msg){this.notes.push(msg);},notes:[]};
+assert.ok(C.masteryBonus(m,shooter,'finishing')>1,'technique mastery affects the corresponding real stat');
+assert.equal(C.masteryBonus(m,shooter,'reflexes'),1);
+const best={q:marked,lane:23,value:20,d:220};
+assert.equal(C.metamind(m,shooter,best).q,midfielder,'Metavision avoids marked target');
+assert.ok(m.notes.some(x=>x.includes('lê a marcação')),'Metavision readable insight is based on real lane');
+assert.equal(C.metamind({...m,ball:{owner:midfielder}},shooter,best),best,'no clairvoyance without possession');
+assert.equal(C.metamind({...m,offside:()=>true},shooter,best),best,'never pass to offside option');
+const duel={time:140,players:[shooter,defender],log(msg){this.logs.push(msg);},logs:[],_neo140Adapt:{}};
+assert.equal(C.learnFromDuel(duel,shooter,defender,defender,'tackle').loser,'Isagi');
+duel.time=180;
+assert.equal(C.learnFromDuel(duel,shooter,defender,defender,'tackle').losses,2);
+assert.ok(C.adaptationBoost(duel,shooter,'dribbling')>1,'loser learns after genuine repeated losses');
+assert.equal(C.adaptationBoost(duel,shooter,'tackling'),1,'no unrelated attribute improvement');
+duel.time=700;assert.equal(C.adaptationBoost(duel,shooter,'dribbling'),1,'adaptation expires');
+const clash={time:120,_neo140Engine:{Abilities:{get:()=>({label:'Impacto Azul'})}},
+ _actionFx(kind,p,x,y,label){this.lastFx=[kind,p.name,label];},log(s){this.message=s;}};
+const contest=C.contest(clash,shooter,defender,defender,'tackle');
+assert.equal(contest.winner,'Rin');
+assert.equal(contest.attackSkill,'Impacto Azul');
+assert.equal(contest.defenseSkill,null);
+assert.equal(clash._neo140Contests.length,1);
+assert.equal(clash.lastFx[1],'Rin','clash never replaces real winner');
+const awakening={time:140,_neo140Awakenings:[],_emitSkill(p,label){this.lastLabel=label;},log(){}};
+assert.equal(C.awakenedSkill(awakening,shooter,{id:'supreme-tech',label:'Impacto Supremo',tier:3}),true);
+assert.equal(C.awakenedSkill(awakening,shooter,{id:'supreme-tech',label:'Impacto Supremo',tier:3}),false,'repeat is blocked');
+assert.equal(awakening._neo140Awakenings.length,1);
+const reactive={time:140,players:[shooter,defender],random:()=>0,
+ _neo140OriginalEgo(p,delta){p.ego=(p.ego||0)+delta;},log(s){this.lastLog=s;}};
+assert.equal(C.chainReaction(reactive,shooter),'Rin');
+assert.equal(defender.ego,2,'reaction is small, never a forced awakening');
+assert.equal(C.chainReaction(reactive,shooter),null,'no reaction spam');
+assert.equal(C.adapt(E),true);
+assert.equal(C.adapt(E),false,'never stack skill hooks');
+const match=new E.Match('bm','px',554113);
+match.rollGameplan();for(let i=0;i<330;i++)match.step(E.TICK);
+assert.ok(match.time>0&&match.players.every(p=>Number.isFinite(p.x)&&Number.isFinite(p.y)));
+const result=match.result();
+assert.ok(Array.isArray(result.egoCombat.contests));
+assert.ok(Array.isArray(result.egoCombat.awakenings));
+assert.deepEqual(result.score,match.score,'never inject goals into result');
+assert.ok(!read('web/neo-ego-combat-v140.js').includes('localStorage.clear('),'do not erase player data');
+assert.ok(read('tools/sync_inline_v930.py').includes('neo-ego-combat-v140.js'));
+assert.ok(read('web/index.html').includes('neo-ego-combat-v140.js'));
+assert.ok(read('web/service-worker.js').includes('./neo-ego-combat-v140.js'));
+assert.ok(read('web/service-worker.js').includes('blue-lock-neo-v1.3.0-ego-combat'));
+const change=JSON.parse(read('CHANGELOG.json'));
+assert.equal(change.current_version,'1.3.0');
+assert.equal(change.releases[0].version,'1.3.0');
+assert.equal(read('web/VERSION').trim(),'1.3.0');
+assert.equal(read('web/UPDATE_BUILD').trim(),'10.6.4');
+assert.ok(read('app/build.gradle').includes("versionName '1.3.0'"));
+assert.ok(read('app/build.gradle').includes('versionCode 111'));
+console.log('OK EGO COMBAT 1.3: real Flow, lane-based Metavision, duels, mastery, awakening, and save-safe release');
