@@ -34,6 +34,7 @@ assert.equal(career.players[deal.name+'|px'].clubHistory[0].club,'bm');
 assert.throws(()=>W.recordMove(season,E,{name:deal.name,from:'bm',to:'px'}),/rodada/);
 assert.equal(W.availableDeals(season,E,'bm','bm').length,0,'cannot transfer to same club');
 assert.equal(W.availableDeals(season,E,'bm','notreal').length,0,'no fake clubs');
+assert.equal(W.adapt(E),true,'install market engine extension before creating a new fixture');
 const sim=new E.Match('bm','px',190109,E.Progression.ensure(season),season);
 assert.equal(sim.teams[1].players[deal.toSlot],deal.name,'real league match receives transfer');
 assert.equal(sim.teams[0].players[deal.fromSlot],deal.replacement);
@@ -82,7 +83,6 @@ const competitions=W.competitions({NeoTournament1030:{safeLoad:()=>[
  {name:'Copa dos Egoístas',rounds:[{games:[{result:[2,1]}]}],champion:'mc'}]},
  localStorage:{}},season,E);
 assert.ok(competitions.some(c=>c.name==='Copa dos Egoístas'&&c.winner==='mc'),'only confirmed cup titles');
-assert.equal(W.adapt(E),true,'engine patched once');
 assert.equal(W.adapt(E),false,'idempotent engine adaptation');
 const checkA=new E.Match('bm','px',90019,E.Progression.ensure(season),season);
 const checkB=new E.Match('bm','px',90019,E.Progression.ensure(season),season);
