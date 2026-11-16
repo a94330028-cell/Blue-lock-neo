@@ -323,8 +323,7 @@ def publish(data, version, packets, *, retry_pending=False):
     secret = os.getenv("DISCORD_WEBHOOK_URL", "")
     token = os.getenv("GH_TOKEN", "") or os.getenv("GITHUB_TOKEN", "")
     if not secret:
-        log("DISCORD_WEBHOOK_URL não configurado. Nenhuma mensagem enviada.")
-        return "not-configured"
+        raise AnnouncementError("DISCORD_WEBHOOK_URL não configurado. Nenhuma mensagem enviada.")
     if not token:
         raise AnnouncementError("GITHUB_TOKEN ausente; controle de duplicações indisponível.")
     parsed = urlsplit(secret)
