@@ -140,7 +140,7 @@
     event.preventDefault();event.stopImmediatePropagation();show(open||'championship');return;
    }
    if(b.dataset.neoUxBack){
-    event.preventDefault();event.stopImmediatePropagation();close();window.NeoReferenceMobile.go(active==='market'?'ranking':'home');return;
+    event.preventDefault();event.stopImmediatePropagation();const previous=active;close();window.NeoReferenceMobile.go(previous==='market'?'ranking':'home');return;
    }
    if(b.dataset.neoUxOriginal){
     event.preventDefault();event.stopImmediatePropagation();original(b.dataset.neoUxOriginal);return;

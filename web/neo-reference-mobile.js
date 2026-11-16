@@ -128,7 +128,7 @@
     const data=career[pKey(name,team)]||{};
     let raw=(index<(team.players||[]).length?team.formation?.[index]?.role:'RES')||data.role||'JOG';
     const rawString=String(raw).toUpperCase();
-    const roleName=/(GK|GOL)/.test(rawString)?'Goleiro':/(CB|LB|RB|DEF|ZAG|LD|LE)/.test(rawString)?'Defensor':/(CM|CAM|CDM|LM|RM|MEI|VOL)/.test(rawString)?'Meia':/(ST|CF|LW|RW|ATA|ATK|FW)/.test(rawString)?'Atacante':'Jogador';
+    const roleName=/(GK|GOL)/.test(rawString)?'Goleiro':/(CB|LB|RB|DEF|ZAG|LD|LE)/.test(rawString)?'Defensor':/(MC|CM|CAM|CDM|LM|RM|MEI|MAT|VOL)/.test(rawString)?'Meia':/(CA|SA|ST|CF|PE|PD|LW|RW|ATA|ATK|FW)/.test(rawString)?'Atacante':'Jogador';
     members.push({name,team,data,role:roleName,ovr:Number(data.ovr)||null});
    });
   }
