@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "project": "Blue Lock NEO",
-  "current_version": "1.6.0",
+  "current_version": "1.7.0",
   "site_url": "https://a94330028-cell.github.io/Blue-lock-neo/",
   "media": {
     "banner": {
@@ -20,6 +20,41 @@
     }
   },
   "releases": [
+    {
+      "version": "1.7.0",
+      "date": "2026-11-16",
+      "novidades": [
+        "EGO SAGA: Devoração de rivais após derrotas em duelos reais e posterior vitória contra o mesmo adversário, com adaptação contextual limitada.",
+        "Arsenal especial: armas ativadas de passe, drible, finalização, defesa e desarme influenciam atributos correspondentes durante sua duração, respeitando custos e recargas.",
+        "Duelo de habilidades registra o vencedor verdadeiro e as técnicas efetivamente ativadas, com efeito visual contextual.",
+        "Episódios cinematográficos: linha do tempo e destaques de transmissão derivados de ações verdadeiras.",
+        "Futebol mais dinâmico: pontas podem criar passes para companheiros desmarcados dentro da área e atletas fazem corridas variadas com bola nas alas."
+      ],
+      "correcoes": [
+        "Devoração não acontece apenas por existir uma rivalidade: depende de derrotas anteriores e vitória posterior.",
+        "Técnicas ativadas fora do contexto não geram vantagens; bônus por aprendizado expiraram normalmente.",
+        "Resultado do duelo, placar, defesas e gols permanecem calculados pelo motor, sem fabricação.",
+        "Histórico de acontecimentos evita duplicação ao processar novamente a mesma súmula."
+      ],
+      "jogabilidade": [
+        "Adaptação após dribles ou desarmes perdidos afeta apenas atributos pertinentes e só contra o mesmo oponente.",
+        "Finalizações com arma ativa podem melhorar moderadamente a qualidade dentro de uma zona plausível.",
+        "Movimentação de atacantes, meio-campistas e laterais reativa ao jogo nas alas, sem teleporte e mantendo o impedimento.",
+        "Escolha de passe para a área depende da oportunidade, da linha livre e da pressão."
+      ],
+      "visual": [
+        "Novo painel EGO SAGA em Recordes, com episódios de Devoração, habilidades, duelos, cinema e futebol.",
+        "Destaques discretos no campo, sem bloquear a transmissão, respeitando movimento reduzido."
+      ],
+      "otimizacoes": [
+        "Eventos limitados por partida e dados de carreira compactos para o Android e o Turbo 40×.",
+        "Saves, imagens e jogadores preservados; versão pública 1.7.0, build interno Android 10.6.8."
+      ],
+      "importantes": [
+        "A atualização foca os itens 6 a 10 do roadmap. Outros itens continuam em desenvolvimento.",
+        "Para atualizar o APK instalado sem desinstalar é necessária a mesma assinatura digital."
+      ]
+    },
     {
       "version": "1.6.0",
       "date": "2026-11-16",

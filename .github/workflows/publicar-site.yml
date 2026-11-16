@@ -58,6 +58,7 @@ jobs:
           node tests/v150.test.cjs
           node tests/v160.test.cjs
           node tests/v170.test.cjs
+          node tests/v180.test.cjs
           python3 -m unittest discover -s tests -p test_neo_announcer.py
           python3 tools/neo_update_announcement.py validate
           python tools/gerar_atualizacao.py

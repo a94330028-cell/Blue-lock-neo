@@ -1,3 +1,22 @@
+# Blue Lock NEO 1.7.0 — EGO SAGA
+
+Esta etapa aprofunda as ideias 6 a 10 do roadmap:
+
+- **Devoração:** aprendizado após derrotas reais, seguido de superação verificável de um rival.
+- **Habilidades especiais:** técnicas ativadas alteram atributos e efeitos táticos pertinentes por tempo limitado.
+- **Duelos de habilidades:** confrontos usam o resultado real do motor e registram armas presentes.
+- **Partidas cinematográficas:** episódios, replays já existentes e efeitos discretos gerados de lances verdadeiros.
+- **Futebol dinâmico:** corridas ao segundo poste, infiltrações e passes para finalização na área.
+
+Painel Recordes → EGO SAGA. Nenhum registro de jogo anterior é inventado. Turbo 40× e dados existentes preservados.
+
+Versão pública: **1.7.0**. Build interno Android: **10.6.8**, versionCode 115.
+A atualização sobre um APK anterior exige a mesma assinatura digital.
+
+[Roadmap das 55 ideias](docs/ROADMAP-55.md).
+
+---
+
 # Blue Lock NEO 1.6.0 — CINCO PILARES DO EGO
 
 A versão **1.6.0** aprofunda as ideias 1–5 do projeto:
