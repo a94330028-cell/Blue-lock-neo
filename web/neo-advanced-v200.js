@@ -175,7 +175,7 @@ function matchReport(m){
   signatures:[...new Set(events.map(e=>e.type))].slice(0,20)};
 }
 function adapt(engine){
- const p=engine?.Match?.prototype;if(!p||p._neoAdvanced) return false;
+ const p=engine?.Match?.prototype;if(!p||p._neoAdvancedInstalled) return false;
  if(typeof p._attributes==='function'){
   const old=p._attributes;
   p._attributes=function(player,key){this._neoAdvancedEngine=engine;return attributes(this,player,key,old.call(this,player,key));};
@@ -228,7 +228,7 @@ function adapt(engine){
  if(typeof p.result==='function'){
   const old=p.result;p.result=function(){const r=old.call(this);r.neoAdvanced=matchReport(this);return r;};
  }
- Object.defineProperty(p,'_neoAdvanced',{value:true});
+ Object.defineProperty(p,'_neoAdvancedInstalled',{value:true});
  return true;
 }
 return {state,note,mastery,attributes,duel,launchedPass,improvisedDecision,evolvedRun,
