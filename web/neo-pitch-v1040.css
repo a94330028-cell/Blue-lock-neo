@@ -1,0 +1,32 @@
+/* NEO 10.4: tactical pitch lineups — responsive, eleven distinct slots. */
+#neo990-xi .neo990-xi-pitch,#neo990-xi .neo990-xi-pitch *{box-sizing:border-box}
+.neo990-xi-pitch{position:relative;isolation:isolate;overflow:hidden;width:100%;height:clamp(435px,151vw,645px);border:2px solid #66ae8c;border-radius:17px;background:repeating-linear-gradient(to bottom,#175d42 0%,#175d42 12.5%,#1c6e4d 12.5%,#1c6e4d 25%);box-shadow:inset 0 0 55px #061f1799,0 9px 18px #06121f66;margin:10px auto 6px}
+.neo990-xi-pitch:after{position:absolute;content:"";inset:0;pointer-events:none;box-shadow:inset 0 0 28px #051a1495}
+.neo990-xi-pitch .neo980-pitch-markings{inset:11px 8px;border-color:#e4f7e5a1}
+.neo990-xi-pitch .neo980-pitch-markings:after,.neo990-xi-pitch .neo980-center-circle,.neo990-xi-pitch .neo980-penalty{border-color:#e4f7e5a1}
+.neo990-xi-pitch .neo980-goal{border-color:#e6f8ec}
+.neo990-pitch-player{appearance:none;position:absolute;left:var(--lane);top:var(--depth);transform:translate(-50%,-50%);z-index:2;width:clamp(46px,14vw,76px);min-height:64px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:1px;padding:3px 1px;background:transparent;border:0;border-radius:9px;color:#f7ffff;text-align:center;text-shadow:0 1px 5px #000,0 1px 2px #000;cursor:pointer}
+.neo990-pitch-player:hover,.neo990-pitch-player:focus-visible{outline:2px solid #f9d58b;outline-offset:2px;z-index:6;background:#092538d9}
+.neo990-pitch-player .neo990-pic{display:block;width:clamp(31px,9vw,43px);height:clamp(31px,9vw,43px);object-fit:cover;object-position:top center;border-radius:50%;border:2px solid #cfecff;box-shadow:0 2px 7px #021525b5;background:#203953;flex:none}
+.neo990-pitch-player .neo990-position{font-size:9px;color:#f2e2af;background:#073248eb;border:1px solid #80b2c0cc;border-radius:5px;line-height:12px;padding:0 3px;font-weight:950}
+.neo990-pitch-player .neo990-name{width:100%;min-width:0;max-width:100%;color:#fff;font-size:clamp(8px,2.25vw,10px);line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:850}
+.neo990-pitch-player .neo990-score{color:#11283c;background:#ffdf86;border-radius:8px;padding:1px 5px;font-size:10px;font-weight:950;line-height:13px;box-shadow:0 1px 4px #0008}
+.neo990-xi-caption{font-size:10px;text-align:center;color:#9ccecd;margin:5px 0 11px}
+.neo990-xi-list{margin:10px 0;border:1px solid #42637f;border-radius:10px;background:#0c2238}
+.neo990-xi-list>summary{cursor:pointer;color:#c1e2f5;padding:11px;font-size:12px;font-weight:800}
+.neo990-xi-list .neo990-grid{padding:9px}
+#neo980-squad-area .neo980-pitch,#neo990-xi .neo990-xi-pitch{contain:layout paint}
+#neo980-squad-area .neo980-player{width:clamp(47px,14vw,70px);min-height:69px}
+#neo980-squad-area .neo980-headshot{width:clamp(31px,9vw,42px);height:clamp(31px,9vw,42px);min-width:0;min-height:0}
+#neo980-squad-area .neo980-player-name{width:100%;max-width:100%;font-size:clamp(8px,2.1vw,10px)}
+#neo980-squad-area .neo980-pitch{height:clamp(435px,151vw,645px);min-height:435px;max-height:645px}
+#neo980-squad-area .neo980-player .neo980-role{font-size:9px}
+#neo980-squad-area .neo980-player .neo980-ovr{font-size:10px}
+@media(max-width:380px){
+ .neo990-pitch-player{width:49px;padding-inline:0}
+ #neo980-squad-area .neo980-player{width:50px;padding-inline:0}
+ .neo990-pitch-player .neo990-pic,#neo980-squad-area .neo980-headshot{width:32px;height:32px}
+ .neo990-pitch-player .neo990-name,#neo980-squad-area .neo980-player-name{font-size:8px}
+ .neo990-xi-pitch,#neo980-squad-area .neo980-pitch{height:clamp(455px,160vw,565px)}
+}
+@media(prefers-reduced-motion:reduce){.neo990-pitch-player{transition:none}}
