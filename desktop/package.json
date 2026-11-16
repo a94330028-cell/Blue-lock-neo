@@ -49,14 +49,14 @@
             "x64"
           ]
         }
-      ],
-      "artifactName": "Blue-Lock-NEO-${version}-${os}-${arch}.${ext}"
+      ]
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
-      "createStartMenuShortcut": true
+      "createStartMenuShortcut": true,
+      "artifactName": "Blue-Lock-NEO-Setup-${version}-${arch}.${ext}"
     },
     "publish": [
       {
@@ -65,6 +65,9 @@
         "repo": "Blue-lock-neo",
         "releaseType": "release"
       }
-    ]
+    ],
+    "portable": {
+      "artifactName": "Blue-Lock-NEO-Portable-${version}-${arch}.${ext}"
+    }
   }
 }
