@@ -13,7 +13,7 @@ android {
         applicationId 'com.neoegoist.simulator'
         minSdk 24
         targetSdk 35
-        versionCode 116
+        versionCode 117
         versionName '1.8.0'
     }
     signingConfigs {
