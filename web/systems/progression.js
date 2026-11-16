@@ -11,6 +11,7 @@ function baseValue(){return 0;}
 function estimateValue(player){
  // No OVR bonus and no guesses from aggregate goals, assists or matches.
  // A player's displayed bid equals their persisted (or reconstructed) bid.
+ if(num(player?.games)<=0&&!player?.bidHistory?.length)return 0;
  return Math.max(0,bidRound(num(player?.value,0)));
 }
 function bidDelta(player,goalDifference=0){
