@@ -165,5 +165,7 @@ if 'neo-evolution-v120.js' not in updated:
 if 'neo-evolution-v120.css' not in updated:
     if updated.count('</head>')!=1:raise RuntimeError('Unable to attach EGO Chronicle styles')
     updated=updated.replace('</head>','<link rel="stylesheet" href="neo-evolution-v120.css?v=1.2.0">\n</head>')
+if 'neo-living-v130.js' not in updated:
+    updated=updated.replace('</body>','<script defer src="neo-living-v130.js?v=1.2.0"></script>\n</body>')
 html.write_text(updated,encoding='utf-8')
 print('Inline game modules synchronized:',counts)
