@@ -104,6 +104,7 @@ jobs:
         continue-on-error: true
         run: python3 tools/neo_update_announcement.py validate --require-media
       - name: Anunciar atualização no Discord somente após deploy real
+        id: neo_announce
         if: steps.deployment.outcome == 'success' && steps.neo_media.outcome == 'success'
         continue-on-error: true
         env:
@@ -115,3 +116,8 @@ jobs:
         run: |
           echo '### NEO UPDATE BOT: anúncio não enviado' >> "$GITHUB_STEP_SUMMARY"
           echo 'As imagens originais ainda não foram verificadas. O site foi publicado; o webhook permanece bloqueado.' >> "$GITHUB_STEP_SUMMARY"
+      - name: Registrar ausência do webhook ou falha no envio
+        if: steps.deployment.outcome == 'success' && steps.neo_media.outcome == 'success' && steps.neo_announce.outcome != 'success'
+        run: |
+          echo '### NEO UPDATE BOT: publicação concluída; Discord ainda não recebeu o anúncio.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Configure DISCORD_WEBHOOK_URL em Settings → Secrets and variables → Actions e use o workflow manual NEO UPDATE BOT → announce.' >> "$GITHUB_STEP_SUMMARY"
