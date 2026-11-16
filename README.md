@@ -1,3 +1,24 @@
+# Blue Lock NEO 1.8.0 — LIVING CAREER & WORLD
+
+Atualização das **ideias 11–18**, integrada aos dados reais do Blue Lock NEO:
+
+- Carreira personalizada com marcos, histórico e desenvolvimento do jogador criado.
+- Rivalidades automáticas com níveis por duelos reais.
+- Evolução individual de atributos após bom desempenho, com foco de treino e teto.
+- Mercado Neo com negociações verdadeiras para os próximos jogos, escalações de 11 titulares e nenhuma duplicação.
+- Competições e campeões das Copas existentes, sem troféus fictícios.
+- Recordes completos derivados de placares, estatísticas e súmulas.
+- Turbo 40× continua independente do resultado dos jogos, com teste determinístico.
+- Jornal Neo publica histórias e manchetes somente de acontecimentos verificados.
+
+Abra **Mais → Mercado Neo** para ajustar transferências e treinos e **Recordes → Universo Vivo** para acompanhar títulos, rivalidades e notícias.
+
+**Compatibilidade:** os retratos, jogadores criados, saves e campeonatos antigos são preservados. Transferências da liga não alteram elencos-base nem copas independentes. O APK com versão interna 10.6.9 precisa da mesma assinatura do aplicativo instalado.
+
+[Roadmap oficial das 55 ideias](docs/ROADMAP-55.md).
+
+---
+
 # Blue Lock NEO 1.7.0 — EGO SAGA
 
 Esta etapa aprofunda as ideias 6 a 10 do roadmap:

@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "project": "Blue Lock NEO",
-  "current_version": "1.7.0",
+  "current_version": "1.8.0",
   "site_url": "https://a94330028-cell.github.io/Blue-lock-neo/",
   "media": {
     "banner": {
@@ -20,6 +20,45 @@
     }
   },
   "releases": [
+    {
+      "version": "1.8.0",
+      "date": "2026-11-16",
+      "novidades": [
+        "Carreira personalizada: personagens criados recebem histórico de jogos, marcos conquistados e foco de treino configurável, com evolução baseada em súmulas.",
+        "Rivalidades de temporada evoluem de inicial a intensa e lendária conforme duelos reais, com resultados e reações de Ego.",
+        "Evolução individual: cada três partidas com boa atuação, atletas podem melhorar uma característica real, com limites de treinamento.",
+        "Mercado Neo: transferências entre os cinco clubes da liga alteram de verdade os 11 titulares das partidas seguintes e promovem reservas, preservando estatísticas.",
+        "Transferências automáticas opcionais, avaliadas com estatísticas reais a cada quatro rodadas completas.",
+        "Central de campeonatos: Neo League e Copas dos Egoístas existentes, com partidas disputadas e campeões confirmados.",
+        "Recordes da temporada: gols, assistências, goleiros, maior goleada e total de partidas reais.",
+        "Jornal Neo: notícias de resultados oficiais, goleadas, gols individuais, evolução, rivalidades e negociações concluídas."
+      ],
+      "correcoes": [
+        "Transferências não modificam os elencos-base do repositório e não deixam atletas duplicados nem equipes com menos de 11 titulares.",
+        "A mesma súmula da temporada não aumenta novamente os marcos, rivalidades, evolução ou notícias.",
+        "O mercado fica bloqueado enquanto a partida estiver em andamento ou pausada, evitando mudanças de elenco no meio do confronto.",
+        "Jogadores não recebem conquistas, notícias ou prêmios antes de registrarem a ação real."
+      ],
+      "jogabilidade": [
+        "O novo elenco do mercado é usado pelo motor de partidas nas próximas rodadas, inclusive ao simular temporadas.",
+        "Os atributos realmente evoluem conforme desempenho e foco de treino, preservando o teto de atributos original.",
+        "Rivalidades verificadas influenciam discretamente a motivação durante duelos futuros.",
+        "O Turbo 40× continua usando o mesmo motor, decisões e placares de simulação, com verificações de sementes repetidas."
+      ],
+      "visual": [
+        "Novo painel Mercado Neo em Mais com seleção de equipes, negociações, contratações automáticas e carreiras dos personagens criados.",
+        "Novo painel Universo Vivo em Recordes com central de campeonatos, ranking de rivalidades, recordes e Jornal Neo."
+      ],
+      "otimizacoes": [
+        "Históricos, notícias e registros das partidas são limitados para preservar desempenho e armazenamento mobile.",
+        "Versão pública 1.8.0; build Android interno 10.6.9, com saves antigos e retratos preservados."
+      ],
+      "importantes": [
+        "Mercado Neo funciona no campeonato da temporada e não modifica os elencos de outras Copas já configuradas.",
+        "As notícias automáticas usam somente dados realmente registrados, não resultados fabricados.",
+        "O APK Android sem assinatura de distribuição não pode atualizar um aplicativo assinado por outra chave."
+      ]
+    },
     {
       "version": "1.7.0",
       "date": "2026-11-16",
