@@ -31,6 +31,6 @@ assert.ok(sync.includes('apple-touch-icon'));
 assert.ok(sync.includes('favicon-32.png?v=9.9.1'));
 assert.equal(fs.readFileSync(path.join(base,'web/VERSION'),'utf8').trim(),'10.5.0');
 const gradle=fs.readFileSync(path.join(base,'app/build.gradle'),'utf8');
-assert.ok(gradle.includes('versionCode 105'));
+assert.ok(gradle.includes('versionCode 106'));
 assert.ok(gradle.includes("versionName '9.9.4'"));
 console.log('PASS: Kaiser icon assets, manifest, Android mipmaps, cache and version 9.9.1');
