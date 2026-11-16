@@ -26,12 +26,12 @@ Este documento é o backlog oficial das 55 propostas do usuário. **Não signifi
 ## Mecânicas de anime
 
 - [ ] **19. Evolução de habilidades em três níveis** — parcial
-- [ ] **20. Jogadas improvisadas** — pendente
+- [ ] **20. Jogadas improvisadas** — parcial: saídas sob pressão em lances legais
 - [ ] **21. Reações em cadeia** — parcial
 - [ ] **22. Química entre jogadores** — parcial
 - [ ] **23. Sistema de armas** — parcial
 - [ ] **24. Instinto de artilheiro** — parcial
-- [ ] **25. Evolução de posições** — pendente
+- [ ] **25. Evolução de posições** — parcial: movimentos situacionais sem alterar posição definitiva
 - [ ] **26. Contra-ataques de Ego** — parcial
 - [ ] **27. Conflitos entre companheiros** — pendente
 - [ ] **28. Evolução por derrotas** — parcial
@@ -40,7 +40,7 @@ Este documento é o backlog oficial das 55 propostas do usuário. **Não signifi
 
 ## Partidas
 
-- [ ] **31. Intensidade contextual** — pendente
+- [ ] **31. Intensidade contextual** — parcial: ajustes discretos de pressão pelo placar e minuto
 - [ ] **32. Câmera inteligente** — pendente
 - [ ] **33. Defesas lendárias** — parcial
 - [ ] **34. Inteligência tática coletiva** — parcial
@@ -49,7 +49,7 @@ Este documento é o backlog oficial das 55 propostas do usuário. **Não signifi
 - [ ] **37. Narração dinâmica** — pendente
 - [ ] **38. Replay de melhores momentos** — parcial
 - [ ] **39. Banco inteligente** — parcial
-- [ ] **40. Domínio territorial** — pendente
+- [ ] **40. Domínio territorial** — parcial: amostras verificadas da posse no terço ofensivo
 
 ## Universo e modos
 
@@ -60,7 +60,7 @@ Este documento é o backlog oficial das 55 propostas do usuário. **Não signifi
 - [ ] **45. Olheiros** — parcial
 - [ ] **46. Treinadores inteligentes** — parcial
 - [ ] **47. Copa dos Egoístas** — parcial
-- [ ] **48. Seleção mundial** — pendente
+- [ ] **48. Seleção mundial** — parcial: WORLD XI amistoso automático, falta competição de seleções
 - [ ] **49. Linha do tempo dos personagens** — parcial
 - [ ] **50. Modo espectador premium** — parcial
 
@@ -71,6 +71,20 @@ Este documento é o backlog oficial das 55 propostas do usuário. **Não signifi
 - [ ] **53. Fórmula de Gol** — parcial
 - [ ] **54. Despertar de novas armas** — parcial
 - [ ] **55. Enciclopédia de Egoístas** — parcial
+
+## Integração incremental após a etapa 11–18 — Build de conteúdo 10.6.10
+
+Este lote adiciona duas camadas testáveis sem substituir o motor: `web/neo-advanced-v200.js` e
+`web/neo-universe-v220.js`, com testes em `tests/v200.test.cjs`.
+
+- **IA e ações físicas:** passagem improvisada apenas com posse, pressão e rota de passe válida; memória de duelos perdidos, ligações de passes realmente lançados, instinto ofensivo e desgaste mental. Os ajustes nos atributos são limitados para não garantir gols.
+- **Jogo e análise:** amostragem por tempo de bola efetiva no terço ofensivo e marcação de defesas confirmadas contra chutes com xG alto; somente os acontecimentos produzidos pelo motor entram no histórico.
+- **Universo:** arquivo idempotente de partidas oficiais com ranking, prêmios apenas após todas as partidas, linha do tempo, Hall da Fama comprovado e olheiros baseados na nota registrada.
+- **Modos:** atalho para Copa Mundial de Clubes com elencos existentes e Seleção Mundial NEO automática para amistosos, recalculada sem duplicar jogadores escalados no adversário. Isto não é uma competição de seleções nacionais nem conclui a ideia 48.
+- **Interface:** painéis recolhidos por padrão. A página não recebe uma seção gigante sempre aberta.
+- **Preservação:** não há migração destrutiva, o módulo não apaga retratos nem grava transferências automáticas. O build Android web 10.6.10 continua separado do número da versão binária.
+
+**Estado de aceite:** este marco integra funcionalidades parciais de vários itens, mas **não conclui automaticamente 19–55**. Continuam necessárias verificações de todas as competências por item, partidas completas, balanceamento, melhorias de câmera e narração, banco inteligente, Seleção Mundial competitiva e validação de compatibilidade de APK assinado.
 
 ## Critérios obrigatórios de aceite
 
