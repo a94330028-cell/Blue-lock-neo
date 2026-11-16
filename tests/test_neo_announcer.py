@@ -67,7 +67,7 @@ class UpdateAnnouncementTests(unittest.TestCase):
             for obj in self.data["media"].values():
                 path = Path(d) / obj["path"]
                 path.parent.mkdir(parents=True, exist_ok=True)
-                path.write_bytes(b"\xff\xd8\xff" + b"x" * 4096)
+                path.write_bytes(bytes.fromhex("89504e470d0a1a0a") + b"x" * 4096)
             with self.assertRaises(announce.AnnouncementError):
                 announce.verify_media(self.data, d)
 
