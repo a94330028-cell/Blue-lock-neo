@@ -6,6 +6,7 @@
  const api=factory();
  if(typeof module==='object'&&module.exports)module.exports=api;
  if(root?.NeoEngine)api.adapt(root.NeoEngine);
+ if(root?.document)api.mount(root);
 })(typeof window!=='undefined'?window:null,function(){
 'use strict';
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
@@ -78,6 +79,22 @@ function adaptiveRun(m,p,owner,fallback){
  if(behind&&minute>75&&MID.has(p.role)&&progress>740&&m.random()<.46)return 'late-box';
  return fallback;
 }
+function mount(win){
+ const doc=win?.document;if(!doc)return;
+ const boot=()=>{
+   if(doc.getElementById('neo110-ai-status'))return;
+   const panel=doc.getElementById('neo920-broadcast')||doc.getElementById('match');
+   if(!panel)return;
+   const note=doc.createElement('div');note.id='neo110-ai-status';note.className='neo110-ai-line';
+   const text=doc.createElement('span');text.textContent='Posicionamento defensivo, passes sob pressão e infiltrações adaptadas ao placar.';
+   const badge=doc.createElement('b');badge.textContent='🧠 IA TÁTICA 1.1';
+   note.append(badge,text);
+   const host=doc.getElementById('neo920-broadcast');
+   if(host)host.insertBefore(note,host.firstChild);else panel.prepend(note);
+ };
+ if(doc.readyState==='loading')doc.addEventListener('DOMContentLoaded',boot,{once:true});
+ else boot();
+}
 function adapt(engine){
  const proto=engine?.Match?.prototype;
  if(!proto||proto._neo110AIStrategy)return false;
@@ -101,5 +118,5 @@ function adapt(engine){
  Object.defineProperty(proto,'_neo110AIStrategy',{value:true});
  return true;
 }
-return {safeOutlet,threatCover,pressEscape,adaptiveRun,adapt};
+return {safeOutlet,threatCover,pressEscape,adaptiveRun,adapt,mount};
 });
