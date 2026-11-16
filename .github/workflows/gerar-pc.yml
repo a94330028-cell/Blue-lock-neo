@@ -1,0 +1,61 @@
+name: Publicar aplicativo PC do Blue Lock NEO
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'desktop/**'
+      - 'web/**'
+      - 'tools/sync_inline_v930.py'
+      - '.github/workflows/gerar-pc.yml'
+permissions:
+  contents: write
+concurrency:
+  group: neo-windows-release
+  cancel-in-progress: false
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Sincronizar jogo para PC
+        shell: pwsh
+        run: |
+          python tools/sync_inline_v930.py web
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          if (-not (Test-Path web/neo-desktop.css)) { throw 'Arquivo CSS desktop ausente' }
+      - name: Verificar Javascript
+        run: node --check desktop/main.cjs
+      - name: Versionar release para atualizacao
+        shell: pwsh
+        run: |
+          $base = (Get-Content web/VERSION -Raw).Trim()
+          if ($base -notmatch '^([0-9]+)\.([0-9]+)\.([0-9]+)$') { throw 'Versao do jogo invalida' }
+          $version = "$($Matches[1]).$($Matches[2]).${{ github.run_number }}"
+          $package = Get-Content desktop/package.json -Raw | ConvertFrom-Json
+          $package.version = $version
+          $package | ConvertTo-Json -Depth 30 | Set-Content desktop/package.json -Encoding utf8
+          "DESKTOP_VERSION=$version" >> $env:GITHUB_ENV
+      - name: Instalar dependencias
+        working-directory: desktop
+        run: npm install --no-audit --no-fund
+      - name: Gerar instalador Windows e publicar atualizacao
+        working-directory: desktop
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: npx electron-builder --win nsis portable --x64 --publish always
+      - name: Disponibilizar executaveis
+        uses: actions/upload-artifact@v4
+        with:
+          name: Blue-Lock-NEO-Windows-${{ env.DESKTOP_VERSION }}
+          path: |
+            desktop/dist/*.exe
+            desktop/dist/latest.yml
+          if-no-files-found: error
