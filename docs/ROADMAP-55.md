@@ -14,14 +14,14 @@ Este documento é o backlog oficial das 55 propostas do usuário. **Não signifi
 - [x] **08. Duelo de habilidades** — concluído e validado (v1.7.0)
 - [x] **09. Partidas cinematográficas** — concluído e validado (v1.7.0)
 - [x] **10. Futebol dinâmico** — concluído e validado (v1.7.0)
-- [ ] **11. Carreira personalizada** — pendente
-- [ ] **12. Rivalidades automáticas** — parcial
-- [ ] **13. Evolução individual** — parcial
-- [ ] **14. Transferências** — pendente
-- [ ] **15. Campeonatos** — parcial
-- [ ] **16. Histórico e recordes** — parcial
-- [ ] **17. Turbo 40×** — parcial
-- [ ] **18. Narrativa automática** — parcial
+- [x] **11. Carreira personalizada** — implementado e validado (v1.8.0)
+- [x] **12. Rivalidades automáticas** — implementado e validado (v1.8.0)
+- [x] **13. Evolução individual** — implementado e validado (v1.8.0)
+- [x] **14. Transferências** — implementado e validado (v1.8.0)
+- [x] **15. Campeonatos** — implementado e validado (v1.8.0)
+- [x] **16. Histórico e recordes** — implementado e validado (v1.8.0)
+- [x] **17. Turbo 40×** — implementado e validado (v1.8.0)
+- [x] **18. Narrativa automática** — implementado e validado (v1.8.0)
 
 ## Mecânicas de anime
 
@@ -120,3 +120,18 @@ Concluídos os cinco requisitos do escopo de desenvolvimento desta etapa, com o 
 10. **Futebol dinâmico:** pontas procuram companheiros livres na área, atacantes atacam o segundo poste, meias buscam o passe recuado e laterais criam linhas de apoio; impedimento, estado real da bola, qualidade da chance e movimento físico são preservados.
 
 **Validação:** testes de cenas positivas e negativas, idempotência das súmulas, comparação de placares, sementes determinísticas, coordenadas finitas, cache de jogadas em Turbo 40× e build do site. Novos episódios passam a existir apenas após uma partida realmente registrada nessa versão.
+
+## Conclusão técnica — Ideias 11 a 18 (v1.8.0)
+
+Validação automatizada em `tests/v190.test.cjs` e regressões do simulador, além do módulo `web/neo-living-career-v190.js`, a camada de integração segura com a temporada em `web/app.js` e o contexto de jogo em `web/engine.js`. Os **itens 19 a 55 continuam pendentes ou parciais**.
+
+11. **Carreira personalizada:** personagens criados pela ferramenta existente acumulam partidas, notas, gols, assistências, marcos e foco de treino com evolução registrada na temporada.
+12. **Rivalidades automáticas:** duelos comprovados na súmula geram rivalidades de três níveis (inicial, intensa, lendária), com vitórias individuais e reação limitada de Ego.
+13. **Evolução individual:** treinamentos baseados em atuações boas de verdade modificam atributos reais, respeitando teto, idempotência e limite de ganhos.
+14. **Transferências:** o Mercado Neo transfere jogadores da liga entre clubes, promove reservas, demove um titular de destino para o banco, conserva 11 titulares únicos e preserva o histórico do atleta. Ofertas automáticas são opcionais e avaliadas após rodadas completas. **Personagens criados permanecem protegidos e não são transferidos por este mercado**, evitando conflito com o editor de personagens.
+15. **Campeonatos:** Neo League e competições eliminatórias independentes existentes ficam reunidas num painel de histórico com campeão apenas quando oficialmente definido.
+16. **Histórico e recordes:** estatísticas reais de partidas, artilharia, assistências, goleiros e maiores vitórias, sem premiar jogadores com 0 gols nem tratar empate como goleada.
+17. **Turbo 40×:** opção de aceleração já existente é preservada, com testes repetindo sementes iguais e os mesmos passos de física para verificar resultados determinísticos.
+18. **Narrativa automática:** Jornal Neo registra placares, destaques individuais, goleadas, rivalidades, treinamentos e transferências; todas as notícias têm uma origem verificável na súmula ou na movimentação confirmada.
+
+**Compatibilidade:** os elencos-base permanecem intactos para copas e amistosos independentes, e os saves não são reinicializados. A carreira e as manchetes passam a registrar acontecimentos a partir da versão 1.8.0, sem atribuir conquistas fictícias a jogos antigos. O APK requer a mesma assinatura digital da versão instalada para atualização sem desinstalar.
