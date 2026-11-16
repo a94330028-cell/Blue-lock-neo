@@ -141,6 +141,12 @@ report('30 genialidade só durante Flow, energia, pressão e recarga',()=>{
  m.opponentPressure=()=>0;p.flowUntil=1600;assert.equal(Twelve.genius(m,p,skill,'pass'),false);
 });
 
+const kickoffCase=new Engine.Match('bm','px',839222,null,Engine.createSchedule());
+Twelve.state(kickoffCase).turnovers=[75,75];
+kickoffCase.kickoff(1);
+assert.deepEqual(Twelve.state(kickoffCase).turnovers,[-9999,-9999],
+ 'goal restart or kickoff must clear any previous counter-attack windows');
+assert.equal(kickoffCase.ball.owner.side,1,'kickoff possession remains controlled by the engine');
 const original=JSON.stringify(Engine.TEAMS.map(t=>({id:t.id,players:t.players,reserves:t.reserves})));
 const cycle=()=>Engine.createSchedule();
 const matchCase=(home,away,seed)=>new Engine.Match(home,away,seed,null,cycle());
