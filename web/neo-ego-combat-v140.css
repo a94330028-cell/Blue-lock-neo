@@ -1,0 +1,15 @@
+/* NEO v1.3 EGO COMBAT — display earned awakenings and genuine skill duels. */
+.neo140-panel{margin:12px 0 16px;padding:13px;border-radius:15px;color:#eff6ff;
+ background:radial-gradient(ellipse at 92% 0%,#142d67 0%,transparent 47%),linear-gradient(140deg,#111b39,#080e25);
+ border:1px solid #5069be;box-shadow:0 10px 24px #050b1f66}
+.neo140-header{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;
+ padding-bottom:10px;margin-bottom:12px;border-bottom:1px solid #5361ac}
+.neo140-header span{font-size:15px;letter-spacing:.08em;font-weight:1000;color:#b5caff}
+.neo140-header small{font-size:9px;font-weight:850;color:#92a7ce;letter-spacing:.05em}
+.neo140-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.neo140-grid>div{padding:10px;border-radius:10px;border:1px solid #3d4f91;background:#121d3bf0}
+.neo140-grid strong{display:block;margin-bottom:10px;font-size:12px;color:#afcfff}
+.neo140-grid p{margin:7px 0;font-size:11px;line-height:1.5;overflow-wrap:anywhere;color:#dae4ff}
+.neo140-grid p b{color:#94f3ef}.neo140-grid p em{font-size:9px;font-style:normal;color:#889cc9}
+.neo140-grid p small{color:#b5d4f2}
+@media(max-width:550px){.neo140-grid{grid-template-columns:1fr}.neo140-panel{padding:10px}.neo140-header span{font-size:13px}}
