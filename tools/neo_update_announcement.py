@@ -158,6 +158,7 @@ def split_lines(lines, limit=1024):
 
 def embed_length(embed):
     return (len(embed.get("title", "")) + len(embed.get("description", "")) +
+            len(embed.get("author", {}).get("name", "")) +
             len(embed.get("footer", {}).get("text", "")) +
             sum(len(f["name"]) + len(f["value"]) for f in embed.get("fields", [])))
 
@@ -191,6 +192,8 @@ def build_payloads(data, version):
                 "footer": {"text": footer},
                 "timestamp": release["date"] + "T12:00:00Z",
                 "image": {"url": image},
+                "thumbnail": {"url": avatar},
+                "author": {"name": "⚡ NEO UPDATE BOT • PATCH NOTES OFICIAIS", "icon_url": avatar},
             }
         if (len(current["fields"]) >= 25 or embed_length(current) +
                 len(field["name"]) + len(field["value"]) > 5100):
