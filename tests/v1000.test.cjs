@@ -57,5 +57,5 @@ const mobile=fs.readFileSync('web/mobile-upgrade.js','utf8');
 assert.ok(mobile.includes('neo-v1000.js?v=10.3.0'),'new gameplay loaded on all existing web shells');
 const worker=fs.readFileSync('web/service-worker.js','utf8');
 assert.ok(worker.includes('./neo-v1000.js'),'10.0 module available offline');
-assert.equal(fs.readFileSync('web/VERSION','utf8').trim(),'10.5.0');
+assert.equal(fs.readFileSync('web/VERSION','utf8').trim(),'10.5.1');
 console.log('PASS v10.0: real recorded awards, club tactics, match pulse and persistent Android portraits');
