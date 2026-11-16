@@ -112,7 +112,7 @@ const server=http.createServer((req,res)=>{
    }
    // Ranking V10: simulate ONE legitimate fixture at representative PC/mobile sizes.
    // No fabricated match stats or external images.
-   if(width===1366||width===390){
+   if(width===1366){
     const result=await page.evaluate(()=>{
      const E=window.NeoEngine,s=window.NeoCareerBridge.getSeason();
      const f=s.rounds[0].games[0];

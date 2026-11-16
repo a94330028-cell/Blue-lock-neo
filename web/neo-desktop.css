@@ -415,3 +415,10 @@ body{background:radial-gradient(circle at 65% 0%,#17548066,transparent 50%),line
  #neo990-xi .neo990-pitch-player{transition:none!important}
  #neo990-xi .neo990-pitch-player:hover{transform:translate(-50%,-50%)!important}
 }
+
+/* A purely informational footer must not block sticky desktop navigation. */
+@media(min-width:701px){
+ .shell>footer,.shell footer{pointer-events:none!important}
+ .shell>.nav{z-index:20}
+ .shell>.nav button{pointer-events:auto!important}
+}
