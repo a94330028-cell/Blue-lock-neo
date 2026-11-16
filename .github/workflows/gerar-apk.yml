@@ -71,6 +71,7 @@ jobs:
           node tests/v190.test.cjs
           node tests/v200.test.cjs
           node tests/v230.test.cjs
+          node tests/v230-validation.test.cjs
           node --check web/neo-advanced-v200.js
           node --check web/neo-universe-v220.js
           node --check web/neo-twelve-v230.js
