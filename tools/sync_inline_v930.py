@@ -215,5 +215,17 @@ if 'neo-desktop.css' not in updated:
     if updated.count('</head>') != 1:
         raise RuntimeError('Unable to attach desktop layout')
     updated = updated.replace('</head>', '<link rel="stylesheet" href="neo-desktop.css?v=1.8.0">\n</head>')
+# PC only: force refresh the desktop CSS and attach the density controls.
+# Scripts only reorganize existing DOM nodes, without changing game saves or handlers.
+import re
+updated = re.sub(
+    r'neo-desktop\.css\?v=[0-9.]+',
+    'neo-desktop.css?v=1.8.2',
+    updated
+)
+if 'neo-pc-compact.js' not in updated:
+    if updated.count('</body>') != 1:
+        raise RuntimeError('Unable to attach PC compact layout')
+    updated = updated.replace('</body>', '<script defer src="neo-pc-compact.js?v=1.8.2"></script>\n</body>')
 html.write_text(updated,encoding='utf-8')
 print('Inline game modules synchronized:',counts)
