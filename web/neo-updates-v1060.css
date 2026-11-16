@@ -1,0 +1,24 @@
+/* NEO UPDATE BOT — mobile-first version archive, does not alter game UI. */
+.neo1060-card{margin:12px 0;padding:0!important;border:1px solid #276e9a;border-radius:14px;background:linear-gradient(135deg,#102b48,#091c31);overflow:hidden;color:#e9f5ff;box-shadow:0 6px 16px #0004}
+.neo1060-toggle{display:flex;align-items:center;gap:9px;width:100%;min-height:54px;padding:12px 14px;background:transparent;border:0;color:#f1fbff;text-align:left;font:inherit;cursor:pointer}
+.neo1060-toggle:focus-visible{outline:2px solid #26dfff;outline-offset:-3px}
+.neo1060-headline{font-weight:950;letter-spacing:.06em;font-size:14px}
+.neo1060-icon{font-size:21px}
+.neo1060-notice,.neo1060-nav-dot{width:7px;height:7px;flex:none;border-radius:50%;background:#29eafa;box-shadow:0 0 8px #15edfc}
+.neo1060-chevron{margin-left:auto;color:#9bd8ed;font-size:19px}
+.neo1060-panel{padding:0 13px 13px;border-top:1px solid #245274}
+.neo1060-panel[hidden],.neo1060-banner[hidden],.neo1060-notice[hidden],.neo1060-nav-dot[hidden]{display:none!important}
+.neo1060-lead,.neo1060-bottom{font-size:11px;line-height:1.55;color:#b6d2e6;margin:12px 1px}
+.neo1060-version{font-size:12px;color:#57e8fa;font-weight:850;margin:12px 1px}
+.neo1060-banner{display:block;max-width:100%;width:100%;height:auto;aspect-ratio:1536/614;object-fit:contain;margin:11px 0;border-radius:9px}
+.neo1060-release{margin:8px 0;border:1px solid #365c7c;border-radius:10px;background:#10233b;overflow:hidden}
+.neo1060-summary{display:flex;align-items:center;gap:7px;padding:10px;cursor:pointer;font-size:12px}
+.neo1060-summary::marker{color:#42d8fa}.neo1060-title{font-weight:900}.neo1060-date{font-size:10px;color:#b9d6e8;margin-left:auto}
+.neo1060-current{font-size:9px;letter-spacing:.05em;color:#081e31;background:#6deaff;border-radius:7px;padding:3px 5px}
+.neo1060-body{padding:0 11px 10px}.neo1060-group{margin:10px 0}
+.neo1060-group h4{font-size:11px;color:#64e3fc;margin:0 0 4px}
+.neo1060-group ul{margin:0 0 0 16px;padding:0}.neo1060-group li{font-size:11px;line-height:1.48;margin:4px 0;color:#e3f0fb}
+#neoMobileNav [data-neo-tab="more"]{position:relative}
+.neo1060-nav-dot{position:absolute;right:9px;top:7px}
+@media(max-width:420px){.neo1060-panel{padding:0 10px 10px}.neo1060-toggle{padding:10px}.neo1060-summary{flex-wrap:wrap}.neo1060-headline{font-size:12px}}
+@media(prefers-reduced-motion:reduce){.neo1060-card *{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
