@@ -51,7 +51,22 @@ function mount(win){
   const list=doc.getElementById('neo1060-list'),version=doc.getElementById('neo1060-version');
   if(!list||!version)return;
   currentData=data;list.replaceChildren();
-  version.textContent='Versão atual: '+data.current_version;
+  version.textContent='v'+data.current_version+' · HISTÓRICO OFICIAL';
+  const headingVersion=doc.getElementById('neo110-heading-version');
+  if(headingVersion)headingVersion.textContent='v'+data.current_version;
+  const avatar=doc.getElementById('neo110-avatar');
+  const avatarPath=data.media?.avatar?.path;
+  if(avatar&&typeof avatarPath==='string'&&/^assets\/updates\/[a-z0-9-]+\.png$/.test(avatarPath))avatar.src='./'+avatarPath;
+  const latest=data.releases[0],highlights=doc.getElementById('neo110-highlights');
+  if(highlights){
+    highlights.replaceChildren();
+    const important=[...(latest.novidades||[]),...(latest.jogabilidade||[]),...(latest.correcoes||[])].slice(0,3);
+    important.forEach((msg,i)=>{
+      const item=el('article','neo110-highlight');
+      item.append(el('span','neo110-highlight-index',String(i+1).padStart(2,'0')),el('p',null,msg));
+      highlights.append(item);
+    });
+  }
   for(const [i,r] of data.releases.entries()){
    const article=el('article','neo1060-release'),details=el('details','neo1060-entry');
    details.open=i===0;
@@ -87,16 +102,35 @@ function mount(win){
   const wrapper=el('section','neo1060-card');wrapper.id='neo1060-updates';
   const top=el('button','neo1060-toggle');top.type='button';top.id='neo1060-open';
   top.setAttribute('aria-expanded','false');top.setAttribute('aria-controls','neo1060-panel');
-  const icon=el('span','neo1060-icon','🚀');
-  const title=el('span','neo1060-headline','ATUALIZAÇÕES');
+  const icon=el('span','neo1060-icon','⚡');
+  const copyHead=el('span','neo110-headings');
+  const title=el('span','neo1060-headline','NEO UPDATE CENTER');
+  const sub=el('span','neo110-subheading','Novidades oficiais do simulador');
+  copyHead.append(title,sub);
   const dot=el('span','neo1060-notice');dot.id='neo1060-dot';dot.hidden=true;
   const arrow=el('span','neo1060-chevron','⌄');arrow.setAttribute('aria-hidden','true');
-  top.append(icon,title,dot,arrow);
+  const versionChip=el('strong','neo110-chip','v1.1.0');versionChip.id='neo110-heading-version';
+  top.append(icon,copyHead,dot,versionChip,arrow);
   const panel=el('div','neo1060-panel');panel.id='neo1060-panel';panel.hidden=true;
-  panel.append(el('p','neo1060-lead','Histórico oficial do Blue Lock NEO — novidades, correções e melhorias realmente publicadas.'));
+  const header=el('div','neo110-identity');
+  const emblem=el('img','neo110-avatar');emblem.id='neo110-avatar';emblem.alt='Emblema NEO UPDATE BOT';emblem.loading='lazy';
+  const identity=el('div','neo110-identity-text');
+  identity.append(el('span','neo110-eyebrow','BLUE LOCK NEO · PATCH NOTES'),
+    el('h3','neo110-identity-title','NOVA ERA DO EGOÍSMO'),
+    el('p',null,'Acompanhe cada evolução do campo, da IA e do universo NEO.'));
+  header.append(emblem,identity);panel.append(header);
+  const kickers=el('div','neo110-kickers');
+  kickers.append(el('span',null,'⚽ FUTEBOL EM EVOLUÇÃO'),
+    el('span',null,'🧠 IA TÁTICA'),
+    el('span',null,'⚡ TURBO 40×'));
+  panel.append(kickers);
+  panel.append(el('p','neo1060-lead','Novas mecânicas e correções reais, apresentadas por versão sem interromper suas partidas.'));
   const banner=el('img','neo1060-banner');banner.id='neo1060-banner';banner.hidden=true;banner.alt='Banner oficial NEO UPDATE BOT';
   banner.loading='lazy';panel.append(banner);
   const version=el('p','neo1060-version','Consultando versão atual...');version.id='neo1060-version';panel.append(version);
+  const hTitle=el('h3','neo110-section-title','🔥 DESTAQUES DA ATUALIZAÇÃO');panel.append(hTitle);
+  const highlights=el('div','neo110-highlights');highlights.id='neo110-highlights';panel.append(highlights);
+  panel.append(el('h3','neo110-section-title','📜 TODAS AS MUDANÇAS'));
   const copy=el('button','neo1060-copy','📋 Copiar novidades da versão');copy.type='button';copy.id='neo1060-copy';panel.append(copy);
   const copyStatus=el('p','neo1060-copy-status','');copyStatus.id='neo1060-copy-status';copyStatus.setAttribute('role','status');panel.append(copyStatus);
   copy.addEventListener('click',async()=>{
