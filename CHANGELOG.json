@@ -41,7 +41,8 @@
       ],
       "visual": [
         "Central de atualizações redesenhada com cabeçalho elétrico, imagem oficial, destaques em cartões, informações da versão e layout adaptado para celulares.",
-        "Botão Turbo 40× com indicador de estado e estilo próprio."
+        "Botão Turbo 40× com indicador de estado e estilo próprio.",
+        "A central flutuante de atualizações e os anúncios do Discord agora usam o banner e o avatar oficiais no cabeçalho."
       ],
       "otimizacoes": [
         "Processamento em blocos e redução da taxa de renderização de animações no Turbo para evitar travamentos excessivos.",
