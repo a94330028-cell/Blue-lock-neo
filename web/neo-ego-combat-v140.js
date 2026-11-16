@@ -173,9 +173,10 @@ function adapt(engine){
  if(typeof proto._recordDuel==='function'){
   const orig=proto._recordDuel;
   proto._recordDuel=function(a,b,w,kind){
-   const old=this.duelHistory?.length||0;
+   const previous=this.duelHistory?.at(-1);
    const result=orig.call(this,a,b,w,kind);
-   if(!this.duelHistory||this.duelHistory.length<=old)return result;
+   if(!this.duelHistory?.length||this.duelHistory.at(-1)===previous)return result;
+   this._neo140Engine=engine;
    learnFromDuel(this,a,b,w,kind);
    contest(this,a,b,w,kind);
    return result;
@@ -218,7 +219,7 @@ function adapt(engine){
  return true;
 }
 function mount(win){
- const doc=win.document,esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','"':'&quot;',"'":'&#39;'}[c]));
+ const doc=win.document,esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  function render(){
   const section=doc.getElementById('records');
   if(!section)return;
