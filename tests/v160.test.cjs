@@ -96,7 +96,7 @@ const releases=JSON.parse(read('CHANGELOG.json'));
 assert.equal(releases.current_version,'1.8.0');
 assert.equal(releases.releases[0].version,'1.8.0');
 assert.equal(read('web/VERSION').trim(),'1.8.0');
-assert.equal(read('web/UPDATE_BUILD').trim(),'10.6.12');
+assert.equal(read('web/UPDATE_BUILD').trim(),'10.6.13');
 assert.ok(read('app/build.gradle').includes("versionName '1.8.0'"));
 assert.ok(read('app/build.gradle').includes('versionCode 116'));
 console.log('PASS World Brain 1.5: keeper adaptations, safe box chances, tactical coaches, season timeline and batch physics');
