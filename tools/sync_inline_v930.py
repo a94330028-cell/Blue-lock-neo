@@ -148,5 +148,8 @@ if 'neo-updates-v1060.css' not in updated:
     updated=updated.replace('</head>','<link rel="stylesheet" href="neo-updates-v1060.css?v=10.6.0">\n</head>')
 updated=re.sub(r'src="neo-updates-v1060\.js(?:\?v=[^"]*)?"','src="neo-updates-v1060.js?v=10.6.0"',updated)
 updated=re.sub(r'href="neo-updates-v1060\.css(?:\?v=[^"]*)?"','href="neo-updates-v1060.css?v=10.6.0"',updated)
+# First official public release: bust every legacy cached JS/CSS version query.
+# Internal module filenames remain unchanged to preserve user data.
+updated=re.sub(r'(?<=\\?v=)\\d+\\.\\d+\\.\\d+', '1.0.0', updated)
 html.write_text(updated,encoding='utf-8')
 print('Inline game modules synchronized:',counts)
