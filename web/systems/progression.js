@@ -1,50 +1,73 @@
 /* Season progression and competitive ranking, derived only from recorded results. */
 (function(root,factory){const api=factory();if(typeof module!=='undefined'&&module.exports)module.exports=api;if(root)root.NeoProgression=api;})(typeof globalThis!=='undefined'?globalThis:null,function(){
 'use strict';const Abilities=typeof globalThis!=='undefined'&&globalThis.NeoAbilities||require('./abilities.js');const Attr=typeof globalThis!=='undefined'&&globalThis.NeoAttributes||require('./attributes.js');const key=(name,club)=>name+'|'+club;
-// Valores em ienes (lances fictícios da Liga Neo Egoísta, não cotações oficiais).
-// O elenco tem diferenciação desde o início; desempenho recente varia o valor aos poucos.
-const STAR_POTENTIAL=Object.freeze({
- 'Michael Kaiser':330,'Rin Itoshi':250,'Yoichi Isagi':245,'Ryusei Shido':165,
- 'Shoei Baro':155,'Meguru Bachira':125,'Seishiro Nagi':95,'Hyoma Chigiri':105,
- 'Rensuke Kunigami':85,'Reo Mikage':90,'Oliver Aiku':110,'Don Lorenzo':180,
- 'Charles Chevalier':190,'Gin Gagamaru':95,'Yo Hiori':90,'Ikki Niko':65,
- 'Tabito Karasu':68,'Alexis Ness':93,'Ranze Kurona':55,'Eita Otoya':48,
- 'Kenyu Yukimiya':65,'Jingo Raichi':55,'Zantetsu Tsurugi':55,
- 'Aoshi Tokimitsu':48,'Nijiro Nanase':38
-});
+// Lances fictícios da Liga Neo Egoísta (ienes). Não são salários ou cotações oficiais.
+// Todas as temporadas começam com ¥0. Só os lances registrados nas partidas mudam o preço.
 const num=(v,def=0)=>Number.isFinite(Number(v))?Number(v):def;
 const between=(n,lo,hi)=>Math.max(lo,Math.min(hi,n));
-// Valores fictícios de leilão, em ienes. Reescala sem alterar saves antigos:
-// estimativas são recalculadas dos atributos e das ações já registradas.
-function baseValue(ovr=75,role='MC'){
- const skill=between(num(ovr,75),60,99),pos=(role||'MC').toUpperCase();
- if(skill>90)return Math.round((340+(skill-90)*23)*1e6/100000)*100000;
- const keeper=/^(GOL|GK)$/.test(pos),back=/^(ZAG|CB|LD|LE|RB|LB|VOL|CDM|ALA|LWB|RWB)$/.test(pos);
- const striker=/^(CA|ST|CF|SA|PD|PE|RW|LW)$/.test(pos);
- const factor=keeper?.91:back?1.02:striker?1.07:1.0;
- const level=between((skill-60)/30,0,1);
- const millions=(30+Math.pow(level,1.75)*206)*factor;
- return Math.round(between(millions,25,260)*1e6/100000)*100000;
+const BID_STEP=100000;
+const bidRound=value=>Math.round(value/BID_STEP)*BID_STEP;
+function baseValue(){return 0;}
+function estimateValue(player){
+ // No OVR bonus and no guesses from aggregate goals, assists or matches.
+ // A player's displayed bid equals their persisted (or reconstructed) bid.
+ return Math.max(0,bidRound(num(player?.value,0)));
 }
-function estimateValue(player,ovr,role){
- const games=Math.max(0,num(player?.games)),pos=role||player?.role||'MC',keeper=/^(GOL|GK)$/.test(pos);
- const defender=/^(ZAG|CB|LD|LE|RB|LB|VOL|CDM|ALA|LWB|RWB)$/.test(pos);
- const base=baseValue(ovr??player?.ovr??75,pos);
- const goals=Math.max(0,num(player?.goals)),assists=Math.max(0,num(player?.assists)),saves=Math.max(0,num(player?.saves));
- const tackles=Math.max(0,num(player?.tackles)),interceptions=Math.max(0,num(player?.interceptions));
- const blocks=Math.max(0,num(player?.shotBlocks)),air=Math.max(0,num(player?.aerialWins));
- const duels=Math.max(0,num(player?.duelsWon)),keyPasses=Math.max(0,num(player?.keyPasses));
- const clean=Math.max(0,num(player?.cleanSheets)),wins=Math.max(0,num(player?.wins));
- const passes=Math.max(0,num(player?.passes)),rating=games?num(player?.ratingSum)/games:6;
- // Ações registradas mexem em milhões, não centenas de milhões por jogo.
- const millions=goals*4.8+assists*3.4+saves*(keeper?.52:.02)
-  +tackles*(defender?.48:.16)+interceptions*(defender?.60:.18)
-  +blocks*(defender?.78:.16)+air*(defender?.27:.08)
-  +duels*(defender?.15:.06)+keyPasses*.40
-  +clean*(keeper?2.0:defender?1.3:.15)
-  +wins*.43+passes*.013+Math.max(0,rating-6)*games*.38;
- const maxValue=(num(ovr)>90?720:395)*1e6;
- return Math.round(between(base+between(millions,0,160)*1e6,base,maxValue)/100000)*100000;
+function bidDelta(player,goalDifference=0){
+ const rating=Number(player?.rating);
+ if(!Number.isFinite(rating))return 0;
+ const note=between(rating,0,10),lose=goalDifference<0,win=goalDifference>0;
+ // Poor individual matches never generate bids, even if the team wins.
+ if(note<6.5)return -bidRound(((6.5-note)*1.8+(lose?.5:0))*1e6);
+ const role=String(player.role||'').toUpperCase();
+ const keeper=/^(GOL|GK)$/.test(role),defender=/^(ZAG|CB|LD|LE|LB|RB|VOL|CDM|ALA|LWB|RWB)$/.test(role);
+ const goals=Math.max(0,num(player.goals)),assists=Math.max(0,num(player.assists));
+ const saves=Math.max(0,num(player.saves)),interceptions=Math.max(0,num(player.interceptions));
+ const tackles=Math.max(0,num(player.tackles)),blocks=Math.max(0,num(player.shotBlocks));
+ const clean=keeper&&goalDifference>=0&&Number(player.goalsAgainst)===0;
+ const influence=goals*4.3+assists*2.8+(keeper?saves*.52:(defender?(interceptions*.20+tackles*.16+blocks*.24):0))+
+  Math.max(0,num(player.keyPasses))*.24+Math.max(0,num(player.dribblesWon))*.14;
+ if(note<7&&influence<.8)return 0;
+ const millions=Math.max(0,(note-6.5)*2.2)+influence+(win?.25:0)+(clean?.5:0);
+ return bidRound(millions*1e6);
+}
+// Rebuild inflated old bids using ONLY actual recorded match sheets.
+// Never changes goals, tactics, photographs, OVR or completed fixtures.
+function reconcileBids(season,skipFixture=null){
+ const career=ensure(season);
+ if(career.bidVersion===2)return 0;
+ const savedEntries=Object.values(career.players),prices=new Map(),byPlayer=new Map();
+ for(const round of season?.rounds||[])for(const fixture of round.games||[]){
+  if(fixture===skipFixture||!Array.isArray(fixture.result)||!Array.isArray(fixture.details?.players))continue;
+  const done=new Set(),difference=fixture.result[0]-fixture.result[1];
+  for(const p of fixture.details.players){
+   if(!p?.name||p.isMaster||![0,1].includes(p.side))continue;
+   const club=p.side===0?fixture.home:fixture.away;
+   const id=key(p.name,club);if(done.has(id))continue;done.add(id);
+   const previous=prices.get(id)||0,change=bidDelta(p,p.side===0?difference:-difference);
+   const next=Math.max(0,previous+change);
+   prices.set(id,next);
+   if(!byPlayer.has(id))byPlayer.set(id,[]);
+   byPlayer.get(id).push({round:round.round,match:fixture.home+' × '+fixture.away,value:next,change:next-previous});
+  }
+ }
+ let repaired=0;
+ for(const p of savedEntries){
+  const id=key(p.name,p.club),value=prices.get(id)||0;
+  if(p.value!==value){p.value=value;repaired++;}
+  p.change=byPlayer.get(id)?.at(-1)?.change||0;
+  p.bidHistory=byPlayer.get(id)||[];
+  // Preserve the historical sporting details while correcting the old inflated prices.
+  if(Array.isArray(p.history)){
+   let i=0;
+   p.history=p.history.map(h=>{
+    const entry=byPlayer.get(id)?.[i++];
+    return {...h,value:entry?.value??0};
+   });
+  }
+ }
+ career.bidVersion=2;
+ return repaired;
 }
 // Top 5 do MVP do campeonato, exclusivamente de partidas realmente salvas.
 // O preço de mercado NÃO entra na votação de melhor jogador.
@@ -94,12 +117,12 @@ function reconcileGoalkeepers(season){
  let repaired=0;for(const [id,t] of totals){
   const p=career.players[id]||row(career,t.name,t.club);
   p.role=t.role;for(const metric of ['games','saves','cleanSheets'])if(num(p[metric])<t[metric]){p[metric]=t[metric];repaired++;}
-  p.ovr=Attr.generate(p.name,p.role,0,p).ovr;p.value=estimateValue(p,p.ovr,p.role);
+  p.ovr=Attr.generate(p.name,p.role,0,p).ovr; // A goalkeeper repair must not invent an auction bid.
  }
  return repaired;
 }
-function record(season,fixture,match,round){const career=ensure(season);const r=match.result();const raw=r.players||[];
- for(const p of raw){if(p.isMaster)continue;const club=p.side===0?fixture.home:fixture.away,entry=row(career,p.name,club);entry.unlocked=entry.unlocked||[];const before=estimateValue(entry,p.ovr,p.role);entry.role=p.role;entry.ovr=p.ovr;const result=p.side===0?r.score[0]-r.score[1]:r.score[1]-r.score[0];
+function record(season,fixture,match,round){const career=ensure(season);reconcileBids(season,fixture);const r=match.result();const raw=r.players||[];
+ for(const p of raw){if(p.isMaster)continue;const club=p.side===0?fixture.home:fixture.away,entry=row(career,p.name,club);entry.unlocked=entry.unlocked||[];const before=estimateValue(entry);entry.role=p.role;entry.ovr=p.ovr;const result=p.side===0?r.score[0]-r.score[1]:r.score[1]-r.score[0];
  const keeper=/^(GOL|GK)$/.test(p.role||'');const cleanSheet=keeper&&r.score[1-p.side]===0;const defender=/^(ZAG|CB|LD|LE|RB|LB|VOL|CDM|ALA|LWB|RWB)$/.test(p.role||'');
  const contribution=(p.goals||0)*3.3+(p.assists||0)*2.6
    +(p.dribblesWon||0)*.10+(p.tackles||0)*(defender?.30:.14)
@@ -119,7 +142,10 @@ function record(season,fixture,match,round){const career=ensure(season);const r=
  entry.duelsWon=(entry.duelsWon||0)+(p.duelsWon||0);
  entry.keyPasses=(entry.keyPasses||0)+(p.keyPasses||0);
  entry.saves+=verifiedKeeperSaves(r,p);entry.cleanSheets=(entry.cleanSheets||0)+(cleanSheet?1:0);entry.wins=(entry.wins||0)+(result>0?1:0);entry.passes+=p.passes||0;entry.flowCount+=p.flowCount||0;entry.ratingSum+=p.rating||6;entry.impact+=scoreGain;entry.score=Math.round(entry.impact*10)/10;
- entry.value=estimateValue(entry,entry.ovr,entry.role);entry.change=entry.value-before;
+ const requested=bidDelta(p,result);
+ entry.value=Math.max(0,before+requested);entry.change=entry.value-before;
+ (entry.bidHistory||(entry.bidHistory=[])).push({round,match:fixture.home+' × '+fixture.away,value:entry.value,change:entry.change});
+ if(entry.bidHistory.length>40)entry.bidHistory.shift();
  if((scoreGain>3||(keeper&&p.saves>=3))&&entry.games%3===0){const target=keeper&&((p.saves||0)>0||cleanSheet)?'reflexes':p.goals?'finishing':p.assists?'vision':(p.tackles||0)+(p.interceptions||0)+(p.shotBlocks||0)>0?'defense':p.dribblesWon?'dribbling':'control';entry.boosts[target]=Math.min(6,(entry.boosts[target]||0)+1);}
  // Secondary weapons only unlock from sustained, recorded match experience.
  if(entry.games>=4&&entry.dribbles>=12&&!entry.unlocked.includes('speed'))entry.unlocked.push('speed');
@@ -160,5 +186,5 @@ function record(season,fixture,match,round){const career=ensure(season);const r=
  if(career.stories.length>90)career.stories=career.stories.slice(-90);
  career.history.push({round,fixture:fixture.home+'-'+fixture.away,score:[...r.score]});if(career.history.length>200)career.history.shift();return career;}
 function rank(season,filter='all'){const career=ensure(season),data=Object.values(career.players);for(const p of data)if(p.role)p.ovr=Attr.generate(p.name,p.role,p.role==='GOL'?0:1,p).ovr;return data.filter(p=>filter==='all'||p.club===filter).sort((a,b)=>b.score-a.score||b.goals-a.goals||a.name.localeCompare(b.name));}
-return {ensure,record,rank,key,baseValue,estimateValue,mvpRanking,verifiedKeeperSaves,reconcileGoalkeepers};
+return {ensure,record,rank,key,baseValue,estimateValue,bidDelta,reconcileBids,mvpRanking,verifiedKeeperSaves,reconcileGoalkeepers};
 });
