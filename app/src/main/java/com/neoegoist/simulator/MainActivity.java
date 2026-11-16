@@ -5,6 +5,12 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.util.Base64;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,6 +28,7 @@ import android.widget.Toast;
 
 import org.json.JSONObject;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -46,9 +53,10 @@ import java.util.zip.ZipInputStream;
 public final class MainActivity extends Activity {
     private static final int REQUEST_PICK = 1501;
     private static final int REQUEST_EXPORT = 1502;
+    private static final int REQUEST_NATIVE_PORTRAIT = 1503;
     private static final String HOST = "appassets.androidplatform.net";
     private static final String HOME = "https://" + HOST + "/index.html";
-    private static final String BUNDLED_WEB_VERSION = "9.9.3";
+    private static final String BUNDLED_WEB_VERSION = "9.9.4";
     private static final String UPDATE_HOST = "a94330028-cell.github.io";
     private static final String MANIFEST_URL = "https://" + UPDATE_HOST + "/Blue-lock-neo/updates/latest.json";
     private static final String PREFS = "blue_lock_neo_android";
@@ -59,6 +67,7 @@ public final class MainActivity extends Activity {
 
     private WebView webView;
     private ValueCallback<Uri[]> fileCallback;
+    private String pendingPortraitName;
     private byte[] pendingExport;
     private volatile File activeContentDirectory;
     private volatile boolean updateBusy = false;
@@ -268,7 +277,7 @@ public final class MainActivity extends Activity {
         } finally { connection.disconnect(); }
     }
 
-    private static final class BuildVersion { static final int CODE = 104; }
+    private static final class BuildVersion { static final int CODE = 105; }
 
     private void installUpdate(UpdateInfo info) {
         if (updateBusy) return;
@@ -383,7 +392,102 @@ public final class MainActivity extends Activity {
         runOnUiThread(() -> Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show());
     }
 
+
+    // Read via Android ContentResolver, not the WebView's FileReader. Some Android
+    // photo providers hand WebView a URI it cannot access even after the picker succeeds.
+    private void chooseNativePortrait(String playerName) {
+        if (playerName == null || playerName.trim().isEmpty() || playerName.length() > 160) return;
+        runOnUiThread(() -> {
+            if (pendingPortraitName != null) {
+                toast("Escolha uma imagem por vez.");
+                return;
+            }
+            pendingPortraitName = playerName;
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("image/*");
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            try {
+                startActivityForResult(intent, REQUEST_NATIVE_PORTRAIT);
+            } catch (Exception e) {
+                // ACTION_GET_CONTENT works on older phones without DocumentsUI.
+                try {
+                    Intent fallback = new Intent(Intent.ACTION_GET_CONTENT);
+                    fallback.addCategory(Intent.CATEGORY_OPENABLE);
+                    fallback.setType("image/*");
+                    fallback.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    startActivityForResult(fallback, REQUEST_NATIVE_PORTRAIT);
+                } catch (Exception ignored) {
+                    pendingPortraitName = null;
+                    toast("O Android não conseguiu abrir o seletor de imagens.");
+                }
+            }
+        });
+    }
+
+    private void sendNativePortraitError(String message) {
+        String safeMessage = JSONObject.quote(message);
+        runOnUiThread(() -> {
+            if (webView != null) webView.evaluateJavascript(
+                "window.dispatchEvent(new CustomEvent('neo:native-portrait-error',{detail:{message:"
+                + safeMessage + "}}));", null);
+        });
+    }
+
+    private void processNativePortrait(Uri uri, String name) {
+        new Thread(() -> {
+            Bitmap bitmap = null;
+            Bitmap square = null;
+            try {
+                if (uri == null) throw new IOException("Foto não selecionada.");
+                BitmapFactory.Options bounds = new BitmapFactory.Options();
+                bounds.inJustDecodeBounds = true;
+                try (InputStream input = getContentResolver().openInputStream(uri)) {
+                    if (input == null) throw new IOException("A galeria não forneceu o arquivo.");
+                    BitmapFactory.decodeStream(input, null, bounds);
+                }
+                if (bounds.outWidth <= 0 || bounds.outHeight <= 0)
+                    throw new IOException("Formato de foto não suportado. Selecione JPG ou PNG.");
+                BitmapFactory.Options opts = new BitmapFactory.Options();
+                opts.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                int sample = 1;
+                while (bounds.outWidth / sample > 1024 || bounds.outHeight / sample > 1024) sample *= 2;
+                opts.inSampleSize = sample;
+                try (InputStream input = getContentResolver().openInputStream(uri)) {
+                    if (input == null) throw new IOException("O acesso à foto foi negado.");
+                    bitmap = BitmapFactory.decodeStream(input, null, opts);
+                }
+                if (bitmap == null) throw new IOException("Não foi possível decodificar a foto.");
+                final int side = Math.min(bitmap.getWidth(), bitmap.getHeight());
+                final int left = (bitmap.getWidth() - side) / 2;
+                final int top = (bitmap.getHeight() - side) / 2;
+                square = Bitmap.createBitmap(320, 320, Bitmap.Config.ARGB_8888);
+                Canvas canvas = new Canvas(square);
+                canvas.drawColor(Color.WHITE);
+                Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
+                canvas.drawBitmap(bitmap, new Rect(left,top,left+side,top+side), new Rect(0,0,320,320), paint);
+                ByteArrayOutputStream bytes = new ByteArrayOutputStream(120 * 1024);
+                if (!square.compress(Bitmap.CompressFormat.JPEG, 84, bytes))
+                    throw new IOException("Não foi possível converter a imagem.");
+                String data = "data:image/jpeg;base64," + Base64.encodeToString(bytes.toByteArray(), Base64.NO_WRAP);
+                String safeName = JSONObject.quote(name), safeData = JSONObject.quote(data);
+                runOnUiThread(() -> {
+                    if (webView != null) webView.evaluateJavascript(
+                        "window.dispatchEvent(new CustomEvent('neo:native-portrait',{detail:{name:"
+                        + safeName + ",data:" + safeData + "}}));", null);
+                });
+            } catch (Exception error) {
+                sendNativePortraitError("Não foi possível importar esta imagem pelo Android. "
+                    + (error.getMessage() == null ? "Escolha um JPG ou PNG." : error.getMessage()));
+            } finally {
+                if (square != null) square.recycle();
+                if (bitmap != null) bitmap.recycle();
+            }
+        }, "NeoPortraitDecoder").start();
+    }
+
     private final class AndroidBridge {
+        @JavascriptInterface public void pickPortrait(String name) { chooseNativePortrait(name); }
         @JavascriptInterface public String getInstalledVersion() { return getCurrentWebVersion(); }
         @JavascriptInterface public void checkForUpdates() { MainActivity.this.checkForUpdates(true); }
         @JavascriptInterface public void restoreBundledVersion() { resetWebUpdate(); }
@@ -409,6 +513,12 @@ public final class MainActivity extends Activity {
             if (fileCallback != null) {
                 fileCallback.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(resultCode, data));
                 fileCallback = null;
+            }
+        } else if (requestCode == REQUEST_NATIVE_PORTRAIT) {
+            String name = pendingPortraitName;
+            pendingPortraitName = null;
+            if (resultCode == RESULT_OK && data != null && data.getData() != null && name != null) {
+                processNativePortrait(data.getData(), name);
             }
         } else if (requestCode == REQUEST_EXPORT) {
             if (resultCode == RESULT_OK && data != null && data.getData() != null && pendingExport != null) {

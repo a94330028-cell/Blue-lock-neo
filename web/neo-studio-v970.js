@@ -98,6 +98,10 @@ function setupPhotos(){const root=$('squads')||$('more');if(!root)return;
     return;
   }
   const b=e.target.closest('[data-neo970-photo]');if(!b)return;
+  if(window.BlueLockAndroid?.pickPortrait){
+    try{window.BlueLockAndroid.pickPortrait(b.dataset.neo970Photo);return;}
+    catch(error){console.warn('Seletor nativo não disponível:',error);}
+  }
   file.dataset.player=b.dataset.neo970Photo;file.value='';file.click();
 });
  file.addEventListener('change',async()=>{const name=file.dataset.player,photo=file.files[0];if(!photo||!name)return;

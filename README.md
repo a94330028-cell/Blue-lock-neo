@@ -1,4 +1,15 @@
-# Blue Lock NEO 9.9.3 — Galeria sem ficha gigante e busca correta de imagens
+# Blue Lock NEO 9.9.4 — Importação de retratos pelo Android
+
+## 📷 v9.9.4 — Correção da importação no APK Android
+
+O app Android usa agora um **seletor de imagens nativo**: ao tocar em **Trocar imagem**, o sistema abre o arquivo pelo ContentResolver, reduz a imagem para um retrato JPEG e envia o resultado diretamente ao armazenamento local de retratos do jogo. Isso evita falhas do FileReader em algumas galerias Android.
+
+- Funciona na galeria Blue Lock e nos jogadores dos quatro clubes históricos.
+- Preserva retratos e saves em IndexedDB; nenhum dado é enviado para servidores.
+- A versão web continua com o seletor normal do navegador.
+- Requer **APK 9.9.4 (versionCode 105)** para ativar o novo recurso nativo; apenas tocar em **Atualizar** dentro de um APK antigo não adiciona o seletor nativo.
+- Para preservar dados, instale um APK com a mesma assinatura da versão atual **por cima**, nunca desinstale antes de fazer backup.
+
 
 ## ✅ v9.9.3 — Pesquisa de fotos e comportamento da Galeria
 

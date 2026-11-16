@@ -1764,7 +1764,30 @@ function openPlayer(clientX,clientY){if(!match)return;
 
 const portraitInput=document.createElement('input');portraitInput.type='file';portraitInput.accept='image/*';portraitInput.style.display='none';document.body.appendChild(portraitInput);
 let portraitEditing=null;
-function selectPortrait(name){portraitEditing=name;portraitInput.value='';portraitInput.click();}
+function selectPortrait(name){
+  portraitEditing=name;
+  if(window.BlueLockAndroid?.pickPortrait){
+    try{window.BlueLockAndroid.pickPortrait(name);return;}
+    catch(error){console.warn('Seletor nativo indisponível, tentando seletor padrão:',error);}
+  }
+  portraitInput.value='';portraitInput.click();
+}
+window.addEventListener('neo:native-portrait',async event=>{
+  const {name,data}=event.detail||{};
+  if(typeof name!=='string'||!name||typeof data!=='string'||!data.startsWith('data:image/jpeg;base64,'))return;
+  const note=$('portraitNotice');
+  try{
+    await savePortraitImage('custom',name,data);
+    if(note)note.textContent='✅ Foto de '+name+' salva com sucesso no aparelho!';
+    refreshPortraits();
+  }catch(error){
+    if(note)note.textContent='⚠️ Não foi possível salvar a imagem: '+String(error?.message||error);
+  }
+});
+window.addEventListener('neo:native-portrait-error',event=>{
+  const note=$('portraitNotice'),message=String(event.detail?.message||'Falha na leitura da imagem.');
+  if(note)note.textContent='⚠️ '+message;
+});
 portraitInput.addEventListener('change',async()=>{
   const file=portraitInput.files?.[0];if(!file||!portraitEditing)return;
   const name=portraitEditing;
