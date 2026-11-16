@@ -22,3 +22,8 @@
 .neo1060-nav-dot{position:absolute;right:9px;top:7px}
 @media(max-width:420px){.neo1060-panel{padding:0 10px 10px}.neo1060-toggle{padding:10px}.neo1060-summary{flex-wrap:wrap}.neo1060-headline{font-size:12px}}
 @media(prefers-reduced-motion:reduce){.neo1060-card *{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+
+/* 1.0.0: small mobile-friendly changelog share control. */
+.neo1060-copy{display:block;width:100%;min-height:39px;margin:11px 0 7px;padding:9px 12px;background:#13486c;border:1px solid #53bfd9;color:#e9faff;border-radius:9px;font:inherit;font-weight:800;font-size:11px;cursor:pointer}
+.neo1060-copy:focus-visible{outline:2px solid #7aeeff;outline-offset:2px}
+.neo1060-copy-status{font-size:10px;color:#a9dbe4;min-height:12px;margin:3px 0 8px}
