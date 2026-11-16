@@ -103,7 +103,7 @@ if 'kaiser-192.png?v=9.9.1' not in updated:
 updated=updated.replace('neo-studio-v970.js?v=9.7.0','neo-studio-v970.js?v=9.9.4')
 updated=updated.replace('neo-v990.css?v=9.9.0','neo-v990.css?v=9.9.4')
 # v10.0: Bust stale Mobile Edition assets when building the Android web bundle.
-updated=re.sub(r'src="mobile-upgrade\\.js(?:\\?v=[^"]*)?"','src="mobile-upgrade.js?v=10.0.0"',updated)
-updated=re.sub(r'href="mobile-upgrade\\.css(?:\\?v=[^"]*)?"','href="mobile-upgrade.css?v=10.0.0"',updated)
+updated=re.sub(r'src="mobile-upgrade\.js(?:\?v=[^"]*)?"','src="mobile-upgrade.js?v=10.0.0"',updated)
+updated=re.sub(r'href="mobile-upgrade\.css(?:\?v=[^"]*)?"','href="mobile-upgrade.css?v=10.0.0"',updated)
 html.write_text(updated,encoding='utf-8')
 print('Inline game modules synchronized:',counts)
