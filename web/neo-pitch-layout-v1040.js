@@ -53,14 +53,23 @@ function adjust(points){
   let collisions=0;
   for(let i=0;i<result.length;i++)for(let j=i+1;j<result.length;j++){
    const a=result[i],b=result[j],dx=Math.abs(a.lane-b.lane),dy=Math.abs(a.depth-b.depth);
-   if(dx>=18||dy>=14)continue;
+   if(dx>=18||dy>=17)continue;
    collisions++;
-   const sign=a.lane<=b.lane?-1:1;
-   const needed=Math.max(0,18-dx);
-   const move=needed*.5+.1;
-   if(i===0){b.lane=clamp(b.lane-sign*move*2,10,90);continue;}
-   a.lane=clamp(a.lane+sign*move,10,90);
-   b.lane=clamp(b.lane-sign*move,10,90);
+   if(dy>=8){
+    // Different tactical lines should stay in their original left/right lanes.
+    const sign=a.depth<=b.depth?-1:1;
+    const move=Math.max(0,17-dy)*.5+.1;
+    if(i===0){b.depth=clamp(b.depth-sign*move*2,18,91);continue;}
+    a.depth=clamp(a.depth+sign*move,18,91);
+    b.depth=clamp(b.depth-sign*move,18,91);
+   }else{
+    // Players within the same row spread out horizontally.
+    const sign=a.lane<=b.lane?-1:1;
+    const move=Math.max(0,18-dx)*.5+.1;
+    if(i===0){b.lane=clamp(b.lane-sign*move*2,10,90);continue;}
+    a.lane=clamp(a.lane+sign*move,10,90);
+    b.lane=clamp(b.lane-sign*move,10,90);
+   }
   }
   if(!collisions)break;
  }
