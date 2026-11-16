@@ -22,7 +22,7 @@ function state(m){
  if(!m._neo230) m._neo230={events:[],losses:Object.create(null),wins:Object.create(null),
    chemistry:Object.create(null),completions:0,launched:[],recentAbility:[null,null],
    recentShot:[null,null],conflicts:Object.create(null),genius:0,innovations:0,
-   lastEvent:Object.create(null),counters:0,turnovers:[-9999,-9999],lastOwner:null};
+   lastEvent:Object.create(null),counters:0,turnovers:[-9999,-9999],lastOwner:null,restarts:0};
  return m._neo230;
 }
 function event(m,idea,p,message,other=''){
@@ -295,12 +295,20 @@ function adapt(engine){
   const old=proto.pass;
   proto.pass=function(p,q){const res=old.call(this,p,q);launched(this,p,q);return res;};
  }
+ if(typeof proto.kickoff==='function'){
+  const old=proto.kickoff;
+  proto.kickoff=function(side){
+   const s=state(this);s.restarts++;s.turnovers=[-9999,-9999];s.lastOwner=null;
+   const res=old.call(this,side);s.lastOwner=this.ball?.owner?.side??null;return res;
+  };
+ }
  if(typeof proto.step==='function'){
   const old=proto.step;
   proto.step=function(dt){
    const previousSide=this.ball?.owner?.side,previousPhase=this.phase;
+   const restartCount=state(this).restarts;
    const res=old.call(this,dt);
-   observeTurnover(this,previousSide,previousPhase);
+   if(state(this).restarts===restartCount)observeTurnover(this,previousSide,previousPhase);
    observeReception(this);return res;
   };
  }
