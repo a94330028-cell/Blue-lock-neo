@@ -87,6 +87,21 @@ const server=http.createServer((req,res)=>{
     return response.ok&&(await response.text()).includes('function observeTurnover');
    });
    assert.ok(loaded,'new module must be served by the browser');
+   // Actual Android-sized mobile navigation: championships and money must be visible.
+   if(width===390){
+    await page.waitForFunction(()=>!!window.NeoMobileHub&&!!document.getElementById('neo-ux-home-links'),null,{timeout:20000});
+    await page.click('#neo-ux-home-links [data-neo-ux-open="championship"]');
+    assert.ok(await page.$eval('#neoRefUxHub .neo-ux-table',el=>el.getBoundingClientRect().height>50),
+      'mobile championship standings must be visible');
+    await page.click('#neoRefUxHub [data-neo-ux-open="market"]');
+    assert.ok(await page.$eval('#neoRefUxHub .neo-ux-money-list',el=>el.querySelectorAll('.neo-ux-money-row').length>0),
+      'mobile market must restore real valuation rows');
+    assert.ok(await page.$eval('#neoRefUxHub .neo-ux-leading',el=>el.textContent.includes('¥')),
+      'market values must be shown in yen');
+    await page.click('#neoRefUxHub [data-neo-ux-back="1"]');
+    assert.ok(await page.evaluate(()=>!document.body.classList.contains('neo-ux-open')),
+      'mobile user can return from market');
+   }
    // Ranking V10: simulate ONE legitimate fixture at representative PC/mobile sizes.
    // No fabricated match stats or external images.
    if(width===1366||width===390){
