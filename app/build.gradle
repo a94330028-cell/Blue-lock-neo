@@ -13,8 +13,8 @@ android {
         applicationId 'com.neoegoist.simulator'
         minSdk 24
         targetSdk 35
-        versionCode 106
-        versionName '10.5.0'
+        versionCode 107
+        versionName '10.6.0'
     }
     signingConfigs {
         stableRelease {
