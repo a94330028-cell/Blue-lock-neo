@@ -52,7 +52,7 @@
    const matching=free.filter(x=>slot.accept.includes(x.role));
    const group=roleGroup(slot.role);
    const substitutes=matching.length?matching:free.filter(x=>roleGroup(x.role)===group);
-   const options=substitutes.length?substitutes:free;
+   const options=substitutes.length?substitutes:[]; // Do not put defenders in attacker slots.
    options.sort((a,b)=>(b.score+compat(slot.role,b.role)*1.9)-(a.score+compat(slot.role,a.role)*1.9)||a.name.localeCompare(b.name,'pt-BR'));
    const best=options[0];if(!best)break;
    used.add(best.name+'|'+best.club);players.push({...best,slot:slot.role,adapted:!slot.accept.includes(best.role)});
@@ -172,16 +172,16 @@
    $('neo990-round-label').textContent=xi.round?'Rodada '+xi.round:'Sem rodada concluída';
    const target=$('neo990-xi');
    if(!xi.players.length){target.innerHTML='<p class="neo990-empty">A seleção será formada quando uma rodada inteira terminar com súmulas de jogadores disponíveis.</p>';return;}
-   const starters=xi.players.map((p,i)=>'<button type="button" class="neo990-player" data-profile="'+encodeURIComponent(p.name+'|'+p.club)+'">'+photo(p.name,p.club)+'<span><b>'+esc(p.name)+'</b><small>'+esc(E.teamById(p.club)?.short||p.club)+' · '+esc(p.slot)+(p.adapted?' (adaptado)':'')+'</small></span><strong>'+p.score.toFixed(1)+'</strong></button>').join('');
+   const starters=xi.players.map((p,i)=>'<button type="button" class="neo990-player" data-profile="'+encodeURIComponent(p.name+'|'+p.club)+'">'+photo(p.name,p.club)+'<span><b>'+esc(p.name)+'</b><small>'+esc(E.teamById(p.club)?.short||p.club)+' · '+esc(p.slot)+(p.adapted?' (adaptado)':'')+'</small></span><strong>'+p.rating.toFixed(1)+'</strong></button>').join('');
    const spots=win.NeoPitch1040?.layout({formationName:'4-3-3',formation:E.DEFAULT_FORMATION},E.DEFAULT_FORMATION)||
      E.DEFAULT_FORMATION.map(f=>({lane:Math.max(10,Math.min(90,f.y*100)),depth:Math.max(18,Math.min(91,(1-f.x)*100))}));
    const pitchPlayers=xi.players.map((p,i)=>{
      const spot=spots[i]||{lane:50,depth:50};
      return '<button type="button" class="neo990-pitch-player" data-profile="'+encodeURIComponent(p.name+'|'+p.club)+'" style="--lane:'+spot.lane+'%;--depth:'+spot.depth+'%" title="'+esc(p.name)+' · '+esc(p.slot)+' · '+p.score.toFixed(1)+'" aria-label="Abrir ficha de '+esc(p.name)+', posição '+esc(p.slot)+'">'+
-       photo(p.name,p.club)+'<span class="neo990-position">'+esc(p.slot)+'</span><span class="neo990-name">'+esc(p.name)+'</span><strong class="neo990-score">'+p.score.toFixed(1)+'</strong></button>';
+       photo(p.name,p.club)+'<span class="neo990-position">'+esc(p.slot)+'</span><span class="neo990-name">'+esc(p.name)+'</span><strong class="neo990-score" aria-label="Nota '+p.rating.toFixed(1)+'">'+p.rating.toFixed(1)+'</strong></button>';
    }).join('');
    const pitch='<div class="neo990-xi-pitch" role="group" aria-label="Seleção do Campeonato em campo, formação 4-3-3"><div class="neo980-pitch-markings"><span class="neo980-center-circle"></span><span class="neo980-penalty neo980-penalty-top"></span><span class="neo980-penalty neo980-penalty-bottom"></span></div><span class="neo980-goal goal-top"></span><span class="neo980-goal goal-bottom"></span>'+pitchPlayers+'</div>';
-   target.innerHTML='<div class="neo990-team-summary"><b>4-3-3 · Melhor XI</b><small>'+xi.candidateCount+' atletas avaliados · posições corretas, retratos e notas no campo</small></div>'+
+   target.innerHTML='<div class="neo990-team-summary"><b>4-3-3 · Melhor XI</b><small>'+xi.candidateCount+' atletas avaliados · notas 0 a 10 e posições corretas</small></div>'+
       pitch+'<p class="neo990-xi-caption">⬆ Ataque · 🧤 Goleiro na base · Toque em um atleta para abrir sua ficha</p>'+
       '<details class="neo990-xi-list"><summary>☷ Ver escalação em lista</summary><div class="neo990-grid">'+starters+'</div></details>'+
       '<details class="neo990-bench"><summary>Banco e destaques ('+xi.reserves.length+')</summary>'+xi.reserves.map(p=>'<div>'+photo(p.name,p.club)+'<span>'+esc(p.name)+' · '+esc(p.role)+'</span><b>'+p.score.toFixed(1)+'</b></div>').join('')+'</details>';
@@ -189,6 +189,7 @@
   }
   if(doc.readyState==='loading')doc.addEventListener('DOMContentLoaded',()=>{injectGallery();render(true);}, {once:true});
   else {injectGallery();render(true);}
+  win.addEventListener('neo:portraits-changed',()=>render(true));
   const navClicks=()=>{injectGallery();render();};
   doc.addEventListener('click',e=>{
    const profile=e.target.closest('[data-profile]');if(profile){const text=decodeURIComponent(profile.dataset.profile||''),at=text.lastIndexOf('|');if(at>=0)win.NeoMarket96?.openProfile?.(text.slice(0,at),text.slice(at+1));}
