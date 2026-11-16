@@ -7,6 +7,7 @@ on:
       - 'portrait-pack/**'
       - 'web/**'
       - 'tools/**'
+      - 'tests/**'
       - '.github/workflows/publicar-site.yml'
   workflow_dispatch:
 permissions:
