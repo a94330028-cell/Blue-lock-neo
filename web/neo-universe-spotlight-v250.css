@@ -1,0 +1,37 @@
+
+/* V10 portrait podium — only uses images from existing player registry. */
+.neo250-podium{background:linear-gradient(135deg,#101f38,#071326);border:1px solid #265e93;border-radius:15px;padding:16px;margin:13px 0;color:#f3f7ff;overflow:hidden}
+.neo250-podium h3{font-size:17px;font-weight:950;margin:0 0 14px;color:#dceaff;letter-spacing:.7px}
+.neo250-podium-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:end;gap:12px;max-width:920px;margin:auto}
+.neo250-champion{min-width:0;min-height:285px;display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 11px;border:1px solid #607082;background:linear-gradient(160deg,#172b48,#0b172c);border-radius:13px;color:#f3f7ff;cursor:pointer;transition:transform .18s,border-color .18s}
+.neo250-position-1{order:2;min-height:324px;border-color:#dbad5c;background:linear-gradient(160deg,#3f321f,#18243a 45%,#091529);box-shadow:0 0 20px #dcaf5644}
+.neo250-position-2{order:1;border-color:#a5bdce;background:linear-gradient(160deg,#203147,#111f38)}
+.neo250-position-3{order:3;border-color:#b48762;background:linear-gradient(160deg,#30261e,#101e38)}
+.neo250-champion:hover{transform:translateY(-3px)}.neo250-champion:focus-visible{outline:3px solid #8dd8ff;outline-offset:3px}
+.neo250-rank{font-size:15px;font-weight:950;color:#ffe0a2}
+.neo250-portrait{width:100%;max-width:230px;height:clamp(150px,14vw,210px);display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:10px;background:linear-gradient(135deg,#13355a,#0b1a30)}
+.neo250-position-1 .neo250-portrait{height:clamp(180px,17vw,247px)}
+.neo250-face{width:100%!important;height:100%!important;object-fit:contain!important;object-position:center center!important;border:none!important;border-radius:0!important;background:transparent!important}
+.neo250-player-name{font-size:clamp(13px,1.3vw,18px);line-height:1.22;text-align:center;overflow-wrap:anywhere}
+.neo250-club{font-size:12px;color:#a9bdd7}.neo250-stat{font-size:12px;font-weight:800;color:#d7edff;text-align:center}
+.neo250-no-image{font-size:11px;color:#b2c4d8;text-align:center}
+.neo250-note{font-size:12px;color:#a3b8d6;line-height:1.5;margin:9px 0}
+.neo250-player-detail{margin:12px 0 0;background:#0b1d33;border-radius:10px;padding:12px;border:1px solid #2b587c}
+.neo250-player-detail:empty{display:none}
+.neo250-detail-head{display:flex;align-items:center;gap:12px}
+.neo250-detail-head .neo250-portrait{width:65px;height:65px;flex:none}
+.neo250-detail-face{max-width:100%;max-height:100%;object-fit:contain}
+.neo250-detail-head h4{margin:0;font-size:16px}.neo250-detail-head p{font-size:12px;color:#a2bfd8}
+.neo250-detail-stats{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;margin-top:11px}
+.neo250-detail-stats>div{background:#142944;padding:10px 5px;border-radius:8px;display:flex;flex-direction:column;align-items:center}
+.neo250-detail-stats strong{font-size:14px}.neo250-detail-stats span{font-size:10px;color:#a9c6de}
+.neo250-records{border:1px solid #316b94;background:#0b1c32;border-radius:11px;margin:11px 0;overflow:hidden;color:#eaf6ff}
+.neo250-records>summary{padding:12px 14px;cursor:pointer;list-style:none;font-weight:900;font-size:13px}
+.neo250-records>summary::-webkit-details-marker{display:none}
+.neo250-world-body{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:10px;padding:10px;max-height:580px;overflow:auto}
+.neo250-world-card{min-width:0;border:1px solid #254d72;border-radius:8px;background:#10253e;padding:10px;max-height:220px;overflow:auto}
+.neo250-world-card h4{font-size:12px;margin:2px 0 9px;color:#a9dfff}
+.neo250-world-card p{font-size:11px;line-height:1.45;margin:7px 0;overflow-wrap:anywhere}
+@media(max-width:650px){.neo250-podium{padding:10px}.neo250-podium-grid{gap:6px}.neo250-champion{padding:7px 4px;min-height:211px}.neo250-position-1{min-height:235px}.neo250-portrait{height:105px}.neo250-position-1 .neo250-portrait{height:133px}.neo250-player-name{font-size:11px}.neo250-club,.neo250-stat{font-size:10px}.neo250-detail-stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:370px){.neo250-podium-grid{grid-template-columns:1fr}.neo250-champion{min-height:0!important}.neo250-portrait,.neo250-position-1 .neo250-portrait{height:165px}}
+@media(prefers-reduced-motion:reduce){.neo250-champion{transition:none!important}}
