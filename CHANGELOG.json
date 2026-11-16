@@ -24,6 +24,7 @@
       "version": "1.8.0",
       "date": "2026-11-16",
       "novidades": [
+        "Conteúdo 10.6.13: novas verificações de temporada completa para as ideias 31–55, com quarenta partidas oficiais, narração baseada em lances reais, amostras táticas, Hall da Fama e enciclopédia com dados comprovados.",
         "Carreira personalizada: personagens criados recebem histórico de jogos, marcos conquistados e foco de treino configurável, com evolução baseada em súmulas.",
         "Rivalidades de temporada evoluem de inicial a intensa e lendária conforme duelos reais, com resultados e reações de Ego.",
         "Evolução individual: cada três partidas com boa atuação, atletas podem melhorar uma característica real, com limites de treinamento.",
@@ -48,6 +49,7 @@
         "Universo Vivo em Recordes: Rei do Campo baseado no desempenho, prêmios apenas após conclusão, linha do tempo, olheiros, fórmulas e enciclopédia com dados reais."
       ],
       "correcoes": [
+        "O Discord recebe identificador novo quando o changelog de conteúdo muda; a proteção contra repetição de um anúncio já confirmado continua ativa.",
         "Transferências não modificam os elencos-base do repositório e não deixam atletas duplicados nem equipes com menos de 11 titulares.",
         "A mesma súmula da temporada não aumenta novamente os marcos, rivalidades, evolução ou notícias.",
         "O mercado fica bloqueado enquanto a partida estiver em andamento ou pausada, evitando mudanças de elenco no meio do confronto.",
@@ -72,6 +74,7 @@
         "Versão pública 1.8.0; build Android interno 10.6.9, com saves antigos e retratos preservados."
       ],
       "importantes": [
+        "A validação automática da temporada é requisito de publicação do site e do APK; testes em aparelhos Android reais e modos ainda parciais continuam pendentes.",
         "Mercado Neo funciona no campeonato da temporada e não modifica os elencos de outras Copas já configuradas.",
         "As notícias automáticas usam somente dados realmente registrados, não resultados fabricados.",
         "O APK Android sem assinatura de distribuição não pode atualizar um aplicativo assinado por outra chave.",
