@@ -9,11 +9,11 @@ Este documento é o backlog oficial das 55 propostas do usuário. **Não signifi
 - [x] **03. Despertares durante partidas** — concluído e validado (v1.6.0)
 - [x] **04. Flow exclusivo** — concluído e validado (v1.6.0)
 - [x] **05. Metavision** — concluído e validado (v1.6.0)
-- [ ] **06. Devoração de rivais** — parcial
-- [ ] **07. Habilidades especiais** — parcial
-- [ ] **08. Duelo de habilidades** — parcial
-- [ ] **09. Partidas cinematográficas** — pendente
-- [ ] **10. Futebol dinâmico** — parcial
+- [x] **06. Devoração de rivais** — concluído e validado (v1.7.0)
+- [x] **07. Habilidades especiais** — concluído e validado (v1.7.0)
+- [x] **08. Duelo de habilidades** — concluído e validado (v1.7.0)
+- [x] **09. Partidas cinematográficas** — concluído e validado (v1.7.0)
+- [x] **10. Futebol dinâmico** — concluído e validado (v1.7.0)
 - [ ] **11. Carreira personalizada** — pendente
 - [ ] **12. Rivalidades automáticas** — parcial
 - [ ] **13. Evolução individual** — parcial
@@ -108,3 +108,15 @@ Esta marcação se refere aos **cinco itens do planejamento**, não às 55 funci
 5. **Metavision:** releitura de linhas de passe e posição projetada dos adversários com a bola nos pés; não ignora impedimento, pressão nem distância máxima.
 
 A aba Recordes apresenta os **Cinco Pilares do Ego** e seu histórico limitado de partidas salvas. Testes incluem decisões positivas/negativas, penalidade por impedimento, caducidade dos bônus, idempotência e simulações com diferentes sementes no motor real. Novos registros são coletados somente depois da atualização, sem reconstruir estatísticas históricas inexistentes.
+
+## Conclusão técnica — Ideias 6 a 10 (v1.7.0)
+
+Concluídos os cinco requisitos do escopo de desenvolvimento desta etapa, com o módulo `web/neo-ego-saga-v180.js`, a interface `web/neo-ego-saga-v180.css` e `tests/v180.test.cjs`, além das regressões anteriores. A publicação do site foi confirmada no GitHub Actions. O resto do planejamento permanece aberto.
+
+6. **Devoração de rivais:** duas derrotas em duelos reais ativam uma janela de adaptação contra aquele adversário; só a vitória efetiva posterior registra Devoração e o bônus termina no prazo. Nenhuma habilidade é copiada artificialmente.
+7. **Habilidades especiais:** armas existentes continuam exigindo ativação, contexto, energia e recarga; seus atributos apropriados recebem pequenas diferenças táticas, e a finalização usa qualidade real da zona do chute.
+8. **Duelo de habilidades:** os resultados continuam pertencendo ao motor original; o jogo registra técnicas realmente ativas e o vencedor real, com efeitos contextuais sem resultados predeterminados.
+9. **Partidas cinematográficas:** o modo de transmissão, câmera, replay e efeitos já existentes são combinados com episódios de acontecimentos reais, linha do tempo da rodada e destaques discretos. Não há geração de vídeos ou imagens novas sem os recursos fornecidos pelo usuário.
+10. **Futebol dinâmico:** pontas procuram companheiros livres na área, atacantes atacam o segundo poste, meias buscam o passe recuado e laterais criam linhas de apoio; impedimento, estado real da bola, qualidade da chance e movimento físico são preservados.
+
+**Validação:** testes de cenas positivas e negativas, idempotência das súmulas, comparação de placares, sementes determinísticas, coordenadas finitas, cache de jogadas em Turbo 40× e build do site. Novos episódios passam a existir apenas após uma partida realmente registrada nessa versão.
