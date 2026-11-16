@@ -69,6 +69,9 @@ jobs:
           node tests/v170.test.cjs
           node tests/v180.test.cjs
           node tests/v190.test.cjs
+          node tests/v200.test.cjs
+          node --check web/neo-advanced-v200.js
+          node --check web/neo-universe-v220.js
           python3 -m unittest discover -s tests -p test_neo_announcer.py
           python3 tools/neo_update_announcement.py validate
           node --check web/neo-clubs-v1050.js
