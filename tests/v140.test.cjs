@@ -67,7 +67,7 @@ const change=JSON.parse(read('CHANGELOG.json'));
 assert.equal(change.current_version,'1.8.0');
 assert.equal(change.releases[0].version,'1.8.0');
 assert.equal(read('web/VERSION').trim(),'1.8.0');
-assert.equal(read('web/UPDATE_BUILD').trim(),'10.6.9');
+assert.equal(read('web/UPDATE_BUILD').trim(),'10.6.10');
 assert.ok(read('app/build.gradle').includes("versionName '1.8.0'"));
 assert.ok(read('app/build.gradle').includes('versionCode 116'));
 console.log('OK EGO COMBAT 1.3: real Flow, lane-based Metavision, duels, mastery, awakening, and save-safe release');
