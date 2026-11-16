@@ -1,3 +1,13 @@
+# Blue Lock NEO 10.5.1 — Liga e Leilão corrigidos
+
+- **Seleção do Campeonato sem clones:** cada jogador só entra uma vez no XI, e a equipe especial não repete atletas nos rankings.
+- **Somente participantes da Liga:** Bastard München, Barcha, Manshine City, PXG e Ubers disputam o mercado e ranking. Clubes históricos continuam disponíveis em amistosos e copas.
+- **Lances iniciam em ¥0:** boas partidas aumentam, partidas ruins reduzem e o mínimo é zero; o OVR não dá bônus inicial.
+- **Migração segura:** antigas cifras artificiais são reconstruídas usando partidas reais já salvas, preservando gols, classificação, fotos e habilidades.
+- **Atualização web 10.5.1:** use Atualizar no APK sem desinstalar e sem apagar dados.
+
+---
+
 # Blue Lock NEO 10.5.0 — Fotos principais, escudos e Melhor XI
 
 - **Fotos principais:** os 87 arquivos locais importados anteriormente aparecem antes das artes genéricas automáticas. Uma escolha manual de retrato continua respeitada.

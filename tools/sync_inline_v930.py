@@ -103,7 +103,7 @@ if 'kaiser-192.png?v=9.9.1' not in updated:
 updated=updated.replace('neo-studio-v970.js?v=9.7.0','neo-studio-v970.js?v=9.9.4')
 updated=updated.replace('neo-v990.css?v=9.9.0','neo-v990.css?v=9.9.4')
 # v10.0: Bust stale Mobile Edition assets when building the Android web bundle.
-updated=re.sub(r'src="mobile-upgrade\.js(?:\?v=[^"]*)?"','src="mobile-upgrade.js?v=10.5.0"',updated)
+updated=re.sub(r'src="mobile-upgrade\.js(?:\?v=[^"]*)?"','src="mobile-upgrade.js?v=10.5.1"',updated)
 updated=re.sub(r'href="mobile-upgrade\.css(?:\?v=[^"]*)?"','href="mobile-upgrade.css?v=10.5.0"',updated)
 # v10.4: load the positional layout BEFORE Squad and Best XI scripts.
 # The generated page is shared by GitHub Pages and the Android WebView.
@@ -133,5 +133,8 @@ for file in ('neo-round-v990.js','neo-squads-v980.js','neo-pitch-layout-v1040.js
     updated=re.sub(r'src="'+re.escape(file)+r'(?:\?v=[^"]*)?"','src="'+file+'?v=10.5.0"',updated)
 for file in ('neo-pitch-v1040.css','neo-squads-v980.css'):
     updated=re.sub(r'href="'+re.escape(file)+r'(?:\?v=[^"]*)?"','href="'+file+'?v=10.5.0"',updated)
+# 10.5.1: reload the real league data and refreshed dynamic Best XI.
+for file in ('neo-player-data-v960.js','neo-round-v990.js'):
+    updated=re.sub(r'src="'+re.escape(file)+r'(?:\?v=[^"]*)?"','src="'+file+'?v=10.5.1"',updated)
 html.write_text(updated,encoding='utf-8')
 print('Inline game modules synchronized:',counts)
