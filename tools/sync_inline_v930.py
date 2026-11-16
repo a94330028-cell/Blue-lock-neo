@@ -243,5 +243,12 @@ updated = re.sub(
     'neo-round-v990.js?v=1.9.1',
     updated
 )
+# NEO Evolution Pack 19–30: web site and Android use the same real-match code.
+if 'neo-twelve-v230.js' not in updated:
+    if updated.count('</body>') != 1: raise RuntimeError('Cannot add NEO Evolution Pack')
+    updated = updated.replace('</body>', '<script defer src="neo-twelve-v230.js?v=1.8.0-12"></script>\n</body>')
+if 'neo-twelve-v230.css' not in updated:
+    if updated.count('</head>') != 1: raise RuntimeError('Cannot add NEO Evolution styles')
+    updated = updated.replace('</head>', '<link rel="stylesheet" href="neo-twelve-v230.css?v=1.8.0-12">\n</head>')
 html.write_text(updated,encoding='utf-8')
 print('Inline game modules synchronized:',counts)
