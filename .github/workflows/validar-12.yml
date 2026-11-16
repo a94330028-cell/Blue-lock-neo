@@ -1,0 +1,42 @@
+name: Validar 12 ideias (19-30) em navegador real
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'web/neo-twelve-v230.js'
+      - 'web/neo-twelve-v230.css'
+      - 'web/neo-desktop.css'
+      - 'web/neo-round-v990.js'
+      - 'tests/v230-browser.test.cjs'
+      - 'tests/v230-validation.test.cjs'
+      - 'tools/sync_inline_v930.py'
+      - '.github/workflows/validar-12.yml'
+permissions:
+  contents: read
+concurrency:
+  group: validate-neo230-browser
+  cancel-in-progress: true
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Preparar projeto real
+        run: python tools/sync_inline_v930.py web
+      - name: Testar doze mecanicas e partidas completas
+        run: |
+          node tests/v230.test.cjs
+          node tests/v230-validation.test.cjs
+      - name: Preparar Chromium do GitHub Runner
+        run: |
+          command -v google-chrome || command -v chromium || command -v chromium-browser
+          npm install --prefix /tmp/neo-ui-validate --no-save --no-package-lock --no-audit playwright-core@1.56.1
+      - name: Validar PC 1366 e 1600 e Android viewport 390
+        run: node tests/v230-browser.test.cjs
