@@ -30,9 +30,9 @@
  function standings(){try{return engine()?.standings?.(season())||[]}catch(error){return []}}
  function template(title,linkLabel,linkAction){
   return '<header class="neo-ux-heading"><h2>'+title+'</h2><button type="button" data-neo-ux-back="1">✕ Fechar</button></header>'+
-   '<div class="neo-ux-tools"><button type="button" data-neo-ux-open="championship">🏆 Campeonatos</button><button type="button" data-neo-ux-open="market">💴 Mercado</button></div>';
+   '<div class="neo-ux-tools"><button type="button" data-neo-ux-open="ranking">📊 Rankings</button><button type="button" data-neo-ux-open="market">💴 Mercado</button><button type="button" data-neo-ux-open="championship">🏆 Liga</button></div>';
  }
- let active=null,limit=30,filter='all',lastToken='',root=null,returnBar=null;
+ let active=null,limit=30,filter='all',rankMode='goals',lastToken='',root=null,returnBar=null;
  const position=p=>{
   const raw=String(p.role||'').toUpperCase();
   const pos=window.NeoMarket96?.position?.(raw);
@@ -72,22 +72,85 @@
   out+='<button class="neo-ux-primary" data-neo-ux-original="more">Gerenciar copas e torneios →</button></div>';
   return out;
  }
- function marketHtml(){
-  const rows=market(),categories=[['all','Todos'],['GK','Goleiros'],['CB','Zagueiros'],['FB','Laterais'],['DM','Volantes'],['CM','Meias'],['AM','Armadores'],['W','Pontas'],['ST','Atacantes'],['MASTER','Mestres']];
-  const filtered=rows.filter(p=>filter==='all'||(filter==='MASTER'?p.isMaster:position(p)===filter));
-  let out=template('💴 Mercado Neo');
-  out+='<div class="neo-ux-hero"><small>OFERTAS E VALORES EM IENES (¥)</small><h3>'+rows.length+' atletas na avaliação</h3><p>Ofertas em ienes fictícios, calculadas por partidas e ações registradas. Sem estreia, o atleta fica em ¥ 0; não é salário nem saldo bancário.</p><div class="neo-ux-leading"><span>Maior avaliação</span><strong>'+(rows[0]?esc(cash(rows[0].value)):'—')+'</strong></div></div>';
-  out+='<div class="neo-ux-filter">'+categories.map(([id,label])=>'<button data-neo-ux-filter="'+id+'" '+(filter===id?'class="active"':'')+'>'+label+'</button>').join('')+'</div>';
-  out+='<div class="neo-ux-money-list">'+filtered.slice(0,limit).map((p,i)=>'<button class="neo-ux-money-row" data-neo-ux-profile="'+encodeURIComponent(p.name+'|'+p.club)+'"><span class="neo-ux-index">'+(i+1)+'</span>'+img(p.name)+'<span class="neo-ux-info"><b>'+esc(p.name)+'</b><small>'+esc(club(p.club)?.short||p.club)+' · '+esc(p.role)+' · '+esc(p.ovr)+' OVR · '+(Number(p.games)>0?esc(p.games)+' J':'Sem estreia')+'</small></span><strong>'+esc(cash(p.value))+'</strong></button>').join('')+'</div>';
-  if(filtered.length>limit)out+='<button class="neo-ux-primary neo-ux-more" data-neo-ux-more="1">Mostrar mais '+esc(filtered.length-limit)+' jogadores</button>';
-  if(!filtered.length)out+='<p class="neo-ux-empty">Ainda não há valores disponíveis para este filtro.</p>';
-  out+='<div class="neo-ux-panel"><h3>🔄 Negociações e contratos</h3><p>O Mercado Neo original e os históricos de transferências continuam disponíveis no menu avançado.</p><button class="neo-ux-primary" data-neo-ux-original="more">Abrir negociações e contratos →</button><button class="neo-ux-secondary" data-neo-ux-original="ranking">Ver ranking de mercado completo →</button></div>';
+
+ const RANK_TYPES=[
+  ['goals','⚽ Artilheiros'],['assists','👟 Assistências'],
+  ['performance','⭐ Desempenho'],['defense','🛡 Defensores'],
+  ['passing','🎯 Passadores'],['mvp','👑 MVP']
+ ];
+ const n=v=>Math.max(0,Number(v)||0);
+ const playerScore=(p,mode)=>{
+  if(mode==='goals')return n(p.goals);
+  if(mode==='assists')return n(p.assists);
+  if(mode==='performance')return n(p.score);
+  if(mode==='defense')return n(p.tackles)*2+n(p.interceptions)*2.5+n(p.shotBlocks)*3+n(p.aerialWins)+n(p.saves)*1.7;
+  if(mode==='passing')return n(p.keyPasses)*2+n(p.assists)*4+n(p.passes)*.035;
+  if(mode==='mvp')return n(p.mvpPoints);
+  return n(p.value);
+ };
+ function metricText(p,mode){
+  const score=playerScore(p,mode);
+  if(mode==='market')return cash(score);
+  const digits=Number.isInteger(score)?0:1;
+  const value=score.toLocaleString('pt-BR',{maximumFractionDigits:digits});
+  if(mode==='goals')return '⚽ '+value+' gol'+(score===1?'':'s');
+  if(mode==='assists')return '👟 '+value+' assist.';
+  return '⭐ '+value+' pts';
+ }
+ function leaderboard(data,mode='market'){
+  const entries=data.slice(0,limit);
+  const card=(p,index,large)=>{
+   const rank=index+1;
+   const meta=esc(club(p.club)?.short||p.club)+' · '+(p.isMaster?'⭐ Mestre · ':'')+
+    (n(p.games)>0?Math.round(n(p.games))+' jogo(s)':'Sem estreia');
+   const face=img(p.name);
+   if(large)return '<button type="button" class="neo-ux-podium-card neo-ux-position-'+rank+'" data-neo-ux-profile="'+encodeURIComponent(p.name+'|'+p.club)+'"><span class="neo-ux-medal">'+(rank===1?'👑 ':rank===2?'🥈 ':'🥉 ')+rank+'º</span>'+
+    face+'<b>'+esc(p.name)+'</b><small>'+meta+'</small><strong>'+esc(metricText(p,mode))+'</strong></button>';
+   return '<button type="button" class="neo-ux-money-row neo-ux-rank-row" data-neo-ux-profile="'+encodeURIComponent(p.name+'|'+p.club)+'"><span class="neo-ux-index">'+rank+'º</span>'+face+
+    '<span class="neo-ux-info"><b>'+esc(p.name)+'</b><small>'+meta+'</small></span><strong>'+esc(metricText(p,mode))+'</strong></button>';
+  };
+  let out='';
+  if(entries.length){
+   out+='<div class="neo-ux-podium neo-ux-shared-leaderboard">'+[1,0,2].map(index=>entries[index]?card(entries[index],index,true):'<span class="neo-ux-podium-placeholder"></span>').join('')+'</div>';
+   out+='<div class="neo-ux-money-list neo-ux-shared-leaderboard">'+entries.slice(3).map((p,i)=>card(p,i+3,false)).join('')+'</div>';
+  }else out+='<p class="neo-ux-empty">Ainda não existem estatísticas registradas para esta classificação.</p>';
+  if(data.length>limit)out+='<button class="neo-ux-primary neo-ux-more" data-neo-ux-more="1">Mostrar mais ('+esc(data.length-limit)+')</button>';
   return out;
  }
+ function rankingHtml(){
+  const s=season(),rows=market().filter(p=>!p.isMaster&&n(p.games)>0);
+  let ranked;
+  if(rankMode==='mvp'){
+   ranked=(engine()?.Progression?.mvpRanking?.(s,20)||[]).map(p=>({...p,mvpPoints:n(p.mvpPoints)}));
+  }else{
+   ranked=rows.filter(p=>playerScore(p,rankMode)>0)
+    .sort((a,b)=>playerScore(b,rankMode)-playerScore(a,rankMode)||n(b.value)-n(a.value)||a.name.localeCompare(b.name,'pt-BR'));
+  }
+  let out=template('🏆 Ranking NEO');
+  out+='<div class="neo-ux-panel neo-ux-rank-intro"><h3>Classificação da temporada</h3><p>Todos os rankings usam os mesmos cards e pódio. Cada aba mantém suas estatísticas reais e sua própria ordem.</p></div>';
+  out+='<div class="neo-ux-filter neo-ux-rank-tabs">'+RANK_TYPES.map(([id,label])=>'<button type="button" data-neo-ux-rank="'+id+'" '+(rankMode===id?'class="active"':'')+'>'+label+'</button>').join('')+'</div>';
+  out+='<div class="neo-ux-rank-meta">'+ranked.length+' atletas classificados · Temporada '+esc(s?.number||1)+'</div>';
+  return out+leaderboard(ranked,rankMode);
+ }
+
+ function marketHtml(){
+  const rows=market(),categories=[['all','Todos'],['GK','Goleiros'],['CB','Zagueiros'],['FB','Laterais'],['DM','Volantes'],['CM','Meias'],['AM','Armadores'],['W','Pontas'],['ST','Atacantes'],['MASTER','⭐ Mestres']];
+  const filtered=rows.filter(p=>filter==='all'||(filter==='MASTER'?p.isMaster:position(p)===filter));
+  const leader=rows.find(p=>n(p.value)>0);
+  let out=template('💴 Mercado Neo');
+  out+='<div class="neo-ux-hero"><small>OFERTAS DE MERCADO EM IENES (¥)</small><h3>'+rows.length+' atletas na avaliação</h3><p>Lances fictícios por partidas e ações registradas. Os mestres só recebem ofertas quando entram oficialmente; não é salário nem dinheiro bancário.</p>'+
+   '<div class="neo-ux-leading"><span>Maior avaliação</span><strong>'+(leader?esc(cash(leader.value)):'¥ 0')+'</strong></div></div>';
+  out+='<div class="neo-ux-filter">'+categories.map(([id,label])=>'<button data-neo-ux-filter="'+id+'" '+(filter===id?'class="active"':'')+'>'+label+'</button>').join('')+'</div>';
+  out+='<div class="neo-ux-rank-meta">'+filtered.length+' atletas · Pódio e cards padronizados em todos os rankings</div>';
+  out+=leaderboard(filtered,'market');
+  out+='<div class="neo-ux-panel"><h3>🔄 Negociações e contratos</h3><p>Os históricos de transferências permanecem nos controles originais do simulador.</p><button class="neo-ux-primary" data-neo-ux-original="more">Abrir negociações e contratos →</button><button class="neo-ux-secondary" data-neo-ux-open="ranking">Ver rankings de desempenho →</button></div>';
+  return out;
+ }
+
  function show(view){
   if(!mobile()||!root)return;
   active=view;
-  root.innerHTML=view==='market'?marketHtml():championship();
+  root.innerHTML=view==='market'?marketHtml():view==='ranking'?rankingHtml():championship();
   document.body.classList.add('neo-ux-open');
   lastToken=token();
   for(const el of root.querySelectorAll('.neo-ux-player-img'))el.addEventListener('error',()=>{if(el.dataset.failed)return;el.dataset.failed='1';el.style.opacity='.25';});
@@ -135,18 +198,21 @@
   document.addEventListener('click',event=>{
    const b=event.target.closest('button');
    if(!b)return;
-   const open=b.dataset.neoUxOpen;
+   const open=b.dataset.neoUxOpen||((b.dataset.refPage==='ranking'||b.dataset.refGo==='ranking')?'ranking':null);
    if(open||b.dataset.refGo==='league'){
     event.preventDefault();event.stopImmediatePropagation();show(open||'championship');return;
    }
    if(b.dataset.neoUxBack){
-    event.preventDefault();event.stopImmediatePropagation();const previous=active;close();window.NeoReferenceMobile.go(previous==='market'?'ranking':'home');return;
+    event.preventDefault();event.stopImmediatePropagation();const previous=active;close();if(previous==='market'){show('ranking');return;}window.NeoReferenceMobile.go('home');return;
    }
    if(b.dataset.neoUxOriginal){
     event.preventDefault();event.stopImmediatePropagation();original(b.dataset.neoUxOriginal);return;
    }
    if(b.dataset.neoUxWatch!==undefined){
     event.preventDefault();event.stopImmediatePropagation();watch(Number(b.dataset.neoUxWatch));return;
+   }
+   if(b.dataset.neoUxRank){
+    event.preventDefault();event.stopImmediatePropagation();rankMode=b.dataset.neoUxRank;limit=30;show('ranking');return;
    }
    if(b.dataset.neoUxFilter){
     event.preventDefault();event.stopImmediatePropagation();filter=b.dataset.neoUxFilter;limit=30;show('market');return;
@@ -179,7 +245,7 @@
   };
   setInterval(refresh,3800);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden&&active)show(active)});
-  window.NeoMobileHub={show,close,market,championship};
+  window.NeoMobileHub={show,close,market,championship,rankingHtml};
  }
  function ready(){
   if(!window.NeoReferenceMobile){setTimeout(ready,90);return;}

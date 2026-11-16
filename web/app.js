@@ -556,13 +556,14 @@ function loadSeason(){
   try{
     const saved=JSON.parse(localStorage.getItem('neo-season-v2'));
     if(saved?.schema===2&&[10,20,30].includes(saved.rounds?.length)){
-      if(saved.career?.bidVersion!==E.Progression.BID_VERSION){
+      if(saved.career?.bidVersion!==E.Progression.BID_VERSION||saved.career?.masterBidVersion!==1){
         try{
-          // Repair missing earned bids using recorded matches (and preserve higher saved offers);
-          // keep every fixture, goal, portrait, ability and career stat.
-          E.Progression.reconcileBids(saved);
+          // Restore earned regular and Master Striker offers ONLY from recorded matches.
+          // Never edit scores, player portraits, abilities or match reports.
+          if(saved.career?.bidVersion!==E.Progression.BID_VERSION)E.Progression.reconcileBids(saved);
+          if(saved.career?.masterBidVersion!==1)E.Progression.reconcileMasterBids(saved);
           localStorage.setItem('neo-season-v2',JSON.stringify(saved));
-        }catch(error){console.warn('Lances recalculados em memória; backup do save original preservado:',error);}
+        }catch(error){console.warn('Lances recalculados em memória; save original preservado:',error);}
       }
       return saved;
     }

@@ -22,7 +22,12 @@
   if(['CA','ST','CF','SA'].includes(r))return 'ST';return 'CM';
  };
  let selected='all',expanded=false,allPlayers=false,searchTerm='';
- function state(){try{const s=JSON.parse(localStorage.getItem('neo-season-v2')||'null');if(s?.schema!==2)return null;E.Progression.reconcileGoalkeepers(s);E.Progression.reconcileBids(s);return s;}catch(e){return null}}
+ function state(){try{const s=JSON.parse(localStorage.getItem('neo-season-v2')||'null');if(s?.schema!==2)return null;E.Progression.reconcileGoalkeepers(s);E.Progression.reconcileBids(s);
+  if(s.career?.masterBidVersion!==1&&E.Progression.reconcileMasterBids){
+   E.Progression.reconcileMasterBids(s);
+   try{localStorage.setItem('neo-season-v2',JSON.stringify(s));}catch(_){}
+  }
+  return s;}catch(e){return null}}
  // O ranking da Liga mostra apenas Bastard, Barcha, Manshine, PXG e Ubers.
  // Escalações XI, clubes históricos e copas são outros modos, não entram no leilão da Liga.
  function market(s){return D.roster(E,s,{scope:'league'})}
@@ -58,11 +63,14 @@
     return selected==='all'||selected==='VALUE'||['G','A','DEF','PASS'].includes(selected)||(selected==='MASTER'?p.isMaster:position(p.role)===selected);
   });
   const ranked=data.sort((a,b)=>score(b,selected)-score(a,selected)||b.value-a.value||a.name.localeCompare(b.name,'pt-BR'));
+  const metric=p=>selected==='G'?Math.round(score(p,'G'))+' gols':
+   selected==='A'?Math.round(score(p,'A'))+' assist.':
+   selected==='DEF'||selected==='PASS'?score(p,selected).toLocaleString('pt-BR',{maximumFractionDigits:1})+' pts':fmt(p.value);
   const limit=term||allPlayers?Infinity:expanded?15:6;
   const list=ranked.slice(0,limit);
   holder.innerHTML=list.map((p,i)=>{
    const t=clubOf(p);
-   return `<button type="button" class="neo940-row neo960-row" data-neo960-profile="${playerKey(p)}" aria-label="Abrir ficha completa de ${esc(p.name)}"><b class="neo940-order">${i+1}º</b>${photo(p)}<span class="neo940-person"><strong>${esc(p.name)}</strong><small>${esc(t.short)} · ${esc(p.role)} · ${p.ovr} OVR${p.isMaster?' · ⭐ Mestre':''}</small></span><strong class="neo940-price">${fmt(p.value)}</strong><span class="neo960-open" aria-hidden="true">›</span></button>`;
+   return `<button type="button" class="neo940-row neo960-row" data-neo960-profile="${playerKey(p)}" aria-label="Abrir ficha completa de ${esc(p.name)}"><b class="neo940-order">${i+1}º</b>${photo(p)}<span class="neo940-person"><strong>${esc(p.name)}</strong><small>${esc(t.short)} · ${esc(p.role)} · ${p.ovr} OVR${p.isMaster?' · ⭐ Mestre':''}</small></span><strong class="neo940-price">${metric(p)}</strong><span class="neo960-open" aria-hidden="true">›</span></button>`;
   }).join('')||'<p class="neo940-empty">Nenhum jogador encontrado. Limpe a busca ou escolha outra posição.</p>';
   const title=$('neo940-subtitle');if(title)title.textContent=`${ranked.length} jogadores`;
   const count=$('neo960-roster-total');if(count)count.textContent=`${all.length} nomes no elenco (incluindo ${all.filter(p=>p.isMaster).length} mestres) · ${ranked.length} nesta lista`;

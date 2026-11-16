@@ -224,10 +224,10 @@ function bootWithReference(){
   addon.onload=()=>{
    if(document.getElementById('neo-mobile-ux-v111-script'))return;
    const style=document.createElement('link');
-   style.rel='stylesheet';style.href='./neo-mobile-ux-v111.css?v=111';style.id='neo-mobile-ux-v111-style';
+   style.rel='stylesheet';style.href='./neo-mobile-ux-v111.css?v=112';style.id='neo-mobile-ux-v111-style';
    document.head.appendChild(style);
    const ux=document.createElement('script');
-   ux.id='neo-mobile-ux-v111-script';ux.src='./neo-mobile-ux-v111.js?v=111';
+   ux.id='neo-mobile-ux-v111-script';ux.src='./neo-mobile-ux-v111.js?v=112';
    ux.onerror=()=>console.warn('Central de Campeonatos/Mercado não carregou; páginas originais preservadas.');
    document.body.appendChild(ux);
   };

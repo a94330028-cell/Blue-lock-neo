@@ -10,7 +10,7 @@
  body.neo-ref-mobile .neo-ux-heading{display:flex;justify-content:space-between;align-items:center;gap:9px;padding:14px 13px;border:1px solid #39a9ff;border-radius:13px;background:linear-gradient(125deg,#0b3a75,#071932);box-shadow:0 0 16px #007bff4a}
  body.neo-ref-mobile .neo-ux-heading h2{font-size:21px;font-weight:950;line-height:1.2;margin:0;font-style:italic;color:white}
  body.neo-ref-mobile .neo-ux-heading button{background:#08264b;color:#e2f2ff;border:1px solid #3a7bb8;border-radius:9px;padding:9px;font-size:11px;flex:none}
- body.neo-ref-mobile .neo-ux-tools{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:10px 0 13px}
+ body.neo-ref-mobile .neo-ux-tools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:10px 0 13px}
  body.neo-ref-mobile .neo-ux-tools button{min-height:43px;padding:10px 7px;border-radius:10px;border:1px solid #3480ca;background:linear-gradient(#0c3b78,#061d3e);color:#eef9ff;font-weight:850;font-size:12px}
  body.neo-ref-mobile .neo-ux-hero,.neo-ref-mobile .neo-ux-panel{padding:15px 13px;border:1px solid #236cb5;border-radius:13px;background:radial-gradient(ellipse at 85% 0%,#195ba96b,transparent 53%),linear-gradient(140deg,#102c54,#06172f);box-shadow:0 6px 20px #0006;margin:10px 0 13px}
  body.neo-ref-mobile .neo-ux-hero small{color:#7bc9ff;font-size:10px;font-weight:950;letter-spacing:.9px}
@@ -82,4 +82,36 @@
  body.neo-ref-mobile .neo-ux-player-img{width:37px;height:45px}
  body.neo-ref-mobile .neo-ux-money-row>strong{font-size:10px}
 }
+
+ /* One consistent podium, ranking rows, photos, badges and interactions for
+    Market, Goals, Assists, Performance, Defense, Passing and MVP. */
+ body.neo-ref-mobile .neo-ux-rank-meta{padding:9px 2px 11px;font-size:11px;color:#a9cfee}
+ body.neo-ref-mobile .neo-ux-rank-intro{margin-bottom:9px}
+ body.neo-ref-mobile .neo-ux-rank-intro h3{margin:0 0 7px;font-size:17px}
+ body.neo-ref-mobile .neo-ux-rank-intro p{margin:0;font-size:11px}
+ body.neo-ref-mobile .neo-ux-podium{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;align-items:end;margin:13px 0 15px;min-width:0}
+ body.neo-ref-mobile .neo-ux-podium-card{position:relative;display:flex;min-width:0;flex-direction:column;align-items:center;overflow:hidden;border-radius:12px;border:1px solid #a8c5da;background:linear-gradient(155deg,#193557,#07152e);color:#eef8ff;padding:0 0 9px;gap:3px;box-shadow:0 3px 14px #0009}
+ body.neo-ref-mobile .neo-ux-podium-card.neo-ux-position-1{border:2px solid #fbd363;box-shadow:0 0 16px #ffb52773;background:linear-gradient(#644923,#071932 50%)}
+ body.neo-ref-mobile .neo-ux-podium-card.neo-ux-position-3{border:1px solid #c68c69}
+ body.neo-ref-mobile .neo-ux-podium-card .neo-ux-medal{width:100%;padding:6px 2px;text-align:center;font-weight:950;font-size:17px;color:#e7f6ff;background:#1d466e}
+ body.neo-ref-mobile .neo-ux-podium-card.neo-ux-position-1 .neo-ux-medal{color:#231501;background:linear-gradient(#fff3b2,#e3a92e)}
+ body.neo-ref-mobile .neo-ux-podium-card.neo-ux-position-3 .neo-ux-medal{background:linear-gradient(#925c3b,#4a2b20)}
+ body.neo-ref-mobile .neo-ux-podium-card .neo-ux-player-img{display:block;width:100%;height:clamp(100px,27vw,162px);max-height:none;border:0;border-radius:0;object-fit:cover;object-position:50% 17%}
+ body.neo-ref-mobile .neo-ux-podium-card.neo-ux-position-1 .neo-ux-player-img{height:clamp(130px,34vw,200px)}
+ body.neo-ref-mobile .neo-ux-podium-card b{display:block;max-width:100%;padding:3px 5px 0;text-align:center;font-size:12px;line-height:1.2;overflow-wrap:anywhere}
+ body.neo-ref-mobile .neo-ux-podium-card small{display:block;font-size:9px;color:#b3cce7;text-align:center;line-height:1.2;padding:0 4px}
+ body.neo-ref-mobile .neo-ux-podium-card strong{display:block;margin-top:auto;padding:6px 2px 0;font-size:11px;color:#fff1b5;text-align:center;overflow-wrap:anywhere}
+ body.neo-ref-mobile .neo-ux-podium-placeholder{min-width:0;min-height:0}
+ body.neo-ref-mobile .neo-ux-shared-leaderboard .neo-ux-rank-row>strong{color:#f4dd91;max-width:29%;text-align:right;white-space:normal;line-height:1.3}
+ body.neo-ref-mobile .neo-ux-shared-leaderboard .neo-ux-rank-row .neo-ux-info small{font-size:10px}
+ body.neo-ref-mobile .neo-ux-rank-tabs{scroll-snap-type:x proximity}
+ body.neo-ref-mobile .neo-ux-rank-tabs button{scroll-snap-align:start}
+ @media(max-width:375px){
+  body.neo-ref-mobile .neo-ux-podium{gap:4px}
+  body.neo-ref-mobile .neo-ux-podium-card b{font-size:10px}
+  body.neo-ref-mobile .neo-ux-podium-card small{font-size:8px}
+  body.neo-ref-mobile .neo-ux-podium-card strong{font-size:10px}
+  body.neo-ref-mobile .neo-ux-tools button{font-size:10px;padding:10px 3px}
+ }
+
 @media(min-width:701px){#neoRefUxHub,#neoUxReturn{display:none!important}}

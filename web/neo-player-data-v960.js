@@ -8,13 +8,13 @@
  const FIELDS=['games','wins','draws','losses','goals','assists','shots','passes','dribbles','tackles',
    'interceptions','shotBlocks','aerialWins','duelsWon','keyPasses','saves','cleanSheets','runs',
    'overlaps','distance','flowCount','masterApps'];
- const byId=(s,name,club)=>s?.career?.players?.[name+'|'+club]||null;
+ const byId=(s,name,club)=>s?.career?.players?.[name+'|'+club]||s?.career?.masterBids?.[name+'|'+club]||null;
  const unaccent=s=>String(s??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
  const nameMatch=(a,b)=>unaccent(a)===unaccent(b);
  const roleFor=(t,i,saved,master)=>master?'CA':i<t.players.length?(t.formation?.[i]?.role||saved?.role||'MC'):(saved?.role||'MC');
  function roster(E,season,options={}){
   if(!E||!Array.isArray(E.TEAMS))return [];
-  const res=[],seen=new Set(),career=season?.career?.players||{};
+  const res=[],seen=new Set(),career=season?.career?.players||{},masterBids=season?.career?.masterBids||{};
   const scope=options?.scope==='all'?'all':'league';
   const teams=(scope==='all'&&typeof E.allTeams==='function'?E.allTeams():E.TEAMS)
     .filter(t=>t?.id!=='neo-bestxi'); // Dynamic best XI is a view, not a second player registration.
@@ -23,7 +23,7 @@
    const roster=[...(t.players||[]),...(t.reserves||[]),...(t.master?[t.master]:[])];
    roster.forEach((name,i)=>{
     if(!name)return;const id=name+'|'+t.id;if(seen.has(id))return;seen.add(id);
-    const saved=career[id]||{},master=name===t.master;
+    const master=name===t.master,saved=(master?masterBids[id]:career[id])||{};
     const role=roleFor(t,i,saved,master);
     const ovr=E.Attr?.generate?E.Attr.generate(name,role,master?9:i<11?i:1,saved).ovr:N(saved.ovr)||75;
     const value=E.Progression?.estimateValue?E.Progression.estimateValue(saved,ovr,role):N(saved.value);

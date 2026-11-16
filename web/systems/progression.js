@@ -117,6 +117,79 @@ function reconcileBids(season,skipFixture=null){
  career.bidVersion=BID_VERSION;
  return repaired;
 }
+
+// Master Strikers play short, recorded substitute appearances. Their market offers
+// have an independent ledger; never add them to regular player MVP/evolution.
+function masterEvidence(fixture){
+ const details=fixture?.details;
+ if(!Array.isArray(fixture?.result)||!Array.isArray(details?.players))return [];
+ const entries=Array.isArray(details.masterEntries)?details.masterEntries:[];
+ if(!entries.length)return [];
+ return details.players.filter(p=>
+  p?.isMaster===true&&p.name&&[0,1].includes(p.side)&&
+  entries.some(e=>e.master===p.name&&e.side===p.side)
+ ).map(p=>({player:p,entry:entries.find(e=>e.master===p.name&&e.side===p.side)}));
+}
+function masterAppearance(career,fixture,round,p,entry){
+ const club=p.side===0?fixture.home:fixture.away,id=key(p.name,club);
+ if(!leagueParticipants({rounds:[{games:[fixture]}]}).has(club))return false;
+ if(!career.masterBids||typeof career.masterBids!=='object')career.masterBids={};
+ const saved=career.masterBids[id]||(career.masterBids[id]={
+  name:p.name,club,role:'CA',games:0,masterApps:0,value:0,change:0,
+  goals:0,assists:0,passes:0,shots:0,tackles:0,saves:0,interceptions:0,
+  ratingSum:0,bidHistory:[],history:[],isMaster:true
+ });
+ // A master earns an offer only when actually on the match sheet with a
+ // corresponding Master Striker substitution entry. OVR alone pays nothing.
+ if(p.rating===null||p.rating===undefined||!Number.isFinite(Number(p.rating)))return false;
+ const previous=Math.max(0,num(saved.value));
+ const goalDifference=(p.side===0?1:-1)*(fixture.result[0]-fixture.result[1]);
+ const proposed=bidDelta(p,goalDifference);
+ const scaled=bidRound(proposed*1.15);
+ const next=Math.max(MIN_PLAYED_BID,previous+scaled);
+ const time=Number(entry?.exitMinute??(Number(entry?.until)/60));
+ const start=Number(entry?.minute);
+ const minutes=Number.isFinite(time)&&Number.isFinite(start)?Math.max(0,Math.round(time-start)):null;
+ saved.games++;saved.masterApps++;saved.goals+=num(p.goals);saved.assists+=num(p.assists);
+ saved.passes+=num(p.passes);saved.shots+=num(p.shots);saved.tackles+=num(p.tackles);
+ saved.saves+=num(p.saves);saved.interceptions+=num(p.interceptions);
+ saved.ratingSum+=num(p.rating);saved.value=next;saved.change=next-previous;
+ const item={round,match:fixture.home+' × '+fixture.away,value:next,change:next-previous,minutes};
+ saved.bidHistory.push(item);if(saved.bidHistory.length>40)saved.bidHistory.shift();
+ saved.history.push({...item,score:num(p.goals)+'G '+num(p.assists)+'A'});
+ if(saved.history.length>40)saved.history.shift();
+ return true;
+}
+function reconcileMasterBids(season,skipFixture=null){
+ const career=ensure(season);
+ if(career.masterBidVersion===1)return 0;
+ // Start with the match reports, not starting OVR or a fictional signing bonus.
+ // Historical fixtures are not edited; only a separate ledger is added.
+ const previous=career.masterBids||{},clean={};
+ career.masterBids=clean;
+ let appearances=0;
+ for(const round of season?.rounds||[])for(const fixture of round.games||[]){
+  if(fixture===skipFixture)continue;
+  for(const {player,entry} of masterEvidence(fixture))
+   if(masterAppearance(career,fixture,round.round,player,entry))appearances++;
+ }
+ // Do not destroy existing higher, actually earned Master Striker bids if a
+ // save contains an advanced ledger but lacks some older match details.
+ for(const [id,old] of Object.entries(previous)){
+  if(!old||num(old.games)<=0)continue;
+  const current=clean[id];
+  if(!current){clean[id]={...old};continue;}
+  if(num(old.value)>num(current.value)){
+   current.value=num(old.value);
+   current.change=num(old.change);
+   if(Array.isArray(old.bidHistory)&&old.bidHistory.length)
+    current.bidHistory=old.bidHistory.map(x=>({...x}));
+  }
+ }
+ career.masterBidVersion=1;
+ return appearances;
+}
+
 function leagueParticipants(season){
  const ids=new Set((season?.rounds||[]).flatMap(r=>r.games||[]).flatMap(g=>[g.home,g.away]).filter(Boolean));
  return ids.size?ids:new Set(['bm','ba','mc','px','ub']);
@@ -174,7 +247,7 @@ function reconcileGoalkeepers(season){
  }
  return repaired;
 }
-function record(season,fixture,match,round){const career=ensure(season);reconcileBids(season,fixture);const r=match.result();const raw=r.players||[];
+function record(season,fixture,match,round){const career=ensure(season);reconcileBids(season,fixture);reconcileMasterBids(season,fixture);const r=match.result();const raw=r.players||[];
  for(const p of raw){if(p.isMaster)continue;const club=p.side===0?fixture.home:fixture.away,entry=row(career,p.name,club);entry.unlocked=entry.unlocked||[];const before=estimateValue(entry);entry.role=p.role;entry.ovr=p.ovr;const result=p.side===0?r.score[0]-r.score[1]:r.score[1]-r.score[0];
  const keeper=/^(GOL|GK)$/.test(p.role||'');const cleanSheet=keeper&&r.score[1-p.side]===0;const defender=/^(ZAG|CB|LD|LE|RB|LB|VOL|CDM|ALA|LWB|RWB)$/.test(p.role||'');
  const contribution=(p.goals||0)*3.3+(p.assists||0)*2.6
@@ -235,9 +308,10 @@ function record(season,fixture,match,round){const career=ensure(season);reconcil
    if(['ZAG','CB'].includes(p.role)&&p.goals)career.stories.push({round,kind:'zagueiro',text:`O defensor ${p.name} decide ofensivamente: ${p.goals} gol(s).`});
    if(['ZAG','CB','LD','LE','VOL','ALA'].includes(p.role)&&((p.interceptions||0)+(p.shotBlocks||0)+(p.tackles||0)>=6))career.stories.push({round,kind:'defesa',text:`MURALHA: ${p.name} acumula ${(p.tackles||0)+(p.interceptions||0)+(p.shotBlocks||0)} ações defensivas contra ${p.side===0?fixture.away:fixture.home}.`});
  }
+ for(const {player,entry} of masterEvidence(fixture))masterAppearance(career,fixture,round,player,entry);
  for(const mr of r.masterEntries||[])career.stories.push({round,kind:'master',text:`${mr.master} participa por ${Math.max(1,Math.round(((mr.exitMinute??(mr.until/60))-(mr.minute||0))))} minutos para ${mr.side===0?fixture.home:fixture.away}.`});
  if(career.stories.length>90)career.stories=career.stories.slice(-90);
  career.history.push({round,fixture:fixture.home+'-'+fixture.away,score:[...r.score]});if(career.history.length>200)career.history.shift();return career;}
 function rank(season,filter='all'){const career=ensure(season),allowed=leagueParticipants(season),data=Object.values(career.players).filter(p=>allowed.has(p.club));for(const p of data)if(p.role)p.ovr=Attr.generate(p.name,p.role,p.role==='GOL'?0:1,p).ovr;return data.filter(p=>filter==='all'||p.club===filter).sort((a,b)=>b.score-a.score||b.goals-a.goals||a.name.localeCompare(b.name));}
-return {ensure,record,rank,key,baseValue,estimateValue,bidDelta,reconcileBids,mvpRanking,verifiedKeeperSaves,reconcileGoalkeepers,BID_VERSION};
+return {ensure,record,rank,key,baseValue,estimateValue,bidDelta,reconcileBids,reconcileMasterBids,mvpRanking,verifiedKeeperSaves,reconcileGoalkeepers,BID_VERSION};
 });
