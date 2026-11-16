@@ -62,6 +62,11 @@ function observeReception(m){
  for(const x of s.launched){
   if(x.done)continue;
   if(N(m.time)-x.at>95){x.done=true;continue;}
+  // An opponent interception, loose-ball restart or unrelated carry ends the opportunity.
+  if(m.ball.mode!=='pass'&&m.ball.mode!=='carry'){x.done=true;continue;}
+  if(m.ball.mode==='carry'&&(receiver?.name!==x.to||receiver?.side!==x.side)){
+   x.done=true;continue;
+  }
   if(receiver?.name!==x.to||receiver?.side!==x.side||m.ball.mode!=='carry')continue;
   x.done=true;success=true;s.completions++;
   const k=x.side+'|'+pair(x.from,x.to),count=s.chemistry[k]=cap(N(s.chemistry[k])+1,1,12);
@@ -87,7 +92,7 @@ function improvise(m,p){
  const viable=(m.players||[]).filter(q=>positive(p,q)&&q.i>0&&physical(q)&&
    dist(p,q)>75&&dist(p,q)<285&&!m.offside?.(q,p)&&N(m.safeLane?.(p,q))>60&&
    N(m.opponentPressure?.(q,75))<=1)
-  .sort((a,b)=>N(m.safeLane(b,p))-N(m.safeLane(a,p))||
+  .sort((a,b)=>N(m.safeLane(p,b))-N(m.safeLane(p,a))||
    (forward(m,p,b)?1:0)-(forward(m,p,a)?1:0)||a.name.localeCompare(b.name));
  if(!viable.length)return false;
  const q=viable[0];m.pass(p,q);
