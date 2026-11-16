@@ -43,4 +43,12 @@ manifest = {
 (DEST / "latest.json").write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 print(f"Pacote: {ARCHIVE} ({ARCHIVE.stat().st_size} bytes)")
 print(f"SHA256: {sha}")
+# The Discord bot checks this exact marker on the deployed site before posting.
+# It is built from changelog entries, not from an arbitrary CI run number.
+from neo_update_announcement import announcement_identity, load_changelog
+announcement = announcement_identity(load_changelog(), PUBLIC_VERSION)
+(DEST / "announcement.json").write_text(
+    json.dumps(announcement, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8"
+)
 print("Manifesto: ", DEST / "latest.json")
+print("Identidade do anuncio: ", announcement["id"])
