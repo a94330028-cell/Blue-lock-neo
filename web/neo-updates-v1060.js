@@ -6,7 +6,7 @@
  if(root?.document){root.NeoUpdates1060=api;api.mount(root);}
 })(typeof window!=='undefined'?window:null,function(){
 'use strict';
-const SEEN_KEY='neo-updates-last-seen',SOURCE='./CHANGELOG.json';
+const SEEN_KEY='neo-updates-last-seen-official-v1',SOURCE='./CHANGELOG.json';
 const ITEMS=[
  ['novidades','✨ Novidades'],['correcoes','🛠️ Bugs corrigidos'],
  ['jogabilidade','⚽ Jogabilidade'],['visual','🎨 Melhorias visuais'],
@@ -27,6 +27,13 @@ function validate(data){
   for(const [key] of ITEMS)if(r[key]!==undefined&&(!Array.isArray(r[key])||r[key].some(v=>typeof v!=='string')))return false;
  }
  return true;
+}
+function formatRelease(data){
+ const r=data?.releases?.[0];if(!r)return '';
+ const lines=['🚀 BLUE LOCK NEO — v'+r.version,'📅 '+r.date];
+ for(const [key,label] of ITEMS)if(Array.isArray(r[key])&&r[key].length){lines.push('',label);for(const x of r[key])if(String(x||'').trim())lines.push('• '+String(x).trim());}
+ lines.push('', '🌐 https://a94330028-cell.github.io/Blue-lock-neo/');
+ return lines.join('\n');
 }
 function mount(win){
  const doc=win.document,storage=win.localStorage;
@@ -71,6 +78,7 @@ function mount(win){
    preview.src='./'+banner;preview.hidden=false;
    preview.onerror=()=>{preview.hidden=true;};
   }
+  if(expanded){saveSeen(currentData.current_version);}
   indicator();
  }
  function boot(){
@@ -89,10 +97,20 @@ function mount(win){
   const banner=el('img','neo1060-banner');banner.id='neo1060-banner';banner.hidden=true;banner.alt='Banner oficial NEO UPDATE BOT';
   banner.loading='lazy';panel.append(banner);
   const version=el('p','neo1060-version','Consultando versão atual...');version.id='neo1060-version';panel.append(version);
+  const copy=el('button','neo1060-copy','📋 Copiar novidades da versão');copy.type='button';copy.id='neo1060-copy';panel.append(copy);
+  const copyStatus=el('p','neo1060-copy-status','');copyStatus.id='neo1060-copy-status';copyStatus.setAttribute('role','status');panel.append(copyStatus);
+  copy.addEventListener('click',async()=>{
+    if(!currentData)return;
+    try{
+      if(!win.navigator?.clipboard?.writeText)throw Error('Clipboard indisponível');
+      await win.navigator.clipboard.writeText(formatRelease(currentData));
+      copyStatus.textContent='✅ Novidades copiadas.';
+    }catch(_){copyStatus.textContent='⚠️ Seu navegador bloqueou a cópia. Consulte o histórico abaixo.';}
+  });
   const list=el('div','neo1060-list');list.id='neo1060-list';panel.append(list);
   const info=el('p','neo1060-bottom','O histórico é informativo. Consultar esta seção não altera sua temporada ou seus retratos.');panel.append(info);
   wrapper.append(top,panel);more.prepend(wrapper);
-  const moreNav=doc.querySelector('#neoMobileNav [data-neo-tab="more"],#neoMobileNav [data-neo-tab="more"]');
+  const moreNav=doc.querySelector('#neoMobileNav [data-neo-tab="more"],#neoMobileNav [data-tab="more"]');
   if(moreNav&&!doc.getElementById('neo1060-nav-dot')){
    const mark=el('i','neo1060-nav-dot');mark.id='neo1060-nav-dot';mark.hidden=true;moreNav.append(mark);
   }
@@ -120,5 +138,5 @@ function mount(win){
  }
  if(doc.readyState==='loading')doc.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 }
-return {SEEN_KEY,compare,validate,mount};
+return {SEEN_KEY,compare,validate,formatRelease,mount};
 });
