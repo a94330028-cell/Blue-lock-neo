@@ -42,8 +42,16 @@ function counterBonus(match,p,stat){
  if(!match||!p||!COUNTER_STATS.has(stat)||!pos(p))return 1;
  const read=match._neo150Reads?.[k(p)];
  if(!read||read.seen<2||match.time>read.until)return 1;
- const foe=match.players?.find(q=>q&&k(q)===read.foe);
- if(!foe||!pos(foe)||dist(foe,p)>165)return 1;
+ const id=k(p),previous=match._neo150CounterCache?.[id];
+ let close;
+ if(previous&&previous.tick===match.time&&previous.read===read)close=previous.close;
+ else{
+  const foe=match.players?.find(q=>q&&k(q)===read.foe);
+  close=!!(foe&&pos(foe)&&dist(foe,p)<=165);
+  if(!match._neo150CounterCache)match._neo150CounterCache=Object.create(null);
+  match._neo150CounterCache[id]={tick:match.time,read,close};
+ }
+ if(!close)return 1;
  // Reading a shot or dribble doesn't copy the rival's power. It improves
  // positioning/anticipation narrowly, against exactly that opponent.
  if(stat==='reflexes'&&p.i!==0)return 1;
