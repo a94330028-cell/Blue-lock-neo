@@ -14,6 +14,6 @@ assert.ok(app.includes("data-portrait-edit=")&&app.includes("data-portrait-style
 assert.ok(app.includes("const picture=e.target.closest('.portrait-card-photo')"),'tapping gallery image still opens photo picker');
 assert.ok(app.includes('neo992-search-result')&&app.includes('data-gallery-jump-team'),'compact gallery search still works');
 assert.ok(mobile.includes('neo-v960.js?v=1.8.0'),'new profile handler must bypass previous cache');
-assert.ok(worker.includes("const CACHE_NAME='blue-lock-neo-v1.9.1-desktop';"),'offline cache updated');
+assert.ok(worker.includes("const CACHE_NAME='blue-lock-neo-v1.9.2-ego12';"),'offline cache updated');
 assert.equal(fs.readFileSync('web/VERSION','utf8').trim(),'1.8.0');
 console.log('PASS v9.9.4: real-club image search, gallery controls without statistics modal, versioned offline update');
