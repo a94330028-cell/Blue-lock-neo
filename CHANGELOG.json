@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "project": "Blue Lock NEO",
-  "current_version": "1.3.0",
+  "current_version": "1.4.0",
   "site_url": "https://a94330028-cell.github.io/Blue-lock-neo/",
   "media": {
     "banner": {
@@ -20,6 +20,39 @@
     }
   },
   "releases": [
+    {
+      "version": "1.4.0",
+      "date": "2026-11-16",
+      "novidades": [
+        "EGO ASCENSION: atletas observam armas ativadas por rivais próximos; após reconhecer a técnica podem ganhar pequenas vantagens de leitura contra aquele adversário.",
+        "Contra-armas ganhas em duelos reais: vitória após estudar a habilidade rival aparece no histórico, sem alterar o vencedor da disputa.",
+        "Combinações de duas habilidades entre jogadores com química comprovada criam sequências de passes e pequenos ganhos temporários de controle.",
+        "Momentos de genialidade vinculados a finalizações reais no alvo e defesas extraordinárias realizadas por goleiros com Flow ou técnica ativa.",
+        "Arquivo EGO ASCENSION em Recordes reúne leituras de armas, contra-ataques táticos, combinações e destaques verdadeiros."
+      ],
+      "correcoes": [
+        "Corrigida a classificação do Flow dos volantes: a função de meio-campo tem prioridade sobre a classificação defensiva.",
+        "Leitura de rivais reutiliza o cálculo de proximidade dentro de cada passo da simulação, protegendo o desempenho no Turbo 40×.",
+        "As habilidades novas não ignoram impedimentos, não alteram o placar manualmente e só registram acontecimentos comprovados."
+      ],
+      "jogabilidade": [
+        "Atacantes procuram mais infiltrações e movimentos na área quando uma equipe repete chutes de longe.",
+        "Meio-campistas oferecem apoio ao portador da bola sob forte pressão.",
+        "Jogadores podem preferir um passe seguro quando insistir num chute distante se torna pouco produtivo.",
+        "A leitura repetida da técnica adversária influencia apenas atributos defensivos relacionados à arma observada e por tempo limitado."
+      ],
+      "visual": [
+        "Painel EGO ASCENSION com quatro áreas de destaques, responsivo e sem sobrepor a transmissão da partida."
+      ],
+      "otimizacoes": [
+        "Observações, destaques e efeitos são limitados por partida para evitar saves gigantes e travamentos.",
+        "Cache offline atualizado; os antigos saves, retratos, campeonatos e números de versões Android seguem preservados."
+      ],
+      "importantes": [
+        "Esta é uma evolução real dos sistemas existentes, não a conclusão de todas as 55 ideias do roadmap.",
+        "Momentos de genialidade e defesas lendárias são destaques de jogadas que aconteceram; não representam gols nem defesas garantidos."
+      ]
+    },
     {
       "version": "1.3.0",
       "date": "2026-11-16",

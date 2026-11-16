@@ -1,3 +1,15 @@
+# Blue Lock NEO v1.4.0 — EGO ASCENSION
+
+**Nova atualização do simulador:** observação real de habilidades rivais, aprendizado tático com contra-armas, combinações entre técnicas de jogadores entrosados e movimentos mais inteligentes para chegar à área. Destaques de genialidade e defesas exigem lances autênticos, nunca placares inventados.
+
+Abra **Recordes → EGO ASCENSION** para conferir leituras, duelos de contra-armas, combinações e destaques de partidas já salvas. Turbo 40×, modo espectador e imagens do usuário são preservados.
+
+- Versão pública: **1.4.0**.
+- Build interno Android: **10.6.5**, para atualizar APKs anteriores sem interpretar 1.4.0 como downgrade.
+- Roadmap integral: [55 ideias](docs/ROADMAP-55.md). O projeto continua em desenvolvimento.
+
+---
+
 # Blue Lock NEO v1.3.0 — EGO COMBAT
 
 A nova atualização incorpora **Flow situacional, Metavision com leitura real das linhas de passe, aprendizagem após duelos, reações de Ego, despertar durante Flow e confrontos entre habilidades que efetivamente aconteceram**. Sem alterar resultados nem apagar saves.
