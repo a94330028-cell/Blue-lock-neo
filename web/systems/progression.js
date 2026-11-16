@@ -61,8 +61,9 @@ function reconcileBids(season,skipFixture=null){
   // Preserve the historical sporting details while correcting the old inflated prices.
   if(Array.isArray(p.history)){
    let i=0;
+   const matching=(byPlayer.get(id)||[]).slice(-p.history.length);
    p.history=p.history.map(h=>{
-    const entry=byPlayer.get(id)?.[i++];
+    const entry=matching[i++];
     return {...h,value:entry?.value??0};
    });
   }
@@ -70,11 +71,16 @@ function reconcileBids(season,skipFixture=null){
  career.bidVersion=2;
  return repaired;
 }
+function leagueParticipants(season){
+ const ids=new Set((season?.rounds||[]).flatMap(r=>r.games||[]).flatMap(g=>[g.home,g.away]).filter(Boolean));
+ return ids.size?ids:new Set(['bm','ba','mc','px','ub']);
+}
 // Top 5 do MVP do campeonato, exclusivamente de partidas realmente salvas.
 // O preço de mercado NÃO entra na votação de melhor jogador.
 function mvpRanking(season,limit=5){
  const career=season?.career?.players||{};
- const scored=Object.values(career).filter(p=>p&&!p.isMaster&&num(p.games)>0)
+ const allowed=leagueParticipants(season);
+ const scored=Object.values(career).filter(p=>p&&!p.isMaster&&num(p.games)>0&&allowed.has(p.club))
  .map(p=>{
   const games=Math.max(1,num(p.games)),keeper=/^(GOL|GK)$/.test(p.role||'');
   const defender=/^(ZAG|CB|LD|LE|RB|LB|VOL|CDM|ALA|LWB|RWB)$/.test(p.role||'');
@@ -186,6 +192,6 @@ function record(season,fixture,match,round){const career=ensure(season);reconcil
  for(const mr of r.masterEntries||[])career.stories.push({round,kind:'master',text:`${mr.master} participa por ${Math.max(1,Math.round(((mr.exitMinute??(mr.until/60))-(mr.minute||0))))} minutos para ${mr.side===0?fixture.home:fixture.away}.`});
  if(career.stories.length>90)career.stories=career.stories.slice(-90);
  career.history.push({round,fixture:fixture.home+'-'+fixture.away,score:[...r.score]});if(career.history.length>200)career.history.shift();return career;}
-function rank(season,filter='all'){const career=ensure(season),data=Object.values(career.players);for(const p of data)if(p.role)p.ovr=Attr.generate(p.name,p.role,p.role==='GOL'?0:1,p).ovr;return data.filter(p=>filter==='all'||p.club===filter).sort((a,b)=>b.score-a.score||b.goals-a.goals||a.name.localeCompare(b.name));}
+function rank(season,filter='all'){const career=ensure(season),allowed=leagueParticipants(season),data=Object.values(career.players).filter(p=>allowed.has(p.club));for(const p of data)if(p.role)p.ovr=Attr.generate(p.name,p.role,p.role==='GOL'?0:1,p).ovr;return data.filter(p=>filter==='all'||p.club===filter).sort((a,b)=>b.score-a.score||b.goals-a.goals||a.name.localeCompare(b.name));}
 return {ensure,record,rank,key,baseValue,estimateValue,bidDelta,reconcileBids,mvpRanking,verifiedKeeperSaves,reconcileGoalkeepers};
 });
