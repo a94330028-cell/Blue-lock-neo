@@ -43,8 +43,8 @@ const java=fs.readFileSync('app/src/main/java/com/neoegoist/simulator/MainActivi
 assert.ok(java.includes('ImageDecoder.decodeBitmap'),'native Android fallback supports modern image formats');
 assert.ok(java.includes('getContentResolver().openInputStream(uri)'),'native android import reads original content provider');
 const gradle=fs.readFileSync('app/build.gradle','utf8');
-assert.ok(gradle.includes('versionCode 116')&&gradle.includes("versionName '1.8.0'"));
-assert.ok(java.includes('BUNDLED_WEB_VERSION = "10.6.13"'));
+assert.ok(gradle.includes('versionCode 117')&&gradle.includes("versionName '1.8.0'"));
+assert.ok(java.includes('BUNDLED_WEB_VERSION = "10.6.14"'));
 const mockRound={round:1,games:[{home:'bm',away:'px',result:[0,0],details:{players:[
  {name:'A',role:'GOL',side:0,rating:9},{name:'B',role:'LD',side:0,rating:8},{name:'C',role:'ZAG',side:0,rating:8},
  {name:'D',role:'ZAG',side:0,rating:8},{name:'E',role:'LE',side:0,rating:8},{name:'F',role:'CA',side:1,rating:10}
