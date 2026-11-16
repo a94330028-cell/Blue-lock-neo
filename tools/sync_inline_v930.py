@@ -24,7 +24,7 @@ def change(m):
  inside=m.group(2);which=None
  if 'Individual attributes and positional OVR' in inside and 'const ROLE_WEIGHTS' in inside:which='attributes'
  elif 'Master-Striker entry profiles' in inside and 'WINDOW_SECONDS' in inside:which='masters'
- elif 'Season progression and competitive ranking' in inside and 'const STAR_POTENTIAL' in inside:which='progression'
+ elif 'Season progression and competitive ranking' in inside and 'function mvpRanking' in inside:which='progression'
  elif 'const TICK = 1/30' in inside and 'const SKILLS =' in inside:which='engine'
  elif 'function renderScorerBoard(){' in inside and 'const $=id=>document.getElementById(id);' in inside:which='app'
  if which is None:return m.group(0)
@@ -103,7 +103,7 @@ if 'kaiser-192.png?v=9.9.1' not in updated:
 updated=updated.replace('neo-studio-v970.js?v=9.7.0','neo-studio-v970.js?v=9.9.4')
 updated=updated.replace('neo-v990.css?v=9.9.0','neo-v990.css?v=9.9.4')
 # v10.0: Bust stale Mobile Edition assets when building the Android web bundle.
-updated=re.sub(r'src="mobile-upgrade\.js(?:\?v=[^"]*)?"','src="mobile-upgrade.js?v=10.5.1"',updated)
+updated=re.sub(r'src="mobile-upgrade\.js(?:\?v=[^"]*)?"','src="mobile-upgrade.js?v=10.6.0"',updated)
 updated=re.sub(r'href="mobile-upgrade\.css(?:\?v=[^"]*)?"','href="mobile-upgrade.css?v=10.5.0"',updated)
 # v10.4: load the positional layout BEFORE Squad and Best XI scripts.
 # The generated page is shared by GitHub Pages and the Android WebView.
@@ -136,5 +136,17 @@ for file in ('neo-pitch-v1040.css','neo-squads-v980.css'):
 # 10.5.1: reload the real league data and refreshed dynamic Best XI.
 for file in ('neo-player-data-v960.js','neo-round-v990.js'):
     updated=re.sub(r'src="'+re.escape(file)+r'(?:\?v=[^"]*)?"','src="'+file+'?v=10.5.1"',updated)
+# NEO 10.6: add the full history without duplicating it as a second data source.
+source_history=root.parent/'CHANGELOG.json'
+if not source_history.is_file():raise RuntimeError('Official changelog missing')
+(root/'CHANGELOG.json').write_bytes(source_history.read_bytes())
+if 'neo-updates-v1060.js' not in updated:
+    if updated.count('</body>')!=1:raise RuntimeError('Unable to load official updates page')
+    updated=updated.replace('</body>','<script defer src="neo-updates-v1060.js?v=10.6.0"></script>\n</body>')
+if 'neo-updates-v1060.css' not in updated:
+    if updated.count('</head>')!=1:raise RuntimeError('Unable to load official updates styles')
+    updated=updated.replace('</head>','<link rel="stylesheet" href="neo-updates-v1060.css?v=10.6.0">\n</head>')
+updated=re.sub(r'src="neo-updates-v1060\.js(?:\?v=[^"]*)?"','src="neo-updates-v1060.js?v=10.6.0"',updated)
+updated=re.sub(r'href="neo-updates-v1060\.css(?:\?v=[^"]*)?"','href="neo-updates-v1060.css?v=10.6.0"',updated)
 html.write_text(updated,encoding='utf-8')
 print('Inline game modules synchronized:',counts)
