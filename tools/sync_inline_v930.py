@@ -220,7 +220,7 @@ if 'neo-desktop.css' not in updated:
 import re
 updated = re.sub(
     r'neo-desktop\.css\?v=[0-9.]+',
-    'neo-desktop.css?v=1.8.2',
+    'neo-desktop.css?v=1.9.1',
     updated
 )
 if 'neo-pc-compact.js' not in updated:
@@ -237,5 +237,11 @@ if 'neo-universe-v220.js' not in updated:
 if 'neo-universe-v220.css' not in updated:
     if updated.count('</head>') != 1: raise RuntimeError('Cannot load Living Universe styles')
     updated = updated.replace('</head>', '<link rel="stylesheet" href="neo-universe-v220.css?v=1.9.0">\n</head>')
+# A changed query key avoids retaining stale tactical XI Javascript in old browsers.
+updated = re.sub(
+    r'neo-round-v990\.js\?v=[0-9.]+',
+    'neo-round-v990.js?v=1.9.1',
+    updated
+)
 html.write_text(updated,encoding='utf-8')
 print('Inline game modules synchronized:',counts)
