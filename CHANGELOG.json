@@ -41,13 +41,19 @@
         "Improvisação sob pressão, reações em cadeia e química entre jogadores construídas a partir de passes concluídos, sem ignorar impedimentos.",
         "Finalizações com instinto de rebote, corridas em novos setores, respostas a contra-ataques e disputa de protagonismo entre companheiros em lances reais.",
         "Evolução por derrotas documentadas, leitura dos rivais após duelos e momentos curtos de genialidade condicionados a Flow, energia e pressão.",
-        "Histórico recolhível na aba Recordes com os 12 sistemas, disponível no site e no conteúdo atualizável do aplicativo Android."
+        "Histórico recolhível na aba Recordes com os 12 sistemas, disponível no site e no conteúdo atualizável do aplicativo Android.",
+        "Pacote Universo 31–55, conteúdo 10.6.12: intensidade contextual, desgaste mental limitado e melhor leitura das corridas de apoio nos minutos decisivos.",
+        "Central de partida com registros reais de narração, jogadas especiais, defesas perigosas, substituições confirmadas e amostras de domínio territorial.",
+        "Rankings com pódio TOP 3 em ouro, prata e bronze usando exclusivamente os retratos originais dos jogadores já cadastrados.",
+        "Universo Vivo em Recordes: Rei do Campo baseado no desempenho, prêmios apenas após conclusão, linha do tempo, olheiros, fórmulas e enciclopédia com dados reais."
       ],
       "correcoes": [
         "Transferências não modificam os elencos-base do repositório e não deixam atletas duplicados nem equipes com menos de 11 titulares.",
         "A mesma súmula da temporada não aumenta novamente os marcos, rivalidades, evolução ou notícias.",
         "O mercado fica bloqueado enquanto a partida estiver em andamento ou pausada, evitando mudanças de elenco no meio do confronto.",
-        "Jogadores não recebem conquistas, notícias ou prêmios antes de registrarem a ação real."
+        "Jogadores não recebem conquistas, notícias ou prêmios antes de registrarem a ação real.",
+        "NEO UPDATE BOT: corrigido bloqueio dos novos anúncios quando a versão pública permanece 1.8.0; agora o conteúdo validado possui identificador próprio, com verificação da implantação no site.",
+        "Atualizador do Android recebe o novo conteúdo 10.6.12 sem apagar retratos, temporadas ou personagens criados."
       ],
       "jogabilidade": [
         "O novo elenco do mercado é usado pelo motor de partidas nas próximas rodadas, inclusive ao simular temporadas.",
@@ -57,7 +63,9 @@
       ],
       "visual": [
         "Novo painel Mercado Neo em Mais com seleção de equipes, negociações, contratações automáticas e carreiras dos personagens criados.",
-        "Novo painel Universo Vivo em Recordes com central de campeonatos, ranking de rivalidades, recordes e Jornal Neo."
+        "Novo painel Universo Vivo em Recordes com central de campeonatos, ranking de rivalidades, recordes e Jornal Neo.",
+        "Novo pódio cinematográfico com retratos em destaque, mantendo a imagem inteira quando o enquadramento original não permite corte do rosto.",
+        "Painéis de partida e Universo Vivo compactos e recolhíveis, evitando crescimento excessivo da página."
       ],
       "otimizacoes": [
         "Históricos, notícias e registros das partidas são limitados para preservar desempenho e armazenamento mobile.",
@@ -68,7 +76,10 @@
         "As notícias automáticas usam somente dados realmente registrados, não resultados fabricados.",
         "O APK Android sem assinatura de distribuição não pode atualizar um aplicativo assinado por outra chave.",
         "As 55 ideias seguem no roadmap: recursos não testados integralmente permanecem parciais; a Seleção Mundial NEO ainda não representa seleções nacionais oficiais.",
-        "Este pacote aprofunda as ideias 19–30 do roteiro; elas permanecem parciais até validação completa em partidas longas, equilíbrio e dispositivos variados."
+        "Este pacote aprofunda as ideias 19–30 do roteiro; elas permanecem parciais até validação completa em partidas longas, equilíbrio e dispositivos variados.",
+        "As ideias 31–55 continuam em acompanhamento individual: implementação de módulos e testes automáticos não equivale à conclusão integral de todos os modos.",
+        "App de computador não será criado. O PC continua usando o site e o Android continua usando o aplicativo.",
+        "O APK de teste pode exigir reinstalação por causa da assinatura debug; faça backup antes de qualquer troca."
       ]
     },
     {
