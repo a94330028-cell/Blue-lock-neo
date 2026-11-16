@@ -104,6 +104,44 @@ def load_changelog(path=CHANGELOG):
     return data
 
 
+def announcement_identity(data, version):
+    """Content-addressed release ID. A new validated changelog can be announced
+    even if the public application version is unchanged."""
+    release = find_release(data, version)
+    if not release:
+        raise AnnouncementError("Versão inexistente no changelog: " + version)
+    build = (BASE / "web" / "UPDATE_BUILD").read_text(encoding="utf-8").strip()
+    if not VERSION_PATTERN.fullmatch(build):
+        raise AnnouncementError("Número de atualização de conteúdo inválido.")
+    # Only announce meaningful notes, not commits that merely re-run deployment.
+    payload = json.dumps({
+        "version": version,
+        "build": build,
+        "release": {category: release.get(category, []) for category, _ in CATEGORIES},
+    }, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    digest = hashlib.sha256(payload.encode("utf-8")).hexdigest()[:16]
+    return {"version": version, "build": build, "digest": digest,
+            "id": version + "-build-" + build + "-" + digest}
+
+
+def verify_live_announcement(identity, site_url=SITE_URL, attempts=8):
+    """Do not announce stale Pages content or an unconfirmed deployment."""
+    for attempt in range(attempts):
+        url = site_url.rstrip("/") + "/updates/announcement.json?" + urlencode({"neo_check": str(attempt)})
+        try:
+            with urlopen(Request(url, headers={
+                "Cache-Control": "no-cache", "User-Agent": "neo-updates"
+            }), timeout=15) as response:
+                deployed = json.load(response)
+            if all(deployed.get(key) == identity[key] for key in ("version", "build", "digest", "id")):
+                return True
+        except (HTTPError, URLError, TimeoutError, UnicodeDecodeError, ValueError):
+            pass
+        if attempt < attempts - 1:
+            time.sleep(5)
+    raise AnnouncementError("GitHub Pages ainda não publicou o manifesto exato do anúncio: " + identity["id"])
+
+
 def find_release(data, version):
     return next((r for r in data["releases"] if r["version"] == version), None)
 
@@ -340,9 +378,11 @@ def publish(data, version, packets, *, retry_pending=False):
         raise AnnouncementError("GITHUB_SHA inválido.")
     verify_media(data)
     verify_live_version(version)
-    key = "neo-updates/" + version
+    identity = announcement_identity(data, version)
+    verify_live_announcement(identity)
+    key = "neo-updates/" + identity["id"]
     if github_ref(REPOSITORY, token, key + "/sent"):
-        log("Versão v" + version + " já anunciada. Nenhuma duplicação.")
+        log("Atualização " + identity["id"] + " já anunciada. Nenhuma duplicação.")
         return "duplicate"
     pending = github_ref(REPOSITORY, token, key + "/pending")
     if pending and not retry_pending:
@@ -362,7 +402,7 @@ def publish(data, version, packets, *, retry_pending=False):
         log("Parte " + str(number) + " confirmada pelo Discord (ID " + str(message_id) + ").")
     if not create_tag(REPOSITORY, token, key + "/sent", sha):
         raise AnnouncementError("Não foi possível registrar a confirmação final no GitHub.")
-    log("Anúncio v" + version + " enviado e registrado com sucesso.")
+    log("Anúncio " + identity["id"] + " enviado e registrado com sucesso.")
     return "sent"
 
 
