@@ -12,21 +12,25 @@ on:
       - '.github/workflows/publicar-site.yml'
   workflow_dispatch:
 permissions:
-  contents: write
-  pages: write
-  id-token: write
+  contents: read
 concurrency:
   group: blue-lock-pages
   cancel-in-progress: false
 jobs:
-  pages:
+  build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+    outputs:
+      artifact_name: ${{ steps.name.outputs.value }}
+      pages_ready: ${{ steps.configure_pages.outcome }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Reconstruir jogo e pacote de atualização
+      - name: Reconstruir jogo, histórico e pacote de atualização
         run: |
           test -f web/index.html
           test -f web/neo-ego-v91.js
@@ -50,10 +54,10 @@ jobs:
           python3 -m unittest discover -s tests -p test_neo_announcer.py
           python3 tools/neo_update_announcement.py validate
           python tools/gerar_atualizacao.py
-      - name: Disponibilizar site completo (mesmo antes de habilitar Pages)
+      - name: Disponibilizar site completo
         uses: actions/upload-artifact@v4
         with:
-          name: Site-Blue-Lock-NEO
+          name: Site-Blue-Lock-NEO-${{ github.run_id }}-${{ github.run_attempt }}
           path: web/
           retention-days: 14
       - name: Configurar GitHub Pages
@@ -62,27 +66,44 @@ jobs:
         continue-on-error: true
         with:
           enablement: true
-      - name: Enviar arquivos para GitHub Pages
+      - name: Selecionar nome único do pacote de deploy
+        id: name
+        run: echo "value=neo-pages-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" >> "$GITHUB_OUTPUT"
+      - name: Enviar pacote único para GitHub Pages
         if: steps.configure_pages.outcome == 'success'
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
+          name: ${{ steps.name.outputs.value }}
           path: web
-      - name: Publicar no GitHub Pages
-        id: deployment
-        if: steps.configure_pages.outcome == 'success'
-        uses: actions/deploy-pages@v4
-      - name: Mostrar instrução se Pages ainda não estiver habilitado
+      - name: Mostrar instruções se Pages ainda não estiver habilitado
         if: steps.configure_pages.outcome != 'success'
         run: |
           echo '### Hospedagem: falta habilitar GitHub Pages' >> "$GITHUB_STEP_SUMMARY"
-          echo 'Em Settings > Pages, selecione **GitHub Actions** como fonte.' >> "$GITHUB_STEP_SUMMARY"
-          echo 'O site completo já está anexado na execução em Artifacts > Site-Blue-Lock-NEO.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Em Settings > Pages, selecione GitHub Actions como fonte.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'O site completo foi anexado em Artifacts.' >> "$GITHUB_STEP_SUMMARY"
+
+  deploy:
+    needs: build
+    if: needs.build.outputs.pages_ready == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    steps:
+      - name: Obter validador de anúncios desta versão
+        uses: actions/checkout@v4
+      - name: Publicar pacote aprovado no GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+        with:
+          artifact_name: ${{ needs.build.outputs.artifact_name }}
       - name: Validar artes oficiais somente após deploy confirmado
         id: neo_media
         if: steps.deployment.outcome == 'success'
         continue-on-error: true
         run: python3 tools/neo_update_announcement.py validate --require-media
-      - name: Anunciar atualização no Discord sem enviar em push ou build falho
+      - name: Anunciar atualização no Discord somente após deploy real
         if: steps.deployment.outcome == 'success' && steps.neo_media.outcome == 'success'
         continue-on-error: true
         env:
