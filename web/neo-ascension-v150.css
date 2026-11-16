@@ -1,0 +1,16 @@
+/* EGO ASCENSION — match-verified strategy feed (responsive, no overlays). */
+.neo150-panel{position:relative;margin:14px 0 17px;padding:13px;border-radius:16px;
+ background:radial-gradient(ellipse at 100% 0%,#233665 0%,transparent 54%),linear-gradient(145deg,#0b1c35,#090e21);
+ border:1px solid #506fd2;box-shadow:0 9px 27px #01091399;color:#e7f3ff;overflow:hidden}
+.neo150-panel:before{content:"";position:absolute;inset:0 0 auto;height:2px;
+ background:linear-gradient(90deg,#32c9ff,#917bff,#2eeecf)}
+.neo150-heading{display:flex;align-items:center;justify-content:space-between;gap:7px;flex-wrap:wrap;
+ margin-bottom:12px;padding-bottom:9px;border-bottom:1px solid #4e5c92}
+.neo150-heading strong{font-size:15px;font-weight:1000;letter-spacing:.05em;color:#b9cafa}
+.neo150-heading small{font-size:9px;letter-spacing:.08em;font-weight:800;color:#a6bcde}
+.neo150-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.neo150-group{border:1px solid #465d9c;border-radius:12px;background:linear-gradient(140deg,#162a4c,#112039);padding:10px}
+.neo150-group strong{display:block;font-weight:950;font-size:12px;color:#c8d7ff;margin-bottom:7px}
+.neo150-group p{font-size:11px;line-height:1.47;color:#e1ebff;padding:6px 0;margin:0;border-top:1px solid #49669b45;overflow-wrap:anywhere}
+.neo150-group .neo150-empty{color:#9fb2d0;font-size:10px}
+@media(max-width:480px){.neo150-panel{padding:10px}.neo150-grid{grid-template-columns:1fr}.neo150-heading strong{font-size:13px}}
