@@ -1,0 +1,36 @@
+/* Blue Lock NEO 1.8.0 — Living World, responsive career/market and real newsroom */
+.neo190-panel{margin:13px 0 17px;padding:14px;color:#e9f4ff;border-radius:16px;
+ border:1px solid #386caa;background:radial-gradient(ellipse at 92% 0%,#1b426b 0%,transparent 50%),
+ linear-gradient(135deg,#0d263d,#0a172b);box-shadow:0 9px 26px #05112385;overflow:hidden}
+.neo190-panel h3{font-size:16px;letter-spacing:.035em;color:#caefff;margin:1px 0 12px;font-weight:1000}
+.neo190-note{font-size:11px;color:#a6c7d9;line-height:1.55;margin:8px 0}
+.neo190-error{font-size:11px;color:#ffb2ad;padding:9px;border:1px solid #b86360;border-radius:8px}
+.neo190-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:9px 0}
+.neo190-control{display:flex;flex-direction:column;gap:5px;min-width:0;font-size:11px;color:#b2d6ec}
+.neo190-control select{background:#102d49;color:#f0faff;border:1px solid #4f91bd;
+ border-radius:9px;height:42px;min-width:0;max-width:100%;padding:7px 10px;font-size:12px}
+.neo190-control select:focus-visible,.neo190-btn:focus-visible{outline:2px solid #75e0ff;outline-offset:2px}
+.neo190-btn{display:block;width:100%;border:1px solid #60c6ff;border-radius:10px;
+ color:#f3fcff;background:linear-gradient(105deg,#06629b,#155fa9);
+ padding:11px 15px;font-size:12px;font-weight:950;cursor:pointer;margin:11px 0}
+.neo190-btn:disabled{opacity:.50;cursor:not-allowed}
+.neo190-toggle{display:flex;align-items:start;gap:9px;font-size:11px;color:#d9eeff;
+ margin:9px 0 13px;line-height:1.55}
+.neo190-toggle input{flex-shrink:0;margin-top:3px;accent-color:#3cc6ff}
+.neo190-group{margin:9px 0;padding:10px 11px;border:1px solid #305a84;
+ border-radius:11px;background:#0d2944}
+.neo190-group>strong{display:block;font-size:12px;color:#9fe5ff;margin-bottom:7px}
+.neo190-group p{font-size:11px;line-height:1.5;color:#d1e8fa;margin:7px 0;overflow-wrap:anywhere}
+.neo190-group .neo190-control{margin:8px 0 13px}
+.neo190-metric{padding:12px;border:1px solid #417eac;border-radius:11px;background:#143958;
+ display:flex;flex-direction:column;gap:7px;min-width:0}
+.neo190-metric small{font-size:10px;color:#a7d5ed}
+.neo190-metric strong{font-size:13px;color:#ecfdff;overflow-wrap:anywhere}
+.neo190-news{padding:8px 0;border-bottom:1px solid #3d68927d}
+.neo190-news:last-child{border:0}
+.neo190-news strong{font-size:12px;display:block;color:#dcf6ff}
+.neo190-news p{margin:5px 0!important}
+.neo190-news small{display:block;font-size:9px;color:#a4bdd0}
+@media(max-width:525px){.neo190-panel{padding:10px}.neo190-grid{grid-template-columns:1fr}
+.neo190-panel h3{font-size:14px}.neo190-metric{padding:10px}}
+@media(prefers-reduced-motion:reduce){.neo190-panel *{animation:none!important;transition:none!important}}
