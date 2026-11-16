@@ -12,22 +12,22 @@ A regra do projeto é: **primeiro validar, depois passar para o próximo bloco**
 
 ## Etapa seguinte: temporada e estabilidade
 
-O [workflow de validação](https://github.com/a94330028-cell/Blue-lock-neo/actions/workflows/validar-12.yml) executa também `tests/v230-season.test.cjs`, cobrindo uma liga com **20 rodadas, 40 confrontos**, a progressão oficial e os dados salvos. A aprovação será registrada quando essa execução terminar com sucesso.
+O [workflow de validação](https://github.com/a94330028-cell/Blue-lock-neo/actions/workflows/validar-12.yml) executou `tests/v230-season.test.cjs` na [execução aprovada #43905051970](https://github.com/a94330028-cell/Blue-lock-neo/actions/runs/43905051970). Foram **20 rodadas e 40 partidas oficiais**, com 97 gols (média de 2,42), 10 empates, cinco clubes com vitórias, classificação consistente, registro único de resultados e premiações somente após o fim da temporada. O save completo teve **3.468.241 bytes (3,308 MiB)**, dentro do limite de 4,65 MB definido no teste. O resultado é uma amostra com semente fixa, não comprova sozinho equilíbrio em todas as temporadas possíveis.
 
 | Ideia | Objetivo verificável | Cenário individual | Temporada longa | Aprovação final |
 |---|---|---|---|---|
-| 19 | Domínio melhora sem desbloquear habilidade indisponível | Aprovado | Em validação | Pendente |
-| 20 | Improviso só com posse, pressão e linha legal | Aprovado | Em validação | Pendente |
-| 21 | Reação em cadeia depende de técnica ou passe confirmado | Aprovado | Em validação | Pendente |
-| 22 | Química depende de passe realmente recebido | Aprovado | Em validação | Pendente |
-| 23 | Arma altera apenas o atributo/contexto correto | Aprovado | Em validação | Pendente |
-| 24 | Instinto depende da área e de chances verificadas | Aprovado | Em validação | Pendente |
-| 25 | Posições são flexíveis sem modificar o elenco titular | Aprovado | Em validação | Pendente |
-| 26 | Contra-ataque exige recuperação real, não saída de bola | Aprovado | Em validação | Pendente |
-| 27 | Rivalidade de companheiros surge de finalizações reais | Aprovado | Em validação | Pendente |
-| 28 | Evolução por derrotas não duplica progressão | Aprovado | Em validação | Pendente |
-| 29 | Adaptação só ocorre após duelos realmente perdidos | Aprovado | Em validação | Pendente |
-| 30 | Genialidade exige Flow, pressão, energia e recarga | Aprovado | Em validação | Pendente |
+| 19 | Domínio melhora sem desbloquear habilidade indisponível | Aprovado | Aprovado (20 rodadas) | Pendente (aparelho real) |
+| 20 | Improviso só com posse, pressão e linha legal | Aprovado | Aprovado (20 rodadas) | Pendente (aparelho real) |
+| 21 | Reação em cadeia depende de técnica ou passe confirmado | Aprovado | Aprovado (20 rodadas) | Pendente (aparelho real) |
+| 22 | Química depende de passe realmente recebido | Aprovado | Aprovado (20 rodadas) | Pendente (aparelho real) |
+| 23 | Arma altera apenas o atributo/contexto correto | Aprovado | Aprovado (20 rodadas) | Pendente (aparelho real) |
+| 24 | Instinto depende da área e de chances verificadas | Aprovado | Aprovado (20 rodadas) | Pendente (aparelho real) |
+| 25 | Posições são flexíveis sem modificar o elenco titular | Aprovado | Aprovado (20 rodadas) | Pendente (aparelho real) |
+| 26 | Contra-ataque exige recuperação real, não saída de bola | Aprovado | Aprovado (20 rodadas) | Pendente (aparelho real) |
+| 27 | Rivalidade de companheiros surge de finalizações reais | Aprovado | Aprovado (20 rodadas) | Pendente (aparelho real) |
+| 28 | Evolução por derrotas não duplica progressão | Aprovado | Aprovado (20 rodadas) | Pendente (aparelho real) |
+| 29 | Adaptação só ocorre após duelos realmente perdidos | Aprovado | Aprovado (20 rodadas) | Pendente (aparelho real) |
+| 30 | Genialidade exige Flow, pressão, energia e recarga | Aprovado | Aprovado (20 rodadas) | Pendente (aparelho real) |
 
 ## Etapas que dependem de uso em aparelho real
 
