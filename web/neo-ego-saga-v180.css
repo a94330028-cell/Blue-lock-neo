@@ -1,0 +1,27 @@
+/* Blue Lock NEO 1.7 — cinematic match timeline; readable without covering field */
+#neo180-saga{margin:14px 0 18px;padding:13px;border:1px solid #4e79d4;border-radius:16px;
+ background:radial-gradient(ellipse at 100% 0%,#1d376a 0%,transparent 55%),linear-gradient(145deg,#102542,#0a1428);
+ color:#ecf5ff;box-shadow:0 12px 30px #06102280;overflow:hidden}
+.neo180-title{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap;
+ border-bottom:1px solid #50659c;padding:0 0 11px;margin-bottom:11px}
+.neo180-title strong{font-size:15px;font-weight:1000;letter-spacing:.035em;color:#c5e6ff}
+.neo180-title small{font-size:9px;font-weight:800;color:#9fbde6}
+.neo180-muted{font-size:11px;color:#a6c6de;line-height:1.6}
+.neo180-episode{margin:7px 0;border:1px solid #3b6094;border-radius:10px;background:#122a48;overflow:hidden}
+.neo180-episode summary{cursor:pointer;font-size:12px;font-weight:750;color:#e5f4ff;padding:12px}
+.neo180-episode summary:focus-visible{outline:2px solid #8fefff;outline-offset:-2px}
+.neo180-timeline{margin:0;padding:5px 12px 12px 31px;display:grid;gap:7px}
+.neo180-timeline li{font-size:11px;line-height:1.5;overflow-wrap:anywhere;color:#bddbef}
+#stadium{position:relative}
+.neo180-live{position:absolute;left:50%;bottom:58px;z-index:18;pointer-events:none;
+ max-width:min(430px,80%);padding:9px 14px;
+ background:linear-gradient(110deg,#09182ce8,#163866ed);
+ border:1px solid #8ecbff;border-radius:12px;
+ box-shadow:0 8px 21px #0009;color:#eaf5ff;text-align:center;
+ font-size:11px;font-weight:900;line-height:1.45;
+ opacity:0;transform:translate(-50%,6px) scale(.96);
+ transition:opacity .22s ease,transform .22s ease;overflow-wrap:anywhere}
+.neo180-live.visible{opacity:1;transform:translate(-50%,0) scale(1)}
+@media(max-width:550px){#neo180-saga{padding:10px}.neo180-title strong{font-size:13px}
+.neo180-live{bottom:35px;font-size:9px;padding:6px 9px;max-width:74%}}
+@media(prefers-reduced-motion:reduce){.neo180-live{transition:none!important}}
