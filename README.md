@@ -1,3 +1,16 @@
+# Blue Lock NEO 10.6.0 — Atualizações oficiais e Discord
+
+- **🚀 ATUALIZAÇÕES:** histórico oficial na aba Mais, carregado de `CHANGELOG.json`, com indicador discreto de versão não lida.
+- **『⚡』𝐍𝐄𝐎 𝐔𝐏𝐃𝐀𝐓𝐄𝐒・𝐁𝐎𝐓:** anúncios por Discord Webhook só após a confirmação de sucesso no GitHub Pages e conferência da versão pública.
+- **Antiduplicação:** tags GitHub de reserva, confirmação por parte e envio concluído; sem anúncio em build incompleto.
+- **Validação:** categorias vazias omitidas, embeds com limites da API, URLs oficiais, prevenção de menções e prévia sem mandar nada ao canal.
+- **Configuração necessária:** incluir o segredo `DISCORD_WEBHOOK_URL` e publicar as duas artes originais em `web/assets/updates/`. **Sem isso o webhook permanece desativado**, embora a interface de histórico funcione.
+- **Preservação:** este sistema não altera saves, retratos, rankings, campeonato ou jogabilidade.
+
+**Instruções completas:** [docs/NEO_UPDATE_BOT.md](docs/NEO_UPDATE_BOT.md)
+
+---
+
 # Blue Lock NEO 10.5.1 — Liga e Leilão corrigidos
 
 - **Seleção do Campeonato sem clones:** cada jogador só entra uma vez no XI, e a equipe especial não repete atletas nos rankings.
