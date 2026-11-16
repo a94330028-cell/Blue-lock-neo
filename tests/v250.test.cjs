@@ -40,6 +40,21 @@ assert.equal(Pulse.tactical(mock,teammate,player,'support'),'third-man','34 off-
 assert.equal(Pulse.cameraCue(mock).focus,'Atleta A','32 camera follows current ball owner');
 mock.ball={mode:'shot',x:1750,y:580,by:player};
 assert.equal(Pulse.cameraCue(mock).kind,'shot','32 camera selects shot cue from true event');
+// 36: count completed passes only when the true engine passer changes possession.
+mock.time=86*60;
+for(let i=0;i<3;i++){
+ const from=i%2?teammate:player,to=i%2?player:teammate;
+ mock.lastPass={p:from,time:mock.time,side:0};
+ mock.ball={mode:'carry',owner:to,x:to.x,y:to.y};
+ Pulse.observe(mock);
+ mock.time+=20;
+}
+assert.equal(Pulse.report(mock).receptions,3,'36 counts three real same-team ball receptions');
+assert.ok(Pulse.report(mock).events.some(e=>e.idea===36),'36 special sequence derives from pass chain');
+mock.lastPass={p:keeper,time:mock.time,side:1};
+mock.ball={mode:'carry',owner:player,x:player.x,y:player.y};
+Pulse.observe(mock);
+assert.equal(Pulse.report(mock).receptions,3,'36 cannot award opponent passing credit');
 Pulse.onLog(mock,'ATLETA A FINALIZA!','shot','Atleta A');
 Pulse.onLog(mock,'GOL DO ATLETA A!','goal','Atleta A');
 assert.equal(Pulse.state(mock).narration.length,2,'37 narration comes from actual log calls');
