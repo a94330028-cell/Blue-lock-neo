@@ -67,9 +67,18 @@ function coverShape(match,p,target,phase){
  const territory=match.progress?.(p.side,b.x);
  if(!Number.isFinite(territory)||territory>650)return target;
  // Only the SECOND closest defender provides cover; the closest presses.
- const defendersOnSide=(match.players||[]).filter(q=>q&&q.side===p.side&&q.i!==0&&defenders(q)&&finite(q));
- defendersOnSide.sort((a,b)=>dist(a,ballTarget(match))-dist(b,ballTarget(match))||val(a.id)-val(b.id));
- const second=defendersOnSide[1];if(second!==p)return target;
+ // Cache the covering defender per team and tick so Turbo 40x only
+ // sorts the defence once during each physics step.
+ const key=p.side,store=match._neo160Cover||(match._neo160Cover=[null,null]);
+ let second=store[key]?.time===match.time?store[key].second:null;
+ if(store[key]?.time!==match.time){
+  const defendersOnSide=(match.players||[]).filter(q=>q&&q.side===p.side&&q.i!==0&&defenders(q)&&finite(q));
+  const ball={x:b.x,y:b.y};
+  defendersOnSide.sort((a,z)=>dist(a,ball)-dist(z,ball)||val(a.id)-val(z.id));
+  second=defendersOnSide[1]||null;
+  store[key]={time:match.time,second};
+ }
+ if(second!==p)return target;
  // Cover halfway between danger and the central shooting channel.
  const ownGoal=p.side===0?75:1845;
  const dangerX=clamp((b.x+ownGoal)*.5,75,1845);
@@ -77,7 +86,6 @@ function coverShape(match,p,target,phase){
  return {x:clamp(target.x*.84+dangerX*.16,75,1845),
          y:clamp(target.y*.78+dangerY*.22,45,1105)};
 }
-function ballTarget(match){return {x:val(match.ball?.x),y:val(match.ball?.y)};}
 function coachAdjustment(match){
  if(!match||!match.autoCoach||match.finished||match.phase!=='play'||match.time<32*60)return [];
  if(match.time-(match._neo160CoachCheck||-1e6)<195)return [];
