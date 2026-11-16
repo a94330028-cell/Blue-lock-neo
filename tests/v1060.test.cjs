@@ -47,7 +47,7 @@ assert.ok(validator.includes('verify_live_version(version)'));
 assert.ok(validator.includes('neo-updates/'));
 assert.ok(validator.includes('{"parse": []}'));
 const native=read('app/src/main/java/com/neoegoist/simulator/MainActivity.java'),gradle=read('app/build.gradle');
-assert.ok(native.includes('BUNDLED_WEB_VERSION = "10.6.12"'));
+assert.ok(native.includes('BUNDLED_WEB_VERSION = "'+read('web/UPDATE_BUILD').trim()+'"'),'native bundle must match published update build');
 assert.ok(gradle.includes("versionName '1.8.0'"));
 assert.ok(gradle.includes('versionCode 116'));
 console.log('PASS NEO 10.6: secure post-deploy announce, no-spam manual preview, truthful changelog and mobile archive');
