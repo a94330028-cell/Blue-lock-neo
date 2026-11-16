@@ -6,7 +6,7 @@
  const api=factory();
  if(typeof module==='object'&&module.exports)module.exports=api;
  if(root?.NeoEngine)api.adapt(root.NeoEngine);
- if(root?.document)api.mount(root);
+ if(root?.document){root.NeoMatchPulseV240=api;api.mount(root);}
 })(typeof window!=='undefined'?window:null,function(){
 'use strict';
 const num=x=>Number.isFinite(+x)?+x:0,cap=(v,min,max)=>Math.max(min,Math.min(max,v));
