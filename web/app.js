@@ -95,6 +95,8 @@ const PORTRAIT_REPORT_KEY='neo-portrait-reports-v41';
 const MANGA_PORTRAIT_KEY='neo-manga-portraits-v602';
 const MANGA_MIGRATION_KEY='neo-manga-preference-migration-v602';
 const ORIGINAL_ART = window.NeoOriginalPortraits || Object.create(null);
+const BUNDLED_PORTRAITS=Object.freeze({"Abdi":"assets/imported-portraits/abdi.jpg","Agi":"assets/imported-portraits/agi.jpg","Aiki Himizu":"assets/imported-portraits/aiki-himizu.jpg","Akira Endoji":"assets/imported-portraits/akira-endoji.jpg","Alexis Ness":"assets/imported-portraits/alexis-ness.jpg","Aoshi Tokimitsu":"assets/imported-portraits/aoshi-tokimitsu.jpg","Arthur":"assets/imported-portraits/arthur.jpg","Bachman":"assets/imported-portraits/bachman.jpg","Benedict Grim":"assets/imported-portraits/benedict-grim.jpg","Birkenstock":"assets/imported-portraits/birkenstock.jpg","Bos":"assets/imported-portraits/bos.jpg","Busby":"assets/imported-portraits/busby.jpg","Canali":"assets/imported-portraits/canali.jpg","Chapa":"assets/imported-portraits/chapa.jpg","Charles Chevalier":"assets/imported-portraits/charles-chevalier.jpg","Chris Prince":"assets/imported-portraits/chris-prince.jpg","Damon":"assets/imported-portraits/damon.jpg","Don Lorenzo":"assets/imported-portraits/don-lorenzo.jpg","Drago":"assets/imported-portraits/drago.jpg","Driver":"assets/imported-portraits/driver.jpg","Eita Otoya":"assets/imported-portraits/eita-otoya.jpg","Erik Gesner":"assets/imported-portraits/erik-gesner.jpg","Espresso":"assets/imported-portraits/espresso.jpg","Gabin":"assets/imported-portraits/gabin.jpg","Gen Fukaku":"assets/imported-portraits/gen-fukaku.jpg","Gin Gagamaru":"assets/imported-portraits/gin-gagamaru.jpg","Gomez":"assets/imported-portraits/gomez.jpg","Gurimu Igarashi":"assets/imported-portraits/gurimu-igarashi.jpg","Hajime Nishioka":"assets/imported-portraits/hajime-nishioka.jpg","Haru Hayate":"assets/imported-portraits/haru-hayate.jpg","Haruhiko Yuzu":"assets/imported-portraits/haruhiko-yuzu.jpg","Hyoma Chigiri":"assets/imported-portraits/hyoma-chigiri.jpg","Ignacio Lara":"assets/imported-portraits/ignacio-lara.jpg","Ikki Niko":"assets/imported-portraits/ikki-niko.jpg","Itsuki Wakatsuki":"assets/imported-portraits/itsuki-wakatsuki.jpg","Jin Kiyora":"assets/imported-portraits/jin-kiyora.jpg","Jingo Raichi":"assets/imported-portraits/jingo-raichi.jpg","Julian Loki":"assets/imported-portraits/julian-loki.jpg","Junichi Wanima":"assets/imported-portraits/junichi-wanima.jpg","Jyubei Aryu":"assets/imported-portraits/jyubei-aryu.jpg","Kairu Saramadara":"assets/imported-portraits/kairu-saramadara.jpg","Kazuma Nio":"assets/imported-portraits/kazuma-nio.jpg","Kento Cho":"assets/imported-portraits/kento-cho.jpg","Kenyu Yukimiya":"assets/imported-portraits/kenyu-yukimiya.jpg","Kyohei Shiguma":"assets/imported-portraits/kyohei-shiguma.jpg","Lavinho":"assets/imported-portraits/lavinho.jpg","Marc Snuffy":"assets/imported-portraits/marc-snuffy.jpg","Meguru Bachira":"assets/imported-portraits/meguru-bachira.jpg","Mensah":"assets/imported-portraits/mensah.jpg","Michael Kaiser":"assets/imported-portraits/michael-kaiser.jpg","Michelin":"assets/imported-portraits/michelin.jpg","Miroku Darai":"assets/imported-portraits/miroku-darai.jpg","Moro":"assets/imported-portraits/moro.jpg","Nijiro Nanase":"assets/imported-portraits/nijiro-nanase.jpg","Noel Noa":"assets/imported-portraits/noel-noa.jpg","Oliver Aiku":"assets/imported-portraits/oliver-aiku.jpg","Peron":"assets/imported-portraits/peron.jpg","Picasso":"assets/imported-portraits/picasso.jpg","Ranze Kurona":"assets/imported-portraits/ranze-kurona.jpg","Reiji Hiiragi":"assets/imported-portraits/reiji-hiiragi.jpg","Renoir":"assets/imported-portraits/renoir.jpg","Rensuke Kunigami":"assets/imported-portraits/rensuke-kunigami.jpg","Reo Mikage":"assets/imported-portraits/reo-mikage.jpg","Rico":"assets/imported-portraits/rico.jpg","Rin Itoshi":"assets/imported-portraits/rin-itoshi.jpg","Rook":"assets/imported-portraits/rook.jpg","Ruiz":"assets/imported-portraits/ruiz.jpg","Ryusei Shido":"assets/imported-portraits/ryusei-shido.jpg","Seishiro Nagi":"assets/imported-portraits/seishiro-nagi.jpg","Shingen Tanaka":"assets/imported-portraits/shingen-tanaka.jpg","Shizuka Haiji":"assets/imported-portraits/shizuka-haiji.jpg","Shoei Baro":"assets/imported-portraits/shoei-baro.jpg","Shuto Sendo":"assets/imported-portraits/shuto-sendo.jpg","So":"assets/imported-portraits/so.jpg","Swift":"assets/imported-portraits/swift.jpg","Tabito Karasu":"assets/imported-portraits/tabito-karasu.jpg","Taiga Tsunzaki":"assets/imported-portraits/taiga-tsunzaki.jpg","Teppei Neru":"assets/imported-portraits/teppei-neru.jpg","Teru Kitsunezato":"assets/imported-portraits/teru-kitsunezato.jpg","Tetsu Sokura":"assets/imported-portraits/tetsu-sokura.jpg","Theo Sachs":"assets/imported-portraits/theo-sachs.jpg","Urzaiz":"assets/imported-portraits/urzaiz.jpg","Yo Hiori":"assets/imported-portraits/yo-hiori.jpg","Yoichi Isagi":"assets/imported-portraits/yoichi-isagi.jpg","Young":"assets/imported-portraits/young.jpg","Yukio Ishikari":"assets/imported-portraits/yukio-ishikari.jpg","Zantetsu Tsurugi":"assets/imported-portraits/zantetsu-tsurugi.jpg"});
+const explicitPortraitStyles=Object.create(null);
 const OFFICIAL_MANGA=window.NeoOfficialManga || Object.create(null);
 const WIKI_REFERENCES=window.NeoWikiSources || Object.create(null);
 const WIKI_PORTRAITS=window.NeoWikiPortraits || Object.create(null);
@@ -151,6 +153,8 @@ try{if(!localStorage.getItem(WIKI_PORTRAIT_MIGRATION_KEY)){
 function portraitStyle(name){
   if(reportedPortraits[name]&&!hasManga(name)&&portraitStyles[name]!=='custom')return 'premium';
   const mode=portraitStyles[name];
+  if(BUNDLED_PORTRAITS[name]&&(mode==='premium'||mode==='original'||!mode)&&!explicitPortraitStyles[name])return 'bundled';
+  if(mode==='bundled'&&BUNDLED_PORTRAITS[name])return 'bundled';
   if(mode==='manga'&&hasManga(name))return 'manga';
   if(mode==='official'&&OFFICIAL_MANGA[name])return 'official';
   if(mode==='wiki'&&WIKI_PORTRAITS[name])return 'wiki';
@@ -170,6 +174,7 @@ function setPortraitStyle(name,style){
   if(style==='manga'&&!hasManga(name))return;
   if(style==='original'&&!ORIGINAL_ART[name])return;
   portraitStyles[name]=style;
+  explicitPortraitStyles[name]=style;
   try{localStorage.setItem(PORTRAIT_STYLE_KEY,JSON.stringify(portraitStyles));}catch(e){}
   // A preferência também fica no IndexedDB, caso o localStorage esteja cheio.
   rememberPortraitChoice(name,style).catch(e=>console.warn('Preferência de retrato não gravada:',e));
@@ -246,7 +251,7 @@ async function putPortraitBlob(type,name,blob,choose=true){
     if(choose)tx.objectStore('choices').put({name,style:type});
   });
   assignPortraitBlob(type,name,blob);
-  if(choose){portraitStyles[name]=type;try{localStorage.setItem(PORTRAIT_STYLE_KEY,JSON.stringify(portraitStyles));}catch(e){}}
+  if(choose){portraitStyles[name]=type;explicitPortraitStyles[name]=type;try{localStorage.setItem(PORTRAIT_STYLE_KEY,JSON.stringify(portraitStyles));}catch(e){}}
 }
 async function savePortraitImage(type,name,data){
   await portraitStorageReady;
@@ -290,7 +295,7 @@ async function initPortraitStorage(){
       try{localStorage.removeItem(PORTRAIT_KEY);localStorage.removeItem(MANGA_PORTRAIT_KEY);}catch(e){}
     }
     for(const rec of saved.images){if(rec?.blob instanceof Blob&&['manga','custom'].includes(rec.type))assignPortraitBlob(rec.type,rec.name,rec.blob);}
-    for(const choice of saved.choices){if(choice?.name&&typeof choice.style==='string')portraitStyles[choice.name]=choice.style;}
+    for(const choice of saved.choices){if(choice?.name&&typeof choice.style==='string'){portraitStyles[choice.name]=choice.style;explicitPortraitStyles[choice.name]=choice.style;}}
     try{localStorage.setItem(PORTRAIT_STYLE_KEY,JSON.stringify(portraitStyles));}catch(e){}
     try{refreshPortraits();}catch(e){console.warn('Fotos carregadas; galeria será atualizada depois:',e);}
     const status=document.getElementById('portraitNotice');
@@ -355,13 +360,14 @@ function portraitUrl(name,color='#3aa8ff'){
   // O retrato do Kaiser foi enviado pelo próprio usuário. Uma foto customizada
   // posterior continua tendo prioridade sobre esta imagem embarcada.
   if(name==='Michael Kaiser'&&!['custom','manga'].includes(mode))return 'assets/kaiser-retrato-enviado.jpg';
-  if(mode==='premium')return ORIGINAL_ART[name]||portraitIdentity(name,color);
+  if(mode==='bundled'&&BUNDLED_PORTRAITS[name])return BUNDLED_PORTRAITS[name];
+  if(mode==='premium')return BUNDLED_PORTRAITS[name]||ORIGINAL_ART[name]||portraitIdentity(name,color);
   if(mode==='official'&&OFFICIAL_MANGA[name])return OFFICIAL_MANGA[name].image;
   if(mode==='wiki'&&WIKI_PORTRAITS[name])return WIKI_PORTRAITS[name].image;
   if(mode==='original'&&ORIGINAL_ART[name])return ORIGINAL_ART[name];
   if(mode==='manga'&&hasManga(name))return mangaPortraits[name];
   if(mode==='custom'&&typeof customPortraits[name]==='string'&&/^(data:image\/|blob:)/.test(customPortraits[name]))return customPortraits[name];
-  return portraitIdentity(name,color);
+  return BUNDLED_PORTRAITS[name]||portraitIdentity(name,color);
 }
 // Exibir primeiro a identificação neutra. Carregar somente imagens com arquivo identificado.
 function remotePortraitCandidates(name){
@@ -369,7 +375,7 @@ function remotePortraitCandidates(name){
  return [...new Set((mode==='official'?[o,w]:mode==='wiki'?[w,o]:[]).filter(Boolean))];
 }
 function makePortraitImage(name,color){
- const result=new Image(),url=portraitUrl(name,color),fallback=ORIGINAL_ART[name]||portraitIdentity(name,color);
+ const result=new Image(),url=portraitUrl(name,color),fallback=BUNDLED_PORTRAITS[name]||ORIGINAL_ART[name]||portraitIdentity(name,color);
  result.src=url.startsWith('http')?fallback:url;
  const sources=remotePortraitCandidates(name);let pos=0;
  const retry=()=>{if(pos>=sources.length)return;
@@ -380,9 +386,9 @@ function makePortraitImage(name,color){
  result.onerror=()=>{result.onerror=null;result.src=fallback;};return result;
 }
 function portrait(name,t,cls='mini-avatar'){
- const fallback=ORIGINAL_ART[name]||portraitIdentity(name,t.color),url=portraitUrl(name,t.color),remote=url.startsWith('http')?url:'';
+ const fallback=BUNDLED_PORTRAITS[name]||ORIGINAL_ART[name]||portraitIdentity(name,t.color),url=portraitUrl(name,t.color),remote=url.startsWith('http')?url:'';
  const first=remote?fallback:url;
- return `<img class="${cls}" data-portrait="1" data-player-name="${encodeURIComponent(name)}" data-fallback="${esc(fallback)}" ${remote?`data-online-src="${esc(remote)}"`:''} src="${esc(first)}" alt="${esc(name)}" loading="lazy" decoding="async">`;
+ return `<img class="${cls}" data-portrait="1" data-player-name="${encodeURIComponent(name)}" data-photo-loaded="${!remote&&url===BUNDLED_PORTRAITS[name]?'1':'0'}" data-fallback="${esc(fallback)}" ${remote?`data-online-src="${esc(remote)}"`:''} src="${esc(first)}" alt="${esc(name)}" loading="lazy" decoding="async">`;
 }
 window.NeoPortraitUI=Object.freeze({
  html:(name,club,cls='neo960-avatar')=>portrait(name,club,cls),
@@ -403,7 +409,7 @@ window.NeoPortraitManager=Object.freeze({
 // Load only the players who actually appear in the match, rather than requesting all 87 at launch.
 const defaultAvatar=makePortraitImage('Jogador','#3aa8ff');
 function cachedPortrait(name,color){return avatarCache[name]||(avatarCache[name]=makePortraitImage(name,color));}
-function refreshPortraits(){for(const name of Object.keys(avatarCache))delete avatarCache[name];renderSquads();renderPortraitGallery();if(match)updateAll();}
+function refreshPortraits(){for(const name of Object.keys(avatarCache))delete avatarCache[name];renderSquads();renderPortraitGallery();if(match)updateAll();window.dispatchEvent(new Event('neo:portraits-changed'));}
 
 document.addEventListener('error',e=>{const el=e.target;
  if(el?.dataset?.portrait==='1'&&el.dataset.fallback&&el.src!==el.dataset.fallback){
@@ -1677,7 +1683,7 @@ function renderPortraitGallery(){
   }
   el.innerHTML=results.map(({name,t,kind,role})=>{
     const mode=portraitStyle(name),hasAnime=hasImage(name),hasCustom=!!customPortraits[name],manga=hasManga(name);
-    const status=mode==='official'&&OFFICIAL_MANGA[name]?'📚 Editora · buscando foto':mode==='wiki'&&WIKI_PORTRAITS[name]?'📸 Wiki · buscando foto':manga&&mode==='manga'?'Mangá · imagem enviada':hasCustom&&mode==='custom'?'Personalizada':mode==='original'?'Ilustração genérica opcional':hasAnime&&mode==='anime'?'Imagem externa não verificada':'Avatar reserva';
+    const status=mode==='bundled'&&BUNDLED_PORTRAITS[name]?'✅ Foto principal offline':mode==='official'&&OFFICIAL_MANGA[name]?'📚 Editora · buscando foto':mode==='wiki'&&WIKI_PORTRAITS[name]?'📸 Wiki · buscando foto':manga&&mode==='manga'?'Mangá · imagem enviada':hasCustom&&mode==='custom'?'Personalizada':mode==='original'?'Ilustração genérica opcional':hasAnime&&mode==='anime'?'Imagem externa não verificada':'Avatar reserva';
     return `<article class="portrait-card" data-gallery-player="${encodeURIComponent(name)}">${portrait(name,t,'portrait-card-photo')}<span class="gallery-tag ${hasAnime?'real':hasCustom?'custom':''}">${status}</span><div class="portrait-card-info"><strong>${esc(name)}</strong><small>${esc(t.short)} · ${kind} · ${role}</small></div><div class="portrait-actions">${manga?`<button class="button ghost ${mode==='manga'?'active':''}" data-portrait-style="manga" data-player="${encodeURIComponent(name)}" type="button">📖 Mangá</button>`:''}${WIKI_PORTRAITS[name]?`<button class="button ghost ${mode==='wiki'?'active':''}" data-portrait-style="wiki" data-player="${encodeURIComponent(name)}" type="button">📸 Retrato Wiki</button><a class="button ghost manga-search-link" href="${esc(WIKI_PORTRAITS[name].source)}" target="_blank" rel="noopener noreferrer">🔗 Arquivo</a>`:''}${OFFICIAL_MANGA[name]?`<button class="button ghost ${mode==='official'?'active':''}" data-portrait-style="official" data-player="${encodeURIComponent(name)}" type="button">📚 Editora</button><a class="button ghost manga-search-link" href="${esc(OFFICIAL_MANGA[name].source)}" target="_blank" rel="noopener noreferrer">🔗 Fonte</a>`:''}<button class="button ghost ${mode==='original'?'active':''}" data-portrait-style="original" data-player="${encodeURIComponent(name)}" type="button">🎨 Original</button><button class="button ghost ${mode==='premium'?'active':''}" data-portrait-style="premium" data-player="${encodeURIComponent(name)}" type="button">Premium</button>${WIKI_REFERENCES[name]?`<a class="button ghost manga-search-link" href="${esc(WIKI_REFERENCES[name].source)}" target="_blank" rel="noopener noreferrer" title="Fonte da Wiki, não é foto incluída no ZIP">🔗 Wiki</a>`:''}<a class="button ghost manga-search-link" href="https://www.pinterest.com/search/pins/?q=${encodeURIComponent(TEAMS.some(original=>original.id===t.id)?'Blue Lock '+name+' manga panel':name+' '+t.name+' football player photo')}" target="_blank" rel="noopener noreferrer" aria-label="Pesquisar ${esc(name)} no Pinterest">🔎 Pinterest</a><button class="button ghost" data-manga-edit="${encodeURIComponent(name)}" type="button">📖 Enviar mangá</button><button class="button ghost ${mode==='custom'?'active':''}" data-portrait-edit="${encodeURIComponent(name)}" type="button">📷 Trocar</button><button class="button ghost" data-portrait-restore="${encodeURIComponent(name)}" type="button">↻ Restaurar</button>${hasAnime?`<button class="button ghost" data-portrait-report="${encodeURIComponent(name)}" type="button">⚠ Imagem errada</button>`:''}</div></article>`;
   }).join('')||'<p class="hint">Nenhum jogador encontrado. Experimente outro time ou limpe os filtros.</p>';
 }
