@@ -1,3 +1,11 @@
+# Blue Lock NEO v1.3.0 — EGO COMBAT
+
+A nova atualização incorpora **Flow situacional, Metavision com leitura real das linhas de passe, aprendizagem após duelos, reações de Ego, despertar durante Flow e confrontos entre habilidades que efetivamente aconteceram**. Sem alterar resultados nem apagar saves.
+
+A aba **Recordes → EGO COMBAT** reúne os acontecimentos registrados nas partidas. O plano das 55 ideias segue documentado em [ROADMAP-55](docs/ROADMAP-55.md); não significa que todas já estejam concluídas.
+
+---
+
 # Blue Lock NEO v1.2.0 — EGO EVOLUTION
 
 Nesta versão, a inteligência usa cada vez mais o histórico *real* dos atletas e dos confrontos: passes de duplas entrosadas, marcação adaptativa de adversários dominantes, decisões sob desgaste mental, evolução dos níveis das armas e arquivo de acontecimentos no painel **Recordes**.

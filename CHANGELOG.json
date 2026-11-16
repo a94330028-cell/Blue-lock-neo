@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "project": "Blue Lock NEO",
-  "current_version": "1.2.0",
+  "current_version": "1.3.0",
   "site_url": "https://a94330028-cell.github.io/Blue-lock-neo/",
   "media": {
     "banner": {
@@ -20,6 +20,39 @@
     }
   },
   "releases": [
+    {
+      "version": "1.3.0",
+      "date": "2026-11-16",
+      "novidades": [
+        "EGO COMBAT: confrontos entre habilidades que realmente foram utilizadas em duelos da partida, com o vencedor real preservado.",
+        "Flow por posição: perfis de Finalização, Visão, Defesa e Reflexos mudam atributos adequados ao lance, respeitando energia e cooldown.",
+        "Metavision contextual: atletas com visão elevada conseguem rejeitar linhas de passe perigosas e procurar opções legais com espaço.",
+        "Despertares autênticos: técnicas avançadas ativadas dentro do Flow ganham registro e destaque, sem fabricar desbloqueios.",
+        "Reações em cadeia de Ego após despertares, condicionadas a rivais próximos e aptos a responder.",
+        "Centro de Recordes ganhou uma área Ego Combat com confrontos e despertares extraídos das partidas salvas."
+      ],
+      "correcoes": [
+        "Duelos de habilidades não alteram quem venceu a disputa, nem concedem gols, saves ou habilidades que não aconteceram.",
+        "Histórico de duelos continua funcionando quando o armazenamento da partida atinge seu limite de registros.",
+        "Bônus de Flow, domínio e adaptação são limitados e aplicados somente aos atributos pertinentes."
+      ],
+      "jogabilidade": [
+        "Jogadores podem aprender temporariamente a enfrentar um adversário após perder confrontos reais.",
+        "Metavision mantém impedimentos e exige linhas seguras para mudar a escolha do passe.",
+        "Técnicas dominadas impactam levemente o atributo correspondente quando a habilidade está ativa."
+      ],
+      "visual": [
+        "Novos efeitos de confronto e leitura de campo associados a disputas e decisões que aconteceram de verdade.",
+        "Painel Ego Combat responsivo, com histórico de duelos e Flow."
+      ],
+      "otimizacoes": [
+        "Eventos limitados por partida e controles de frequência para evitar excesso de efeitos no modo Turbo 40×.",
+        "Sem alterações destrutivas em temporadas, imagens importadas ou contas do jogador."
+      ],
+      "importantes": [
+        "A atualização aprofunda Flow, Metavision, Devoração e habilidades existentes. As 55 propostas ainda não estão todas concluídas."
+      ]
+    },
     {
       "version": "1.2.0",
       "date": "2026-11-16",
