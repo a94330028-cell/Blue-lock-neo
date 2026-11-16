@@ -37,7 +37,7 @@ function render(){
  const all=teams();const select=all.map(x=>`<option value="${esc(x.id)}" ${x.id===t.id?'selected':''}>${esc(x.name)}</option>`).join('');
  root.innerHTML=`<div class="neo980-intro"><div><span class="neo980-kicker">CENTRAL TÁTICA · EGOIST</span><h2>👥 Escalação & técnico IA</h2><p>Veja os 11 titulares nas posições de jogo. Toque em qualquer atleta para abrir a ficha.</p></div><span class="neo980-total">${all.length} equipes</span></div>
  <label class="neo980-selector">Escolher equipe<select id="neo980-select">${select}</select></label>
- <div class="neo980-team-header"><span class="neo980-crest" style="--team:${esc(t.color||'#47b8ff')}">${esc(t.crest||t.short?.slice(0,2)||'FC')}</span><div><strong>${esc(t.name)}</strong><small>${formationLabel} · ${esc(t.country||'')}${t.master?' · Master Striker: '+esc(t.master):''}</small></div><span class="neo980-ai-live">IA ATIVA</span></div>
+ <div class="neo980-team-header"><span class="neo980-crest" style="--team:${esc(t.color||'#47b8ff')}">${window.NeoCrests1050?.icon(t)||esc(t.crest||t.short?.slice(0,2)||'FC')}</span><div><strong>${esc(t.name)}</strong><small>${formationLabel} · ${esc(t.country||'')}${t.master?' · Master Striker: '+esc(t.master):''}</small></div><span class="neo980-ai-live">IA ATIVA</span></div>
  <div class="neo980-pitch" role="group" aria-label="Escalação visual: ${esc(t.name)}, ${formationLabel}"><div class="neo980-pitch-markings"><span class="neo980-center-circle"></span><span class="neo980-penalty neo980-penalty-top"></span><span class="neo980-penalty neo980-penalty-bottom"></span></div><span class="neo980-goal goal-top"></span><span class="neo980-goal goal-bottom"></span>
  ${plan.players.map((name,i)=>player(t,name,f[i]?.role||E.DEFAULT_FORMATION[i]?.role||'MC',i,s,spots?.[i]||f[i]||E.DEFAULT_FORMATION[i])).join('')}
  </div><div class="neo980-pitch-caption">⬆ Ataque · OVR calculado para a posição de cada jogador · 🧤 goleiro na base</div>
@@ -48,6 +48,7 @@ function render(){
  // Keep the original all-team cards available inside a collapsed area only.
  const legacy=$('squadCards'),anchor=$('neo980-legacy-anchor');if(legacy&&anchor&&legacy.parentElement!==anchor)anchor.append(legacy);
 }
+window.addEventListener('neo:portraits-changed',()=>{if($('neo980-squad-area'))render();});
 function boot(){const root=$('squads');if(!root)return;
  if(!$('neo980-squad-area')){const top=document.createElement('div');top.id='neo980-squad-area';root.insertBefore(top,root.firstChild)}
  render();
