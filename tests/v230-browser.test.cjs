@@ -53,6 +53,8 @@ const server=http.createServer((req,res)=>{
    assert.ok(details.nav,'desktop and mobile menus remain in DOM');
    assert.ok(details.list,'XI tactical/list toggle is mounted');
    if(width>=1100){
+    await page.click('.nav button[data-tab="league"]');
+    await page.waitForFunction(()=>getComputedStyle(document.getElementById('league')).display!=='none');
     assert.ok(details.overflow<=5,'desktop horizontal overflow at '+width+': '+details.overflow);
     await page.evaluate(()=>{
      const dest=document.querySelector('#neo990-xi');
