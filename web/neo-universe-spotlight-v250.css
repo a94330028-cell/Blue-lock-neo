@@ -35,3 +35,6 @@
 @media(max-width:650px){.neo250-podium{padding:10px}.neo250-podium-grid{gap:6px}.neo250-champion{padding:7px 4px;min-height:211px}.neo250-position-1{min-height:235px}.neo250-portrait{height:105px}.neo250-position-1 .neo250-portrait{height:133px}.neo250-player-name{font-size:11px}.neo250-club,.neo250-stat{font-size:10px}.neo250-detail-stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:370px){.neo250-podium-grid{grid-template-columns:1fr}.neo250-champion{min-height:0!important}.neo250-portrait,.neo250-position-1 .neo250-portrait{height:165px}}
 @media(prefers-reduced-motion:reduce){.neo250-champion{transition:none!important}}
+
+#ranking .card[hidden]{display:none!important}
+#ranking>#neo250-podium{width:100%;min-width:0}
