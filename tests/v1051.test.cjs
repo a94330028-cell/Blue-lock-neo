@@ -80,6 +80,6 @@ assert.ok(Object.values(realSeason.career.players).every(p=>p.value>=0));
 const app=read('web/app.js'),market=read('web/neo-v960.js');
 assert.ok(app.includes('E.Progression.reconcileBids(saved)'),'old saves migrated on load');
 assert.ok(market.includes("D.roster(E,s,{scope:'league'})"),'ranking is scoped to league');
-assert.ok(read('web/service-worker.js').includes('blue-lock-neo-v1.10.0-31to55'));
+assert.ok(read('web/service-worker.js').includes('blue-lock-neo-v1.10.1-31to55'));
 assert.equal(read('web/VERSION').trim(),'1.8.0');
 console.log('PASS 10.6.0: exclusive NEL league rankings, unique XI athletes, zero initial bids, poor-match decline, safe save migration');
