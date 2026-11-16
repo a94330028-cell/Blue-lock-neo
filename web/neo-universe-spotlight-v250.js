@@ -68,6 +68,13 @@ function mount(win){
    const older=doc.getElementById('neoRankingPodium')?.closest('.card');
    if(older)older.hidden=true;
   }
+  // Ranking controllers may fold legacy cards after this module mounts.
+  // Keep the live podium outside any collapsed details on every refresh.
+  if(host.parentElement!==tab||host.closest('details:not([open])')){
+   tab.insertBefore(host,tab.firstElementChild);
+  }
+  host.hidden=false;
+  host.classList.remove('neo950-old-ranking');
   const season=win.NeoCareerBridge?.getSeason?.();
   if(!season)return;
   const club=doc.getElementById('rankClub')?.value||'all';
