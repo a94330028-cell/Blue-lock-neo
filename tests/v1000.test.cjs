@@ -23,6 +23,13 @@ assert.equal(insight.minute,60);
 assert.deepEqual(insight.shots,[5,2]);
 assert.ok(insight.pressure>50);
 assert.equal(XP.matchPulse(null),null);
+const archive=XP.leagueRecaps({rounds:[
+ {round:1,games:[{home:'bm',away:'px',result:[2,1],details:{goalRecords:[{minute:32,scorer:'Isagi'}],events:[{type:'goal',minute:32,text:'Gol de Isagi'}]}}]},
+ {round:2,games:[{home:'ub',away:'mc',result:null,details:null}]}
+]},6);
+assert.equal(archive.length,1,'only recorded finished matches appear');
+assert.equal(archive[0].goals[0].scorer,'Isagi');
+
 function Match(){}
 Match.prototype.rollGameplan=function(){
  this.pressing=['balanced','balanced'];this.buildUp=['balanced','balanced'];
@@ -37,6 +44,12 @@ assert.equal(match.pressing[0],'low');
 assert.equal(match.buildUp[0],'patient');
 assert.equal(match.tactics[1],'attack');
 assert.equal(plan.plans[0],'Bloco compacto');
+const Engine=require('../web/engine.js');
+assert.equal(XP.adaptTactics(Engine),true);
+const official=new Engine.Match('bm','px',12345);
+official.rollGameplan();
+for(let i=0;i<50;i++)official.step(1/30);
+assert.equal(XP.matchPulse(official).teams[0],'BASTARD');
 const app=fs.readFileSync('web/app.js','utf8');
 assert.ok(app.includes('URL.createObjectURL(file)'),'Android file fallback reads blob image URLs');
 assert.ok(app.includes("putPortraitBlob('custom',name,dataPortraitToBlob(data))"),'historical club photos are copied to stable JPEG before IndexedDB');
