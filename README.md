@@ -1,3 +1,17 @@
+# Blue Lock NEO 10.5.0 — Fotos principais, escudos e Melhor XI
+
+- **Fotos principais:** os 87 arquivos locais importados anteriormente aparecem antes das artes genéricas automáticas. Uma escolha manual de retrato continua respeitada.
+- **Galeria:** opção ⭐ Foto principal e atualização das fotos nas escalações, ranking e Melhor XI após uma substituição.
+- **Android:** opções 📁 Tentar pelo Arquivos e 📋 Colar imagem copiada para aparelhos em que o seletor falha. Novo leitor nativo para fotos modernas, exigindo APK compatível com assinatura atual.
+- **Equipes:** escudos estilizados locais para Blue Lock e clubes históricos, sem depender de conexões externas. Não são logotipos oficiais.
+- **Melhor XI:** a cada rodada concluída, os atletas são escolhidos por setor adequado e aparecem com nota real (0–10), não com a pontuação interna da seleção.
+- **Design:** cartões, campo e retratos refinados para Android.
+- **Offline:** todas as 87 fotos e novos scripts ficam armazenados na versão 10.5.0.
+
+Não desinstale o aplicativo nem limpe seus dados. Para atualizar o código nativo, o APK precisa manter a assinatura do APK instalado.
+
+---
+
 # Blue Lock NEO 10.4.0 — Escalações sem sobreposição
 
 - **Seleção do Campeonato em campo**: o Melhor XI dinâmico agora aparece numa formação 4-3-3 completa, com fotos, posições e notas individuais sobre o gramado. A lista antiga continua acessível num painel recolhível.
