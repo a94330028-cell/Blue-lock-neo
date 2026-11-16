@@ -194,7 +194,7 @@ function boot(){
 
  if(!document.getElementById('neo1000-script')){
   const addon=document.createElement('script');addon.id='neo1000-script';
-  addon.src='./neo-v1000.js?v=10.0.0';
+  addon.src='./neo-v1000.js?v=10.0.1';
   addon.onerror=()=>toast('Não foi possível carregar o Raio-X e as premiações. Atualize o aplicativo.');
   document.body.appendChild(addon);
  }
