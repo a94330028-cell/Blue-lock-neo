@@ -547,7 +547,20 @@ function showCameraHud(){
 }
 
 function loadSeason(){
-  try{const saved=JSON.parse(localStorage.getItem('neo-season-v2'));if(saved?.schema===2&&[10,20,30].includes(saved.rounds?.length))return saved;}catch(e){}
+  try{
+    const saved=JSON.parse(localStorage.getItem('neo-season-v2'));
+    if(saved?.schema===2&&[10,20,30].includes(saved.rounds?.length)){
+      if(saved.career?.bidVersion!==2){
+        try{
+          // Rebuild the old inflated starting bids using recorded matches;
+          // keep every fixture, goal, portrait, ability and career stat.
+          E.Progression.reconcileBids(saved);
+          localStorage.setItem('neo-season-v2',JSON.stringify(saved));
+        }catch(error){console.warn('Lances recalculados em memória; backup do save original preservado:',error);}
+      }
+      return saved;
+    }
+  }catch(error){console.warn('Falha ao recuperar temporada anterior:',error);}
   try{const old=JSON.parse(localStorage.getItem('neo-season-v1'));const migrated=E.migrateLegacySeason(old);if(migrated){localStorage.setItem('neo-season-v2',JSON.stringify(migrated));return migrated;}}catch(e){}
   return E.createSchedule();
 }
@@ -1565,7 +1578,7 @@ function renderCareerRanking(){if(!$('careerRankings'))return;const mode=$('rank
   if(mode==='ovr')data=rosterMarket(career,club).sort((a,b)=>b.ovr-a.ovr);
   else if(mode==='market')data=rosterMarket(career,club).sort((a,b)=>E.Progression.estimateValue(b,b.ovr,b.role)-E.Progression.estimateValue(a,a.ovr,a.role));
   else if(mode==='evolution')data=[...ranked].sort((a,b)=>Object.values(b.boosts||{}).reduce((x,y)=>x+y,0)-Object.values(a.boosts||{}).reduce((x,y)=>x+y,0)||b.score-a.score);
-  const labels={performance:'Ranking por atuações registradas: gols, assistências, defesa, consistência e resultados.',ovr:'Capacidade posicional do elenco. O OVR não é o valor de mercado.',market:'Leilão fictício: todos começam em ¥0. Os lances sobem apenas com estatísticas registradas: gols, assistências, passes, desarmes e, especialmente para goleiros, defesas e jogos sem sofrer gols. Não são cifras oficiais.',evolution:'Evolução real de atributos conquistada em partidas registradas.'};
+  const labels={performance:'Ranking por atuações registradas: gols, assistências, defesa, consistência e resultados.',ovr:'Capacidade posicional do elenco. O OVR não é o valor de mercado.',market:'Leilão fictício da Liga Neo Egoísta: todos começam com ¥0. Jogadas e notas boas valorizam o atleta; atuação ruim diminui o lance (mínimo ¥0). Só participam os cinco clubes da Liga. Não são cifras oficiais.',evolution:'Evolução real de atributos conquistada em partidas registradas.'};
   $('rankExplanation').textContent=labels[mode];$('rankCount').textContent=['ovr','market'].includes(mode)?`${data.length} atletas`:`${Object.keys(career.players).length} com jogos registrados`;
   $('careerRankings').innerHTML=data.length?data.slice(0,90).map((p,i)=>rankingHead(p,i,mode)).join(''):'<div class="empty-ranking">Nenhuma partida registrada ainda. Assista ou simule uma rodada para criar o ranking competitivo.</div>';
   renderCareerNarrative();
