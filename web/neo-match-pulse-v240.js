@@ -189,18 +189,20 @@ function mount(win){
  const create=(tag,cls,text)=>{const el=doc.createElement(tag);if(cls)el.className=cls;if(text!==undefined)el.textContent=text;return el};
  function render(){
   const box=doc.getElementById('neo240-match-report');if(!box?.open)return;
-  const body=box.querySelector('.neo240-body');body.replaceChildren();
+  const body=box.querySelector('.neo240-body'),events=body.querySelector('.neo240-events');
+  if(!events)return;
+  events.replaceChildren();
   const m=win.NeoMatchBridge?.getMatch?.();
-  if(!m){body.append(create('p',null,'Inicie uma partida para acompanhar os acontecimentos verdadeiros.'));return}
+  if(!m){events.append(create('p',null,'Inicie uma partida para acompanhar os acontecimentos verdadeiros.'));return}
   const data=report(m);
-  body.append(create('p',null,'Domínio territorial (amostras no terço ofensivo): '+data.territory.join(' × ')));
-  body.append(create('p',null,'Conexões confirmadas: '+data.receptions+' · Defesas perigosas: '+data.greatSaves.length));
+  events.append(create('p',null,'Domínio territorial (amostras no terço ofensivo): '+data.territory.join(' × ')));
+  events.append(create('p',null,'Conexões confirmadas: '+data.receptions+' · Defesas perigosas: '+data.greatSaves.length));
   const wrap=create('div','neo240-event-list');
   for(const e of data.narration.slice(-14).reverse()){
    wrap.append(create('p',null,e.minute+"' · "+e.text));
   }
   if(!wrap.childElementCount)wrap.append(create('p',null,'Sem acontecimentos registrados nesta partida.'));
-  body.append(wrap);
+  events.append(wrap);
  }
  function boot(){
   const tab=doc.getElementById('match');if(!tab||doc.getElementById('neo240-match-report'))return;
@@ -209,7 +211,8 @@ function mount(win){
   const body=create('div','neo240-body');box.append(body);
   tab.append(box);box.addEventListener('toggle',()=>{if(box.open)render();});
   const button=create('button','neo240-refresh','Atualizar lances da partida');button.type='button';
-  button.addEventListener('click',render);body.append(button);
+  button.addEventListener('click',render);body.append(button,create('div','neo240-events'));
+  box.addEventListener('keydown',event=>{if(event.key==='Enter'&&event.target===button)render();});
  }
  if(doc.readyState==='loading')doc.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 }
