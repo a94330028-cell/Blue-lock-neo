@@ -132,6 +132,63 @@ function adapt(engine){
  Object.defineProperty(progression,'_neoLegacyInstalled',{value:true});
  return true;
 }
+
+/* The Mundial XI is an automatically composed official exhibition opponent.
+ * It NEVER edits league squads or creates an arbitrary player-owned team.
+ * Existing club starters are excluded from the opponent side to prevent clones.
+ */
+const WORLD_ID='neo-world-xi';
+function buildWorldXI(engine,season,opponentId){
+ const opponent=engine?.teamById?.(opponentId);
+ if(!opponent||opponent.id===WORLD_ID)return null;
+ const forbidden=new Set([...(opponent.players||[]),...(opponent.reserves||[])]);
+ const pools=(typeof engine.allTeams==='function'?engine.allTeams():engine.TEAMS||[])
+  .filter(t=>t.id!==WORLD_ID);
+ const names=new Set(),candidates=[];
+ for(const t of pools)for(let i=0;i<(t.players||[]).length;i++){
+  const name=t.players[i];if(!name||names.has(name)||forbidden.has(name))continue;
+  names.add(name);
+  const role=String(t.formation?.[i]?.role||'MC').toUpperCase();
+  const row=season?.career?.players?.[name+'|'+t.id];
+  const games=n(row?.games),grade=games?n(row?.ratingSum)/games:0;
+  const verified=games>0?1:0;
+  candidates.push({name,role,club:t.id,verified,grade,
+   score:verified*1000+grade*12+n(row?.goals)*2+n(row?.assists)*1.5+n(row?.saves)*.8+n(row?.tackles)*.3});
+ }
+ const template=engine?.FORMATIONS?.bm||engine?.DEFAULT_FORMATION;
+ if(!Array.isArray(template)||template.length!==11)return null;
+ const pool=candidates.slice(),players=[];
+ const family=r=>/GOL|GK/.test(r)?'keeper':/ZAG|CB|LD|LE|LB|RB/.test(r)?'def':
+  /VOL|CDM|MC|CM|MEI|CAM/.test(r)?'mid':'front';
+ for(const slot of template){
+  const role=String(slot.role||'MC').toUpperCase(),group=family(role);
+  const scored=pool.map((p,i)=>({...p,index:i,
+   fitness:p.role===role?3:family(p.role)===group?2:group==='mid'&&family(p.role)==='front'?1:0}));
+  scored.sort((a,b)=>b.fitness-a.fitness||b.score-a.score||a.name.localeCompare(b.name));
+  const choice=scored[0];
+  if(!choice||choice.fitness===0)return null;
+  players.push(choice.name);pool.splice(choice.index,1);
+ }
+ return {players,reserves:pool.sort((a,b)=>b.score-a.score||a.name.localeCompare(b.name))
+  .slice(0,7).map(p=>p.name),verifiedCount:players.filter(name=>candidates.some(p=>p.name===name&&p.verified)).length};
+}
+function registerWorldXI(engine,season,opponentId){
+ if(!engine?.registerTeam)return null;
+ const roster=buildWorldXI(engine,season,opponentId);if(!roster)return null;
+ let team=engine.teamById(WORLD_ID);
+ if(!team){
+  team=engine.registerTeam({id:WORLD_ID,country:'Mundial',name:'Seleção Mundial NEO',short:'WORLD XI',
+   crest:'XI',formationName:'4-3-3',formation:(engine.FORMATIONS?.bm||engine.DEFAULT_FORMATION).map(p=>({...p})),
+   color:'#61bcff',dark:'#133678',accent:'#b9f0ff',atk:92,def:91,pas:92,style:'balanced',
+   master:'',players:roster.players,reserves:roster.reserves});
+ }else{
+  // Mutable generated exhibition roster only; original five teams are untouched.
+  team.players.splice(0,team.players.length,...roster.players);
+  team.reserves.splice(0,team.reserves.length,...roster.reserves);
+ }
+ return {team,roster};
+}
+
 function mount(win){
  const doc=win?.document;if(!doc)return;
  const E=win.NeoEngine, api=()=>win.NeoTournament1030, bridge=()=>win.NeoCareerBridge;
@@ -195,6 +252,28 @@ function mount(win){
   for(const p of view.players.filter(p=>p.games>=2).slice(0,5))
    scout.append(make('p',null,p.name+' · '+p.club.toUpperCase()+' · média '+(p.ratingSum/p.games).toFixed(1)+' · '+p.goals+' gols'));
   if(!view.players.some(p=>p.games>=2))scout.append(make('p','neo-legacy-note','Os olheiros precisam observar pelo menos dois jogos.'));
+  const mundial=group('⭐ Seleção Mundial NEO · amistoso real');
+  mundial.append(make('p','neo-legacy-note','Onze atletas escolhidos automaticamente por posições e desempenho confirmado; os clubes originais não são alterados.'));
+  const exhibition=make('button','neo-legacy-world-btn','Escalar WORLD XI contra o clube selecionado');
+  exhibition.type='button';exhibition.disabled=!!bridge()?.busy?.();
+  exhibition.addEventListener('click',()=>{
+   const home=doc.getElementById('home'),away=doc.getElementById('away');
+   if(!home||!away)return;
+   const opponentId=home.value===WORLD_ID?away.value:home.value;
+   const selected=registerWorldXI(E,season,opponentId);
+   if(!selected){mundial.append(make('p','neo-legacy-note','Não há elenco válido suficiente para esta seleção.'));return;}
+   for(const select of [home,away]){
+    if(!Array.from(select.options).some(o=>o.value===WORLD_ID)){
+     const option=make('option',null,'Seleção Mundial NEO');option.value=WORLD_ID;select.append(option);
+    }
+   }
+   home.value=opponentId;away.value=WORLD_ID;
+   home.dispatchEvent(new win.Event('change',{bubbles:true}));
+   away.dispatchEvent(new win.Event('change',{bubbles:true}));
+   mundial.append(make('p','neo-legacy-note','WORLD XI pronto: '+selected.roster.verifiedCount+' atletas baseados em atuações oficiais. Abra Partida para jogar.'));
+   const matchTab=doc.querySelector('.nav button[data-tab="match"]');matchTab?.click();
+  });
+  mundial.append(exhibition);
   const world=group('🌐 Copa Mundial de Clubes · torneio jogável');
   world.append(make('p','neo-legacy-note','Use clubes reais já disponíveis no jogo. Isto não cria seleções nacionais nem atribui resultados fictícios.'));
   const eligible=(typeof E?.allTeams==='function'?E.allTeams():E?.TEAMS||[]).filter(t=>t?.id&&Array.isArray(t.players)&&t.players.length===11).slice(0,8);
@@ -224,5 +303,5 @@ function mount(win){
  }
  if(doc.readyState==='loading')doc.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 }
-return {verifiedFixture,ensure,completed,isFinal,scores,capture,summary,adapt,mount};
+return {WORLD_ID,verifiedFixture,ensure,completed,isFinal,scores,capture,summary,buildWorldXI,registerWorldXI,adapt,mount};
 });
