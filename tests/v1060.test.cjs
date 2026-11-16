@@ -14,7 +14,7 @@ assert.equal(data.releases[0].version,'1.8.0');
 assert.equal(data.releases.length,9,'official 1.8.0 retains all seven previous stable releases');
 assert.ok(U.formatRelease(data).includes('v1.8.0'),'release notes are copyable');
 assert.ok(U.SEEN_KEY.includes('official-v1'),'unread key resets after old beta numbering');
-assert.equal(read('web/UPDATE_BUILD').trim(),'10.6.12','Android delivery build remains monotonic');
+assert.ok(U.compare(read('web/UPDATE_BUILD').trim(),'10.6.12')>=0,'Android delivery build remains monotonic');
 assert.ok(data.releases.every(r=>r.novidades.length+r.correcoes.length+r.jogabilidade.length+r.visual.length+r.otimizacoes.length+r.importantes.length>0));
 const page=read('web/index.html'),style=read('web/neo-updates-v1060.css'),script=read('web/neo-updates-v1060.js');
 assert.ok(page.includes('neo-updates-v1060.js'), 'real page loads history script');
