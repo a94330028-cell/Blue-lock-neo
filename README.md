@@ -1,4 +1,13 @@
-# Blue Lock NEO 9.9.1 — Ícone Kaiser NEO e atualização visual
+# Blue Lock NEO 9.9.2 — Galeria compacta e correção de fotos Android
+
+## ✅ v9.9.2 — Pesquisa e importação de imagens corrigidas
+
+- **Busca da galeria:** durante a pesquisa mostra apenas **nome do jogador e equipe**, em lista compacta. Toque no resultado para abrir o painel completo daquele jogador.
+- **Novos elencos:** o buscador de Manchester United 2008, Flamengo 2019, Sport 2015 e Mirassol 2025 também mostra somente nome e equipe enquanto digita.
+- **Android:** tenta decodificar a imagem diretamente com `createImageBitmap`; se não funcionar, usa `FileReader` e um segundo leitor (`arrayBuffer`). Caso o arquivo seja inacessível, mostra uma orientação específica para copiar a imagem para Downloads/Galeria.
+- **Corrigir imagens:** mostra confirmação depois de reparar referências e não deixa alerta antigo de leitura na tela; não apaga retratos privados nem temporadas.
+- **Atualização web offline:** cache v9.9.2; Android versionCode 103. Para quem já tem o APK assinado v9.9.1, use o botão **Atualizar** dentro do jogo para receber o site novo sem desinstalar.
+
 
 
 ## 📱 Atualização do Android sem apagar dados

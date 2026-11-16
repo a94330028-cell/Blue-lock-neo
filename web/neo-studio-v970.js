@@ -85,7 +85,21 @@ function setupPhotos(){const root=$('squads')||$('more');if(!root)return;
  $('neo970-photo-search').addEventListener('input',e=>{photoQuery=e.target.value.trim().toLocaleLowerCase('pt-BR');renderPhotos()});
  $('neo970-photo-club').addEventListener('change',e=>{photoTeam=e.target.value;renderPhotos()});
  const file=$('neo970-photo-input');
- sec.addEventListener('click',e=>{const b=e.target.closest('[data-neo970-photo]');if(!b)return;file.dataset.player=b.dataset.neo970Photo;file.value='';file.click();});
+ sec.addEventListener('click',e=>{
+  const selected=e.target.closest('[data-neo992-photo-select]');
+  if(selected){
+    photoTeam=selected.dataset.neo992PhotoTeam;
+    photoQuery='';
+    $('neo970-photo-club').value=photoTeam;
+    $('neo970-photo-search').value='';
+    renderPhotos();
+    const row=[...sec.querySelectorAll('[data-neo970-photo]')].find(el=>el.dataset.neo970Photo===selected.dataset.neo992PhotoSelect)?.closest('.neo970-photo-row');
+    if(row){row.classList.add('neo992-selected');row.scrollIntoView?.({behavior:'smooth',block:'center'});}
+    return;
+  }
+  const b=e.target.closest('[data-neo970-photo]');if(!b)return;
+  file.dataset.player=b.dataset.neo970Photo;file.value='';file.click();
+});
  file.addEventListener('change',async()=>{const name=file.dataset.player,photo=file.files[0];if(!photo||!name)return;
   setStatus('neo970-photo-status','Salvando retrato de '+name+'...');
   try{await importPortrait(name,photo);setStatus('neo970-photo-status','✅ Foto salva para '+name+'. Será usada nas listas, nas partidas e na ficha.');renderPhotos();refreshExternal();}
@@ -96,6 +110,16 @@ function setupPhotos(){const root=$('squads')||$('more');if(!root)return;
 function renderPhotos(){const el=$('neo970-photo-list');if(!el)return;
  const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('pt-BR');
  const q=norm(photoQuery);
+ // Searching shows just name + club, not a huge open panel for every player.
+ if(q){
+   const hits=H.teams.filter(t=>photoTeam==='all'||photoTeam===t.id)
+     .flatMap(t=>[...t.starters,...t.reserves].filter(([name])=>norm(name).includes(q)||norm(t.name).includes(q))
+       .map(([name])=>({name,t})));
+   el.innerHTML='<div class="neo992-search-results" role="list">'+hits.map(({name,t})=>
+     `<button type="button" class="neo992-search-result" data-neo992-photo-select="${esc(name)}" data-neo992-photo-team="${esc(t.id)}"><strong>${esc(name)}</strong><small>${esc(t.name)}</small></button>`
+   ).join('')+'</div>'+(hits.length?'':'<p class="neo970-hint">Nenhum atleta corresponde à busca.</p>');
+   return;
+ }
  el.innerHTML=H.teams.filter(t=>photoTeam==='all'||photoTeam===t.id).map(t=>{
   const all=[...t.starters,...t.reserves].filter(([name])=>!q||norm(name).includes(q)||norm(t.name).includes(q));if(!all.length)return '';
   return `<details class="neo970-club-roster" ${q||photoTeam===t.id?'open':''}><summary><strong>${esc(t.name)}</strong><span>${all.length} jogadores · titulares e reservas</span></summary>

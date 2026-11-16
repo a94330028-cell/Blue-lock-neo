@@ -1659,13 +1659,20 @@ function galleryMembers(){
 }
 function renderPortraitGallery(){
   const el=$('portraitGallery');if(!el)return;
-  const members=galleryMembers(),teamId=$('galleryTeam')?.value||'bm',kind=$('galleryType')?.value||'all',needle=($('gallerySearch')?.value||'').trim().toLocaleLowerCase('pt-BR');
+  const members=galleryMembers(),teamId=$('galleryTeam')?.value||'bm',kind=$('galleryType')?.value||'all',needle=($('gallerySearch')?.value||'').trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('pt-BR');
   const hasImage=name=>isPortraitAvailable(name);
-  const results=members.filter(({name,t})=>(teamId==='all'||t.id===teamId)&&(!needle||name.toLocaleLowerCase('pt-BR').includes(needle))&&(kind==='all'||(kind==='anime'&&hasImage(name))||(kind==='official'&&!!OFFICIAL_MANGA[name])||(kind==='premium'&&portraitStyle(name)==='premium')||(kind==='custom'&&!!customPortraits[name])||(kind==='manga'&&hasManga(name))||(kind==='original'&&!!ORIGINAL_ART[name])||(kind==='wiki'&&!!WIKI_REFERENCES[name])||(kind==='wikiphoto'&&!!WIKI_PORTRAITS[name])));
+  const results=members.filter(({name,t})=>(teamId==='all'||t.id===teamId)&&(!needle||[name,t.name,t.short].some(value=>String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('pt-BR').includes(needle)))&&(kind==='all'||(kind==='anime'&&hasImage(name))||(kind==='official'&&!!OFFICIAL_MANGA[name])||(kind==='premium'&&portraitStyle(name)==='premium')||(kind==='custom'&&!!customPortraits[name])||(kind==='manga'&&hasManga(name))||(kind==='original'&&!!ORIGINAL_ART[name])||(kind==='wiki'&&!!WIKI_REFERENCES[name])||(kind==='wikiphoto'&&!!WIKI_PORTRAITS[name])));
   const total=members.length,available=members.filter(m=>hasImage(m.name)).length;
   $('galleryCount').textContent=`${total} integrantes`;
   $('galleryStats').textContent=`${total} integrantes · ${members.filter(m=>!!OFFICIAL_MANGA[m.name]).length} retratos oficiais remotos · ${members.filter(m=>!!WIKI_PORTRAITS[m.name]).length} arquivos Wiki vinculados · ${members.filter(m=>!!WIKI_REFERENCES[m.name]).length} páginas Wiki · ${members.filter(m=>hasManga(m.name)).length} imagens importadas · ${members.filter(m=>!!ORIGINAL_ART[m.name]).length} reservas offline` ;
   $('galleryShown').textContent=`${results.length} MOSTRADOS`;
+  // While searching, show only the player's name and team. Open the card after selecting.
+  if(needle){
+    el.innerHTML='<div class="neo992-search-results" role="list">'+results.map(({name,t})=>
+      `<button type="button" class="neo992-search-result" data-gallery-jump="${encodeURIComponent(name)}" data-gallery-jump-team="${esc(t.id)}" aria-label="Abrir ${esc(name)} do ${esc(t.name)}"><strong>${esc(name)}</strong><small>${esc(t.name)}</small></button>`
+    ).join('')+'</div>'+(results.length?'':'<p class="hint">Nenhum jogador encontrado.</p>');
+    return;
+  }
   el.innerHTML=results.map(({name,t,kind,role})=>{
     const mode=portraitStyle(name),hasAnime=hasImage(name),hasCustom=!!customPortraits[name],manga=hasManga(name);
     const status=mode==='official'&&OFFICIAL_MANGA[name]?'📚 Editora · buscando foto':mode==='wiki'&&WIKI_PORTRAITS[name]?'📸 Wiki · buscando foto':manga&&mode==='manga'?'Mangá · imagem enviada':hasCustom&&mode==='custom'?'Personalizada':mode==='original'?'Ilustração genérica opcional':hasAnime&&mode==='anime'?'Imagem externa não verificada':'Avatar reserva';
@@ -1799,26 +1806,49 @@ async function fileToPortrait(file){
   if(file.size>15*1024*1024)throw Error('Imagem maior que 15 MB. Reduza o arquivo.');
   const isImage=file.type?.startsWith('image/')||/\.(png|jpe?g|webp|gif|bmp|heic|heif)$/i.test(file.name||'');
   if(!isImage)throw Error('Arquivo não é uma imagem. Escolha uma foto PNG, JPG ou WebP.');
-  // Ler o arquivo diretamente evita bloqueios de URLs blob: em navegadores Android/localhost.
-  const data=await new Promise((resolve,reject)=>{
-    const reader=new FileReader();
-    reader.onload=()=>resolve(reader.result);
-    reader.onerror=()=>reject(Error('Não foi possível ler o arquivo. Confira a permissão de fotos do navegador.'));
-    reader.readAsDataURL(file);
-  });
-  const picture=new Image();
-  await new Promise((resolve,reject)=>{
-    picture.onload=resolve;
-    picture.onerror=()=>reject(Error('O navegador não conseguiu decodificar esta imagem. Se for HEIC, converta para JPG ou PNG.'));
-    picture.src=data;
-  });
-  if(Math.min(picture.naturalWidth,picture.naturalHeight)<60)throw Error('A imagem precisa ter ao menos 60 pixels em cada lado.');
+  // Modern Android WebView: decode the original File directly whenever possible.
+  // Older WebViews fall back to FileReader and then File.arrayBuffer().
+  let picture=null;
+  if(typeof createImageBitmap==='function'){
+    try{picture=await createImageBitmap(file);}catch(e){/* try other readers */ }
+  }
+  if(!picture){
+    let data=null;
+    try{
+      data=await new Promise((resolve,reject)=>{
+        const reader=new FileReader();
+        reader.onload=()=>resolve(reader.result);
+        reader.onerror=()=>reject(reader.error||Error('FileReader falhou'));
+        reader.onabort=()=>reject(Error('Leitura cancelada'));
+        reader.readAsDataURL(file);
+      });
+    }catch(firstError){
+      // Some document providers expose files that FileReader cannot access.
+      if(typeof file.arrayBuffer==='function'){
+        try{
+          const bytes=new Uint8Array(await file.arrayBuffer()),pieces=[];
+          for(let i=0;i<bytes.length;i+=32768)pieces.push(String.fromCharCode(...bytes.subarray(i,i+32768)));
+          data='data:'+(file.type||'image/jpeg')+';base64,'+btoa(pieces.join(''));
+        }catch(e){/* show a useful Android-specific error below */ }
+      }
+      if(!data)throw Error('Não foi possível abrir esta foto no Android. Copie a imagem para Downloads ou Galeria e escolha novamente. Seus retratos salvos não foram apagados.');
+    }
+    picture=new Image();
+    await new Promise((resolve,reject)=>{
+      picture.onload=resolve;
+      picture.onerror=()=>reject(Error('Formato de imagem não suportado. Use JPG, PNG ou WebP salvo no aparelho.'));
+      picture.src=data;
+    });
+  }
+  const width=picture.naturalWidth||picture.width,height=picture.naturalHeight||picture.height;
+  if(Math.min(width,height)<60)throw Error('A imagem precisa ter ao menos 60 pixels em cada lado.');
   const c=document.createElement('canvas');c.width=c.height=320;const g=c.getContext('2d');
   if(!g)throw Error('O navegador não conseguiu preparar a imagem.');
-  const side=Math.min(picture.naturalWidth,picture.naturalHeight);
-  const sx=(picture.naturalWidth-side)/2,sy=(picture.naturalHeight-side)/2;
+  const side=Math.min(width,height);
+  const sx=(width-side)/2,sy=(height-side)/2;
   g.imageSmoothingEnabled=true;g.imageSmoothingQuality='high';
   g.drawImage(picture,sx,sy,side,side,0,0,320,320);
+  picture.close?.();
   try{return c.toDataURL('image/jpeg',.84);}
   catch(e){throw Error('Falha ao converter a imagem. Escolha uma foto JPG, PNG ou WebP salva no aparelho.');}
 }
@@ -1922,8 +1952,10 @@ function init(){
     }
     savePortraitReports();
     try{localStorage.setItem(PORTRAIT_STYLE_KEY,JSON.stringify(portraitStyles));}catch(e){}
-    $('portraitNotice').textContent='Retratos restaurados sem links antigos. O mangá enviado foi preservado; nenhuma temporada foi apagada.';
     refreshPortraits();
+    // A failed photo-picker read can leave an old warning visible here.
+    // Repair only resets unavailable references; it must not request a file.
+    $('portraitNotice').textContent='✅ Imagens verificadas. Retratos personalizados e temporadas preservados. Para trocar uma foto, use 📷 Trocar no jogador.';
   });
   $('portraitOffline')?.addEventListener('click',()=>{
     for(const name of Object.keys(REAL_PORTRAITS))if(!['custom','manga'].includes(portraitStyles[name]))portraitStyles[name]=OFFICIAL_MANGA[name]?'official':WIKI_PORTRAITS[name]?'wiki':'premium';
@@ -1931,7 +1963,21 @@ function init(){
     $('portraitNotice').textContent='Modo offline ativado. Todos terão avatar; fotos personalizadas foram preservadas.';
     refreshPortraits();
   });
-  $('portraitGallery')?.addEventListener('click',e=>{const picture=e.target.closest('.portrait-card-photo');if(!picture)return;const card=picture.closest('[data-gallery-player]');if(card)selectPortrait(decodeURIComponent(card.dataset.galleryPlayer));});
+  $('portraitGallery')?.addEventListener('click',e=>{
+    const choice=e.target.closest('[data-gallery-jump]');
+    if(choice){
+      const name=choice.dataset.galleryJump,team=choice.dataset.galleryJumpTeam;
+      if($('galleryTeam'))$('galleryTeam').value=team;
+      if($('galleryType'))$('galleryType').value='all';
+      if($('gallerySearch'))$('gallerySearch').value='';
+      renderPortraitGallery();
+      const card=[...document.querySelectorAll('#portraitGallery [data-gallery-player]')].find(el=>el.dataset.galleryPlayer===name);
+      if(card){card.classList.add('neo992-selected');card.scrollIntoView?.({behavior:'smooth',block:'center'});}
+      return;
+    }
+    const picture=e.target.closest('.portrait-card-photo');if(!picture)return;
+    const card=picture.closest('[data-gallery-player]');if(card)selectPortrait(decodeURIComponent(card.dataset.galleryPlayer));
+  });
   document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
   initArsenal();
   document.addEventListener('click',e=>{

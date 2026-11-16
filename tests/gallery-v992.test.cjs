@@ -1,0 +1,18 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs');
+const app=fs.readFileSync('web/app.js','utf8'),studio=fs.readFileSync('web/neo-studio-v970.js','utf8');
+const css=fs.readFileSync('web/neo-v990.css','utf8');
+assert.ok(app.includes("if(needle){"),"Gallery search must branch to compact results");
+assert.ok(app.includes('neo992-search-result')&&app.includes('data-gallery-jump-team'),"Gallery search shows name + club selection");
+assert.ok(app.includes("choice.dataset.galleryJumpTeam")&&app.includes("renderPortraitGallery();"),"Selecting a result restores the actual player card");
+assert.ok(studio.includes("if(q){")&&studio.includes('data-neo992-photo-select'),"New-team search is also compact");
+assert.ok(studio.includes("photoQuery='';")&&studio.includes("renderPhotos();"),"Selecting new-team player opens correct club");
+assert.ok(app.includes("createImageBitmap(file)"),"Android uses native image decoding before FileReader");
+assert.ok(app.includes("await file.arrayBuffer()"),"Android file provider fallback");
+assert.ok(!app.includes("Confira a permissão de fotos do navegador."),"Remove incorrect permission-only warning");
+assert.ok(app.includes("Retratos personalizados e temporadas preservados."),"Repair does not erase saves");
+assert.ok(css.includes(".neo992-search-results")&&css.includes(".neo992-search-result"),"Compact search styling present");
+assert.equal(fs.readFileSync('web/VERSION','utf8').trim(),'9.9.2');
+const gradle=fs.readFileSync('app/build.gradle','utf8');
+assert.ok(gradle.includes("versionName '9.9.2'")&&gradle.includes('versionCode 103'));
+console.log('PASS v9.9.2: compact searches, image reading recovery, preserved portrait data, Android version');

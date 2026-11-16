@@ -30,3 +30,11 @@
 @keyframes neo990-save-glow{0%{box-shadow:inset 0 0 0 0 #75daff00}35%{box-shadow:inset 0 0 0 4px #75daffb9}100%{box-shadow:inset 0 0 0 0 #75daff00}}
 @keyframes neo990-duel-glow{0%{box-shadow:inset 0 0 0 0 #ccaae800}35%{box-shadow:inset 0 0 0 3px #ccaae8a3}100%{box-shadow:inset 0 0 0 0 #ccaae800}}
 @media(prefers-reduced-motion:reduce){#stadium.neo990-impact-shot,#stadium.neo990-impact-save,#stadium.neo990-impact-duel{animation:none!important}}
+/* v9.9.2 - compact, actionable player search; never render giant portrait cards while typing */
+.neo992-search-results{grid-column:1/-1;display:grid;gap:7px;width:100%;min-width:0;margin:6px 0 14px}
+.neo992-search-result{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;min-height:52px;padding:10px 14px;text-align:left;background:#122a43;border:1px solid #365877;border-radius:12px;color:#f1f8ff;font:inherit;cursor:pointer}
+.neo992-search-result strong{font-size:13px;line-height:1.3;flex:1;min-width:0;overflow-wrap:anywhere}
+.neo992-search-result small{font-size:11px;color:#9bbbd1;max-width:45%;text-align:right}
+.neo992-search-result:hover,.neo992-search-result:focus-visible{border-color:#62c8ff;background:#1d3a56;outline:2px solid transparent}
+.portrait-card.neo992-selected,.neo970-photo-row.neo992-selected{outline:2px solid #50c6ff;outline-offset:3px}
+@media(max-width:700px){.neo992-search-result{padding:11px;min-height:51px}.neo992-search-result strong{font-size:12px}.neo992-search-result small{font-size:10px}}

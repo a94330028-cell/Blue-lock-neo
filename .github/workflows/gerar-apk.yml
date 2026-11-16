@@ -50,6 +50,7 @@ jobs:
           node tests/v981.test.cjs
           node tests/v990.test.cjs
           node tests/kaiser-icon-v991.test.cjs
+          node tests/gallery-v992.test.cjs
           node --check web/neo-coach-v980.js
           node --check web/neo-squads-v980.js
           node --check web/neo-match-v981.js
