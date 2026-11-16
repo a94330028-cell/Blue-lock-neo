@@ -2005,7 +2005,25 @@ function init(){
     speedPicker.append(fast);
   }
   if(speedPicker){
+    if(!document.getElementById('neo110-turbo')){
+      const turboButton=document.createElement('button');
+      turboButton.type='button';turboButton.id='neo110-turbo';turboButton.className='neo110-turbo';
+      turboButton.textContent='⚡ TURBO 40×';
+      turboButton.setAttribute('aria-pressed','false');
+      turboButton.title='Alternar entre 1× e até 40×. A velocidade real depende do desempenho do aparelho.';
+      turboButton.addEventListener('click',()=>{
+        speedPicker.value=speedPicker.value==='40'?'1':'40';
+        speedPicker.dispatchEvent(new Event('change',{bubbles:true}));
+      });
+      speedPicker.insertAdjacentElement('afterend',turboButton);
+    }
     speedPicker.addEventListener('change',()=>{
+      const turboButton=document.getElementById('neo110-turbo');
+      if(turboButton){
+        const enabled=speedPicker.value==='40';
+        turboButton.setAttribute('aria-pressed',String(enabled));
+        turboButton.textContent=enabled?'⚡ TURBO ATIVO':'⚡ TURBO 40×';
+      }
       // Never carry a backlog from a previous speed into the next one.
       accumulator=0;lastFrame=0;
       speedPicker.title=speedPicker.value==='40'
