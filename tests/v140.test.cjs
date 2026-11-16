@@ -62,12 +62,12 @@ assert.ok(!read('web/neo-ego-combat-v140.js').includes('localStorage.clear('),'d
 assert.ok(read('tools/sync_inline_v930.py').includes('neo-ego-combat-v140.js'));
 assert.ok(read('web/index.html').includes('neo-ego-combat-v140.js'));
 assert.ok(read('web/service-worker.js').includes('./neo-ego-combat-v140.js'));
-assert.ok(read('web/service-worker.js').includes('blue-lock-neo-v1.9.2-ego12'));
+assert.ok(read('web/service-worker.js').includes('blue-lock-neo-v1.10.0-31to55'));
 const change=JSON.parse(read('CHANGELOG.json'));
 assert.equal(change.current_version,'1.8.0');
 assert.equal(change.releases[0].version,'1.8.0');
 assert.equal(read('web/VERSION').trim(),'1.8.0');
-assert.equal(read('web/UPDATE_BUILD').trim(),'10.6.11');
+assert.equal(read('web/UPDATE_BUILD').trim(),'10.6.12');
 assert.ok(read('app/build.gradle').includes("versionName '1.8.0'"));
 assert.ok(read('app/build.gradle').includes('versionCode 116'));
 console.log('OK EGO COMBAT 1.3: real Flow, lane-based Metavision, duels, mastery, awakening, and save-safe release');
