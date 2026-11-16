@@ -6,6 +6,8 @@
 const num=(v,def=0)=>Number.isFinite(Number(v))?Number(v):def;
 const between=(n,lo,hi)=>Math.max(lo,Math.min(hi,n));
 const BID_STEP=100000;
+const BID_VERSION=3;
+const MIN_PLAYED_BID=BID_STEP;
 const bidRound=value=>Math.round(value/BID_STEP)*BID_STEP;
 function baseValue(){return 0;}
 function estimateValue(player){
@@ -15,28 +17,43 @@ function estimateValue(player){
  return Math.max(0,bidRound(num(player?.value,0)));
 }
 function bidDelta(player,goalDifference=0){
- const rating=Number(player?.rating);
- if(!Number.isFinite(rating))return 0;
- const note=between(rating,0,10),lose=goalDifference<0,win=goalDifference>0;
- // Poor individual matches never generate bids, even if the team wins.
- if(note<6.5)return -bidRound(((6.5-note)*1.8+(lose?.5:0))*1e6);
+ // Only a genuine match sheet with a valid player rating can produce a bid.
+ // The match engine starts everyone at 6.0; requiring 6.5 before ANY offer
+ // accidentally left most active defenders, keepers and passers at ¥0.
+ const rating=player?.rating;
+ if(rating===null||rating===undefined||rating==='')return 0;
+ const parsed=Number(rating);
+ if(!Number.isFinite(parsed)||parsed<1||parsed>10)return 0;
+ const note=between(parsed,1,10);
  const role=String(player.role||'').toUpperCase();
  const keeper=/^(GOL|GK)$/.test(role),defender=/^(ZAG|CB|LD|LE|LB|RB|VOL|CDM|ALA|LWB|RWB)$/.test(role);
- const goals=Math.max(0,num(player.goals)),assists=Math.max(0,num(player.assists));
- const saves=Math.max(0,num(player.saves)),interceptions=Math.max(0,num(player.interceptions));
- const tackles=Math.max(0,num(player.tackles)),blocks=Math.max(0,num(player.shotBlocks));
- const clean=keeper&&goalDifference>=0&&Number(player.goalsAgainst)===0;
- const influence=goals*4.3+assists*2.8+(keeper?saves*.52:(defender?(interceptions*.20+tackles*.16+blocks*.24):0))+
-  Math.max(0,num(player.keyPasses))*.24+Math.max(0,num(player.dribblesWon))*.14;
- if(note<7&&influence<.8)return 0;
- const millions=Math.max(0,(note-6.5)*2.2)+influence+(win?.25:0)+(clean?.5:0);
- return bidRound(millions*1e6);
+ const good=v=>Math.max(0,num(v));
+ const goals=good(player.goals),assists=good(player.assists);
+ const saves=good(player.saves),interceptions=good(player.interceptions);
+ const tackles=good(player.tackles),blocks=good(player.shotBlocks);
+ const passes=good(player.passes),aerial=good(player.aerialWins);
+ const duels=good(player.duelsWon),shots=good(player.shots);
+ const creativity=good(player.keyPasses),dribbles=good(player.dribblesWon);
+ // Contribution weights are in millions of fictional yen. Even a quiet
+ // appearance now has a small bid; decisive match actions add far more.
+ const activity=goals*4.1+assists*2.9+
+   (keeper?saves*.25:saves*.04)+
+   tackles*(defender?.23:.10)+interceptions*(defender?.26:.12)+
+   blocks*(defender?.30:.10)+aerial*.09+duels*.07+
+   creativity*.25+dribbles*.19+shots*.08+
+   Math.min(2.5,passes*.018);
+ const ratingBonus=Math.max(0,(note-5.5)*1.05);
+ const resultBonus=goalDifference>0?.27:goalDifference===0?.10:0;
+ // Very weak displays can reduce an existing offer in later matches, but an
+ // actual first appearance never vanishes from the auction board.
+ if(note<5.3&&activity<.5)return -bidRound((5.3-note)*.45e6);
+ return Math.max(MIN_PLAYED_BID,bidRound((.32+ratingBonus+activity+resultBonus)*1e6));
 }
 // Rebuild inflated old bids using ONLY actual recorded match sheets.
 // Never changes goals, tactics, photographs, OVR or completed fixtures.
 function reconcileBids(season,skipFixture=null){
  const career=ensure(season);
- if(career.bidVersion===2)return 0;
+ if(career.bidVersion===BID_VERSION)return 0;
  const savedEntries=Object.values(career.players),prices=new Map(),byPlayer=new Map();
  for(const round of season?.rounds||[])for(const fixture of round.games||[]){
   if(fixture===skipFixture||!Array.isArray(fixture.result)||!Array.isArray(fixture.details?.players))continue;
@@ -46,7 +63,9 @@ function reconcileBids(season,skipFixture=null){
    const club=p.side===0?fixture.home:fixture.away;
    const id=key(p.name,club);if(done.has(id))continue;done.add(id);
    const previous=prices.get(id)||0,change=bidDelta(p,p.side===0?difference:-difference);
-   const next=Math.max(0,previous+change);
+   const validRating=p.rating!==null&&p.rating!==undefined&&Number.isFinite(Number(p.rating))&&Number(p.rating)>=1;
+   if(!validRating)continue;
+   const next=Math.max(MIN_PLAYED_BID,previous+change);
    prices.set(id,next);
    if(!byPlayer.has(id))byPlayer.set(id,[]);
    byPlayer.get(id).push({round:round.round,match:fixture.home+' × '+fixture.away,value:next,change:next-previous});
@@ -54,21 +73,32 @@ function reconcileBids(season,skipFixture=null){
  }
  let repaired=0;
  for(const p of savedEntries){
-  const id=key(p.name,p.club),value=prices.get(id)||0;
-  if(p.value!==value){p.value=value;repaired++;}
-  p.change=byPlayer.get(id)?.at(-1)?.change||0;
-  p.bidHistory=byPlayer.get(id)||[];
-  // Preserve the historical sporting details while correcting the old inflated prices.
-  if(Array.isArray(p.history)){
-   let i=0;
-   const matching=(byPlayer.get(id)||[]).slice(-p.history.length);
-   p.history=p.history.map(h=>{
-    const entry=matching[i++];
-    return {...h,value:entry?.value??0};
-   });
+  if(!p?.name||!p?.club)continue;
+  const id=key(p.name,p.club);
+  const reconstructed=byPlayer.get(id);
+  // No match-sheet evidence means NO new bid and NO destruction of an
+  // existing offer from older saves, custom competitions or transfers.
+  if(!reconstructed?.length)continue;
+  const previouslySaved=Math.max(0,bidRound(num(p.value)));
+  const replayed=Math.max(MIN_PLAYED_BID,prices.get(id)||0);
+  // Keep already-earned higher offers; only backfill unjustified zero bids.
+  const improved=Math.max(previouslySaved,replayed);
+  if(improved!==num(p.value)){p.value=improved;repaired++;}
+  if(replayed>=previouslySaved||!Array.isArray(p.bidHistory)||!p.bidHistory.length){
+   p.bidHistory=reconstructed.map(entry=>({...entry}));
+   p.change=reconstructed.at(-1)?.change||0;
+   if(replayed<improved&&p.bidHistory.length){
+    const last=p.bidHistory.at(-1),prev=p.bidHistory.at(-2)?.value||0;
+    last.value=improved;last.change=improved-prev;p.change=last.change;
+   }
+   // Update only market values, never match stats, goals or ratings.
+   if(Array.isArray(p.history)){
+    const aligned=reconstructed.slice(-p.history.length);
+    p.history=p.history.map((h,i)=>aligned[i]?{...h,value:aligned[i].value}:h);
+   }
   }
  }
- career.bidVersion=2;
+ career.bidVersion=BID_VERSION;
  return repaired;
 }
 function leagueParticipants(season){
@@ -150,7 +180,7 @@ function record(season,fixture,match,round){const career=ensure(season);reconcil
  entry.keyPasses=(entry.keyPasses||0)+(p.keyPasses||0);
  entry.saves+=verifiedKeeperSaves(r,p);entry.cleanSheets=(entry.cleanSheets||0)+(cleanSheet?1:0);entry.wins=(entry.wins||0)+(result>0?1:0);entry.passes+=p.passes||0;entry.flowCount+=p.flowCount||0;entry.ratingSum+=p.rating||6;entry.impact+=scoreGain;entry.score=Math.round(entry.impact*10)/10;
  const requested=bidDelta(p,result);
- entry.value=Math.max(0,before+requested);entry.change=entry.value-before;
+ entry.value=Math.max(MIN_PLAYED_BID,before+requested);entry.change=entry.value-before;
  (entry.bidHistory||(entry.bidHistory=[])).push({round,match:fixture.home+' × '+fixture.away,value:entry.value,change:entry.change});
  if(entry.bidHistory.length>40)entry.bidHistory.shift();
  if((scoreGain>3||(keeper&&p.saves>=3))&&entry.games%3===0){const target=keeper&&((p.saves||0)>0||cleanSheet)?'reflexes':p.goals?'finishing':p.assists?'vision':(p.tackles||0)+(p.interceptions||0)+(p.shotBlocks||0)>0?'defense':p.dribblesWon?'dribbling':'control';entry.boosts[target]=Math.min(6,(entry.boosts[target]||0)+1);}
@@ -193,5 +223,5 @@ function record(season,fixture,match,round){const career=ensure(season);reconcil
  if(career.stories.length>90)career.stories=career.stories.slice(-90);
  career.history.push({round,fixture:fixture.home+'-'+fixture.away,score:[...r.score]});if(career.history.length>200)career.history.shift();return career;}
 function rank(season,filter='all'){const career=ensure(season),allowed=leagueParticipants(season),data=Object.values(career.players).filter(p=>allowed.has(p.club));for(const p of data)if(p.role)p.ovr=Attr.generate(p.name,p.role,p.role==='GOL'?0:1,p).ovr;return data.filter(p=>filter==='all'||p.club===filter).sort((a,b)=>b.score-a.score||b.goals-a.goals||a.name.localeCompare(b.name));}
-return {ensure,record,rank,key,baseValue,estimateValue,bidDelta,reconcileBids,mvpRanking,verifiedKeeperSaves,reconcileGoalkeepers};
+return {ensure,record,rank,key,baseValue,estimateValue,bidDelta,reconcileBids,mvpRanking,verifiedKeeperSaves,reconcileGoalkeepers,BID_VERSION};
 });

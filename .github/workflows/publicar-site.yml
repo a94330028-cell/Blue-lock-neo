@@ -66,6 +66,7 @@ jobs:
           node tests/v250.test.cjs
           node tests/v255-season.test.cjs
           node tests/neo-team-logos.test.cjs
+          node tests/neo-bids-v3.test.cjs
           node --check web/neo-advanced-v200.js
           node --check web/neo-universe-v220.js
           node --check web/neo-twelve-v230.js
