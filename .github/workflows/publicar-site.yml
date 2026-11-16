@@ -30,6 +30,18 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Conferir banner e avatar enviados para o repositório
+        run: |
+          python3 - <<'PY'
+          import pathlib,hashlib,struct
+          for f in sorted(pathlib.Path('web/assets/updates').glob('file_*.png')):
+              raw=f.read_bytes()
+              if raw[:8]!=b'\\x89PNG\\r\\n\\x1a\\n':
+                  print(f.name,'não é PNG')
+                  continue
+              width,height=struct.unpack('>II',raw[16:24])
+              print('NEO_MEDIA',f.name,'resolução',str(width)+'x'+str(height),'sha256',hashlib.sha256(raw).hexdigest(),flush=True)
+          PY
       - name: Reconstruir jogo, histórico e pacote de atualização
         run: |
           test -f web/index.html
