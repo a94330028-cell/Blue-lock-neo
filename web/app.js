@@ -2185,6 +2185,14 @@ if($('actionTheaterToggle'))$('actionTheaterToggle').addEventListener('click',()
  $('actionTheaterToggle').textContent=collapsed?'Mostrar animações':'Ocultar';
  $('actionTheaterToggle').setAttribute('aria-expanded',String(!collapsed));
 });
+// Safe integration point for season-specific add-ons. Never replaces saved portraits.
+window.NeoCareerBridge={
+ getSeason:()=>season,
+ save:()=>saveSeason(),
+ busy:()=>!!(simBusy||(match&&!match.finished)),
+ refresh:()=>{renderLeague();renderRecords();renderSquads();}
+};
+
 })();
 // Fotos verificadas da editora requerem internet; substitutos e imagens importadas funcionam offline.
 if (!window.BlueLockAndroid && 'serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js').catch(()=>{});
@@ -2232,13 +2240,6 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();neoDeferred
 window.addEventListener('appinstalled',()=>{neoDeferredInstall=null;neoAppMessage('✅ Aplicativo instalado! Faça backup dos seus retratos periodicamente.');});
 document.getElementById('installApp')?.addEventListener('click',neoInstallApp);
 document.getElementById('keepPortraits')?.addEventListener('click',neoProtectPortraits);
-// Safe integration point for season-specific add-ons. Never replaces saved portraits.
-window.NeoCareerBridge={
- getSeason:()=>season,
- save:()=>saveSeason(),
- busy:()=>!!(simBusy||(match&&!match.finished)),
- refresh:()=>{renderLeague();renderRecords();renderSquads();}
-};
 window.NeoAppStorage={report:neoStorageReport,protect:neoProtectPortraits};
 if(!window.BlueLockAndroid && 'serviceWorker' in navigator && location.protocol!=='file:' && !location.pathname.endsWith('/jogar-offline.html')){
   window.addEventListener('load',()=>{
