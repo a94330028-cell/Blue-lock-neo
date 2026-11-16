@@ -44,11 +44,13 @@ const server=http.createServer((req,res)=>{
     const layout=getComputedStyle(panel);
     const list=xi.querySelector('[data-neo990-view="list"]');
     return {ready:!!window.NeoEngine?.Match?.prototype?._neo230Installed,
+      season:!!window.NeoCareerBridge?.getSeason?.()?.rounds?.length,
       closed:panel.open===false,nav:!!document.querySelector('.shell>.nav'),
       list:!!list,overflow:document.documentElement.scrollWidth-window.innerWidth,
       css:layout.display,font:css.fontFamily};
    });
    assert.ok(details.ready,'NEO 19–30 engine hooks must load in a real browser');
+   assert.ok(details.season,'career bridge must return the active real season without ReferenceError');
    assert.ok(details.closed,'the new Records section must start collapsed');
    assert.ok(details.nav,'desktop and mobile menus remain in DOM');
    assert.ok(details.list,'XI tactical/list toggle is mounted');
