@@ -30,13 +30,14 @@ const server=http.createServer((req,res)=>{
   assert.ok(chrome,'Chrome/Chromium browser is required for actual UI validation');
   browser=await chromium.launch({headless:true,executablePath:chrome,args:['--no-sandbox','--disable-gpu','--disable-dev-shm-usage']});
   const base='http://127.0.0.1:'+port+'/';
-  for(const [width,height] of [[1366,768],[1600,900],[390,844]]){
+  for(const [width,height] of [[1920,1080],[1600,900],[1366,768],[1280,720],[1024,768],[768,1024],[390,844],[360,800]]){
    const page=await browser.newPage({viewport:{width,height},reducedMotion:'reduce'});
    const errors=[];
    page.on('pageerror',error=>errors.push(String(error.stack||error.message||error)));
    await page.goto(base,{waitUntil:'domcontentloaded',timeout:30000});
    await page.waitForFunction(()=>!!document.getElementById('neo230-features') &&
-    !!document.getElementById('neo990-round-team'),null,{timeout:25000});
+    !!document.getElementById('neo990-round-team') &&
+    !!document.getElementById('neo250-podium') && !!document.getElementById('neo240-match-report'),null,{timeout:25000});
    const details=await page.evaluate(()=>{
     const panel=document.getElementById('neo230-features');
     const xi=document.getElementById('neo990-round-team');
@@ -44,12 +45,18 @@ const server=http.createServer((req,res)=>{
     const layout=getComputedStyle(panel);
     const list=xi.querySelector('[data-neo990-view="list"]');
     return {ready:!!window.NeoEngine?.Match?.prototype?._neo230Installed,
+      pulse:!!window.NeoEngine?.Match?.prototype?._neo240Installed,
+      portraits:typeof window.NeoPortraitUI?.html==='function',
+      liveMatch:typeof window.NeoMatchBridge?.getMatch==='function',
       season:!!window.NeoCareerBridge?.getSeason?.()?.rounds?.length,
       closed:panel.open===false,nav:!!document.querySelector('.shell>.nav'),
       list:!!list,overflow:document.documentElement.scrollWidth-window.innerWidth,
       css:layout.display,font:css.fontFamily};
    });
    assert.ok(details.ready,'NEO 19–30 engine hooks must load in a real browser');
+   assert.ok(details.pulse,'31–40 live engine hooks must load');
+   assert.ok(details.portraits,'registered portrait provider must remain accessible');
+   assert.ok(details.liveMatch,'real match bridge must be usable');
    assert.ok(details.season,'career bridge must return the active real season without ReferenceError');
    assert.ok(details.closed,'the new Records section must start collapsed');
    assert.ok(details.nav,'desktop and mobile menus remain in DOM');
@@ -80,6 +87,36 @@ const server=http.createServer((req,res)=>{
     return response.ok&&(await response.text()).includes('function observeTurnover');
    });
    assert.ok(loaded,'new module must be served by the browser');
+   // Ranking V10: simulate ONE legitimate fixture at representative PC/mobile sizes.
+   // No fabricated match stats or external images.
+   if(width===1366||width===390){
+    const result=await page.evaluate(()=>{
+     const E=window.NeoEngine,s=window.NeoCareerBridge.getSeason();
+     const f=s.rounds[0].games[0];
+     if(!f.result){
+      E.Progression.ensure(s);
+      const game=new E.Match(f.home,f.away,122600+window.innerWidth,s.career,s);
+      game.runToEnd();
+      if(!E.recordFixture(s,f,game))throw Error('Fixture could not be recorded');
+      if(!window.NeoCareerBridge.save())throw Error('Official save failed');
+     }
+     return {score:f.result,recorded:f.details?.players?.length||0};
+    });
+    assert.ok(result.recorded>=18,'match must record player data for real podium');
+    await page.click('.nav button[data-tab="ranking"]');
+    await page.selectOption('#rankMode','performance');
+    await page.waitForFunction(()=>document.querySelectorAll('#neo250-podium .neo250-champion').length>=3,null,{timeout:12000});
+    const portraits=await page.$eval('#neo250-podium .neo250-champion img[data-portrait]',imgs=>imgs.map(img=>({
+      hasName:!!img.getAttribute('data-player-name'),fit:getComputedStyle(img).objectFit,
+      alt:img.alt})));
+    assert.equal(portraits.length,3,'podium shows three existing registered player portraits');
+    assert.ok(portraits.every(p=>p.hasName&&p.fit==='contain'&&p.alt));
+    await page.click('#neo250-podium .neo250-position-1');
+    assert.ok(await page.$eval('#neo250-player-detail',el=>el.textContent.includes('Jogos')),
+       'podium player opens functioning compact profile with statistics');
+    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth)<=5,
+       'ranking podium must not create horizontal scrolling');
+   }
    // Verify persistence in a temporary browser profile, never in a real user's save.
    const sentinel='validated-'+width+'x'+height;
    const wrote=await page.evaluate(value=>{
