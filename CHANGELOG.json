@@ -5,18 +5,18 @@
   "site_url": "https://a94330028-cell.github.io/Blue-lock-neo/",
   "media": {
     "banner": {
-      "path": "assets/updates/neo-update-banner.jpg",
-      "sha256": "bd56fa4c5ee2c4f6d9cdf259da6c14bae1ab25077d81f9253c7be5fb555f6768",
-      "width": 1536,
-      "height": 614,
-      "mime": "image/jpeg"
+      "path": "assets/updates/neo-update-banner.png",
+      "sha256": "65e2913e0568591c114e61485eb1d4771f08360fdcfaf3e9f00879eeb83f9a9f",
+      "width": 1983,
+      "height": 793,
+      "mime": "image/png"
     },
     "avatar": {
-      "path": "assets/updates/neo-update-avatar.jpg",
-      "sha256": "7572eea5ed7bf33e8fa1af5c63d4753dd55fb79a3d16a4178c5d508e70e02cbe",
-      "width": 1536,
-      "height": 1536,
-      "mime": "image/jpeg"
+      "path": "assets/updates/neo-update-avatar.png",
+      "sha256": "882595c75b8ae95ab4fa9bb058f208181c1101c47028ed17b0ac4270b77c64b9",
+      "width": 1254,
+      "height": 1254,
+      "mime": "image/png"
     }
   },
   "releases": [
