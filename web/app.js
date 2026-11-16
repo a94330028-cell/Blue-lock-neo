@@ -391,9 +391,11 @@ window.NeoPortraitUI=Object.freeze({
 window.NeoPortraitManager=Object.freeze({
  saveFile:async(name,file)=>{
   if(typeof name!=='string'||!name.trim()||!(file instanceof Blob))throw Error('Imagem inválida.');
-  if(file.size>8*1024*1024||!['image/jpeg','image/png','image/webp'].includes(file.type))throw Error('Escolha JPG, PNG ou WebP (até 8 MB).');
+  if(file.size>15*1024*1024||!(file.type?.startsWith('image/')||/\.(png|jpe?g|webp)$/i.test(file.name||'')))throw Error('Escolha JPG, PNG ou WebP (até 15 MB).');
+  // Copy pixels into a real JPEG Blob, not the transient content:// File from Android.
+  const data=await fileToPortrait(file);
   await portraitStorageReady;
-  await putPortraitBlob('custom',name,file);
+  await putPortraitBlob('custom',name,dataPortraitToBlob(data));
   refreshPortraits();
  },
  current:name=>portraitUrl(name)
@@ -1834,6 +1836,21 @@ async function fileToPortrait(file){
   let picture=null;
   if(typeof createImageBitmap==='function'){
     try{picture=await createImageBitmap(file);}catch(e){/* try other readers */ }
+  }
+  // FileReader may fail for Android content:// URIs even when an image can be decoded.
+  // Try the short-lived Blob URL before falling back to FileReader/arrayBuffer.
+  if(!picture&&URL?.createObjectURL){
+    let localURL=null;
+    try{
+      localURL=URL.createObjectURL(file);
+      picture=await new Promise((resolve,reject)=>{
+        const img=new Image();
+        img.onload=()=>resolve(img);
+        img.onerror=()=>reject(Error('Não foi possível decodificar a imagem local.'));
+        img.src=localURL;
+      });
+    }catch(_){picture=null;}
+    finally{if(localURL)URL.revokeObjectURL(localURL);}
   }
   if(!picture){
     let data=null;
