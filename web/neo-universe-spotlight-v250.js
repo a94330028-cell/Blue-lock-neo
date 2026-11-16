@@ -63,7 +63,10 @@ function mount(win){
   let host=doc.getElementById('neo250-podium');
   if(!host){
    host=make(doc,'section','neo250-podium');host.id='neo250-podium';
-   mount.before(host);
+   // Display the upgraded podium in the real Ranking tab, never inside legacy collapsed extras.
+   tab.insertBefore(host,tab.firstElementChild);
+   const older=doc.getElementById('neoRankingPodium')?.closest('.card');
+   if(older)older.hidden=true;
   }
   const season=win.NeoCareerBridge?.getSeason?.();
   if(!season)return;
