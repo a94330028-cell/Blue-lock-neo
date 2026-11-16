@@ -4,11 +4,11 @@ Este documento é o backlog oficial das 55 propostas do usuário. **Não signifi
 
 ## IA e personalidade
 
-- [ ] **01. IA individual e estilos de jogo** — parcial
-- [ ] **02. Sistema de Ego** — parcial
-- [ ] **03. Despertares durante partidas** — parcial
-- [ ] **04. Flow exclusivo** — parcial
-- [ ] **05. Metavision** — parcial
+- [x] **01. IA individual e estilos de jogo** — concluído e validado (v1.6.0)
+- [x] **02. Sistema de Ego** — concluído e validado (v1.6.0)
+- [x] **03. Despertares durante partidas** — concluído e validado (v1.6.0)
+- [x] **04. Flow exclusivo** — concluído e validado (v1.6.0)
+- [x] **05. Metavision** — concluído e validado (v1.6.0)
 - [ ] **06. Devoração de rivais** — parcial
 - [ ] **07. Habilidades especiais** — parcial
 - [ ] **08. Duelo de habilidades** — parcial
@@ -96,3 +96,15 @@ Este documento é o backlog oficial das 55 propostas do usuário. **Não signifi
 A versão 1.5.0 entregou melhorias reais de IA coletiva, memória de goleiros, adaptação de treinadores, prevenção de chutes repetitivos e uma Enciclopédia por partidas. Mecânicas anteriores já incluem Copa eliminatória jogável de 2, 4 ou 8 clubes, Flow, Metavision, química, habilidades e replays de gol. A existência dessas peças **não significa** conclusão integral dos itens.
 
 Continuam faltando para dar as 55 ideias como concluídas: carreira totalmente abrangente, transferências e olheiros com decisões reais de mercado, Seleção Mundial/convocações, temporadas persistentes multi-modo, competições internacionais e modo de 100 partidas simultâneas estável em celular, além de polimento cinematográfico e testes extensivos. Não marcar como concluído antes de aceitar cada sistema.
+
+## Conclusão técnica — Ideias 1 a 5 (v1.6.0)
+
+Esta marcação se refere aos **cinco itens do planejamento**, não às 55 funcionalidades restantes. Evidências: `web/neo-five-pillars-v170.js`, `tests/v170.test.cjs`, motor original e as regressões executadas em GitHub Actions.
+
+1. **IA individual:** perfis individuais estáveis de jogadores que determinam decisões reais de passe, finalização e movimentação; atributos e escolhas preservados na carreira.
+2. **Sistema de Ego:** ajustes contextuais limitados a ações reais, com influência do estilo e do placar, respeitando as condições existentes para ativar o Flow e registrando o pico efetivo.
+3. **Despertares:** apenas para técnicas realmente ativadas com o atleta em Flow e experiência suficiente, com duração curta, limite de uma ocorrência por atleta e sem inventar habilidades.
+4. **Flow exclusivo:** cada jogador possui identidade nominal e especialidade própria, bônus situacionais e limites por fadiga; o gatilho original por Ego e seus cooldowns continuam valendo.
+5. **Metavision:** releitura de linhas de passe e posição projetada dos adversários com a bola nos pés; não ignora impedimento, pressão nem distância máxima.
+
+A aba Recordes apresenta os **Cinco Pilares do Ego** e seu histórico limitado de partidas salvas. Testes incluem decisões positivas/negativas, penalidade por impedimento, caducidade dos bônus, idempotência e simulações com diferentes sementes no motor real. Novos registros são coletados somente depois da atualização, sem reconstruir estatísticas históricas inexistentes.
