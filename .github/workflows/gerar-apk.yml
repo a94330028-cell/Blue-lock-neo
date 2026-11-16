@@ -9,6 +9,7 @@ on:
       - 'portrait-pack/**'
       - 'web/**'
       - 'tests/**'
+      - 'CHANGELOG.json'
       - 'tools/assemble_web.py'
       - 'tools/sync_inline_v930.py'
       - 'build.gradle'
@@ -58,6 +59,9 @@ jobs:
           node tests/v1040.test.cjs
           node tests/v1050.test.cjs
           node tests/v1051.test.cjs
+          node tests/v1060.test.cjs
+          python3 -m unittest discover -s tests -p test_neo_announcer.py
+          python3 tools/neo_update_announcement.py validate
           node --check web/neo-clubs-v1050.js
           node --check web/neo-photo-recovery-v1050.js
           node --check web/neo-football-v1010.js
@@ -67,6 +71,7 @@ jobs:
           node --check web/neo-squads-v980.js
           node --check web/neo-match-v981.js
           node --check web/neo-round-v990.js
+          node --check web/neo-updates-v1060.js
           node --check web/neo-player-data-v960.js
           node --check web/systems/progression.js
           node --check web/neo-v960.js
