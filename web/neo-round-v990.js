@@ -48,16 +48,16 @@
   if(!completeRound(round))return {round:round?.round||0,players:[],reserves:[],candidateCount:0};
   const pool=candidates(round),used=new Set(),players=[];
   for(const slot of SLOTS){
-   const free=pool.filter(x=>!used.has(x.name+'|'+x.club));
+   const free=pool.filter(x=>!used.has(x.name.toLocaleLowerCase('pt-BR')));
    const matching=free.filter(x=>slot.accept.includes(x.role));
    const group=roleGroup(slot.role);
    const substitutes=matching.length?matching:free.filter(x=>roleGroup(x.role)===group);
    const options=substitutes.length?substitutes:[]; // Do not put defenders in attacker slots.
    options.sort((a,b)=>(b.score+compat(slot.role,b.role)*1.9)-(a.score+compat(slot.role,a.role)*1.9)||a.name.localeCompare(b.name,'pt-BR'));
    const best=options[0];if(!best)break;
-   used.add(best.name+'|'+best.club);players.push({...best,slot:slot.role,adapted:!slot.accept.includes(best.role)});
+   used.add(best.name.toLocaleLowerCase('pt-BR'));players.push({...best,slot:slot.role,adapted:!slot.accept.includes(best.role)});
   }
-  const reserves=pool.filter(x=>!used.has(x.name+'|'+x.club)).sort((a,b)=>b.score-a.score).slice(0,8);
+  const reserveNames=new Set(used);const reserves=pool.filter(x=>{const k=x.name.toLocaleLowerCase('pt-BR');if(reserveNames.has(k))return false;reserveNames.add(k);return true;}).sort((a,b)=>b.score-a.score).slice(0,8);
   return {round:round.round,players,reserves,candidateCount:pool.length};
  }
  function currentXI(competition){const round=latestCompletedRound(competition);return round?selectXI(round):{round:0,players:[],reserves:[],candidateCount:0};}
