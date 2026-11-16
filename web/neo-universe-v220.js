@@ -197,7 +197,7 @@ function mount(win){
   if(!view.players.some(p=>p.games>=2))scout.append(make('p','neo-legacy-note','Os olheiros precisam observar pelo menos dois jogos.'));
   const world=group('🌐 Copa Mundial de Clubes · torneio jogável');
   world.append(make('p','neo-legacy-note','Use clubes reais já disponíveis no jogo. Isto não cria seleções nacionais nem atribui resultados fictícios.'));
-  const eligible=(E?.TEAMS||[]).filter(t=>t?.id&&Array.isArray(t.players)&&t.players.length===11).slice(0,8);
+  const eligible=(typeof E?.allTeams==='function'?E.allTeams():E?.TEAMS||[]).filter(t=>t?.id&&Array.isArray(t.players)&&t.players.length===11).slice(0,8);
   const btn=make('button','neo-legacy-world-btn','Criar Copa Mundial com 8 clubes');
   btn.type='button';btn.disabled=eligible.length<8||view.cups.length>=6||bridge()?.busy?.();
   btn.addEventListener('click',()=>{
