@@ -95,7 +95,7 @@ def load_changelog(path=CHANGELOG):
         item = data["media"].get(part)
         if not isinstance(item, dict) or not isinstance(item.get("path"), str):
             raise AnnouncementError("Manifesto de imagem ausente: " + part)
-        if not re.fullmatch(r"assets/updates/neo-update-(?:banner|avatar)\.jpg", item["path"]):
+        if not re.fullmatch(r"assets/updates/neo-update-(?:banner|avatar)\.png", item["path"]):
             raise AnnouncementError("Caminho de imagem inesperado: " + part)
         if not re.fullmatch(r"[a-f0-9]{64}", str(item.get("sha256", ""))):
             raise AnnouncementError("SHA256 de mídia inválido: " + part)
@@ -116,8 +116,8 @@ def verify_media(data, site_dir=None):
         if not file.is_file():
             raise AnnouncementError("Arquivo oficial " + part + " ainda não existe em " + entry["path"])
         raw = file.read_bytes()
-        if len(raw) < 2048 or not raw.startswith(b"\xff\xd8\xff"):
-            raise AnnouncementError("Imagem " + part + " não é um JPEG válido.")
+        if len(raw) < 2048 or not raw.startswith(bytes.fromhex("89504e470d0a1a0a")):
+            raise AnnouncementError("Imagem " + part + " não é um PNG válido.")
         if hashlib.sha256(raw).hexdigest() != entry["sha256"]:
             raise AnnouncementError("A imagem " + part + " não corresponde ao original fornecido.")
     return True
