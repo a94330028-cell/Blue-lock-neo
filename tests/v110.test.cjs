@@ -48,6 +48,8 @@ assert.ok(history.includes('neo110-highlights')&&history.includes('neo110-identi
 assert.ok(style.includes('neo110-identity-title')&&style.includes('neo110-kickers'),'new hero styles are installed');
 assert.ok(screen.includes('neo110-turbo[aria-pressed="true"]'),'speed control shows state');
 assert.ok(read('tools/sync_inline_v930.py').includes('neo-ai-v110.js'),'AI loaded in page and APK');
+assert.ok(read('web/index.html').includes('neo-ai-v110.js'),'AI script is installed in the actual shipped HTML');
+assert.ok(read('web/index.html').includes('neo-ai-v110.css'),'Turbo style installed in actual shipped HTML');
 const worker=read('web/service-worker.js');
 assert.ok(worker.includes('./neo-ai-v110.js')&&worker.includes('./neo-ai-v110.css'));
 assert.ok(worker.includes('blue-lock-neo-v1.1.0-turbo-and-ai'));
