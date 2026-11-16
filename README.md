@@ -1,5 +1,12 @@
 # Blue Lock NEO 9.9.1 — Ícone Kaiser NEO e atualização visual
 
+
+## 📱 Atualização do Android sem apagar dados
+
+**[⬇️ Baixar APK v9.9.1 assinado — Kaiser, atualiza sem desinstalar](https://github.com/a94330028-cell/Blue-lock-neo/releases/download/v9.9.1/Blue-Lock-NEO-v9.9.1-KAISER-ASSINADO.apk)**
+
+Esse APK é assinado com o mesmo certificado estável das versões v9.0–v9.5, inclui o ícone do Kaiser e pode ser instalado **por cima** de uma versão anterior assinada com a mesma chave. Faça backup por segurança e **não desinstale** nem limpe os dados. Caso o Android recuse a atualização por conflito de assinatura, pare e confira a assinatura da instalação atual. SHA-256: `cf9bf4dadd53850847ca320cdd5985aaece4be21693d7a6198a2c6e0ea3f2884`.
+
 ## 🖼️ v9.9.1 — Novo ícone oficial do aplicativo
 
 - Ícones do site instalável (192 e 512 px) substituídos pela arte do **Kaiser NEO**, com fundo azul-neon.
