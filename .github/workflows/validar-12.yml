@@ -11,6 +11,7 @@ on:
       - 'web/neo-round-v990.js'
       - 'tests/v230-browser.test.cjs'
       - 'tests/v230-validation.test.cjs'
+      - 'tests/v230-season.test.cjs'
       - 'tools/sync_inline_v930.py'
       - '.github/workflows/validar-12.yml'
 permissions:
@@ -21,6 +22,7 @@ concurrency:
 jobs:
   smoke:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -35,6 +37,7 @@ jobs:
         run: |
           node tests/v230.test.cjs
           node tests/v230-validation.test.cjs
+          node tests/v230-season.test.cjs
       - name: Preparar Chromium do GitHub Runner
         run: |
           command -v google-chrome || command -v chromium || command -v chromium-browser
