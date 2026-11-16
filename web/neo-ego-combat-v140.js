@@ -27,8 +27,8 @@ const skillLabel=(engine,p)=>{
 function flowProfile(p){
  const position=role(p?.role);
  if(position==='GOL'||position==='GK')return {label:'Flow de Reflexos',stats:['reflexes','positioning','control']};
- if(defense.has(position))return {label:'Flow Defensivo',stats:['tackling','defense','positioning']};
  if(['MC','CM','MEI','CAM','VOL','CDM'].includes(position))return {label:'Flow de Visão',stats:['vision','passing','control']};
+ if(defense.has(position))return {label:'Flow Defensivo',stats:['tackling','defense','positioning']};
  return {label:'Flow de Finalização',stats:['finishing','positioning','dribbling']};
 }
 function flowBonus(p,key,time){
