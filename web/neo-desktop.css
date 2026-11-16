@@ -23,3 +23,62 @@ body{background:radial-gradient(circle at 65% 0%,#17548066,transparent 50%),line
 .button:hover:not(:disabled){filter:brightness(1.15)}button:focus-visible{outline:3px solid #68ceff!important;outline-offset:2px}
 }
 @media(min-width:1100px) and (max-width:1350px){.match-layout{grid-template-columns:minmax(0,1fr)!important}.match-side{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.match-side .card{margin-top:0}}
+
+
+/* NEO desktop broadcast refinement inspired by the supplied PC reference.
+   Existing match, rankings, portraits and real engine data remain authoritative. */
+@media (min-width:1100px){
+ :root{--neo-pc-neon:#29c7ff;--neo-pc-edge:#1b6195}
+ .site-header{min-height:79px!important;border-image:none!important}
+ .branding{gap:15px!important}
+ .branding .brand-icon{width:53px;height:53px;border-radius:12px;background:linear-gradient(135deg,#163e89,#067bc0);box-shadow:0 0 0 1px #4ca9ee,0 0 23px #087dff55}
+ .site-header .eyebrow{color:#8ccfff;letter-spacing:1.5px}
+ .site-header h1 span{color:#56bcff!important;text-shadow:0 0 17px #137aff77}
+ .header-meta{padding:9px 13px;background:#102744;border:1px solid #245c8c;border-radius:9px;font-size:10px!important;color:#c3dfff}
+ .app-install-bar{border-radius:10px}
+ .shell>.nav{background:linear-gradient(180deg,#0b2549 0%,#081a36 54%,#061226 100%)!important}
+ .shell>.nav button{font-weight:820!important;letter-spacing:.18px}
+ .shell>.nav button.active{box-shadow:0 0 18px #197aff55,inset 4px 0 #8ae5ff!important}
+ .shell>.tab-content{max-width:none!important}
+ #match{position:relative}
+ #match::before{content:"◈  NEO SELECTION  /  MATCH CENTER";display:block;letter-spacing:1.7px;font-size:11px;font-weight:950;color:#80dfff;padding:12px 14px;margin-bottom:14px;border:1px solid #215a94;border-left:4px solid #159dff;border-radius:9px;background:linear-gradient(90deg,#102f56,#0a1d37)}
+ .match-main .match-card{position:relative;border:1px solid #287bc1!important;background:radial-gradient(ellipse at top,#184276,#0b1c35 50%,#08172a)!important;overflow:hidden}
+ .match-main .match-card::before{content:"BLUE LOCK NEO  ·  LIVE BROADCAST";display:block;font-size:11px;font-weight:900;letter-spacing:2px;color:#91e8ff;border-bottom:1px solid #265a87;padding:0 2px 12px;margin-bottom:15px}
+ .match-setup{background:#06182bb5;padding:10px 12px;border:1px solid #29557a;border-radius:12px;gap:12px!important}
+ .match-setup>label{color:#a6c5e7!important;font-size:11px!important}
+ .match-setup select{border-color:#2875b0;background:#112e52}
+ .scoreboard{background:linear-gradient(110deg,#0c2850,#081729 50%,#15314f);border:1px solid #2a6393;border-radius:14px;padding:17px 16px!important;margin:10px 0 16px;box-shadow:inset 0 0 30px #1c5da622}
+ .score-center{padding:2px 18px;min-width:150px}
+ .score-digit{font-weight:1000;line-height:1.03;text-shadow:0 3px 22px #3cafff44}
+ .score-team{min-width:0;overflow:hidden}
+ .score-team span{white-space:normal}
+ .match-time{color:#a8ddff!important;font-weight:900}
+ .pitch-wrap{border-radius:12px!important;overflow:hidden;box-shadow:0 0 0 3px #12365b,0 20px 46px #0007,0 0 25px #0275eb33!important}
+ .pitch-top{padding:12px!important}
+ .live-badge.live{background:#c41939!important;box-shadow:0 0 18px #ff245277;color:#fff!important;font-size:12px!important}
+ .field-bottom{background:linear-gradient(transparent,#061735e9)!important;gap:10px}
+ .match-controls{background:#071b34;border:1px solid #215c88;border-radius:12px;padding:12px!important;margin-top:15px!important;gap:8px!important}
+ .match-controls .button.primary{background:linear-gradient(105deg,#0089df,#1460c0)!important;box-shadow:0 0 18px #137bd833}
+ .match-side .card{border-radius:12px!important;margin-top:0;margin-bottom:14px}
+ .match-side .card-head,.under-pitch .card-head{border-bottom:1px solid #245477;padding-bottom:11px}
+ .match-side .card-head h2,.under-pitch .card-head h2{font-weight:950;color:#e9f5ff;text-transform:uppercase;font-size:13px;letter-spacing:.4px}
+ .match-side .card-head h2:before{content:"◆";font-size:10px;color:#25c4ff;margin-right:7px}
+ .two-col.under-pitch{grid-template-columns:1.15fr 1fr!important;margin-top:17px!important}
+ .events{background:#08182c;border-radius:9px;padding:8px 12px;border:1px solid #1d496c}
+ .event{border-color:#214465!important}
+ .event.goal{color:#ffe296!important}
+ .modern-tactics-live,.pulse-card,.live-arsenal,.action-theater{border-radius:12px!important;border-color:#276093!important}
+ .goal-shortcut{border-radius:12px!important}
+ .card-head{align-items:center!important}
+ .hero-card,.neo190-panel,.neo91-card{border-radius:14px!important}
+ @media (prefers-reduced-motion:reduce){.shell>.nav button{transition:none!important}}
+}
+@media (min-width:1351px) {
+ .match-side{display:flex;flex-direction:column;gap:0}
+}
+@media (min-width:1100px) and (max-width:1190px){
+ .shell{grid-template-columns:190px minmax(0,1fr)!important;gap:13px!important;padding:15px!important}
+ .shell>.nav button{font-size:12px!important;padding:9px!important}
+ .score-center{min-width:115px;padding:0 7px}
+ .score-digit{font-size:37px!important}
+}
