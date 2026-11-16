@@ -1,3 +1,19 @@
+# Blue Lock NEO v1.2.0 — EGO EVOLUTION
+
+Nesta versão, a inteligência usa cada vez mais o histórico *real* dos atletas e dos confrontos: passes de duplas entrosadas, marcação adaptativa de adversários dominantes, decisões sob desgaste mental, evolução dos níveis das armas e arquivo de acontecimentos no painel **Recordes**.
+
+- **Arquivo de Egoístas:** rivalidades, duplas, domínio de armas e relatos de partidas oficialmente salvas.
+- **Evolução persistente:** confiança, forma recente e adaptação após derrotas no mesmo sistema de carreira já existente.
+- **IA tática:** marcação contextual de atacantes perigosos, passes apoiados na química e reações ao desgaste mental.
+- **Desempenho:** avaliações defensivas em cache por passo para reduzir custo no Turbo 40×.
+- **Segurança:** os recursos preservam os dados, retratos, temporadas, placares e lances de mercado.
+
+As demais 55 ideias do projeto são propostas futuras e não são declaradas como implementadas.
+
+[▶ Abrir Blue Lock NEO](https://a94330028-cell.github.io/Blue-lock-neo/)
+
+---
+
 # Blue Lock NEO v1.1.0 — IA Tática + Turbo 40× + NEO UPDATE CENTER
 
 **Nova atualização oficial:** o simulador mantém toda a temporada, escalações e os retratos locais existentes.

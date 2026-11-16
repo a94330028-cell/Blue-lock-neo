@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "project": "Blue Lock NEO",
-  "current_version": "1.1.0",
+  "current_version": "1.2.0",
   "site_url": "https://a94330028-cell.github.io/Blue-lock-neo/",
   "media": {
     "banner": {
@@ -20,6 +20,38 @@
     }
   },
   "releases": [
+    {
+      "version": "1.2.0",
+      "date": "2026-11-16",
+      "novidades": [
+        "Arquivo de Egoístas na aba Recordes: rivalidades reais, duplas com assistências, armas aprimoradas e acontecimentos registrados.",
+        "Evolução persistente de concentração e confiança por atleta com histórico das últimas 12 atuações oficiais.",
+        "Domínio de armas em três estágios — Inicial, Avançado e Supremo — com progresso derivado do uso de habilidades registrado nas partidas.",
+        "Rivalidades passam a registrar duelos verdadeiros, com níveis de disputa em vez de depender apenas dos gols."
+      ],
+      "correcoes": [
+        "Proteção contra contagem duplicada quando uma súmula da mesma rodada é processada novamente.",
+        "O histórico de rivalidade considera disputas efetivamente registradas e não inventa confrontos.",
+        "A marcação do jogador mais perigoso evita múltiplos defensores seguindo o mesmo adversário e permanece dentro dos limites do campo."
+      ],
+      "jogabilidade": [
+        "Duplas com química comprovada são consideradas mais frequentemente em passes e infiltrações quando a linha de passe está livre.",
+        "Jogadores sob desgaste mental elevado podem optar por reconstruir a posse em vez de insistir em lances precipitados.",
+        "A defesa adapta a cobertura à ameaça ofensiva real, com um marcador responsável pelo adversário em destaque.",
+        "Histórico de derrotas influencia tentativas de infiltração de atacantes e meio-campistas no fim do jogo.",
+        "Vencedores de duelos de rivalidades antigas podem ganhar pequenas reações de Ego, condicionadas a um lance real."
+      ],
+      "visual": [
+        "Novo painel responsivo Arquivo de Egoístas na área de Recordes, com dados da carreira e histórias reais."
+      ],
+      "otimizacoes": [
+        "Avaliação do marcador de maior perigo reutilizada por passo de simulação para reduzir custo no modo Turbo 40×.",
+        "As informações de evolução são armazenadas na carreira existente, sem apagar saves, retratos, escalações ou dinheiro."
+      ],
+      "importantes": [
+        "Este lançamento adiciona a primeira etapa de uma evolução maior; transferências automáticas, torneios mundiais e 100 partidas paralelas ainda não fazem parte desta versão."
+      ]
+    },
     {
       "version": "1.1.0",
       "date": "2026-11-16",
