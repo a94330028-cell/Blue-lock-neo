@@ -11,6 +11,10 @@ const TEAMS=Object.freeze({
 });
 function design(t){const id=typeof t==='string'?t:t?.id;return TEAMS[id]||[String(t?.crest||'FC').slice(0,3),'★',t?.color||'#42aeec',t?.dark||'#11253c','#e3f6ff'];}
 function icon(t,cls='neo1050-crest'){
+ const id=typeof t==='string'?t:t?.id;
+ if(['bm','ba','mc','px','ub'].includes(id)){
+  return '<img class="'+esc(cls)+' neo-team-icon" src="assets/team-logos/'+id+'.webp" alt="Escudo '+esc(id)+'" loading="lazy" decoding="async">';
+ }
  const [name,symbol,accent,dark,light]=design(t);
  return '<svg class="'+esc(cls)+'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 82" aria-hidden="true" focusable="false">'+
  '<path d="M36 4 Q54 9 66 15 L64 45 Q59 66 36 78 Q13 66 8 45 L6 15 Q18 9 36 4Z" fill="'+esc(dark)+'" stroke="'+esc(accent)+'" stroke-width="3"/>'+
@@ -23,7 +27,7 @@ function icon(t,cls='neo1050-crest'){
 function mount(win){
  const doc=win.document;
  const style=doc.createElement('style');style.id='neo1050-logos-css';
- style.textContent='.neo1050-crest{display:block;width:43px;height:49px;flex:none;filter:drop-shadow(0 2px 3px #001a3488)}'+
+ style.textContent='.neo1050-crest{display:block;width:43px;height:49px;flex:none;filter:drop-shadow(0 2px 3px #001a3488)}.neo1050-crest.neo-team-icon{object-fit:contain;background:transparent}'+
  '.neo1050-selectline{display:flex;align-items:center;gap:9px;min-width:0;width:100%}.neo1050-selectline>select{min-width:0;flex:1 1 auto}'+
  '.neo1050-pict{width:42px;height:47px;display:grid;place-items:center;flex:none;border:1px solid #3b6385;border-radius:10px;background:#0e223b}'+
  '.neo1050-pict .neo1050-crest{width:32px;height:37px}.neo980-team-header .neo980-crest{background:transparent!important;width:49px;height:53px;padding:0}'+

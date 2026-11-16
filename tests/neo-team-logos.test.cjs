@@ -8,6 +8,7 @@ for(const id of ['bm','ba','mc','px','ub']){
  assert.ok(fs.readFileSync('web/service-worker.js','utf8').includes('./assets/team-logos/'+id+'.webp'),'not cached '+id);
 }
 const app=fs.readFileSync('web/app.js','utf8'),mobile=fs.readFileSync('web/neo-reference-mobile.js','utf8'),css=fs.readFileSync('web/neo-reference-mobile.css','utf8');
+assert.ok(fs.readFileSync('web/neo-clubs-v1050.js','utf8').includes('neo-team-icon'),'team pickers must use supplied crests');
 assert.ok(app.includes('TEAM_LOGO_PATHS')&&app.includes('neo-club-crest-img'),'gamewide crest rendering missing');
 assert.ok(mobile.includes('neo-ref-result-score')&&mobile.includes('neo-ref-table-logo'),'home crest slots missing');
 assert.ok(css.includes('neo-ref-crest[src*="team-logos/"]'),'mobile crest styling missing');

@@ -24,8 +24,9 @@ assert.ok(round.includes("neo:portraits-changed"),'championship pitch photo refr
 assert.ok(round.includes("p.rating.toFixed(1)"),'championship displays real player rating');
 assert.ok(round.includes("const options=substitutes.length?substitutes:[]"),'no defenders as forwards');
 for(const t of E.TEAMS) {
- const svg=crests.icon(t);
- assert.ok(svg.startsWith('<svg')&&svg.includes('viewBox="0 0 72 82"'),t.name+' badge');
+ const markup=crests.icon(t);
+ if(['bm','ba','mc','px','ub'].includes(t.id))assert.ok(markup.startsWith('<img')&&markup.includes(t.id+'.webp'),t.name+' supplied logo');
+ else assert.ok(markup.startsWith('<svg')&&markup.includes('viewBox="0 0 72 82"'),t.name+' fallback badge');
  assert.ok(crests.TEAMS[t.id],'known clubs get a distinct badge');
 }
 assert.ok(crests.icon('neo-bestxi').includes('XI'));
