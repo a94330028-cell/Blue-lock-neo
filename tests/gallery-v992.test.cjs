@@ -14,5 +14,5 @@ assert.ok(app.includes("Retratos personalizados e temporadas preservados."),"Rep
 assert.ok(css.includes(".neo992-search-results")&&css.includes(".neo992-search-result"),"Compact search styling present");
 assert.equal(fs.readFileSync('web/VERSION','utf8').trim(),'1.8.0');
 const gradle=fs.readFileSync('app/build.gradle','utf8');
-assert.ok(gradle.includes("versionName '1.8.0'")&&gradle.includes('versionCode 116'));
+assert.ok(gradle.includes("versionName '1.8.0'")&&gradle.includes('versionCode 117'));
 console.log('PASS v9.9.4: compact searches, image reading recovery, preserved portrait data, Android version');
