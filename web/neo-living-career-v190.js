@@ -198,7 +198,7 @@ function matchNews(w,report,fixture,round){
  const result=home+' '+score[0]+' × '+score[1]+' '+away;
  postNews(w,{round,type:'result',headline:'⚽ Rodada '+round+': '+result,
   text:'Partida encerrada: '+result+'.',source:'placar oficial registrado'});
- const gap=Math.abs(n(score[0])-n(score[1]);
+ const gap=Math.abs(n(score[0])-n(score[1]));
  if(gap>=3)postNews(w,{round,type:'result',headline:'💥 Goleada: '+result,
   text:'A diferença foi de '+gap+' gols no confronto '+home+' contra '+away+'.',
   source:'placar oficial da partida'});
