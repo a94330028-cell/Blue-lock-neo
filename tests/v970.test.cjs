@@ -30,5 +30,5 @@ assert.ok(fs.existsSync(dir+'/assets/kaiser-retrato-enviado.jpg'));
 const app=fs.readFileSync(dir+'/app.js','utf8');assert.ok(app.includes('assets/kaiser-retrato-enviado.jpg'));assert.ok(app.includes('window.NeoPortraitManager'));
 const html=fs.readFileSync(dir+'/index.html','utf8');for(const marker of ['neo-historic-teams-v970.js','neo-cups-v970.js','neo-studio-v970.js','neo-studio-v970.css','window.NeoPortraitManager','registerCreatedPlayer'])assert.ok(html.includes(marker),marker);
 const ui=fs.readFileSync(dir+'/neo-studio-v970.js','utf8');for(const marker of ['neo970-creator','neo970-photo-list','neo970-cups','neo970-char-name','neo970-char-style','data-neo970-photo','C.playNext','E.registerCreatedPlayer'])assert.ok(ui.includes(marker),marker);
-assert.equal(fs.readFileSync(dir+'/VERSION','utf8').trim(),'10.4.0');
+assert.equal(fs.readFileSync(dir+'/VERSION','utf8').trim(),'10.5.0');
 console.log('PASS v9.7: historical squads, 11 starters, exhibition engine, character creator, cups, player profiles, portraits & original league isolation');
