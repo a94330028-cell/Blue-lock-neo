@@ -1,0 +1,28 @@
+/* Blue Lock NEO v1.5 — Ego Encyclopedia, without covering the field */
+.neo160-encyclopedia{margin:14px 0 20px;padding:14px;border:1px solid #257bc4;border-radius:17px;
+ background:radial-gradient(ellipse at 92% -10%,#173e73 0%,transparent 54%),
+ linear-gradient(145deg,#0e233d,#081526 88%);box-shadow:0 13px 34px #00112299;color:#eaf6ff;overflow:hidden}
+.neo160-heading{display:flex;flex-wrap:wrap;gap:9px;align-items:baseline;justify-content:space-between;
+ padding-bottom:11px;border-bottom:1px solid #37638e;margin-bottom:11px}
+.neo160-heading strong{font-size:16px;letter-spacing:.05em;color:#d7efff;font-weight:1000}
+.neo160-heading small{color:#9ec2de;font-size:10px;font-weight:800;letter-spacing:.04em}
+.neo160-picker{display:flex;flex-direction:column;gap:6px;font-size:11px;color:#b4d9ee;margin-bottom:12px}
+.neo160-picker select{max-width:100%;width:100%;min-height:42px;border-radius:10px;
+ background:#09223b;color:#effaff;border:1px solid #469be0;padding:8px 12px;font-size:12px}
+.neo160-picker select:focus-visible{outline:2px solid #82e9ff;outline-offset:2px}
+.neo160-content h4{font-size:12px;color:#83eafa;margin:15px 0 9px}
+.neo160-profile{display:flex;flex-direction:column;gap:7px;border:1px solid #3c86b6;
+ background:linear-gradient(120deg,#15426a,#0d2743);padding:12px;border-radius:11px}
+.neo160-profile strong{font-size:18px;color:#fff;font-weight:1000;letter-spacing:.02em}
+.neo160-profile span{font-size:11px;color:#b8e0f7}
+.neo160-profile p{margin:4px 0 0;font-size:11px;line-height:1.6;color:#e3f7ff}
+.neo160-timeline{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.neo160-timeline p{margin:0;padding:9px;border:1px solid #356b96;border-radius:8px;
+ background:#132f4b;color:#d4ecfc;font-size:11px;line-height:1.5;overflow-wrap:anywhere}
+.neo160-teamgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.neo160-team{padding:10px;border:1px solid #37678f;border-radius:10px;background:#102b47;display:flex;flex-direction:column;gap:6px}
+.neo160-team strong{font-size:12px;color:#b3e9ff}.neo160-team span{font-size:10px;line-height:1.5;color:#c0dcef}
+.neo160-empty{font-size:11px;color:#a7bdd0;line-height:1.5}
+@media(max-width:550px){.neo160-encyclopedia{padding:10px}.neo160-heading strong{font-size:14px}
+ .neo160-teamgrid,.neo160-timeline{grid-template-columns:1fr}.neo160-profile strong{font-size:16px}}
+@media(prefers-reduced-motion:reduce){.neo160-encyclopedia *{animation:none!important;transition:none!important}}
