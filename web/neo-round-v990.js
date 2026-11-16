@@ -151,6 +151,28 @@
    panel=doc.createElement('section');panel.id='neo990-round-team';panel.className='card neo990-panel';
    panel.innerHTML='<div class="neo990-head"><div><small>⭐ SELEÇÃO DINÂMICA</small><h3>Time do Campeonato</h3><p>Muda automaticamente a cada rodada concluída, com base nas ações e notas registradas.</p></div><span id="neo990-round-label">—</span></div><label class="neo990-select">Competição<select id="neo990-comp"></select></label><div id="neo990-xi"></div><div class="neo990-foot">Apenas partidas realmente concluídas são utilizadas. Esta equipe é gerada pelo campeonato; não existe criação de times pelos usuários.</div>';
    root.insertBefore(panel,root.firstChild);
+   // Desktop presentation only: no edits to the original squads, seasons, or XI scoring.
+   panel.dataset.xiView='pitch';
+   const viewActions=doc.createElement('div');
+   viewActions.className='neo990-view-actions';
+   viewActions.setAttribute('role','group');
+   viewActions.setAttribute('aria-label','Visualização do melhor onze');
+   viewActions.innerHTML='<span>VISUALIZAÇÃO</span><button type="button" class="neo990-view-button is-current" data-neo990-view="pitch" aria-pressed="true">⚽ Campo tático</button><button type="button" class="neo990-view-button" data-neo990-view="list" aria-pressed="false">☷ Escalação compacta</button>';
+   panel.querySelector('.neo990-select').insertAdjacentElement('afterend',viewActions);
+   viewActions.addEventListener('click',event=>{
+    const control=event.target.closest('[data-neo990-view]');
+    if(!control)return;
+    const mode=control.dataset.neo990View;
+    if(mode!=='pitch'&&mode!=='list')return;
+    panel.dataset.xiView=mode;
+    viewActions.querySelectorAll('[data-neo990-view]').forEach(button=>{
+     const selected=button.dataset.neo990View===mode;
+     button.classList.toggle('is-current',selected);
+     button.setAttribute('aria-pressed',String(selected));
+    });
+    const list=panel.querySelector('.neo990-xi-list');
+    if(list)list.open=mode==='list';
+   });
    $('neo990-comp').addEventListener('change',e=>{selected=e.target.value;render(true)});
    return panel;
   }
@@ -185,6 +207,8 @@
       pitch+'<p class="neo990-xi-caption">⬆ Ataque · 🧤 Goleiro na base · Toque em um atleta para abrir sua ficha</p>'+
       '<details class="neo990-xi-list"><summary>☷ Ver escalação em lista</summary><div class="neo990-grid">'+starters+'</div></details>'+
       '<details class="neo990-bench"><summary>Banco e destaques ('+xi.reserves.length+')</summary>'+xi.reserves.map(p=>'<div>'+photo(p.name,p.club)+'<span>'+esc(p.name)+' · '+esc(p.role)+'</span><b>'+p.score.toFixed(1)+'</b></div>').join('')+'</details>';
+   const lineUp=target.querySelector('.neo990-xi-list');
+   if(lineUp)lineUp.open=panel.dataset.xiView==='list';
    if(xi.players.length===11){const team=registerDynamicTeam(E,xi);updateFriendly(team);}
   }
   if(doc.readyState==='loading')doc.addEventListener('DOMContentLoaded',()=>{injectGallery();render(true);}, {once:true});
