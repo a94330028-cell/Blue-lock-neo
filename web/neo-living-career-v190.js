@@ -219,14 +219,14 @@ function records(season,engine){
   const gap=Math.abs(n(g.result[0])-n(g.result[1]));
   goals+=n(g.result[0])+n(g.result[1]);
   if(g.result[0]===g.result[1])draws++;
-  if(!biggest||gap>biggest.gap)biggest={home:g.home,away:g.away,score:g.result,gap,round:g.round};
+  if(gap>0&&(!biggest||gap>biggest.gap))biggest={home:g.home,away:g.away,score:g.result,gap,round:g.round};
  }
  const c=season?.career?.players||{},players=Object.values(c).filter(p=>n(p.games)>0);
- const sorted=(stat)=>players.slice().sort((a,b)=>n(b[stat])-n(a[stat])||String(a.name).localeCompare(String(b.name)))[0]||null;
+ const sorted=(stat,filter=()=>true)=>players.filter(p=>n(p[stat])>0&&filter(p)).sort((a,b)=>n(b[stat])-n(a[stat])||String(a.name).localeCompare(String(b.name)))[0]||null;
  const table=engine?.standings?.(season)||[];
  const finished=completed.length>0&&completed.length===(season?.rounds||[]).reduce((a,r)=>a+(r.games||[]).length,0);
  return {played:completed.length,goals,draws,biggest,
-  topScorer:sorted('goals'),topAssister:sorted('assists'),topKeeper:sorted('saves'),
+  topScorer:sorted('goals'),topAssister:sorted('assists'),topKeeper:sorted('saves',p=>/^(GOL|GK)$/.test(p.role||'')),
   leader:table[0]?.team?.id||null,champion:finished?table[0]?.team?.id:null,
   teams:table};
 }
