@@ -1,3 +1,24 @@
+# Blue Lock NEO v1.0.0 — Primeiro lançamento oficial
+
+Este é o **primeiro lançamento público**. O histórico de builds 9.x/10.x era interno; a versão pública do jogo agora é **1.0.0**. Não é necessário apagar dados ou recomeçar a Liga.
+
+### Novidades desta versão
+
+- Liga Neo Egoísta com simulação de partidas, estatísticas, rivalidades e destaques por rodada.
+- Seleção do Campeonato, rankings da Liga e avaliação de atletas por posição.
+- Retratos offline, edição de fotos e backup, sem envio automático de imagens pessoais.
+- Nova página **Mais → 🚀 Atualizações**, com indicador de novidades não lidas e botão para copiar o resumo da versão.
+- Melhorias no aviso de atualizações e compatibilidade da entrega para quem vinha de APKs 10.x.
+- Integração segura do NEO UPDATE BOT ao GitHub Pages; o anúncio exige mídia e webhook configurados, e a API do Discord precisa confirmar o envio.
+
+### Compatibilidade
+
+A versão exibida é **1.0.0**. O número interno de entrega para o atualizador Android é **10.6.1** para não ser interpretado como uma versão mais antiga por APKs beta. A assinatura do APK continua precisando ser compatível.
+
+[Configurar NEO UPDATE BOT](docs/NEO_UPDATE_BOT.md)
+
+---
+
 # Blue Lock NEO 10.6.0 — Atualizações oficiais e Discord
 
 - **🚀 ATUALIZAÇÕES:** histórico oficial na aba Mais, carregado de `CHANGELOG.json`, com indicador discreto de versão não lida.
