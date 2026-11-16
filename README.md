@@ -1,3 +1,16 @@
+# Blue Lock NEO 10.4.0 — Escalações sem sobreposição
+
+- **Seleção do Campeonato em campo**: o Melhor XI dinâmico agora aparece numa formação 4-3-3 completa, com fotos, posições e notas individuais sobre o gramado. A lista antiga continua acessível num painel recolhível.
+- **Ubers 3-5-2**: três zagueiros, alas, meio-campistas e atacantes posicionados com separação real; nomes e fotos não ficam empilhados.
+- **Outras escalações**: Bastard, Barcha, Manshine, PXG, clubes históricos e formações alternativas usam posições adaptadas aos slots, evitando sobreposições no Android.
+- **Sem alteração de carreira**: somente a apresentação da escalação mudou. Os jogadores permanecem nos times, com o mesmo OVR, fotos, resultados e saves.
+- **Offline**: script de posições e CSS adicionados ao cache da versão 10.4.0; seleção dinâmica continua mudando após cada rodada concluída.
+
+Abra **Jogar → Atualizar** e veja **Liga → Time do Campeonato** ou **Jogadores → Escalações**.
+Não desinstale o APK nem limpe os dados, para não perder as fotos e os saves.
+
+---
+
 # Blue Lock NEO 10.3.0 — Futebol, estatísticas e Copas Eliminatórias
 
 ## Conteúdo novo

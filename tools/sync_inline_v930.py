@@ -103,7 +103,20 @@ if 'kaiser-192.png?v=9.9.1' not in updated:
 updated=updated.replace('neo-studio-v970.js?v=9.7.0','neo-studio-v970.js?v=9.9.4')
 updated=updated.replace('neo-v990.css?v=9.9.0','neo-v990.css?v=9.9.4')
 # v10.0: Bust stale Mobile Edition assets when building the Android web bundle.
-updated=re.sub(r'src="mobile-upgrade\.js(?:\?v=[^"]*)?"','src="mobile-upgrade.js?v=10.3.0"',updated)
-updated=re.sub(r'href="mobile-upgrade\.css(?:\?v=[^"]*)?"','href="mobile-upgrade.css?v=10.3.0"',updated)
+updated=re.sub(r'src="mobile-upgrade\.js(?:\?v=[^"]*)?"','src="mobile-upgrade.js?v=10.4.0"',updated)
+updated=re.sub(r'href="mobile-upgrade\.css(?:\?v=[^"]*)?"','href="mobile-upgrade.css?v=10.4.0"',updated)
+# v10.4: load the positional layout BEFORE Squad and Best XI scripts.
+# The generated page is shared by GitHub Pages and the Android WebView.
+if 'neo-pitch-layout-v1040.js' not in updated:
+    anchor='<script defer src="neo-squads-v980.js'
+    if updated.count(anchor)!=1:raise RuntimeError('Unable to place position helper before Squad screen')
+    updated=updated.replace(anchor,'<script defer src="neo-pitch-layout-v1040.js?v=10.4.0"></script>\n'+anchor)
+if 'neo-pitch-v1040.css' not in updated:
+    if updated.count('</head>')!=1:raise RuntimeError('Unable to install pitch styling')
+    updated=updated.replace('</head>','<link rel="stylesheet" href="neo-pitch-v1040.css?v=10.4.0">\n</head>')
+# Existing squads and best-XI scripts changed and must bypass the previous cached copy.
+for file in ('neo-squads-v980.js','neo-round-v990.js'):
+    updated=re.sub(r'src="'+re.escape(file)+r'(?:\?v=[^"]*)?"','src="'+file+'?v=10.4.0"',updated)
+updated=re.sub(r'href="neo-squads-v980\.css(?:\?v=[^"]*)?"','href="neo-squads-v980.css?v=10.4.0"',updated)
 html.write_text(updated,encoding='utf-8')
 print('Inline game modules synchronized:',counts)
