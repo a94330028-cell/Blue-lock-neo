@@ -99,12 +99,13 @@ function observe(m){
  }
  const pass=m.lastPass;
  const owner=m.ball.owner;
- if(pass&&owner&&m.ball.mode==='carry'&&pass.to===owner.name&&pass.side===owner.side){
+ if(pass?.p&&owner&&pass.p!==owner&&m.ball.mode==='carry'&&pass.side===owner.side&&
+    num(m.time)-num(pass.time)<95){
   const old=s.chain[owner.side];
   if(old?.id===pass&&old.done)return;
   const prev=s.chain[owner.side];
   const player=m.players.find(p=>p.name===owner.name&&p.side===owner.side);
-  s.chain[owner.side]={id:pass,done:true,owner:owner.name,at:num(m.time),count:prev?.owner===pass.from?prev.count+1:1};
+  s.chain[owner.side]={id:pass,done:true,owner:owner.name,at:num(m.time),count:prev?.owner===pass.p.name?prev.count+1:1};
   s.receptions++;
   if(s.chain[owner.side].count>=3&&player){
    pulse(m,36,'combination',player,'Combinação especial após sequência real de passes recebidos');
