@@ -134,7 +134,15 @@ const server=http.createServer((req,res)=>{
       alt:img.alt})));
     assert.equal(portraits.length,3,'podium shows three existing registered player portraits');
     assert.ok(portraits.every(p=>p.hasName&&p.fit==='contain'&&p.alt));
-    await page.click('#neo250-podium .neo250-position-1');
+    const podiumVisibility=await page.$eval('#neo250-podium .neo250-position-1',el=>({
+      visible:!!el.getClientRects().length&&getComputedStyle(el).visibility==='visible',
+      details:!!el.closest('details:not([open])'),
+      rect:el.getBoundingClientRect().toJSON(),
+      parent:el.parentElement?.parentElement?.parentElement?.id
+     }));
+     console.log('PODIUM CLICKABLE',width+'x'+height,JSON.stringify(podiumVisibility));
+     assert.ok(podiumVisibility.visible&&!podiumVisibility.details,'Podium card cannot be inside folded controls');
+     await page.click('#neo250-podium .neo250-position-1');
     assert.ok(await page.$eval('#neo250-player-detail',el=>el.textContent.includes('Jogos')),
        'podium player opens functioning compact profile with statistics');
     assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth)<=5,
