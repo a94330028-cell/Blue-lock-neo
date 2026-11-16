@@ -1,0 +1,59 @@
+name: NEO UPDATE BOT — revisão e reenvio manual
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "Prévia sem Discord ou anúncio de versão publicada"
+        required: true
+        default: preview
+        type: choice
+        options:
+          - preview
+          - announce
+          - retry_pending
+permissions:
+  contents: write
+concurrency:
+  group: neo-discord-manual
+  cancel-in-progress: false
+jobs:
+  manual:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Obter código oficial do Blue Lock NEO
+        uses: actions/checkout@v4
+      - name: Validar changelog e estrutura dos embeds
+        run: |
+          python3 -m unittest discover -s tests -p test_neo_announcer.py
+          python3 tools/neo_update_announcement.py validate
+      - name: Gerar prévia local sem enviar mensagem
+        if: inputs.action == 'preview'
+        run: python3 tools/neo_update_announcement.py preview --output neo-update-preview.json
+      - name: Disponibilizar payload de teste para revisão
+        if: inputs.action == 'preview'
+        uses: actions/upload-artifact@v4
+        with:
+          name: NEO-UPDATE-BOT-DRY-RUN
+          path: neo-update-preview.json
+          retention-days: 7
+      - name: Verificar artes oficiais antes do envio
+        if: inputs.action != 'preview'
+        run: python3 tools/neo_update_announcement.py validate --require-media
+      - name: Anunciar somente a versão confirmada no GitHub Pages
+        if: inputs.action == 'announce'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: python3 tools/neo_update_announcement.py publish
+      - name: Retomar envio pendente após revisão do log
+        if: inputs.action == 'retry_pending'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: python3 tools/neo_update_announcement.py publish --retry-pending
+      - name: Resumo de segurança
+        if: always()
+        run: |
+          echo 'Prévia não envia mensagem. Reenvio ignora partes já confirmadas.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Se Discord não confirmou o recebimento, um reenvio manual ainda pode repetir uma mensagem cujo aceite se perdeu na rede.' >> "$GITHUB_STEP_SUMMARY"
