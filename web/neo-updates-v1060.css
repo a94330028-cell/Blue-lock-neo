@@ -119,3 +119,14 @@
  .neo110-kickers span{font-size:8px}
 }
 @media(prefers-reduced-motion:reduce){#neo1060-updates *{animation:none!important;transition:none!important}}
+
+
+/* The floating Android / browser update checker uses the same premium identity. */
+.neo920-pane{border-color:#168ed5!important;border-radius:17px!important;background:linear-gradient(155deg,#102b47,#071224 76%)!important;box-shadow:0 22px 55px #001224b7,0 0 0 1px #0ef6ff29 inset!important}
+.neo110-bot-header{border-radius:11px;overflow:hidden;margin:-1px 0 12px;border:1px solid #2d95c7;background:#061525;box-shadow:0 8px 20px #0006}
+.neo110-bot-header img{display:block;width:100%;height:auto;aspect-ratio:1983/793;object-fit:contain}
+.neo920-pane .neo920-uphead strong{color:#fff;font-size:15px;letter-spacing:.04em}
+.neo920-pane .neo920-primary{background:linear-gradient(90deg,#007cbd,#00b9d0)!important;border-color:#74eaff!important;box-shadow:0 5px 15px #02b7ea35}
+.neo920-pane .neo920-link{border-color:#3b85a9!important}
+.neo920-up-btn{background:linear-gradient(105deg,#0072b7,#00b7cf)!important;border-color:#72ecff!important;box-shadow:0 7px 21px #0089d177!important}
+@media(max-width:420px){.neo920-pane{padding:12px!important}.neo110-bot-header{margin:0 0 10px}}
