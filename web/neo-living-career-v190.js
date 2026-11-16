@@ -104,15 +104,14 @@ function recordMove(season,engine,input){
  const deal=availableDeals(season,engine,from,to).find(x=>x.name===name);
  if(!deal)throw Error('A negociação não é válida para estas equipes e escalações.');
  const candidate={...deal,round,id:'transfer-'+String(w.market.moves.length+1).padStart(2,'0')};
- const before=squadsFor(season,engine);
  const simulated=squadsFor(season,engine);
  if(!applyMove(simulated,candidate)||validateSquads(simulated).length)throw Error('A transferência criaria uma escalação inconsistente.');
- w.market.moves.push(candidate);
  const c=season.career;
  const previous=c.players?.[name+'|'+from];
+ if(previous&&c.players[name+'|'+to]&&n(c.players[name+'|'+to].games)>0)throw Error('Histórico de carreira já existente no novo clube.');
+ w.market.moves.push(candidate);
  if(previous){
-  const newKey=name+'|'+to,priorAtDestination=c.players[newKey];
-  if(priorAtDestination&&n(priorAtDestination.games)>0)throw Error('Histórico de carreira já existente no novo clube.');
+  const newKey=name+'|'+to;
   delete c.players[name+'|'+from];
   c.players[newKey]={...previous,club:to,clubHistory:[...(previous.clubHistory||[]),{club:from,throughRound:round-1}]};
  }
@@ -248,7 +247,8 @@ function recordSeason(engine,season,fixture,match,round){
    text:summary.champion.toUpperCase()+' conquistou a Liga Neo Egoísta após '+summary.played+' partidas oficialmente registradas.',
    source:'classificação final e tabela completa'});
  }
- if(w.market.automatic&&round%4===0&&round>w.market.lastAutoRound&&w.market.moves.length<MAX_MOVES){
+ if(w.market.automatic&&round%4===0&&round>w.market.lastAutoRound&&w.market.moves.length<MAX_MOVES&&
+   (season.rounds.find(r=>r.round===round)?.games||[]).every(g=>Array.isArray(g.result))){
   const table=summary.teams;
   const leader=table[0]?.team?.id,last=table.at(-1)?.team?.id;
   const candidates=Object.values(season.career.players||{})
