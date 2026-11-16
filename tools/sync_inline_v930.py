@@ -24,7 +24,7 @@ def change(m):
  inside=m.group(2);which=None
  if 'Individual attributes and positional OVR' in inside and 'const ROLE_WEIGHTS' in inside:which='attributes'
  elif 'Master-Striker entry profiles' in inside and 'WINDOW_SECONDS' in inside:which='masters'
- elif 'Season progression and competitive ranking' in inside and 'function mvpRanking' in inside:which='progression'
+ elif 'Season progression and competitive ranking' in inside:which='progression'
  elif 'const TICK = 1/30' in inside and 'const SKILLS =' in inside:which='engine'
  elif 'function renderScorerBoard(){' in inside and 'const $=id=>document.getElementById(id);' in inside:which='app'
  if which is None:return m.group(0)
