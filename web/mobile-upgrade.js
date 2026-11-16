@@ -192,9 +192,20 @@ function boot(){
   }else document.body.appendChild(addon);
  }
 
+ // NEO 10.3 extensions are additive and read existing clubs, fixtures and portraits.
+ for(const [id,src] of [
+  ['neo1010-script','./neo-football-v1010.js?v=10.3.0'],
+  ['neo1020-script','./neo-insights-v1020.js?v=10.3.0'],
+  ['neo1030-script','./neo-tournament-v1030.js?v=10.3.0']
+ ]){
+  if(document.getElementById(id))continue;
+  const addon=document.createElement('script');addon.id=id;addon.async=false;addon.src=src;
+  addon.onerror=()=>toast('Não foi possível carregar '+src+'. Verifique a atualização do jogo.');
+  document.body.appendChild(addon);
+ }
  if(!document.getElementById('neo1000-script')){
   const addon=document.createElement('script');addon.id='neo1000-script';
-  addon.src='./neo-v1000.js?v=10.0.1';
+  addon.src='./neo-v1000.js?v=10.3.0';
   addon.onerror=()=>toast('Não foi possível carregar o Raio-X e as premiações. Atualize o aplicativo.');
   document.body.appendChild(addon);
  }
