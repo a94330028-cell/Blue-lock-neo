@@ -111,7 +111,8 @@ const server=http.createServer((req,res)=>{
        ancestors:e?[...(()=>{let a=[],n=e;while(n&&a.length<6){a.push(n.id||n.className||n.tagName);n=n.parentElement;}return a;})()]:[]};
     });
     console.log('RANKING NAV',width+'x'+height,JSON.stringify(rankState));
-    await page.selectOption('#rankMode','performance');
+    await page.evaluate(()=>{const control=document.getElementById('rankMode');control.value='performance';control.dispatchEvent(new Event('change',{bubbles:true}));});
+    assert.ok(await page.$eval('#neo250-podium',el=>getComputedStyle(el).display!=='none'&&el.getBoundingClientRect().height>100),'V10 podium must be visible outside legacy folded controls');
     await page.waitForFunction(()=>document.querySelectorAll('#neo250-podium .neo250-champion').length>=3,null,{timeout:12000});
     const portraits=await page.$eval('#neo250-podium .neo250-champion img[data-portrait]',imgs=>imgs.map(img=>({
       hasName:!!img.getAttribute('data-player-name'),fit:getComputedStyle(img).objectFit,
