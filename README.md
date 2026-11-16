@@ -1,3 +1,17 @@
+# Blue Lock NEO v1.1.0 — IA Tática + Turbo 40× + NEO UPDATE CENTER
+
+**Nova atualização oficial:** o simulador mantém toda a temporada, escalações e os retratos locais existentes.
+
+- **Turbo 40×:** botão ao lado da velocidade e opção no seletor. Executa os mesmos passos de simulação do jogo normal, sem inventar gols. A taxa efetiva pode ser menor em aparelhos lentos.
+- **IA de jogo:** passes mais inteligentes quando há pressão, coberturas próximas à área defensiva e novas infiltrações no segundo poste ou no fim da partida.
+- **NEO UPDATE CENTER:** banner e avatar oficiais, destaques da versão, histórico completo e nova aparência da central flutuante.
+- **Discord:** embeds com identidade NEO UPDATE BOT, banner oficial e avatar no cabeçalho.
+- **Correção:** o verificador web agora distingue a versão pública 1.1.0 do número interno 10.6.2 usado para atualizar o APK de builds anteriores.
+
+**Jogar:** https://a94330028-cell.github.io/Blue-lock-neo/
+
+---
+
 # Blue Lock NEO v1.0.0 — Primeiro lançamento oficial
 
 Este é o **primeiro lançamento público**. O histórico de builds 9.x/10.x era interno; a versão pública do jogo agora é **1.0.0**. Não é necessário apagar dados ou recomeçar a Liga.
