@@ -30,7 +30,7 @@ const adapted=M.dangerTarget(defence,mate,{x:270,y:390},'block');
 assert.ok(adapted.y>390&&adapted.y<500,'actual threat gets ONE defender moving towards dangerous lane');
 assert.equal(M.dangerTarget(defence,mate,{x:270,y:390},'attack').y,390,'no extra marking while attacking');
 const run=M.adaptiveRun({...match,progress:()=>1010,ball:{owner:alice},random:()=>0},bob,alice,'support');
-assert.equal(run,'third-man','good chemistry changes an actual off-ball run');
+assert.equal(run,'blindside','wide chemistry changes an actual off-ball run behind the defence');
 const season={career:{players:{'Isagi|bm':{name:'Isagi',club:'bm',games:3,abilityUses:{impact:6}}},
  links:{},rivals:{},stories:[]}};
 const fixture={home:'bm',away:'px'};
