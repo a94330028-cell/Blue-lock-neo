@@ -46,7 +46,7 @@ function bidDelta(player,goalDifference=0){
  const resultBonus=goalDifference>0?.27:goalDifference===0?.10:0;
  // Very weak displays can reduce an existing offer in later matches, but an
  // actual first appearance never vanishes from the auction board.
- if(note<5.3&&activity<.5)return -bidRound((5.3-note)*.45e6);
+ if(note<5.7)return -Math.max(BID_STEP,bidRound((5.7-note)*1.1e6));
  return Math.max(MIN_PLAYED_BID,bidRound((.32+ratingBonus+activity+resultBonus)*1e6));
 }
 // Rebuild inflated old bids using ONLY actual recorded match sheets.
@@ -54,6 +54,8 @@ function bidDelta(player,goalDifference=0){
 function reconcileBids(season,skipFixture=null){
  const career=ensure(season);
  if(career.bidVersion===BID_VERSION)return 0;
+ const trustedSavedBids=career.bidVersion===2;
+ const allowed=leagueParticipants(season);
  const savedEntries=Object.values(career.players),prices=new Map(),byPlayer=new Map();
  for(const round of season?.rounds||[])for(const fixture of round.games||[]){
   if(fixture===skipFixture||!Array.isArray(fixture.result)||!Array.isArray(fixture.details?.players))continue;
@@ -76,10 +78,24 @@ function reconcileBids(season,skipFixture=null){
   if(!p?.name||!p?.club)continue;
   const id=key(p.name,p.club);
   const reconstructed=byPlayer.get(id);
-  // No match-sheet evidence means NO new bid and NO destruction of an
-  // existing offer from older saves, custom competitions or transfers.
-  if(!reconstructed?.length)continue;
-  const previouslySaved=Math.max(0,bidRound(num(p.value)));
+  const validClub=allowed.has(p.club);
+  // V2 bids were earned on the field and must never be erased. Pre-v2
+  // versions contained large phantom start prices and need an evidence-only reset.
+  if(!validClub||(!reconstructed?.length&&num(p.games)<=0)){
+   if(!trustedSavedBids){
+    if(num(p.value)!==0){p.value=0;repaired++;}
+    p.change=0;p.bidHistory=[];
+   }
+   continue;
+  }
+  if(!reconstructed?.length){
+   if(!trustedSavedBids){
+    if(num(p.value)!==0){p.value=0;repaired++;}
+    p.change=0;p.bidHistory=[];
+   }
+   continue;
+  }
+  const previouslySaved=trustedSavedBids?Math.max(0,bidRound(num(p.value))):0;
   const replayed=Math.max(MIN_PLAYED_BID,prices.get(id)||0);
   // Keep already-earned higher offers; only backfill unjustified zero bids.
   const improved=Math.max(previouslySaved,replayed);

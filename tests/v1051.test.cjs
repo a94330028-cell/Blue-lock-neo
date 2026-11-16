@@ -16,7 +16,7 @@ assert.ok(P.bidDelta({role:'GOL',rating:8.0,saves:7},0)>0,'great keeper increase
 assert.ok(P.bidDelta({role:'ZAG',rating:8.0,tackles:5,interceptions:5},0)>0,'great defender increases value');
 assert.ok(P.bidDelta({role:'CA',rating:4.4,goals:3},2)<0,'bad match never increases bid despite goals/team win');
 assert.ok(P.bidDelta({role:'GOL',rating:5.2,saves:5},1)<0,'bad keeper match lowers the bid');
-assert.equal(P.bidDelta({role:'CA',rating:6.7,goals:0,assists:0},0),0,'neutral match gives no automatic money');
+assert.ok(P.bidDelta({role:'CA',rating:6.7,goals:0,assists:0},0)>0,'real participation at a neutral rating earns a modest bid');
 const snapshotPlayer={name:'Isagi',club:'bm',role:'CA',games:2,goals:1,value:390000000,history:[{round:1,value:300000000},{round:2,value:390000000}]};
 const season={schema:2,rounds:[
  {round:1,games:[{home:'bm',away:'px',result:[1,0],details:{players:[
@@ -75,11 +75,11 @@ const fixture=realSeason.rounds[0].games[0];
 const match=new E.Match(fixture.home,fixture.away,4557);
 match.runToEnd();
 assert.equal(E.recordFixture(realSeason,fixture,match),true);
-assert.equal(realSeason.career.bidVersion,2,'new seasons activate v2 auction rules');
+assert.equal(realSeason.career.bidVersion,3,'new seasons activate the v3 participation auction');
 assert.ok(Object.values(realSeason.career.players).every(p=>p.value>=0));
 const app=read('web/app.js'),market=read('web/neo-v960.js');
 assert.ok(app.includes('E.Progression.reconcileBids(saved)'),'old saves migrated on load');
 assert.ok(market.includes("D.roster(E,s,{scope:'league'})"),'ranking is scoped to league');
 assert.ok(read('web/service-worker.js').includes('blue-lock-neo-v1.10.1-bids-v3'));
 assert.equal(read('web/VERSION').trim(),'1.8.0');
-console.log('PASS 10.6.0: exclusive NEL league rankings, unique XI athletes, zero initial bids, poor-match decline, safe save migration');
+console.log('PASS 10.6.0: exclusive NEL rankings, honest bids after participation, poor-match decline, safe migration');
