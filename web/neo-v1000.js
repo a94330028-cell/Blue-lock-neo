@@ -46,6 +46,18 @@ function matchPulse(match){
   styles:match.teams.map(t=>BIAS[t.id]?.label||'Plano adaptável'),
   duel:derby(match.teams[0].id,match.teams[1].id),finished:!!match.finished};
 }
+function leagueRecaps(season,limit=6){
+ const found=[];
+ for(const round of season?.rounds||[])for(const game of round.games||[]){
+  if(!Array.isArray(game.result)||!game.details)continue;
+  const d=game.details;
+  const goals=(d.goalRecords||[]).filter(g=>g?.scorer).map(g=>({minute:N(g.minute),scorer:String(g.scorer),assister:g.assister?String(g.assister):''})).sort((a,b)=>a.minute-b.minute);
+  const incidents=(d.events||[]).filter(e=>e&&['goal','save','penalty','card','shot','halftime','skill','tackle'].includes(e.type))
+   .map(e=>({minute:N(e.minute),type:String(e.type),text:String(e.text||'').slice(0,150)})).slice(0,8);
+  found.push({home:game.home,away:game.away,score:game.result.slice(0,2).map(N),round:N(round.round),goals,incidents});
+ }
+ return found.slice(-Math.max(1,Math.min(12,N(limit)||6))).reverse();
+}
 function adaptTactics(engine){
  const p=engine?.Match?.prototype;if(!p||p._neo1000Tactics||typeof p.rollGameplan!=='function')return false;
  const original=p.rollGameplan;
@@ -97,6 +109,21 @@ function mount(win){
   el.innerHTML='<h3>🏆 Prêmios do Campeonato</h3><p class="neo1000-small">Destaques parciais, calculados somente com partidas realmente salvas.</p>'+
    (list.length?'<div class="neo1000-prizes">'+list.map(r=>'<div class="neo1000-prize"><b>'+r.icon+' '+esc(r.label)+'</b><strong>'+esc(r.player.name)+'</strong><small>'+esc(r.metric(r.player))+' · '+esc(r.player.club||'')+'</small></div>').join('')+'</div>':'<p class="neo1000-small">As premiações aparecem após a primeira rodada com estatísticas.</p>');
  }
+ function renderRecaps(){
+  const host=$('records');if(!host)return;
+  let wrap=$('neo1000-recaps');
+  if(!wrap){wrap=doc.createElement('section');wrap.id='neo1000-recaps';wrap.className='neo1000-panel';host.prepend(wrap);}
+  const list=leagueRecaps(season(),6);
+  const signature=list.map(r=>r.round+':'+r.home+':'+r.away+':'+r.score.join('-')).join(';');
+  if(wrap.dataset.key===signature)return;wrap.dataset.key=signature;
+  wrap.innerHTML='<h3>🎬 Arquivo de jogos da Liga</h3><p class="neo1000-small">Súmulas reais dos últimos confrontos concluídos; não é uma reprodução de vídeo.</p>'+
+    (list.length?list.map(r=>{
+      const home=win.NeoEngine.teamById(r.home)?.short||r.home,away=win.NeoEngine.teamById(r.away)?.short||r.away;
+      const items=r.goals.map(g=>"<li>"+g.minute+"' ⚽ "+esc(g.scorer)+(g.assister?' · Assistência: '+esc(g.assister):'')+'</li>');
+      if(!items.length)items.push(...r.incidents.map(e=>"<li>"+e.minute+"' "+esc(e.text)+'</li>'));
+      return '<details class="neo1000-prize"><summary><b>Rodada '+r.round+'</b> '+esc(home)+' '+r.score.join(' × ')+' '+esc(away)+'</summary><ul class="neo1000-small">'+(items.length?items.join(''):'<li>Resultado salvo sem lances detalhados.</li>')+'</ul></details>';
+    }).join(''):'<p class="neo1000-small">Ainda não há partidas concluídas no histórico.</p>');
+ }
  adaptTactics(win.NeoEngine);
  const proto=win.NeoEngine.Match?.prototype;
  if(proto&&!proto._neo1000Pulse&&typeof proto.step==='function'){
@@ -111,14 +138,15 @@ function mount(win){
   Object.defineProperty(proto,'_neo1000Pulse',{value:true});
  }
  function boot(){
-  panel();renderAwards();
+  panel();renderAwards();renderRecaps();
   doc.addEventListener('click',event=>{
    if(event.target.closest('[data-tab="league"],[data-neo-tab="league"]'))win.setTimeout(renderAwards,100);
+   if(event.target.closest('[data-tab="records"],[data-neo-tab="records"]'))win.setTimeout(renderRecaps,100);
    if(event.target.closest('[data-tab="match"],[data-neo-tab="match"]'))win.setTimeout(panel,50);
   });
   win.setInterval(()=>{if(doc.querySelector('.nav button[data-tab="league"].active'))renderAwards();},6500);
  }
  if(doc.readyState==='loading')doc.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 }
-return {BIAS,derby,awards,matchPulse,adaptTactics,mount};
+return {BIAS,derby,awards,leagueRecaps,matchPulse,adaptTactics,mount};
 });
