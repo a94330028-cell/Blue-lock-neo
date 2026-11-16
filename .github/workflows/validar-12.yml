@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
     paths:
+      - 'web/app.js'
       - 'web/neo-twelve-v230.js'
       - 'web/neo-twelve-v230.css'
       - 'web/neo-desktop.css'
