@@ -1,0 +1,101 @@
+{
+  "schema": 1,
+  "project": "Blue Lock NEO",
+  "current_version": "10.6.0",
+  "site_url": "https://a94330028-cell.github.io/Blue-lock-neo/",
+  "media": {
+    "banner": {
+      "path": "assets/updates/neo-update-banner.jpg",
+      "sha256": "bd56fa4c5ee2c4f6d9cdf259da6c14bae1ab25077d81f9253c7be5fb555f6768",
+      "width": 1536,
+      "height": 614,
+      "mime": "image/jpeg"
+    },
+    "avatar": {
+      "path": "assets/updates/neo-update-avatar.jpg",
+      "sha256": "7572eea5ed7bf33e8fa1af5c63d4753dd55fb79a3d16a4178c5d508e70e02cbe",
+      "width": 1536,
+      "height": 1536,
+      "mime": "image/jpeg"
+    }
+  },
+  "releases": [
+    {
+      "version": "10.6.0",
+      "date": "2026-11-16",
+      "novidades": [
+        "Nova área 🚀 ATUALIZAÇÕES com histórico oficial e indicador discreto de versões ainda não visualizadas.",
+        "Gerador de anúncios por webhook para o Discord, condicionado a uma implantação bem-sucedida no GitHub Pages e à configuração do segredo DISCORD_WEBHOOK_URL.",
+        "Registro persistente de anúncios por versão usando tags do GitHub, com proteção para reexecuções.",
+        "CHANGELOG.json estruturado como fonte comum do site e do Discord, com validação antes de enviar qualquer mensagem."
+      ],
+      "correcoes": [],
+      "jogabilidade": [],
+      "visual": [
+        "Novo painel de histórico de versões adaptado para telas de celular, sem abrir janelas durante as partidas."
+      ],
+      "otimizacoes": [
+        "Validação dos limites dos embeds do Discord, proibição de menções automáticas e prévia local sem postar no canal.",
+        "Registro de confirmações do Discord e tentativas controladas para falhas temporárias."
+      ],
+      "importantes": [
+        "A publicação só pode ser anunciada depois de confirmada no site e com as duas artes oficiais acessíveis.",
+        "Sem o segredo DISCORD_WEBHOOK_URL, o jogo continua publicando normalmente, mas nenhum anúncio é disparado."
+      ]
+    },
+    {
+      "version": "10.5.1",
+      "date": "2026-11-16",
+      "novidades": [],
+      "correcoes": [
+        "Jogadores do Melhor XI deixam de contar como uma inscrição duplicada nas listas da Liga.",
+        "Ranking da Liga Neo Egoísta passa a usar somente os cinco clubes participantes.",
+        "Lances iniciais fictícios corrigidos para ¥0; partidas ruins podem diminuir os valores acumulados."
+      ],
+      "jogabilidade": [
+        "Lances passam a variar de acordo com as notas e ações registradas de cada partida."
+      ],
+      "visual": [],
+      "otimizacoes": [
+        "Valores de temporadas anteriores recalculados usando súmulas salvas sem apagar resultados ou retratos."
+      ],
+      "importantes": []
+    },
+    {
+      "version": "10.5.0",
+      "date": "2026-11-16",
+      "novidades": [
+        "Opção para selecionar a foto principal já incluída no jogo.",
+        "Novos escudos estilizados de clubes e importação alternativa de retratos no Android."
+      ],
+      "correcoes": [
+        "Retratos locais passam a ter prioridade sobre artes genéricas escolhidas automaticamente.",
+        "Formação do Melhor XI evita adaptações incompatíveis entre setores do campo."
+      ],
+      "jogabilidade": [],
+      "visual": [
+        "Cartões, retratos, notas de 0 a 10 e indicadores do campo mais legíveis no celular."
+      ],
+      "otimizacoes": [
+        "Os retratos incluídos no pacote passam a integrar o cache offline."
+      ],
+      "importantes": []
+    },
+    {
+      "version": "10.4.0",
+      "date": "2026-11-16",
+      "novidades": [
+        "Seleção do Campeonato agora pode ser visualizada como escalação 4-3-3 no campo."
+      ],
+      "correcoes": [
+        "Distribuição visual dos jogadores da Ubers em 3-5-2 corrigida para reduzir sobreposições."
+      ],
+      "jogabilidade": [],
+      "visual": [
+        "Fotos, posições e notas alinhadas aos espaços de cada formação em telas pequenas."
+      ],
+      "otimizacoes": [],
+      "importantes": []
+    }
+  ]
+}
