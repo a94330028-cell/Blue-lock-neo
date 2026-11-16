@@ -16,12 +16,16 @@ import zipfile
 ROOT = Path(__file__).resolve().parent.parent
 WEB = ROOT / "web"
 HOST = "https://a94330028-cell.github.io/Blue-lock-neo"
-VERSION = (WEB / "VERSION").read_text(encoding="utf-8").strip()
-if not re.fullmatch(r"\d{1,4}\.\d{1,4}\.\d{1,4}", VERSION):
-    raise SystemExit("web/VERSION inválida. Ex.: 8.5.0")
+PUBLIC_VERSION = (WEB / "VERSION").read_text(encoding="utf-8").strip()
+# Build number stays monotonic so old 10.x beta Android clients can receive
+# the first stable release displayed to players as 1.0.0.
+UPDATE_BUILD = (WEB / "UPDATE_BUILD").read_text(encoding="utf-8").strip()
+for label, version in (("public", PUBLIC_VERSION), ("Android update", UPDATE_BUILD)):
+    if not re.fullmatch(r"\d{1,4}\.\d{1,4}\.\d{1,4}", version):
+        raise SystemExit(f"Invalid {label} version: {version}")
 DEST = WEB / "updates"
 DEST.mkdir(exist_ok=True)
-ARCHIVE = DEST / f"blue-lock-web-{VERSION}.zip"
+ARCHIVE = DEST / f"blue-lock-web-{UPDATE_BUILD}.zip"
 with zipfile.ZipFile(ARCHIVE, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=7) as z:
     for file in sorted(WEB.rglob("*")):
         if not file.is_file() or DEST in file.parents or file.name in {".DS_Store"}:
@@ -29,11 +33,12 @@ with zipfile.ZipFile(ARCHIVE, "w", compression=zipfile.ZIP_DEFLATED, compresslev
         z.write(file, file.relative_to(WEB).as_posix())
 sha = hashlib.sha256(ARCHIVE.read_bytes()).hexdigest()
 manifest = {
-    "version": VERSION,
+    "version": UPDATE_BUILD,
+    "displayVersion": PUBLIC_VERSION,
     "url": f"{HOST}/updates/{ARCHIVE.name}",
     "sha256": sha,
     "minAndroidVersion": 85,
-    "changes": "Correções, novidades e atualizações da Liga Neo Egoísta"
+    "changes": "Blue Lock NEO 1.0.0 — primeira versão oficial, novidades, correções e melhorias"
 }
 (DEST / "latest.json").write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 print(f"Pacote: {ARCHIVE} ({ARCHIVE.stat().st_size} bytes)")
