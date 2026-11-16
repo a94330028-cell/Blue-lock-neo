@@ -74,7 +74,7 @@ function mount(win){
   }
   const banner=data.media?.banner?.path;
   const preview=doc.getElementById('neo1060-banner');
-  if(preview&&typeof banner==='string'&&/^assets\/updates\/[a-z0-9-]+\.jpg$/.test(banner)){
+  if(preview&&typeof banner==='string'&&/^assets\/updates\/[a-z0-9-]+\.png$/.test(banner)){
    preview.src='./'+banner;preview.hidden=false;
    preview.onerror=()=>{preview.hidden=true;};
   }
