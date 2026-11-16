@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "project": "Blue Lock NEO",
-  "current_version": "1.0.0",
+  "current_version": "1.1.0",
   "site_url": "https://a94330028-cell.github.io/Blue-lock-neo/",
   "media": {
     "banner": {
@@ -20,6 +20,37 @@
     }
   },
   "releases": [
+    {
+      "version": "1.1.0",
+      "date": "2026-11-16",
+      "novidades": [
+        "Modo Turbo 40× disponível ao lado do seletor de velocidade das partidas, com botão para ativar e desativar rapidamente.",
+        "Novo motor de decisões táticas: saídas de pressão, cobertura defensiva contextual e infiltrações para o segundo poste.",
+        "Painel NEO UPDATE CENTER com identidade futurista, banner oficial, destaques da versão e histórico organizado.",
+        "Indicador discreto de IA Tática ativa durante as partidas, sem bloquear a visão do campo."
+      ],
+      "correcoes": [
+        "Corrigida a comparação da versão pública no verificador web de atualizações, evitando confundir a versão 1.1.0 com a numeração interna 10.x do Android.",
+        "A troca de velocidade agora elimina acúmulo de tempo da opção anterior, evitando saltos inesperados ao alternar entre modos.",
+        "No Turbo, o processamento não pula eventos, faltas, disputas ou gols: usa os mesmos passos do motor de simulação."
+      ],
+      "jogabilidade": [
+        "Meio-campistas e defensores procuram opções de passe mais seguras ao serem pressionados por dois ou mais adversários.",
+        "Recomposição perto da área própria e movimentos de ataque pelo lado oposto foram aprimorados com base na posição real da bola.",
+        "Jogadores ofensivos e de meio-campo ajustam melhor as infiltrações no fim do jogo quando sua equipe está perdendo."
+      ],
+      "visual": [
+        "Central de atualizações redesenhada com cabeçalho elétrico, imagem oficial, destaques em cartões, informações da versão e layout adaptado para celulares.",
+        "Botão Turbo 40× com indicador de estado e estilo próprio."
+      ],
+      "otimizacoes": [
+        "Processamento em blocos e redução da taxa de renderização de animações no Turbo para evitar travamentos excessivos.",
+        "Velocidade Turbo depende da capacidade do dispositivo; em aparelhos lentos, a taxa efetiva pode ficar abaixo do alvo de 40×."
+      ],
+      "importantes": [
+        "A atualização preserva os saves, temporadas, retratos locais e campeonatos existentes."
+      ]
+    },
     {
       "version": "1.0.0",
       "date": "2026-11-16",

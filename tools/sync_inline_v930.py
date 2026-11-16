@@ -150,6 +150,13 @@ updated=re.sub(r'src="neo-updates-v1060\.js(?:\?v=[^"]*)?"','src="neo-updates-v1
 updated=re.sub(r'href="neo-updates-v1060\.css(?:\?v=[^"]*)?"','href="neo-updates-v1060.css?v=10.6.0"',updated)
 # First official public release: bust every legacy cached JS/CSS version query.
 # Internal module filenames remain unchanged to preserve user data.
-updated=re.sub(r'(\?v=)\d+\.\d+\.\d+', r'\g<1>1.0.0', updated)
+updated=re.sub(r'(\?v=)\d+\.\d+\.\d+', r'\g<1>1.1.0', updated)
+# v1.1: AI tactics and Turbo control styling, available on both browser and Android.
+if 'neo-ai-v110.js' not in updated:
+    if updated.count('</body>')!=1:raise RuntimeError('Cannot attach tactical AI')
+    updated=updated.replace('</body>','<script defer src="neo-ai-v110.js?v=1.1.0"></script>\n</body>')
+if 'neo-ai-v110.css' not in updated:
+    if updated.count('</head>')!=1:raise RuntimeError('Cannot attach Turbo UI styling')
+    updated=updated.replace('</head>','<link rel="stylesheet" href="neo-ai-v110.css?v=1.1.0">\n</head>')
 html.write_text(updated,encoding='utf-8')
 print('Inline game modules synchronized:',counts)

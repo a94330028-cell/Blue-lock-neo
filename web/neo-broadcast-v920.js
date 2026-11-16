@@ -3,7 +3,7 @@
 (() => {
   'use strict';
   if (window.NeoBroadcast92) return;
-  const VERSION='9.2.0', HOST='https://a94330028-cell.github.io/Blue-lock-neo/';
+  const VERSION='1.1.0', HOST='https://a94330028-cell.github.io/Blue-lock-neo/';
   const MODES=Object.freeze({classic:{label:'Clássica',rate:18,physics:1,mins:5},long:{label:'Estendida',rate:12,physics:.75,mins:10},cinema:{label:'Cinematográfica',rate:10,physics:.60,mins:15},epic:{label:'Épica',rate:9,physics:.50,mins:20}});
   const $=id=>document.getElementById(id);
   const APP_KEY='neo-broadcast-mode-v92', HISTORY_KEY='neo-broadcast-history-v92';
@@ -53,7 +53,7 @@
   @media(prefers-reduced-motion:reduce){.neo920-pressure i{transition:none}}
   `;
   function installCSS(){const s=document.createElement('style');s.id='neo920-styles';s.textContent=styles;document.head.appendChild(s)}
-  function installedVersion(){try{return window.BlueLockAndroid?.getInstalledVersion?.()||VERSION;}catch(_){return VERSION}}
+  function installedVersion(){return VERSION;}
   function parts(v){return String(v||'0.0.0').split('.').slice(0,3).map(x=>parseInt(x,10)||0)}
   function compare(a,b){const x=parts(a),y=parts(b);for(let i=0;i<3;i++)if(x[i]!==y[i])return x[i]-y[i];return 0}
   const native=()=>!!window.BlueLockAndroid?.checkForUpdates;
@@ -73,8 +73,10 @@
       let response;try{response=await fetch('./updates/latest.json?ver='+Date.now(),{cache:'no-store',signal:controller.signal})}finally{clearTimeout(stop)}
       if(!response.ok)throw new Error('HTTP '+response.status);
       const data=await response.json();
-      if(!/^\d+\.\d+\.\d+$/.test(data.version||''))throw new Error('Versão inválida');
-      setUpdateStatus(compare(data.version,VERSION)>0?'Versão '+data.version+' publicada. Atualize a página para carregar os novos arquivos.':'Você está usando a versão mais recente: v'+VERSION,compare(data.version,VERSION)>0?data.version:'');
+      // The APK update stream is monotonic (10.x), while public release notes use 1.x.
+      const published=data.displayVersion||data.version;
+      if(!/^\d+\.\d+\.\d+$/.test(published||''))throw new Error('Versão inválida');
+      setUpdateStatus(compare(published,VERSION)>0?'Versão '+published+' publicada. Atualize a página para carregar os novos arquivos.':'Você está usando a versão mais recente: v'+VERSION,compare(published,VERSION)>0?published:'');
     }catch(_){setUpdateStatus('Sem conexão com o servidor de atualizações. O jogo offline continua disponível.');}
   }
   function requestUpdate(){
