@@ -77,3 +77,16 @@ button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid #5f
 @media(max-width:370px){.neo-mobile-bottom>button{font-size:8px}.portrait-card.neo-card-ready{grid-template-columns:91px minmax(0,1fr);gap:8px}.portrait-card.neo-card-ready>.portrait-card-photo{width:91px!important;height:118px!important}.gallery-tools .gallery-filters{grid-template-columns:1fr}}
 @media(min-width:701px){.neo-mobile-bottom,.neo-mobile-menu{display:none!important}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* 10.0: denser Android gallery while preserving each photo action. */
+@media(max-width:700px){
+ .portrait-card.neo-card-ready{grid-template-columns:88px minmax(0,1fr)!important;grid-template-rows:auto auto!important;column-gap:10px!important;min-height:0!important;padding:9px!important}
+ .portrait-card.neo-card-ready>.portrait-card-photo{grid-row:1/3!important;height:112px!important;width:88px!important}
+ .portrait-card.neo-card-ready>.portrait-card-info strong{font-size:13px!important}
+ .portrait-card.neo-card-ready>.gallery-tag{font-size:9px!important}
+ .portrait-card.neo-card-ready>.portrait-actions{grid-column:1/-1!important;grid-row:3!important;margin-top:5px!important}
+ .portrait-card.neo-card-ready .neo-main-action{min-height:38px!important;padding:7px!important;font-size:11px!important}
+ .portrait-card.neo-card-ready .neo-extra-options summary{min-height:37px!important}
+ .portrait-card.neo-card-ready .neo-extra-options:not([open]){background:transparent;border-color:#2b4664}
+ .portrait-card.neo-card-ready .neo-extra-content .button{min-height:36px!important}
+}
