@@ -1524,10 +1524,13 @@ function frame(now){
     if(danger)lastBroadcastDangerAt=now;
     const linger=now-lastBroadcastDangerAt<1500;
     const requested=dt*(tv?(linger?1:Math.max(2.5,speed*1.5)):speed);
-    // No 1.8-second catch-up spiral after a dropped frame: stay responsive.
-    accumulator=Math.min(.55,accumulator+requested);let iterations=0;
-    const mode=graphicsMode(),limit=mode==='low'?26:mode==='medium'?32:42;
-    const start=performance.now(),maxWorkMs=mode==='low'?13:mode==='medium'?17:19;
+    // Turbo runs the SAME deterministic engine ticks as 1x, never skipping
+    // shots, fouls, interceptions or goal events. Protect the UI from long
+    // blocking frames and cap unbounded work after tab suspension.
+    const turbo=speed>=40;
+    accumulator=Math.min(turbo?1.5:.55,accumulator+requested);let iterations=0;
+    const mode=graphicsMode(),limit=turbo?(mode==='low'?52:mode==='medium'?65:78):(mode==='low'?26:mode==='medium'?32:42);
+    const start=performance.now(),maxWorkMs=turbo?(mode==='low'?19:mode==='medium'?23:26):(mode==='low'?13:mode==='medium'?17:19);
     while(accumulator>=TICK&&iterations<limit&&!match.finished){
       match.step(TICK);accumulator-=TICK;iterations++;
       if(iterations%5===0&&performance.now()-start>maxWorkMs)break;
@@ -1542,9 +1545,10 @@ function frame(now){
   }
   // The broadcast cut-in only consumes GPU/CPU when actually visible.
   const quality=graphicsMode();
-  const stageFps=quality==='low'?12:quality==='medium'?18:24;
+  const turboDrawing=Number($('speed')?.value)>=40&&playing;
+  const stageFps=turboDrawing?8:quality==='low'?12:quality==='medium'?18:24;
   if(activeTab==='match'&&stageVisible&&now-stageLastDraw>=1000/stageFps&&match){drawActionStage(now);stageLastDraw=now;}
-  const fps=quality==='low'?22:quality==='medium'?30:40;
+  const fps=turboDrawing?18:quality==='low'?22:quality==='medium'?30:40;
   if(activeTab==='match'&&now-lastCanvasAt>=1000/fps){draw();lastCanvasAt=now;}
  }catch(error){
    console.error('Erro recuperável da partida:',error);
@@ -1994,6 +1998,21 @@ function bindMangaBatchImport(){
 }
 document.addEventListener('click',e=>{const button=e.target.closest('[data-manga-edit]');if(button){const name=decodeURIComponent(button.dataset.mangaEdit||'');if(name)selectManga(name);}});
 function init(){
+  // 40x turbo is a live simulation setting, not a visual playback trick.
+  const speedPicker=$('speed');
+  if(speedPicker && ![...speedPicker.options].some(opt=>opt.value==='40')){
+    const fast=document.createElement('option');fast.value='40';fast.textContent='⚡ 40× · Turbo';
+    speedPicker.append(fast);
+  }
+  if(speedPicker){
+    speedPicker.addEventListener('change',()=>{
+      // Never carry a backlog from a previous speed into the next one.
+      accumulator=0;lastFrame=0;
+      speedPicker.title=speedPicker.value==='40'
+        ?'Turbo 40×: acelera a simulação real. Em celulares lentos, a velocidade efetiva pode ser menor.'
+        :'Ajusta o avanço do tempo da partida ao vivo.';
+    });
+  }
   const memory=Number(navigator.deviceMemory||4),mobile=window.matchMedia?.('(max-width: 650px)')?.matches;
   if(mobile||memory<=3){$('showTactics').checked=false;}
   configureCanvasResolution();
