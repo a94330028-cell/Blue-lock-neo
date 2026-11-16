@@ -227,5 +227,15 @@ if 'neo-pc-compact.js' not in updated:
     if updated.count('</body>') != 1:
         raise RuntimeError('Unable to attach PC compact layout')
     updated = updated.replace('</body>', '<script defer src="neo-pc-compact.js?v=1.8.2"></script>\n</body>')
+# v1.9 — bounded, real-event advanced Ego and Living Universe.
+if 'neo-advanced-v200.js' not in updated:
+    if updated.count('</body>') != 1: raise RuntimeError('Cannot load advanced Ego decisions')
+    updated = updated.replace('</body>', '<script defer src="neo-advanced-v200.js?v=1.9.0"></script>\n</body>')
+if 'neo-universe-v220.js' not in updated:
+    if updated.count('</body>') != 1: raise RuntimeError('Cannot load Living Universe archive')
+    updated = updated.replace('</body>', '<script defer src="neo-universe-v220.js?v=1.9.0"></script>\n</body>')
+if 'neo-universe-v220.css' not in updated:
+    if updated.count('</head>') != 1: raise RuntimeError('Cannot load Living Universe styles')
+    updated = updated.replace('</head>', '<link rel="stylesheet" href="neo-universe-v220.css?v=1.9.0">\n</head>')
 html.write_text(updated,encoding='utf-8')
 print('Inline game modules synchronized:',counts)
