@@ -12,10 +12,14 @@
  const unaccent=s=>String(s??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
  const nameMatch=(a,b)=>unaccent(a)===unaccent(b);
  const roleFor=(t,i,saved,master)=>master?'CA':i<t.players.length?(t.formation?.[i]?.role||saved?.role||'MC'):(saved?.role||'MC');
- function roster(E,season){
+ function roster(E,season,options={}){
   if(!E||!Array.isArray(E.TEAMS))return [];
   const res=[],seen=new Set(),career=season?.career?.players||{};
-  for(const t of (typeof E.allTeams==='function'?E.allTeams():E.TEAMS)){
+  const scope=options?.scope==='all'?'all':'league';
+  const teams=(scope==='all'&&typeof E.allTeams==='function'?E.allTeams():E.TEAMS)
+    .filter(t=>t?.id!=='neo-bestxi'); // Dynamic best XI is a view, not a second player registration.
+  const allowed=new Set(teams.map(t=>t.id));
+  for(const t of teams){
    const roster=[...(t.players||[]),...(t.reserves||[]),...(t.master?[t.master]:[])];
    roster.forEach((name,i)=>{
     if(!name)return;const id=name+'|'+t.id;if(seen.has(id))return;seen.add(id);
@@ -30,11 +34,12 @@
   // have no current roster assignment. Never silently omit their saved names.
   for(const [id,saved] of Object.entries(career)){
    if(!saved?.name)continue;
-   const club=saved.club||id.slice(id.lastIndexOf('|')+1),key=saved.name+'|'+club;
+   const club=saved.club||id.slice(id.lastIndexOf('|')+1);if(!allowed.has(club))continue;
+   const key=saved.name+'|'+club;
    if(seen.has(key))continue;seen.add(key);
    const role=saved.role||'MC',ovr=E.Attr?.generate?.(saved.name,role,1,saved)?.ovr||N(saved.ovr)||75;
    res.push({...saved,name:saved.name,club,role,ovr,
-     value:E.Progression?.estimateValue?.(saved,ovr,role)||N(saved.value),isMaster:false,legacy:true});
+     value:E.Progression?.estimateValue?E.Progression.estimateValue(saved,ovr,role):N(saved.value),isMaster:false,legacy:true});
   }
   return res;
  }
@@ -57,7 +62,7 @@
   return rows.sort((a,b)=>(a.source?'1':'0').localeCompare(b.source?'1':'0')||a.round-b.round);
  }
  function profile(E,season,name,club){
-  const all=roster(E,season),entry=all.find(p=>p.name===name&&p.club===club)
+  const all=roster(E,season,{scope:'all'}),entry=all.find(p=>p.name===name&&p.club===club)
    ||all.find(p=>nameMatch(p.name,name)&&p.club===club);
   if(!entry)return null;
   const saved=byId(season,entry.name,entry.club)||{};
