@@ -729,3 +729,8 @@
 
 /* Android app updater: hide native-only controls in browsers */
 #checkNativeUpdate[hidden],#restoreBundledGame[hidden],#nativeVersionLabel[hidden]{display:none!important}
+
+/* Club emblems from supplied images, instead of textual generic shields. */
+.club-art[src*="assets/team-logos/"],.neo-club-crest-img{object-fit:contain!important;object-position:center!important;background:transparent!important}
+.crest.neo-club-crest{background:transparent!important;border:0!important;box-shadow:none!important;overflow:visible!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;padding:0!important;clip-path:none!important}
+.neo-club-crest-img{display:block;width:100%;height:100%;max-width:100%;max-height:100%;filter:drop-shadow(0 0 4px #259aff55)}

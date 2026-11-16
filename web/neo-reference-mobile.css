@@ -137,3 +137,17 @@
 @media(prefers-reduced-motion:reduce){
  .neo-ref-mobile *, .neo-ref-mobile *::before, .neo-ref-mobile *::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}
 }
+/* Escudos enviados pelo criador: cartões, confrontos e classificação no celular. */
+@media(max-width:700px){
+ .neo-ref-mobile .neo-ref-crest[src*="team-logos/"]{display:block;width:clamp(65px,19vw,90px)!important;height:clamp(65px,19vw,90px)!important;max-width:100%;object-fit:contain!important;clip-path:none!important;border:0!important;background:none!important;filter:drop-shadow(0 0 10px #1487ff80)}
+ .neo-ref-mobile .neo-ref-hero{min-height:210px}
+ .neo-ref-mobile .neo-ref-result{padding:9px 4px!important}
+ .neo-ref-mobile .neo-ref-result-score{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:3px;align-items:center;min-height:62px;margin-top:4px}
+ .neo-ref-mobile .neo-ref-result-score>b{display:block;font-size:clamp(16px,4vw,21px);white-space:nowrap}
+ .neo-ref-mobile .neo-ref-result-club{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:3px;min-width:0}
+ .neo-ref-mobile .neo-ref-result-logo{display:block;width:clamp(26px,7vw,38px);height:clamp(30px,8vw,42px);max-width:100%;object-fit:contain;filter:drop-shadow(0 0 4px #158aff50)}
+ .neo-ref-mobile .neo-ref-result-club strong{font-size:clamp(7px,2vw,9px);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ .neo-ref-mobile .neo-ref-table-team{display:flex;align-items:center;gap:4px;min-width:0;white-space:nowrap;overflow:hidden}
+ .neo-ref-mobile .neo-ref-table-logo{width:16px;height:18px;object-fit:contain;flex:none}
+ .neo-ref-mobile .neo-ref-table .neo-ref-logo-fallback{font-size:7px}
+}

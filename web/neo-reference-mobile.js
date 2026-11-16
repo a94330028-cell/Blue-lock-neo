@@ -140,9 +140,15 @@
  function heading(title,to,label){
   return '<div class="neo-ref-heading"><h2>'+title+'</h2>'+(to?'<button class="neo-ref-link" data-ref-go="'+safe(to)+'">'+safe(label||'Ver todos')+' →</button>':'')+'</div>';
  }
+ const logoFiles=Object.freeze({bm:'bm.webp',ba:'ba.webp',mc:'mc.webp',px:'px.webp',ub:'ub.webp'});
+ function logo(t,cls='neo-ref-logo'){
+  if(!t)return '';
+  const filename=logoFiles[t.id];
+  return filename?'<img class="'+safe(cls)+'" src="./assets/team-logos/'+filename+'" alt="Escudo '+safe(t.name)+'" loading="lazy" decoding="async">':'<span class="'+safe(cls)+' neo-ref-logo-fallback">'+safe((t.crest||t.short||t.name||'?').slice(0,3))+'</span>';
+ }
  function teamView(t){
   if(!t)return '<span class="neo-ref-team"><span class="neo-ref-crest">?</span>—</span>';
-  return '<span class="neo-ref-team"><span class="neo-ref-crest" style="background:linear-gradient(130deg,'+safe(t.color||'#0066ee')+',#051333)">'+safe((t.crest||t.short||t.name||'?').slice(0,3))+'</span><strong>'+safe(t.short||t.name)+'</strong></span>';
+  return '<span class="neo-ref-team">'+logo(t,'neo-ref-crest')+'<strong>'+safe(t.short||t.name)+'</strong></span>';
  }
  function homeHtml(){
   const s=season(),games=allGames(),next=games.find(g=>!g.result),recent=games.filter(g=>g.result).slice(-3).reverse(),table=standings(),top=seasonScorers('scorers').slice(0,3);
@@ -153,10 +159,13 @@
   }else h+='<p class="neo-ref-empty">Não há próxima partida registrada. Consulte a liga para começar uma temporada.</p>';
   h+='</div>';
   h+=heading('▰ Últimos Resultados','league','Ver todos')+'<div class="neo-ref-results">';
-  if(recent.length)h+=recent.map(g=>'<div class="neo-ref-result"><small>Rodada '+safe(g.round)+'</small><strong>'+safe(club(g.home)?.short||g.home)+'</strong><b>'+safe(g.result[0])+'–'+safe(g.result[1])+'</b><strong>'+safe(club(g.away)?.short||g.away)+'</strong></div>').join('');
+  if(recent.length)h+=recent.map(g=>{
+   const home=club(g.home),away=club(g.away);
+   return '<div class="neo-ref-result"><small>Rodada '+safe(g.round)+'</small><div class="neo-ref-result-score"><span class="neo-ref-result-club">'+logo(home,'neo-ref-result-logo')+'<strong>'+safe(home?.short||g.home)+'</strong></span><b>'+safe(g.result[0])+'–'+safe(g.result[1])+'</b><span class="neo-ref-result-club">'+logo(away,'neo-ref-result-logo')+'<strong>'+safe(away?.short||g.away)+'</strong></span></div></div>';
+  }).join('');
   else h+='<div class="neo-ref-empty" style="grid-column:1/-1">Os resultados aparecerão após jogos oficiais.</div>';
   h+='</div><div class="neo-ref-two"><div class="neo-ref-panel"><h3>▥ Classificação</h3><table class="neo-ref-table"><thead><tr><th>#</th><th>Equipe</th><th>J</th><th>Pts</th></tr></thead><tbody>';
-  h+=table.length?table.slice(0,4).map((r,i)=>'<tr><td>'+(i+1)+'</td><td>'+safe(r.team?.short||r.team?.name)+'</td><td>'+safe(r.J)+'</td><td>'+safe(r.PTS)+'</td></tr>').join(''):'<tr><td colspan="4">Sem classificação</td></tr>';
+  h+=table.length?table.slice(0,4).map((r,i)=>'<tr><td>'+(i+1)+'</td><td><span class="neo-ref-table-team">'+logo(r.team,'neo-ref-table-logo')+safe(r.team?.short||r.team?.name)+'</span></td><td>'+safe(r.J)+'</td><td>'+safe(r.PTS)+'</td></tr>').join(''):'<tr><td colspan="4">Sem classificação</td></tr>';
   h+='</tbody></table></div><div class="neo-ref-panel"><h3>▣ Destaques</h3>';
   const first=top[0];if(first){h+='<div class="neo-ref-feature">'+img(first.name)+'<div><strong>'+safe(short(first.name))+' lidera a artilharia</strong><small>'+safe(first.value)+' gols registrados na liga</small></div></div>';}
   else h+='<p class="neo-ref-empty">Nenhum artilheiro registrado ainda.</p>';
