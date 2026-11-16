@@ -16,5 +16,5 @@ assert.deepEqual(result.score,sim.score);
 assert.equal(result.shots.length,sim.shotMap.length);
 assert.ok(result.events.length>0);
 assert.equal(E.GAME_RATE,18);
-assert.equal(fs.readFileSync('web/VERSION','utf8') .trim(),'10.6.0');
+assert.equal(fs.readFileSync('web/VERSION','utf8') .trim(),'1.0.0');
 console.log('OK: updater visible, live-clock modes, native updater action, live data, background season simulation');
