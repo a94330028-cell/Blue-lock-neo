@@ -1,3 +1,17 @@
+# Blue Lock NEO 1.5.0 — WORLD BRAIN
+
+Atualização jogável que aprofunda a simulação de futebol com **goleiros que estudam finalizadores**, **técnicos que adaptam a equipe ao estilo dos jogos**, **recomposição coletiva**, **criação de chances na área** e **Enciclopédia de Egoístas**.
+
+- O sistema registra somente partidas oficiais na carreira e mantém uma linha do tempo por jogador.
+- O antigo modo Turbo 40× funciona com o mesmo motor de física e eventos.
+- A atualização preserva os retratos importados, saves, temporadas e personagens criados.
+- Versão pública: **1.5.0**; número interno Android: **10.6.6** para atualizar a partir dos APKs antigos.
+- **55 ideias:** consulte [roadmap oficial](docs/ROADMAP-55.md); funcionalidades ainda pendentes não são declaradas prontas.
+
+[▶ Jogar no navegador](https://a94330028-cell.github.io/Blue-lock-neo/)
+
+---
+
 # Blue Lock NEO v1.4.0 — EGO ASCENSION
 
 **Nova atualização do simulador:** observação real de habilidades rivais, aprendizado tático com contra-armas, combinações entre técnicas de jogadores entrosados e movimentos mais inteligentes para chegar à área. Destaques de genialidade e defesas exigem lances autênticos, nunca placares inventados.

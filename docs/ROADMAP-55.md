@@ -4,73 +4,73 @@ Este documento é o backlog oficial das 55 propostas do usuário. **Não signifi
 
 ## IA e personalidade
 
-- [ ] **01. IA individual e estilos de jogo** — pendente
+- [ ] **01. IA individual e estilos de jogo** — parcial
 - [ ] **02. Sistema de Ego** — parcial
-- [ ] **03. Despertares durante partidas** — pendente
-- [ ] **04. Flow exclusivo** — pendente
-- [ ] **05. Metavision** — pendente
-- [ ] **06. Devoração de rivais** — pendente
-- [ ] **07. Habilidades especiais** — pendente
-- [ ] **08. Duelo de habilidades** — pendente
+- [ ] **03. Despertares durante partidas** — parcial
+- [ ] **04. Flow exclusivo** — parcial
+- [ ] **05. Metavision** — parcial
+- [ ] **06. Devoração de rivais** — parcial
+- [ ] **07. Habilidades especiais** — parcial
+- [ ] **08. Duelo de habilidades** — parcial
 - [ ] **09. Partidas cinematográficas** — pendente
-- [ ] **10. Futebol dinâmico** — pendente
+- [ ] **10. Futebol dinâmico** — parcial
 - [ ] **11. Carreira personalizada** — pendente
 - [ ] **12. Rivalidades automáticas** — parcial
 - [ ] **13. Evolução individual** — parcial
 - [ ] **14. Transferências** — pendente
-- [ ] **15. Campeonatos** — pendente
+- [ ] **15. Campeonatos** — parcial
 - [ ] **16. Histórico e recordes** — parcial
 - [ ] **17. Turbo 40×** — parcial
-- [ ] **18. Narrativa automática** — pendente
+- [ ] **18. Narrativa automática** — parcial
 
 ## Mecânicas de anime
 
-- [ ] **19. Evolução de habilidades em três níveis** — pendente
+- [ ] **19. Evolução de habilidades em três níveis** — parcial
 - [ ] **20. Jogadas improvisadas** — pendente
-- [ ] **21. Reações em cadeia** — pendente
+- [ ] **21. Reações em cadeia** — parcial
 - [ ] **22. Química entre jogadores** — parcial
-- [ ] **23. Sistema de armas** — pendente
-- [ ] **24. Instinto de artilheiro** — pendente
+- [ ] **23. Sistema de armas** — parcial
+- [ ] **24. Instinto de artilheiro** — parcial
 - [ ] **25. Evolução de posições** — pendente
-- [ ] **26. Contra-ataques de Ego** — pendente
+- [ ] **26. Contra-ataques de Ego** — parcial
 - [ ] **27. Conflitos entre companheiros** — pendente
 - [ ] **28. Evolução por derrotas** — parcial
 - [ ] **29. Adaptação da IA** — parcial
-- [ ] **30. Momentos de genialidade** — pendente
+- [ ] **30. Momentos de genialidade** — parcial
 
 ## Partidas
 
 - [ ] **31. Intensidade contextual** — pendente
 - [ ] **32. Câmera inteligente** — pendente
-- [ ] **33. Defesas lendárias** — pendente
-- [ ] **34. Inteligência tática coletiva** — pendente
+- [ ] **33. Defesas lendárias** — parcial
+- [ ] **34. Inteligência tática coletiva** — parcial
 - [ ] **35. Cansaço mental** — parcial
-- [ ] **36. Combinações especiais** — pendente
+- [ ] **36. Combinações especiais** — parcial
 - [ ] **37. Narração dinâmica** — pendente
-- [ ] **38. Replay de melhores momentos** — pendente
-- [ ] **39. Banco inteligente** — pendente
+- [ ] **38. Replay de melhores momentos** — parcial
+- [ ] **39. Banco inteligente** — parcial
 - [ ] **40. Domínio territorial** — pendente
 
 ## Universo e modos
 
-- [ ] **41. História emergente** — pendente
+- [ ] **41. História emergente** — parcial
 - [ ] **42. Ranking de Egoístas** — parcial
 - [ ] **43. Prêmios da temporada** — parcial
 - [ ] **44. Hall da Fama** — parcial
 - [ ] **45. Olheiros** — parcial
-- [ ] **46. Treinadores inteligentes** — pendente
-- [ ] **47. Copa dos Egoístas** — pendente
+- [ ] **46. Treinadores inteligentes** — parcial
+- [ ] **47. Copa dos Egoístas** — parcial
 - [ ] **48. Seleção mundial** — pendente
-- [ ] **49. Linha do tempo dos personagens** — pendente
-- [ ] **50. Modo espectador premium** — pendente
+- [ ] **49. Linha do tempo dos personagens** — parcial
+- [ ] **50. Modo espectador premium** — parcial
 
 ## Extras
 
 - [ ] **51. Rei do Campo** — parcial
 - [ ] **52. Níveis de rivalidade** — parcial
 - [ ] **53. Fórmula de Gol** — parcial
-- [ ] **54. Despertar de novas armas** — pendente
-- [ ] **55. Enciclopédia de Egoístas** — pendente
+- [ ] **54. Despertar de novas armas** — parcial
+- [ ] **55. Enciclopédia de Egoístas** — parcial
 
 ## Critérios obrigatórios de aceite
 
@@ -90,3 +90,9 @@ Este documento é o backlog oficial das 55 propostas do usuário. **Não signifi
 - **Lote D — Competições:** Copa dos Egoístas, Seleção Mundial e campeonatos.
 - **Lote E — Apresentação:** câmera, replays, narrador, galeria, enciclopédia e modo espectador.
 - **Lote F — Estabilização:** testes de carga, otimização mobile, migração e segurança de saves.
+
+## Situação validável — 1.5.0
+
+A versão 1.5.0 entregou melhorias reais de IA coletiva, memória de goleiros, adaptação de treinadores, prevenção de chutes repetitivos e uma Enciclopédia por partidas. Mecânicas anteriores já incluem Copa eliminatória jogável de 2, 4 ou 8 clubes, Flow, Metavision, química, habilidades e replays de gol. A existência dessas peças **não significa** conclusão integral dos itens.
+
+Continuam faltando para dar as 55 ideias como concluídas: carreira totalmente abrangente, transferências e olheiros com decisões reais de mercado, Seleção Mundial/convocações, temporadas persistentes multi-modo, competições internacionais e modo de 100 partidas simultâneas estável em celular, além de polimento cinematográfico e testes extensivos. Não marcar como concluído antes de aceitar cada sistema.

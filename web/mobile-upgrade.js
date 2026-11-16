@@ -181,9 +181,9 @@ async function extractZipImages(file){
 }
 function boot(){
  makeNav();setupGalleryTools();beautifyCards();
- if(!document.getElementById("neo920-script")){const script=document.createElement("script");script.id="neo920-script";script.src="./neo-broadcast-v920.js?v=1.4.0";script.onerror=()=>toast("Falha ao carregar a transmissão v9.2. Reabra o jogo após atualizar.");document.body.appendChild(script);}
+ if(!document.getElementById("neo920-script")){const script=document.createElement("script");script.id="neo920-script";script.src="./neo-broadcast-v920.js?v=1.5.0";script.onerror=()=>toast("Falha ao carregar a transmissão v9.2. Reabra o jogo após atualizar.");document.body.appendChild(script);}
  if(!document.getElementById('neo960-script')){
-  const addon=document.createElement('script');addon.id='neo960-script';addon.src='./neo-v960.js?v=1.4.0';
+  const addon=document.createElement('script');addon.id='neo960-script';addon.src='./neo-v960.js?v=1.5.0';
   addon.onerror=()=>toast('Não foi possível carregar o ranking por posições. Confira a versão do jogo.');
   const source=document.getElementById('neo920-script');
   if(source&&!window.NeoBroadcast92){
@@ -194,9 +194,9 @@ function boot(){
 
  // NEO 10.3 extensions are additive and read existing clubs, fixtures and portraits.
  for(const [id,src] of [
-  ['neo1010-script','./neo-football-v1010.js?v=1.4.0'],
-  ['neo1020-script','./neo-insights-v1020.js?v=1.4.0'],
-  ['neo1030-script','./neo-tournament-v1030.js?v=1.4.0']
+  ['neo1010-script','./neo-football-v1010.js?v=1.5.0'],
+  ['neo1020-script','./neo-insights-v1020.js?v=1.5.0'],
+  ['neo1030-script','./neo-tournament-v1030.js?v=1.5.0']
  ]){
   if(document.getElementById(id))continue;
   const addon=document.createElement('script');addon.id=id;addon.async=false;addon.src=src;
@@ -205,7 +205,7 @@ function boot(){
  }
  if(!document.getElementById('neo1000-script')){
   const addon=document.createElement('script');addon.id='neo1000-script';
-  addon.src='./neo-v1000.js?v=1.4.0';
+  addon.src='./neo-v1000.js?v=1.5.0';
   addon.onerror=()=>toast('Não foi possível carregar o Raio-X e as premiações. Atualize o aplicativo.');
   document.body.appendChild(addon);
  }

@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "project": "Blue Lock NEO",
-  "current_version": "1.4.0",
+  "current_version": "1.5.0",
   "site_url": "https://a94330028-cell.github.io/Blue-lock-neo/",
   "media": {
     "banner": {
@@ -20,6 +20,38 @@
     }
   },
   "releases": [
+    {
+      "version": "1.5.0",
+      "date": "2026-11-16",
+      "novidades": [
+        "WORLD BRAIN: goleiros desenvolvem leitura limitada do padrão de finalizações após enfrentar repetidamente o mesmo atacante na partida.",
+        "Técnicos automáticos estudam chutes longos, entradas na área e placar antes de mudar largura e construção de jogo; decisões manuais são respeitadas.",
+        "Nova Enciclopédia de Egoístas em Recordes, com linha do tempo individual e identidade tática das equipes baseada nas súmulas de jogos realizados.",
+        "Memória persistente de temporada registra os resultados dos atletas e estilos de jogo sem inventar conquistas."
+      ],
+      "correcoes": [
+        "Segundo marcador defensivo passa a proteger o centro de perigo sem abandonar o posicionamento original nem perseguir o mesmo atacante.",
+        "Evita recalcular as coberturas defensivas repetidamente durante o mesmo passo do modo Turbo 40×.",
+        "Registros de partidas não são duplicados se a mesma súmula for processada novamente."
+      ],
+      "jogabilidade": [
+        "Quando um chute de baixa qualidade é pressionado, jogadores com companheiros livres dentro da área podem criar uma chance melhor por meio de um passe real.",
+        "Ajustes coletivos orientados pelo histórico de chutes longos e oportunidades do adversário, preservando as táticas escolhidas manualmente.",
+        "Goleiros reagem melhor a atacantes que já enfrentaram repetidas vezes, com bônus pequenos e sem defesas automáticas."
+      ],
+      "visual": [
+        "Novo painel responsivo Enciclopédia de Egoístas para consultar personagens e últimas partidas oficiais.",
+        "Identidade de cada equipe medida por jogos, finalizações distantes e entradas na área."
+      ],
+      "otimizacoes": [
+        "Cache do segundo defensor por passo de simulação e histórico de temporada com tamanho limitado.",
+        "Mantida a compatibilidade de instalação Android com a numeração interna 10.6.6 e os saves das versões anteriores."
+      ],
+      "importantes": [
+        "As 55 ideias continuam sendo o roteiro de desenvolvimento. O lançamento 1.5.0 não declara prontas as funções ainda incompletas, como Seleção Mundial e transferências completas.",
+        "Os novos históricos são construídos com partidas registradas a partir da instalação da atualização."
+      ]
+    },
     {
       "version": "1.4.0",
       "date": "2026-11-16",
