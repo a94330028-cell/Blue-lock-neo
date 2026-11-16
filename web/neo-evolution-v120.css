@@ -1,0 +1,14 @@
+/* Blue Lock NEO 1.2 — EGO CHRONICLE, compact real-data tournament journal */
+.neo120-panel{margin:12px 0;padding:13px;border-radius:15px;
+ border:1px solid #388ac8;background:linear-gradient(135deg,#123657,#071a2d 78%);
+ color:#eaf9ff;box-shadow:0 9px 25px #020c1c66}
+.neo120-title{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;
+ border-bottom:1px solid #3a759f;padding:2px 0 10px;margin-bottom:11px}
+.neo120-title span{font-size:16px;font-weight:950;letter-spacing:.04em;color:#9ceeff}
+.neo120-title small{font-size:9px;font-weight:800;color:#87accb;letter-spacing:.09em}
+#neo120-journal-body{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.neo120-group{border:1px solid #2b5d89;border-radius:10px;padding:10px;background:#102b48}
+.neo120-group strong{display:block;color:#8cedff;margin-bottom:8px;font-size:12px}
+.neo120-group p{color:#d8e9fa;margin:6px 0;font-size:11px;line-height:1.5;overflow-wrap:anywhere}
+.neo120-group b{color:#ffce77}
+@media(max-width:500px){#neo120-journal-body{grid-template-columns:1fr}.neo120-panel{padding:10px}.neo120-title span{font-size:14px}}
