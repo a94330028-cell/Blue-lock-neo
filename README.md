@@ -9,7 +9,7 @@ Este é o **primeiro lançamento público**. O histórico de builds 9.x/10.x era
 - Retratos offline, edição de fotos e backup, sem envio automático de imagens pessoais.
 - Nova página **Mais → 🚀 Atualizações**, com indicador de novidades não lidas e botão para copiar o resumo da versão.
 - Melhorias no aviso de atualizações e compatibilidade da entrega para quem vinha de APKs 10.x.
-- Integração segura do NEO UPDATE BOT ao GitHub Pages; o anúncio exige mídia e webhook configurados, e a API do Discord precisa confirmar o envio.
+- Integração segura do NEO UPDATE BOT ao GitHub Pages, com banner e avatar originais já publicados. **Falta cadastrar o Secret `DISCORD_WEBHOOK_URL`** antes do primeiro anúncio no canal.
 
 ### Compatibilidade
 
