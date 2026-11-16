@@ -2236,7 +2236,7 @@ document.getElementById('keepPortraits')?.addEventListener('click',neoProtectPor
 window.NeoCareerBridge={
  getSeason:()=>season,
  save:()=>saveSeason(),
- busy:()=>!!(simBusy||(match&&!match.finished&&(playing||replaying))),
+ busy:()=>!!(simBusy||(match&&!match.finished)),
  refresh:()=>{renderLeague();renderRecords();renderSquads();}
 };
 window.NeoAppStorage={report:neoStorageReport,protect:neoProtectPortraits};
