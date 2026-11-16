@@ -50,7 +50,19 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
-        run: npx electron-builder --win nsis portable --x64 --publish always
+        run: npx electron-builder --win nsis portable --x64 --publish never
+      - name: Publicar instalador Windows e manifesto de atualização
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $tag = "desktop-v$env:DESKTOP_VERSION"
+          $files = @(Get-ChildItem 'desktop/dist' -File | Where-Object { $_.Extension -eq '.exe' -or $_.Extension -eq '.blockmap' -or $_.Name -eq 'latest.yml' } | ForEach-Object { $_.FullName })
+          if (-not ($files | Where-Object { $_ -like '*Setup*.exe' })) { throw 'Instalador Setup nao encontrado' }
+          if (-not ($files | Where-Object { $_ -like '*Portable*.exe' })) { throw 'Executavel Portable nao encontrado' }
+          if (-not ($files | Where-Object { $_ -like '*latest.yml' })) { throw 'Manifesto de atualizacao nao encontrado' }
+          gh release create $tag @files --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --title "Blue Lock NEO Windows $env:DESKTOP_VERSION" --notes "Aplicativo para Windows: use o arquivo Setup para receber atualizacoes futuras. A versao Portable deve ser substituida manualmente."
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Disponibilizar executaveis
         uses: actions/upload-artifact@v4
         with:
