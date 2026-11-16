@@ -35,4 +35,48 @@ Testar o APK **instalado sobre a versão anterior** no mesmo Android, preservand
 
 ## Critério de encerramento
 
-Marcar um item como *validado* somente depois dos testes de mecanismo, integração, temporada e usabilidade aplicáveis. Quando houver pendências, mantê-las explícitas. **Não avançar automaticamente para as ideias 31–42 antes do aceite completo do bloco 19–30.**
+Marcar um item como *validado* somente depois dos testes de mecanismo, integração, temporada e usabilidade aplicáveis. Quando houver pendências, mantê-las explícitas. **As ideias 31–55 foram autorizadas pelo usuário; seu aceite final continua condicionado a testes completos e em Android real.**
+
+## Lote autorizado — Ideias 31–55 (conteúdo 10.6.12)
+
+O usuário autorizou o desenvolvimento do próximo bloco após a validação automatizada 19–30.
+Os módulos `web/neo-match-pulse-v240.js` e `web/neo-universe-spotlight-v250.js` reutilizam
+o motor atual, seus jogos, retratos, rankings e torneios. A presença deles **não** é evidência
+de que todas as vinte e cinco ideias estão integralmente concluídas.
+
+| # | Ideia | Evidência técnica existente | Estado até aceite final |
+|---|---|---|---|
+| 31 | Intensidade contextual | bônus condicionais ao minuto e placar; limites reais | Implementada; testes de equilíbrio em andamento |
+| 32 | Câmera inteligente | foco no portador, chutes e habilidades integrado à câmera existente | Implementada; inspeção visual pendente |
+| 33 | Defesas lendárias | evento apenas quando goleiro realmente salva finalização perigosa | Implementada; variedade visual pendente |
+| 34 | Tática coletiva | movimentações de apoio e técnico adaptativo já existente | Parcial; exige mais formações e confrontos |
+| 35 | Cansaço mental | influência limitada por pressão e resistência | Implementada; balanceamento prolongado pendente |
+| 36 | Combinações especiais | cadeia apenas de passes recebidos, via `lastPass.p` real | Implementada; repetição em várias partidas pendente |
+| 37 | Narração dinâmica | histórico originado apenas no `Match.log` original | Implementada; variedade editorial pendente |
+| 38 | Replays | clipes e replays existentes, com índice dos destaques registrados | Parcial; replays por tipo de evento pendentes |
+| 39 | Banco inteligente | substituições reais e decisões do técnico preservadas | Parcial; lógica de escalação ainda tem melhorias |
+| 40 | Domínio territorial | amostras da posse real no terço ofensivo e painel limitado | Implementada; UI de heatmap pendente |
+| 41 | História emergente | linha do tempo de resultados, MVP e duelos | Parcial; arcos longos pendentes |
+| 42 | Ranking de Egoístas | pontuação real de progressão e novo pódio com retratos registrados | Implementada; teste de usabilidade pendente |
+| 43 | Prêmios da temporada | liberados apenas após terminar todos os confrontos | Implementada e testada em temporada; visual pendente |
+| 44 | Hall da Fama | campeões persistidos somente após desfecho verdadeiro | Implementada e testada em temporada |
+| 45 | Olheiros | desempenho mínimo de dois jogos, sem ofertas fictícias | Parcial; ofertas de mercado pendentes |
+| 46 | Treinadores inteligentes | `_coachDecisions` e `NeoCoach980`, sem alterar opções manuais | Parcial; mais estratégias pendentes |
+| 47 | Copa dos Egoístas | torneio jogável existente, placares produzidos por `Match` | Funcional; campanhas e UI precisam de verificação ampliada |
+| 48 | Seleção Mundial | WORLD XI de amistoso com elenco automático registrado | **Parcial**: competição mundial de seleções não existe |
+| 49 | Linha do tempo | súmulas e destaques reais por atleta | Parcial: visualização extensa pendente |
+| 50 | Espectador premium | transmissão/câmera automáticas e painel de lances | Parcial: controles avançados e testes faltantes |
+| 51 | Rei do Campo | líder por estatísticas da temporada, sem título fictício | Parcial: prêmio próprio depende de regra de aceite |
+| 52 | Níveis de rivalidade | `neo-living-career-v190` e duelos reais | Funcional; interface de confronto pendente |
+| 53 | Fórmula de Gol | médias de gols e assistências provenientes de partidas verdadeiras | Parcial: mecânica estratégica exclusiva pendente |
+| 54 | Despertar de novas armas | evolução por uso e Flow de habilidades existentes | Parcial: catálogo de novas armas não definido |
+| 55 | Enciclopédia de Egoístas | dados oficiais salvos com índice de personagens | Parcial: busca e fichas detalhadas pendentes |
+
+### Validação que ainda é necessária
+
+- Tests de unidade e integração devem passar para cada novo módulo (incluindo cenários negativos).
+- O simulador deve concluir 20 rodadas sem gerar placares ou conquistas artificiais.
+- Testar a interface em oito resoluções (de 360 × 800 a 1920 × 1080), com retratos do cadastro e sem rolagem lateral.
+- A atualização WebView deve preservar as informações do usuário no Android realmente instalado, com assinatura compatível. O pipeline não substitui esse teste.
+- Verificar o webhook após o deploy; a identidade de anúncio passa a considerar build e conteúdo verificado, não apenas o número público da versão.
+- **Itens parciais não devem ser rotulados como concluídos, mesmo após um build verde.**
