@@ -33,7 +33,7 @@ const server=http.createServer((req,res)=>{
   for(const [width,height] of [[1366,768],[1600,900],[390,844]]){
    const page=await browser.newPage({viewport:{width,height},reducedMotion:'reduce'});
    const errors=[];
-   page.on('pageerror',error=>errors.push(String(error.message||error)));
+   page.on('pageerror',error=>errors.push(String(error.stack||error.message||error)));
    await page.goto(base,{waitUntil:'domcontentloaded',timeout:30000});
    await page.waitForFunction(()=>!!document.getElementById('neo230-features') &&
     !!document.getElementById('neo990-round-team'),null,{timeout:25000});
@@ -78,6 +78,8 @@ const server=http.createServer((req,res)=>{
     return response.ok&&(await response.text()).includes('function observeTurnover');
    });
    assert.ok(loaded,'new module must be served by the browser');
+   if(errors.length)console.error('BROWSER PAGE ERRORS '+width+'x'+height+':\n'+errors.slice(0,3).join('\n'));
+   assert.equal(errors.length,0,'browser must not contain uncaught JavaScript errors');
    // Other external portrait sources may be blocked in test environments; record only.
    console.log('BROWSER PASS',width+'x'+height,'DOM ready, tactical controls, Records, local asset',errors.length?'pageErrors='+errors.slice(0,2).join(' | '):'no page errors');
    await page.close();
