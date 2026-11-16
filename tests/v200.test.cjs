@@ -81,4 +81,16 @@ assert.ok(read('tools/sync_inline_v930.py').includes('neo-universe-v220.js'));
 assert.ok(read('web/service-worker.js').includes('./neo-advanced-v200.js'));
 assert.ok(read('web/service-worker.js').includes('./neo-universe-v220.js'));
 assert.ok(read('web/service-worker.js').includes('./neo-universe-v220.css'));
+
+const selection=U.registerWorldXI(E,season,'bm');
+assert.ok(selection,'WORLD XI must be created from existing official athletes');
+assert.equal(selection.team.players.length,11);
+assert.equal(new Set(selection.team.players).size,11,'no duplicated world XI starters');
+assert.ok(selection.team.players.every(name=>!E.teamById('bm').players.includes(name)),'avoid cloning opposing starters');
+assert.equal(U.registerWorldXI(E,season,'bm').team,selection.team,'rebuild the same generated team');
+const worldMatch=new E.Match('bm',U.WORLD_ID,120730,null,season);
+for(let i=0;i<300;i++)worldMatch.step(E.TICK);
+assert.ok(worldMatch.players.every(p=>Number.isFinite(p.x)&&Number.isFinite(p.y)),'World XI is playable');
+assert.equal(JSON.stringify(E.TEAMS.map(t=>({id:t.id,players:t.players,reserves:t.reserves}))),pristine,'World XI must not mutate base clubs');
+
 console.log('PASS 1.9: deterministic gameplay, genuine duels and saves, verified awards, bounded history and offline integration');
