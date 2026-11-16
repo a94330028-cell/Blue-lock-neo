@@ -38,13 +38,13 @@ assert.ok(photoRecovery.includes('NeoPortraitManager.saveFile'),'alternatives us
 assert.ok(worker.includes('./neo-clubs-v1050.js')&&worker.includes('./neo-photo-recovery-v1050.js'));
 assert.ok(worker.includes('./neo-polish-v1050.css'));
 assert.ok(html.includes('neo-clubs-v1050.js')&&html.includes('neo-photo-recovery-v1050.js'));
-assert.equal(read('VERSION').trim(),'1.5.0');
+assert.equal(read('VERSION').trim(),'1.6.0');
 const java=fs.readFileSync('app/src/main/java/com/neoegoist/simulator/MainActivity.java','utf8');
 assert.ok(java.includes('ImageDecoder.decodeBitmap'),'native Android fallback supports modern image formats');
 assert.ok(java.includes('getContentResolver().openInputStream(uri)'),'native android import reads original content provider');
 const gradle=fs.readFileSync('app/build.gradle','utf8');
-assert.ok(gradle.includes('versionCode 113')&&gradle.includes("versionName '1.5.0'"));
-assert.ok(java.includes('BUNDLED_WEB_VERSION = "10.6.6"'));
+assert.ok(gradle.includes('versionCode 114')&&gradle.includes("versionName '1.6.0'"));
+assert.ok(java.includes('BUNDLED_WEB_VERSION = "10.6.7"'));
 const mockRound={round:1,games:[{home:'bm',away:'px',result:[0,0],details:{players:[
  {name:'A',role:'GOL',side:0,rating:9},{name:'B',role:'LD',side:0,rating:8},{name:'C',role:'ZAG',side:0,rating:8},
  {name:'D',role:'ZAG',side:0,rating:8},{name:'E',role:'LE',side:0,rating:8},{name:'F',role:'CA',side:1,rating:10}
