@@ -104,6 +104,13 @@ const server=http.createServer((req,res)=>{
     });
     assert.ok(result.recorded>=18,'match must record player data for real podium');
     await page.click('.nav button[data-tab="ranking"]');
+    const rankState=await page.evaluate(()=>{
+      const r=document.getElementById('ranking'),e=document.getElementById('rankMode');
+      return {tabClass:r?.className,tabDisplay:r?getComputedStyle(r).display:null,
+       rankStyle:e?getComputedStyle(e).display:null,client:e?.getBoundingClientRect().width,
+       ancestors:e?[...(()=>{let a=[],n=e;while(n&&a.length<6){a.push(n.id||n.className||n.tagName);n=n.parentElement;}return a;})()]:[]};
+    });
+    console.log('RANKING NAV',width+'x'+height,JSON.stringify(rankState));
     await page.selectOption('#rankMode','performance');
     await page.waitForFunction(()=>document.querySelectorAll('#neo250-podium .neo250-champion').length>=3,null,{timeout:12000});
     const portraits=await page.$eval('#neo250-podium .neo250-champion img[data-portrait]',imgs=>imgs.map(img=>({
