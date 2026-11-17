@@ -47,6 +47,7 @@ for(const piece of ['#neo980-squad-area .neo980-card-pitch','.neo980-lineup-card
 }
 assert.ok(css.includes('position:relative!important'),'cards are not absolute overlapping badges');
 assert.ok(css.includes('height:auto!important'),'formation grows with actual card count');
+assert.ok(css.includes('#neo980-squad-area .neo980-pitch.neo980-card-pitch'),'responsive lineup overrides fixed PC pitch height');
 assert.ok(source.includes('neo980-coach-card')&&source.includes('neo980-reserves'),'coach and bench remain accessible');
 assert.equal(fs.readFileSync('web/UPDATE_BUILD','utf8').trim(),'10.6.20');
 console.log('PASS NEO 10.6.20: 11 readable lineup cards, formations, responsive slots, intact coach and bench');
