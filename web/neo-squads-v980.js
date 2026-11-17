@@ -65,6 +65,11 @@ function render(){
  const summary=form.played===0?'Sem jogos registrados: técnico mantém a formação inicial.'
  :form.underPressure?`Últimos 3 jogos: ${form.lossesLast3} derrota(s). ${plan.reason}.`
  :`Últimos jogos: ${form.streak} derrota(s) consecutiva(s). ${plan.reason}.`;
+ // The original simulator still writes into #squadCards on every tab visit.
+ // Keep that real node alive across innerHTML rerenders instead of destroying
+ // it with the old accordion; otherwise renderSquads() throws on navigation.
+ const preservedCards=$('squadCards');
+ if(preservedCards&&root.contains(preservedCards))root.parentElement?.appendChild(preservedCards);
  const all=teams();const select=all.map(x=>`<option value="${esc(x.id)}" ${x.id===t.id?'selected':''}>${esc(x.name)}</option>`).join('');
  root.innerHTML=`<div class="neo980-intro"><div><span class="neo980-kicker">CENTRAL TÁTICA · EGOIST</span><h2>👥 Escalação & técnico IA</h2><p>Escalação em cartas grandes: posição, rosto, nome e OVR. Toque em qualquer atleta para abrir a ficha.</p></div><span class="neo980-total">${all.length} equipes</span></div>
  <label class="neo980-selector">Escolher equipe<select id="neo980-select">${select}</select></label>
