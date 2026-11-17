@@ -22,7 +22,8 @@ const getTeam=id=>teams.find(t=>t.id===id);
 function install(E){
  if(!E?.registerTeam)throw Error('Atualize o motor para habilitar os clubes históricos.');
  for(const t of teams){
-  E.registerTeam({...t,players:t.starters.map(v=>v[0]),reserves:t.reserves.map(v=>v[0]),master:null,
+  E.registerTeam({...t,players:t.starters.map(v=>v[0]),reserves:t.reserves.map(v=>v[0]),
+   reserveRoles:Object.fromEntries(t.reserves.map(([name,role])=>[name,role])),master:null,
    formation:E.DEFAULT_FORMATION.map((v,i)=>({...v,role:t.starters[i][1]}))});
   for(const [name,role,number,ovr] of [...t.starters,...t.reserves])E.Attr.registerPlayerRatings(name,ovr,{club:t.id,role,number,historic:true});
  }

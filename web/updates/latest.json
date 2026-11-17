@@ -1,7 +1,8 @@
 {
-  "version": "9.1.0",
-  "url": "https://blue-lock-neo-simulator.netlify.app/updates/blue-lock-web-9.1.0.zip",
-  "sha256": "89902a994df4189ae6f4e00ecbd25dfaf9a57184ca628586e9bb9260015d2fb1",
+  "version": "10.6.30",
+  "displayVersion": "2.0.0",
+  "url": "https://a94330028-cell.github.io/Blue-lock-neo/updates/blue-lock-web-10.6.30.zip",
+  "sha256": "7e18ea85fae248c629e6257544463b38bc6eb597f6def73109d0be2fc2cdeb7f",
   "minAndroidVersion": 85,
-  "changes": "Correções, novidades e atualizações da Liga Neo Egoísta"
+  "changes": "Blue Lock NEO 2.0.0 · conteúdo 10.6.30: Inteligência de jogo, universo vivo, Seleção Mundial NEO e melhorias de campo."
 }

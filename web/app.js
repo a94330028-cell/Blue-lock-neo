@@ -1614,15 +1614,32 @@ function rankingHead(p,index,mode){const club=team(p.club);const value=mode==='o
 }
 function rosterMarket(career,clubFilter){
   const list=[],seen=new Set();
-  for(const t of TEAMS.filter(t=>clubFilter==='all'||t.id===clubFilter)){
+  for(const t of leagueTeams().filter(t=>clubFilter==='all'||t.id===clubFilter)){
     for(const [i,name] of [...t.players,...t.reserves].entries()){
       const id=name+'|'+t.id;if(seen.has(id))continue;seen.add(id);
-      const stored=career.players[id]||{};const role=i<t.players.length?t.formation[i]?.role||'MC':stored.role||'MC';
+      const stored=career.players[id]||{};const role=i<t.players.length?t.formation[i]?.role||'MC':t.reserveRoles?.[name]||stored.role||'MC';
       const ovr=E.Attr.generate(name,role,i<t.players.length?i:1,stored).ovr;
       list.push({...stored,name,club:t.id,role,ovr,games:stored.games||0,goals:stored.goals||0,assists:stored.assists||0,score:stored.score||0});
     }
   }
   return list;
+}
+function leagueTeams(){
+  const ids=new Set(Array.isArray(season?.teamIds)&&season.teamIds.length?season.teamIds:
+    TEAMS.map(t=>t.id));
+  return (E.allTeams?.()||TEAMS).filter(t=>t.id!=='neo-bestxi'&&ids.has(t.id));
+}
+function syncLeagueStatsFilters(){
+  const clubs=leagueTeams();
+  for(const id of ['rankClub','recordsTeam']){
+    const select=$(id);if(!select)return;
+    const values=clubs.map(t=>t.id).join('|');
+    if(select.dataset.leagueClubs===values)continue;
+    const current=select.value;
+    select.innerHTML='<option value="all">Todos os clubes</option>'+clubs.map(t=>`<option value="${esc(t.id)}">${esc(t.name)}</option>`).join('');
+    select.value=clubs.some(t=>t.id===current)?current:'all';
+    select.dataset.leagueClubs=values;
+  }
 }
 function renderCareerRanking(){if(!$('careerRankings'))return;const mode=$('rankMode')?.value||'performance',club=$('rankClub')?.value||'all';const career=E.Progression.ensure(season),ranked=E.Progression.rank(season,club);
   let data=ranked;
@@ -1740,7 +1757,7 @@ function renderLeagueTeamPicker(){
   picker.onchange=updateLeagueTeamSelection;
   updateLeagueTeamSelection();
 }
-function renderLeague(){const round=currentRound();$('round').textContent=round?`RODADA ${round.round} / ${season.rounds.length}`:'TEMPORADA ENCERRADA';$('simulateRound').disabled=!round||simBusy;$('simulateSeason').disabled=!round&& !simBusy;
+function renderLeague(){syncLeagueStatsFilters();const round=currentRound();$('round').textContent=round?`RODADA ${round.round} / ${season.rounds.length}`:'TEMPORADA ENCERRADA';$('simulateRound').disabled=!round||simBusy;$('simulateSeason').disabled=!round&& !simBusy;
   const ranks=E.standings(season);
   $('leagueTeamCount').textContent=`TEMPORADA · ${ranks.length} CLUBES`;
   $('standings').innerHTML=ranks.map((r,i)=>`<tr><td>${i+1}º</td><td><div class="club-row">${teamArt(r.team,'club-art-table')}<span>${esc(r.team.short)}</span></div></td><td>${r.J}</td><td>${r.V}</td><td>${r.E}</td><td>${r.D}</td><td>${r.GP}</td><td>${r.GC}</td><td>${r.SG>0?'+':''}${r.SG}</td><td>${r.PTS}</td></tr>`).join('');
@@ -2163,7 +2180,7 @@ function init(){
   configureCanvasResolution();
   $('graphicsLevel').addEventListener('change',()=>{autoResolutionFactor=1;lastResampleKey='';configureCanvasResolution();});
   for(const id of ['home','away'])$(id).innerHTML=(E.allTeams?.()||TEAMS).filter(t=>t.id!=='neo-bestxi').map(t=>`<option value="${t.id}">${esc(t.name)} · ${esc(t.formationName||'')}</option>`).join('');
-  $('home').value='bm';$('away').value='px';$('rankClub').innerHTML='<option value="all">Todos os clubes</option>'+TEAMS.map(t=>`<option value="${t.id}">${esc(t.name)}</option>`).join('');$('rankClub').onchange=renderCareerRanking;$('rankMode').onchange=renderCareerRanking;renderMasterProfiles();renderAbilityCatalog();$('recordsTeam').innerHTML='<option value="all">Todos os clubes</option>'+TEAMS.map(t=>`<option value="${t.id}">${esc(t.name)}</option>`).join('');$('recordsTeam').onchange=renderRecords;$('recordsSearch').oninput=renderRecords;
+  $('home').value='bm';$('away').value='px';syncLeagueStatsFilters();$('rankClub').onchange=renderCareerRanking;$('rankMode').onchange=renderCareerRanking;renderMasterProfiles();renderAbilityCatalog();$('recordsTeam').onchange=renderRecords;$('recordsSearch').oninput=renderRecords;
   bindMangaBatchImport();
   const gt=$('galleryTeam');if(gt){for(const t of (E.allTeams?.()||TEAMS).filter(t=>t.id!=='neo-bestxi')){const option=document.createElement('option');option.value=t.id;option.textContent=t.name;gt.appendChild(option);}gt.value='all';}
   for(const id of ['galleryTeam','galleryType'])$(id)?.addEventListener('change',renderPortraitGallery);

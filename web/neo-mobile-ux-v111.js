@@ -104,9 +104,9 @@
    const meta=esc(club(p.club)?.short||p.club)+' · '+(p.isMaster?'⭐ Mestre · ':'')+
     (n(p.games)>0?Math.round(n(p.games))+' jogo(s)':'Sem estreia');
    const face=img(p.name);
-   if(large)return '<button type="button" class="neo-ux-podium-card neo-ux-position-'+rank+'" data-neo-ux-profile="'+encodeURIComponent(p.name+'|'+p.club)+'"><span class="neo-ux-medal">'+(rank===1?'👑 ':rank===2?'🥈 ':'🥉 ')+rank+'º</span>'+
+   if(large)return '<button type="button" class="neo-ux-podium-card neo-ux-position-'+rank+'" data-neo-ux-profile="'+encodeURIComponent(p.name+'|'+p.club+(p.isMaster?'|master':''))+'"><span class="neo-ux-medal">'+(rank===1?'👑 ':rank===2?'🥈 ':'🥉 ')+rank+'º</span>'+
     face+'<b>'+esc(p.name)+'</b><small>'+meta+'</small><strong>'+esc(metricText(p,mode))+'</strong></button>';
-   return '<button type="button" class="neo-ux-money-row neo-ux-rank-row" data-neo-ux-profile="'+encodeURIComponent(p.name+'|'+p.club)+'"><span class="neo-ux-index">'+rank+'º</span>'+face+
+   return '<button type="button" class="neo-ux-money-row neo-ux-rank-row" data-neo-ux-profile="'+encodeURIComponent(p.name+'|'+p.club+(p.isMaster?'|master':''))+'"><span class="neo-ux-index">'+rank+'º</span>'+face+
     '<span class="neo-ux-info"><b>'+esc(p.name)+'</b><small>'+meta+'</small></span><strong>'+esc(metricText(p,mode))+'</strong></button>';
   };
   let out='';
@@ -222,8 +222,9 @@
    }
    if(b.dataset.neoUxProfile){
     event.preventDefault();event.stopImmediatePropagation();
-    const key=decodeURIComponent(b.dataset.neoUxProfile),at=key.lastIndexOf('|');
-    if(at>=0)window.NeoMarket96?.openProfile?.(key.slice(0,at),key.slice(at+1));
+    const key=decodeURIComponent(b.dataset.neoUxProfile),isMaster=key.endsWith('|master');
+    const identity=isMaster?key.slice(0,-7):key,at=identity.lastIndexOf('|');
+    if(at>=0)window.NeoMarket96?.openProfile?.(identity.slice(0,at),identity.slice(at+1),isMaster);
     return;
    }
    if(b.closest('#neoMobileNav')||b.closest('.shell>.nav')){

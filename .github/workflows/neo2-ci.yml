@@ -56,7 +56,7 @@ jobs:
             v150.test.cjs v160.test.cjs v170.test.cjs v180.test.cjs \
             v190.test.cjs v200.test.cjs v230.test.cjs v230-validation.test.cjs \
             v250.test.cjs v255-season.test.cjs neo-team-logos.test.cjs \
-            neo-bids-v3.test.cjs neo-master-market-v1.test.cjs
+            neo-bids-v3.test.cjs neo-master-market-v1.test.cjs neo-assists-v203.test.cjs
           do
             node "tests/$suite"
           done

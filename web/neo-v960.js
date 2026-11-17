@@ -28,8 +28,8 @@
    try{localStorage.setItem('neo-season-v2',JSON.stringify(s));}catch(_){}
   }
   return s;}catch(e){return null}}
- // O ranking da Liga mostra apenas Bastard, Barcha, Manshine, PXG e Ubers.
- // Escalações XI, clubes históricos e copas são outros modos, não entram no leilão da Liga.
+ // O ranking da Liga acompanha os clubes escalados para a temporada atual.
+ // Copas e a Seleção do Campeonato não rendem ofertas da Liga Neo Egoísta.
  function market(s){return D.roster(E,s,{scope:'league'})}
  function clubOf(p){return E.teamById(p?.club)||{id:p?.club||'',short:p?.club||'CLUBE',name:p?.club||'Clube',color:'#61b9e9'};}
  function photo(p,cls='neo960-avatar'){
@@ -39,7 +39,7 @@
   if(fallback)return `<img class="${cls}" src="${esc(fallback)}" alt="Foto de ${esc(p.name)}" loading="lazy" decoding="async">`;
   return `<span class="${cls} neo960-avatar-fallback" aria-label="Sem foto cadastrada">${esc((p.name||'?').split(' ').map(s=>s[0]).slice(0,2).join(''))}</span>`;
  }
- const playerKey=p=>encodeURIComponent(p.name+'|'+p.club);
+ const playerKey=p=>encodeURIComponent(p.name+'|'+p.club+(p.isMaster?'|master':''));
  function score(p,k){const n=v=>Number(p[v]||0);switch(k){
   case 'G':return n('goals');case 'A':return n('assists');
   case 'DEF':return n('tackles')*2+n('interceptions')*2.5+n('shotBlocks')*3+n('aerialWins')+n('saves')*1.7;
@@ -145,7 +145,7 @@
  }
  let activeProfile=null,lastFocus=null;
  function closeProfile(){const modal=$('neo960-profile-modal');if(!modal||modal.hidden)return;modal.hidden=true;modal.classList.remove('open');document.body.classList.remove('neo960-modal-open');activeProfile=null;lastFocus?.focus?.();}
- function openProfile(name,club){const season=state(),p=D.profile(E,season,name,club);if(!p)return;
+ function openProfile(name,club,isMaster){const season=state(),p=D.profile(E,season,name,club,{isMaster});if(!p)return;
   activeProfile={name,club};lastFocus=document.activeElement;
   let modal=$('neo960-profile-modal');if(!modal){
     modal=document.createElement('div');modal.id='neo960-profile-modal';modal.className='neo960-modal';modal.hidden=true;
@@ -169,8 +169,9 @@
    // Leave gallery photos, buttons, search results and historical-roster rows alone.
    if(e.target.closest('#portraitGallery, #neo970-new-squads, #gallery .portrait-card, .portrait-card, .neo970-photo-row, [data-gallery-player]'))return;
    const target=e.target.closest('[data-neo960-profile]');if(target){
-    const key=decodeURIComponent(target.dataset.neo960Profile||''),split=key.lastIndexOf('|');
-    if(split>=0)openProfile(key.slice(0,split),key.slice(split+1));return;
+    const key=decodeURIComponent(target.dataset.neo960Profile||''),isMaster=key.endsWith('|master');
+    const identity=isMaster?key.slice(0,-7):key,split=identity.lastIndexOf('|');
+    if(split>=0)openProfile(identity.slice(0,split),identity.slice(split+1),isMaster);return;
    }
    // As outras listagens de jogadores também levam à ficha, quando reconhecíveis.
    if(e.target.closest('button,a,[data-portrait-edit],[data-manga-edit],[data-portrait-style]'))return;

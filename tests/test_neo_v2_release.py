@@ -53,7 +53,8 @@ class V2ReleaseTests(unittest.TestCase):
         native=(ROOT/"app/src/main/java/com/neoegoist/simulator/MainActivity.java").read_text()
         self.assertIn('HOST = "appassets.androidplatform.net"',native)
         self.assertIn('PREF_WEB_VERSION = "installed_web_version"',native)
-        self.assertIn('BUNDLED_WEB_VERSION = "10.6.22"',native)
+        expected_build=(ROOT/"web/UPDATE_BUILD").read_text().strip()
+        self.assertIn(f'BUNDLED_WEB_VERSION = "{expected_build}"',native)
         self.assertIn("MAX_PACKAGE_BYTES = 32L * 1024 * 1024",native)
         self.assertIn("MAX_UNPACKED_BYTES = 96L * 1024 * 1024",native)
 

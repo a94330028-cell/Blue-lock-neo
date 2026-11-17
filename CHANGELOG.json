@@ -28,11 +28,12 @@
         "Calendário, tabela e campo ao vivo com 22 atletas se adaptam ao número de participantes, de 2 a 10 clubes."
       ],
       "correcoes": [
-        "Saves antigos da liga continuam compatíveis; backup da edição anterior é criado antes de iniciar uma nova.",
-        "History Team atualizado: Void substitui Dots, com posições e OVRs oficiais preservados."
+        "Saves antigos da liga continuam compatíveis e recebem backup; History Team atualizado: Void substitui Dots, com posições e OVRs preservados.",
+        "Clubes adicionados à Liga Neo Egoísta aparecem nas estatísticas, nos rankings e no mercado de ofertas da própria temporada.",
+        "Pênaltis não geram assistências invisíveis, e quem faz o cruzamento não cabeceia a própria bola no instante do lançamento."
       ],
       "jogabilidade": [
-        "Escolha dois, quatro ou seis encontros por dupla, com mandos equilibrados e folgas automáticas quando necessárias."
+        "Dois, quatro ou seis encontros por dupla, com mandos equilibrados; no ataque, jogadores procuram mais companheiros livres para passes decisivos e assistências reais."
       ],
       "visual": [
         "Novo seletor de clubes com escudos, contador de participantes e prévia de rodadas na página da liga."

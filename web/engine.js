@@ -947,9 +947,13 @@ class Match {
   }
   _aerialChallenge(b){
     // One contest on an airborne ball: height and players' relative positions matter.
-    const inRange=this.players.filter(q=>q.i>0&&distance(q,b)<44);
+    // The crosser cannot head their own high cross a split-second after release.
+    // Require another player to reach the flight path before contesting it.
+    const inRange=this.players.filter(q=>q.i>0&&distance(q,b)<44&&
+      !(b.crossType&&q===b.by));
     if(!inRange.length)return false;
-    const ranked=inRange.map(q=>({q,score:(q.role==='ZAG'?18:0)+(q.i>=8?11:0)+(has(q,'poacher')?15:0)+(has(q,'trap')?7:0)+this.random()*30-distance(q,b)*.6})).sort((a,c)=>c.score-a.score);
+    const ranked=inRange.map(q=>({q,score:(q.role==='ZAG'?18:0)+(q.i>=8?11:0)+(has(q,'poacher')?15:0)+(has(q,'trap')?7:0)+
+      (q===b.to&&q.side===b.by?.side?18:0)+this.random()*30-distance(q,b)*.6})).sort((a,c)=>c.score-a.score);
     const winner=ranked[0].q;
     if(b.by?.side!==winner.side&&this.random()<.012){
       const ownGoal=winner.side===0?PITCH.left:PITCH.right;
@@ -1064,6 +1068,17 @@ class Match {
       this.stats.soloRuns[p.side]++;this._moment(p.side,'solo',`🔥 ${p.name} ignora a opção de passe e parte no um contra um!`,[p.name]);
     }
     const solo=p.soloUntil>this.time;
+    // In the final third, look for an open teammate in a better scoring
+    // position before taking an immediate shot.  An actual completed pass is
+    // still required for an assist; no goal statistics are granted here.
+    const attackingReceiver=candidate?.q;
+    const receiverGoalDist=attackingReceiver?distance(attackingReceiver,{x:goalX,y:PITCH.cy}):Infinity;
+    const layoff=attackingReceiver&&candidate.lane>39&&candidate.d<250&&candidate.value>10&&
+      this.progress(p.side,p.x)>830&&goalDist<440&&receiverGoalDist<goalDist-35&&
+      this.progress(p.side,attackingReceiver.x)>975&&
+      this.opponentPressure(attackingReceiver,80)<2&&
+      !this.offside(attackingReceiver,p);
+    if(!solo&&layoff&&this.random()<.60){this.pass(p,attackingReceiver);return;}
     // Long-range goals remain possible, but most attackers now seek the box before shooting.
     const takesShot=this.canShoot(p),shotChance=takesShot?clamp(.17+(370-goalDist)*.00070+pressure*.009+(p.i>=8?.045:0)+(aggressive?.040:0)-(defensive?.015:0)+(profile?.shoot||0)*.65+(this._attributes(p,'finishing')-75)*.0013,.045,.62)*(inside?1.62:goalDist>345?(solo?.31:.17):goalDist>270?.58:1):0;
     if(takesShot&&Math.abs(p.y-PITCH.cy)<265&&this.random()<shotChance){this.shoot(p);return;}
@@ -1955,7 +1970,7 @@ class Match {
     this.score[side]++;let scorer=thisSide;
     if(!scorer){const striker=this.players.filter(p=>p.side===side&&p.i>=8);scorer=striker.reduce((a,p)=>distance(p,b)<distance(a,b)?p:a,striker[0]);}
     scorer.goals++;scorer.rating=clamp(scorer.rating+.75,5,10);this._ego(scorer,39,'gol decisivo');let assister=null;
-    if(this.lastPass&&this.lastPass.side===side&&this.lastPass.p!==scorer&&this.time-this.lastPass.time<135){assister=this.lastPass.p;assister.assists++;assister.rating=clamp(assister.rating+.32,5,10);this._ego(assister,19,'assistência');}
+    if(!b.isPenalty&&this.lastPass&&this.lastPass.side===side&&this.lastPass.p!==scorer&&this.time-this.lastPass.time<135){assister=this.lastPass.p;assister.assists++;assister.rating=clamp(assister.rating+.32,5,10);this._ego(assister,19,'assistência');}
     if(b.isPenalty){this.stats.penaltiesScored[side]++;assister=null;}
     const scoredFrom=b.isPenalty?'penalty':b.setPiece||((this.lastPass&&this.time-this.lastPass.time<135)?this.lastPass.setPiece:null)||null;
     const kind=b.isPenalty?'penalty':shot?.style||(shot?.header?'header':'normal');

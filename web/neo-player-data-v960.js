@@ -8,22 +8,36 @@
  const FIELDS=['games','wins','draws','losses','goals','assists','shots','passes','dribbles','tackles',
    'interceptions','shotBlocks','aerialWins','duelsWon','keyPasses','saves','cleanSheets','runs',
    'overlaps','distance','flowCount','masterApps'];
- const byId=(s,name,club)=>s?.career?.players?.[name+'|'+club]||s?.career?.masterBids?.[name+'|'+club]||null;
+ const byId=(s,name,club,isMaster)=>isMaster?
+  s?.career?.masterBids?.[name+'|'+club]||null:
+  s?.career?.players?.[name+'|'+club]||null;
+ function leagueIds(E,season){
+  // Pre-customization saves have no teamIds, so retain their original five-club market.
+  return new Set(Array.isArray(season?.teamIds)&&season.teamIds.length?
+   season.teamIds:E.TEAMS.map(t=>t.id));
+ }
  const unaccent=s=>String(s??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
  const nameMatch=(a,b)=>unaccent(a)===unaccent(b);
- const roleFor=(t,i,saved,master)=>master?'CA':i<t.players.length?(t.formation?.[i]?.role||saved?.role||'MC'):(saved?.role||'MC');
+ const roleFor=(t,i,saved,master)=>master?'CA':i<t.players.length?
+  (t.formation?.[i]?.role||saved?.role||'MC'):
+  (t.reserveRoles?.[t.reserves?.[i-t.players.length]]||saved?.role||'MC');
  function roster(E,season,options={}){
   if(!E||!Array.isArray(E.TEAMS))return [];
   const res=[],seen=new Set(),career=season?.career?.players||{},masterBids=season?.career?.masterBids||{};
   const scope=options?.scope==='all'?'all':'league';
-  const teams=(scope==='all'&&typeof E.allTeams==='function'?E.allTeams():E.TEAMS)
-    .filter(t=>t?.id!=='neo-bestxi'); // Dynamic best XI is a view, not a second player registration.
+  const participants=leagueIds(E,season);
+  const teams=(typeof E.allTeams==='function'?E.allTeams():E.TEAMS)
+    .filter(t=>t?.id!=='neo-bestxi'&&(scope==='all'||participants.has(t.id)));
   const allowed=new Set(teams.map(t=>t.id));
   for(const t of teams){
    const roster=[...(t.players||[]),...(t.reserves||[]),...(t.master?[t.master]:[])];
    roster.forEach((name,i)=>{
-    if(!name)return;const id=name+'|'+t.id;if(seen.has(id))return;seen.add(id);
-    const master=name===t.master,saved=(master?masterBids[id]:career[id])||{};
+    if(!name)return;const id=name+'|'+t.id;
+    // A starter and a Master Striker can share a name (History Team's Gustavo).
+    // Their market ledgers must remain separate even with the same display name.
+    const master=i===(t.players||[]).length+(t.reserves||[]).length;
+    const uniqueId=id+(master?'|master':'');if(seen.has(uniqueId))return;seen.add(uniqueId);
+    const saved=(master?masterBids[id]:career[id])||{};
     const role=roleFor(t,i,saved,master);
     const ovr=E.Attr?.generate?E.Attr.generate(name,role,master?9:i<11?i:1,saved).ovr:N(saved.ovr)||75;
     const value=E.Progression?.estimateValue?E.Progression.estimateValue(saved,ovr,role):N(saved.value);
@@ -43,12 +57,13 @@
   }
   return res;
  }
- function detailsFor(season,name,club){
+ function detailsFor(season,name,club,isMaster){
   const rows=[];
   for(const r of season?.rounds||[]){for(const fixture of r.games||[]){
    const side=fixture.home===club?0:fixture.away===club?1:-1;
    if(side===-1||!Array.isArray(fixture.details?.players))continue;
-   const p=fixture.details.players.find(q=>q.side===side&&nameMatch(q.name,name));
+   const p=fixture.details.players.find(q=>q.side===side&&nameMatch(q.name,name)&&
+     (isMaster===undefined||Boolean(q.isMaster)===isMaster));
    if(!p)continue;
    const score=fixture.result||fixture.details?.score||null;
    rows.push({round:r.round||0,opponent:side===0?fixture.away:fixture.home,
@@ -61,12 +76,14 @@
   }
   return rows.sort((a,b)=>(a.source?'1':'0').localeCompare(b.source?'1':'0')||a.round-b.round);
  }
- function profile(E,season,name,club){
+ function profile(E,season,name,club,options={}){
   const all=roster(E,season,{scope:'all'}),entry=all.find(p=>p.name===name&&p.club===club)
    ||all.find(p=>nameMatch(p.name,name)&&p.club===club);
-  if(!entry)return null;
-  const saved=byId(season,entry.name,entry.club)||{};
-  const matched=detailsFor(season,entry.name,entry.club);
+  const chosen=options.isMaster===undefined?entry:
+   all.find(p=>nameMatch(p.name,name)&&p.club===club&&p.isMaster===Boolean(options.isMaster));
+  if(!chosen)return null;
+  const saved=byId(season,chosen.name,chosen.club,chosen.isMaster)||{};
+  const matched=detailsFor(season,chosen.name,chosen.club,chosen.isMaster);
   const detail={};for(const field of FIELDS)detail[field]=0;
   let ratingSum=0,ratings=0,goalsAgainst=0;
   const abilities={};
@@ -116,7 +133,7 @@
     Number(saved.ratingSum)/Number(saved.games):ratings?ratingSum/ratings:null;
   const abilityUses=Object.keys(saved.abilityUses||{}).length?saved.abilityUses:abilities;
   const games=totals.games;
-  return {entry,saved,totals,avgRating:avgRating===null?null:Math.max(0,Math.min(10,avgRating)),
+  return {entry:chosen,saved,totals,avgRating:avgRating===null?null:Math.max(0,Math.min(10,avgRating)),
    goalsAgainst:matched.some(m=>m.score&&/^(GOL|GK)$/.test(m.raw.role||''))?goalsAgainst:null,
    abilityUses,matched,hasMatches:games>0,
    recordedMatches:matched.length,
