@@ -97,7 +97,7 @@ const server=http.createServer((req,res)=>{
     if(width===390){
      await page.click('#neo980-squad-area .neo980-lineup-card');
      assert.ok(await page.$eval('#neo960-profile-modal',el=>!el.hidden),'player profile opens from card');
-     await page.click('#neo960-profile-modal [data-neo960-close]');
+     await page.click('#neo960-profile-modal button.neo960-close[data-neo960-close]');
     }
     if(width<=700)await page.evaluate(()=>window.NeoReferenceMobile?.go?.('home'));
    }
