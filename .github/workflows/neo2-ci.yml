@@ -31,6 +31,7 @@ jobs:
           node --check web/neo2-abilities-v200.js
           node --check web/app.js
           node --check web/engine.js
+          node --check web/neo2-history-team-v201.js
           node --check web/neo2-deep-ai-v202.js
           node --check web/neo2-world-v210.js
           node --check web/neo2-insights-v211.js
@@ -84,7 +85,7 @@ jobs:
           marker='<script src="neo2-abilities-v200.js?v=2.0.0"></script>'
           assert page.count(marker)==1, 'Module must appear exactly once'
           assert page.index(marker)<page.index('function renderScorerBoard(){'), 'Ability module must load before immediate app.init()'
-          sequence=["neo2-abilities-v200.js","neo2-deep-ai-v202.js","neo2-world-v210.js","neo2-insights-v211.js","neo2-synergy-v213.js","neo2-hub-v212.js"]
+          sequence=["neo2-abilities-v200.js","neo2-history-team-v201.js","neo2-deep-ai-v202.js","neo2-world-v210.js","neo2-insights-v211.js","neo2-synergy-v213.js","neo2-hub-v212.js"]
           tags=['<script src="'+name+'?v=2.0.0"></script>' for name in sequence]
           assert all(page.count(tag)==1 for tag in tags), 'Each integration script loads exactly once'
           order=[page.index(tag) for tag in tags]

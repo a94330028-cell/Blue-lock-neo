@@ -278,14 +278,14 @@ updated=re.sub(r'src="neo2-abilities-v200\.js(?:\?v=[^"]*)?"',
 # Remove duplicate older tags first to keep repeated sync strictly idempotent.
 # NEO 2.0: one synchronous skill script and one deep-AI script, between
 # the real inline match engine and app.init(). Idempotent across Android/site.
-for module in ('neo2-abilities-v200.js','neo2-deep-ai-v202.js','neo2-world-v210.js','neo2-insights-v211.js','neo2-synergy-v213.js','neo2-hub-v212.js'):
+for module in ('neo2-abilities-v200.js','neo2-history-team-v201.js','neo2-deep-ai-v202.js','neo2-world-v210.js','neo2-insights-v211.js','neo2-synergy-v213.js','neo2-hub-v212.js'):
     updated=re.sub(r'\s*<script\b[^>]*src="' + re.escape(module) + r'(?:\?[^"]*)?"[^>]*>\s*</script>', '', updated, flags=re.I)
 app_scripts=[m for m in patterns.finditer(updated) if 'function renderScorerBoard(){' in m.group(2) and 'const $=id=>document.getElementById(id);' in m.group(2)]
 if len(app_scripts)!=1:raise RuntimeError('NEO 2.0 app entrypoint missing or ambiguous: '+str(len(app_scripts)))
 boot=app_scripts[0].start()
-tags='<script src="neo2-abilities-v200.js?v=2.0.0"></script>\n<script src="neo2-deep-ai-v202.js?v=2.0.0"></script>\n<script src="neo2-world-v210.js?v=2.0.0"></script>\n<script src="neo2-insights-v211.js?v=2.0.0"></script>\n<script src="neo2-synergy-v213.js?v=2.0.0"></script>\n<script src="neo2-hub-v212.js?v=2.0.0"></script>\n'
+tags='<script src="neo2-abilities-v200.js?v=2.0.0"></script>\n<script src="neo2-history-team-v201.js?v=2.0.0"></script>\n<script src="neo2-deep-ai-v202.js?v=2.0.0"></script>\n<script src="neo2-world-v210.js?v=2.0.0"></script>\n<script src="neo2-insights-v211.js?v=2.0.0"></script>\n<script src="neo2-synergy-v213.js?v=2.0.0"></script>\n<script src="neo2-hub-v212.js?v=2.0.0"></script>\n'
 updated=updated[:boot]+tags+updated[boot:]
-for module in ('neo2-abilities-v200.js','neo2-deep-ai-v202.js','neo2-world-v210.js','neo2-insights-v211.js','neo2-synergy-v213.js','neo2-hub-v212.js'):
+for module in ('neo2-abilities-v200.js','neo2-history-team-v201.js','neo2-deep-ai-v202.js','neo2-world-v210.js','neo2-insights-v211.js','neo2-synergy-v213.js','neo2-hub-v212.js'):
     if updated.count(module+'?v=2.0.0')!=1:raise RuntimeError('NEO 2.0 module not loaded once: '+module)
 print('NEO 2.0 boot order checked: inline engine → ability registry → deep AI → app')
 # Normalise the two versioned stylesheets: never append a second copy.

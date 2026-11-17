@@ -1,6 +1,9 @@
 'use strict';
 const assert=require('node:assert/strict'),fs=require('node:fs');
 const E=require('../web/engine.js');
+const History=require('../web/neo2-history-team-v201.js');
+assert.ok(History.install(E),'History Team registered only when its module is loaded');
+assert.equal(History.install(E),false,'History registration is idempotent');
 const expected={
  'Dexter Morgan':['PE',94],'Gustavo Grace':['PD',94],'Hao':['CA',90],
  'Saiko':['CA',92],'Gb':['MC',93],'Fuyuki':['MC',92],'Zenkai':['VOL',90],

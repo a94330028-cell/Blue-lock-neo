@@ -2,8 +2,8 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const dir=path.join(__dirname,'..','web');const E=require(dir+'/engine.js'),H=require(dir+'/neo-historic-teams-v970.js'),C=require(dir+'/neo-cups-v970.js'),D=require(dir+'/neo-player-data-v960.js');
 assert.equal(E.TEAMS.length,5,'Original Neo Egoist league must remain unchanged');
-assert.equal(E.allTeams().length,6,'Five official league clubs plus History Team exhibition squad');
-assert.equal(H.install(E),4);assert.equal(E.allTeams().length,10,'History Team remains selectable alongside four historic clubs');assert.equal(E.TEAMS.length,5);
+assert.equal(E.allTeams().length,5);
+assert.equal(H.install(E),4);assert.equal(E.allTeams().length,9);assert.equal(E.TEAMS.length,5);
 for(const t of H.teams){assert.equal(t.starters.length,11);assert.ok(t.reserves.length>=10);assert.equal(new Set([...t.starters,...t.reserves].map(p=>p[0])).size,t.starters.length+t.reserves.length);
  const game=new E.Match(t.id,'bm',81);assert.equal(game.players.length,22);assert.equal(game.teams[0].id,t.id);const first=game.players.find(p=>p.name===t.starters[9][0]);assert.ok(first?.attributes?.ovr>=60&&first.attributes.ovr<=90);
 }
