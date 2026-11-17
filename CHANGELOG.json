@@ -33,7 +33,8 @@
         "2.520 novas técnicas procedurais em sete raridades, por posição e situação de jogo; custo, recarga, ativação e efeito realmente integrados ao motor."
       ],
       "visual": [
-        "Arsenal 2.0: arte offline por tipo de jogada, filtros de raridade e catálogo completo paginado; histórico da 1.x recolhido."
+        "Arsenal 2.0: arte offline por tipo de jogada, filtros de raridade e catálogo completo paginado; histórico da 1.x recolhido.",
+        "Busca rápida no Arsenal por nome, efeito ou identificador, sem renderizar milhares de cartas de uma vez."
       ],
       "otimizacoes": [
         "Catálogo 2.0 definido por regras em um módulo compacto, sem adicionar milhares de arquivos ao aplicativo."

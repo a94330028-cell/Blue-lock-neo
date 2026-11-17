@@ -1,0 +1,11 @@
+/* NEO 2.0 — fast search across 3,274 registered techniques. */
+#neo2ArsenalSearch{
+ width:min(100%,460px);min-width:170px;min-height:43px;
+ padding:10px 13px;margin:4px 0;
+ border:1px solid #418ce1;border-radius:11px;
+ background:linear-gradient(120deg,#0b2f5b,#07162f);
+ color:#eff9ff;font-size:13px;outline-offset:2px;
+}
+#neo2ArsenalSearch:focus-visible{outline:2px solid #71d7ff}
+#neo2ArsenalSearch::placeholder{color:#a3c4df}
+@media(max-width:700px){#neo2ArsenalSearch{display:block;width:100%;max-width:none;margin:6px 0 10px}}

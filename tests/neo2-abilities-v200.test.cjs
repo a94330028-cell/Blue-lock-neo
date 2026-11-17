@@ -56,10 +56,12 @@ assert.ok(a.bonus(dummy,common.stat,101)>1,'ability really changes game stat');
 assert.equal(a.bonus(dummy,common.stat,100+common.duration+2),1,'effect expires');
 assert.ok(a.tacticalBonus(dummy,'shot',101)>0,'skill family changes tactical context');
 const sw=fs.readFileSync('web/service-worker.js','utf8');
-for(const asset of ['neo2-abilities-v200.js','assets/neo2-skills/shot.svg','assets/neo2-skills/dribble.svg','assets/neo2-skills/pass.svg','assets/neo2-skills/tackle.svg','assets/neo2-skills/save.svg'])
+assert.ok(fs.existsSync('web/neo2-abilities-v200.css'),'fast Arsenal search styling exists');
+assert.ok(fs.readFileSync('web/app.js','utf8').includes('neo2ArsenalSearch'),'fast search filters names and effects');
+for(const asset of ['neo2-abilities-v200.js','neo2-abilities-v200.css','assets/neo2-skills/shot.svg','assets/neo2-skills/dribble.svg','assets/neo2-skills/pass.svg','assets/neo2-skills/tackle.svg','assets/neo2-skills/save.svg'])
  assert.ok(sw.includes(asset),'offline caching of '+asset);
 const loader=fs.readFileSync('tools/sync_inline_v930.py','utf8');
-assert.ok(loader.includes('neo2-abilities-v200.js'),'both Android and web bundles load new module');
+assert.ok(loader.includes('neo2-abilities-v200.js')&&loader.includes('neo2-abilities-v200.css'),'both Android and web bundles load new module and search UI');
 const app=fs.readFileSync('web/app.js','utf8');
 assert.ok(app.includes("assets/neo2-skills/"),'real Arsenal card artwork source wired');
 console.log('PASS NEO 2.0: '+initial+' preserved + '+newSkills.length+' new skills = '+all.length+' total; rarity, role, activation, cooldown, offline artwork validated');

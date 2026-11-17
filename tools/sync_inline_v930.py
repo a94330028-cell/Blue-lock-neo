@@ -271,5 +271,9 @@ if 'neo2-abilities-v200.js' not in updated:
     updated=updated.replace('</body>','<script defer src="neo2-abilities-v200.js?v=2.0.0"></script>\n</body>',1)
 updated=re.sub(r'src="neo2-abilities-v200\.js(?:\?v=[^"]*)?"',
                'src="neo2-abilities-v200.js?v=2.0.0"',updated)
+# 2.0: lightweight skill catalogue search stylesheet on both site and APK.
+if 'neo2-abilities-v200.css' not in updated:
+    if updated.count('</head>')!=1:raise RuntimeError('Cannot load NEO 2.0 Arsenal search styling')
+    updated=updated.replace('</head>','<link rel="stylesheet" href="neo2-abilities-v200.css?v=2.0.0">\n</head>',1)
 html.write_text(updated,encoding='utf-8')
 print('Inline game modules synchronized:',counts)

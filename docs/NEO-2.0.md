@@ -50,7 +50,7 @@ validar e aplicar esse tipo de pacote.**
 
 - [ ] Ajustar IA e decisões táticas, melhorando variedade e leitura de jogo.
 - [x] Preservar as 754 habilidades existentes e adicionar **2.520 técnicas** novas, geradas em módulo separado, com raridades, posições, custo, recarga e seleção contextual.
-- [x] Ligar novas habilidades ao motor existente (ativação, bônus e cooldown) e à galeria do Arsenal, com 5 artes SVG compactas disponíveis offline.
+- [x] Ligar novas habilidades ao motor existente (ativação, bônus e cooldown) e à galeria do Arsenal, com 5 artes SVG compactas disponíveis offline e busca rápida no Arsenal.
 - [ ] Validar equilíbrio em campeonatos completos, variabilidade de ativação e desempenho real no Android antes do lançamento público.
 - [ ] Tornar habilidades mais perceptíveis sem garantir gols artificialmente.
 - [ ] Melhorar campo, replays, narração e responsividade da tela.
