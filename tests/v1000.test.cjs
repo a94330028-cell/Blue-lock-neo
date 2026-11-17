@@ -52,7 +52,7 @@ for(let i=0;i<50;i++)official.step(1/30);
 assert.equal(XP.matchPulse(official).teams[0],'BASTARD');
 const app=fs.readFileSync('web/app.js','utf8');
 assert.ok(app.includes('URL.createObjectURL(file)'),'Android file fallback reads blob image URLs');
-assert.ok(app.includes("putPortraitBlob('custom',name,dataPortraitToBlob(data))"),'historical club photos are copied to stable JPEG before IndexedDB');
+assert.ok(app.includes("await savePortraitImage('custom',name,data)"),'historical club portraits use reliable JPEG conversion with IndexedDB and localStorage fallback');
 const mobile=fs.readFileSync('web/mobile-upgrade.js','utf8');
 assert.ok(mobile.includes('neo-v1000.js?v=1.8.0'),'new gameplay loaded on all existing web shells');
 const worker=fs.readFileSync('web/service-worker.js','utf8');
