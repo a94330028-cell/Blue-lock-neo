@@ -6,16 +6,16 @@
   "media": {
     "banner": {
       "path": "assets/updates/neo-update-banner.png",
-      "sha256": "65e2913e0568591c114e61485eb1d4771f08360fdcfaf3e9f00879eeb83f9a9f",
-      "width": 1983,
-      "height": 793,
+      "sha256": "0976853338c9e2ed121bcca343d7675f79671c089c7452155d581d8df4f0eddb",
+      "width": 200,
+      "height": 100,
       "mime": "image/png"
     },
     "avatar": {
       "path": "assets/updates/neo-update-avatar.png",
-      "sha256": "882595c75b8ae95ab4fa9bb058f208181c1101c47028ed17b0ac4270b77c64b9",
-      "width": 1254,
-      "height": 1254,
+      "sha256": "c8a683c7a65d5e15f4b902a482af7fccdf0a4ae0f1e2716206f344778be73283",
+      "width": 200,
+      "height": 200,
       "mime": "image/png"
     }
   },
@@ -24,23 +24,43 @@
       "version": "2.0.0",
       "date": "2026-11-17",
       "novidades": [
-        "Nova camada do mundo persistente: notícias de resultados oficiais, dossiês individuais e memória das duplas entre partidas."
+        "Nova ficha oficial de atualização com conteúdos, melhorias, balanceamento, correções e prévia de desenvolvimento.",
+        "Ícone amarelo e banner azul oficiais enviados para o NEO UPDATE BOT."
       ],
       "correcoes": [
-        "Regras de pênalti/impedimento preservadas; inspeção de integridade por laboratório automático de partidas reais."
+        "Mira das finalizações, cabeceios, faltas e pênaltis alinhada à linha real do gol; defesas e erros continuam possíveis.",
+        "Anúncios baseados apenas em modificações verificadas, com proteção contra duplicação e validação das imagens."
       ],
       "jogabilidade": [
-        "2.520 técnicas da expansão, combos contextuais limitados e contra-ataques com recarga e efeitos físicos moderados."
+        "IA contextual, memória entre partidas, rivalidades e 2.520 habilidades novas com recargas e combinações."
       ],
       "visual": [
-        "Centro de Evolução com histórico, rivalidades, mapas de calor, xG e momentos decisivos baseados em dados reais."
+        "Centro de Evolução com dossiês, mapas de calor, notícias e replays de lances realmente registrados."
       ],
       "otimizacoes": [
-        "Módulos independentes e relatório de regressões para o APK; pacote incremental e otimização completa ainda pendentes."
+        "Laboratório de 120 partidas e regressão das versões anteriores aprovados; arquivos e saves preservados."
       ],
       "importantes": [
-        "2.0 continua em desenvolvimento isolado: lançamento público somente após testes no aparelho e revisão geral."
-      ]
+        "Site 2.0 publicado; APK disponível como teste, podendo exigir assinatura original para atualizar sem reinstalar."
+      ],
+      "balance": {
+        "buffs": [],
+        "nerfs": [],
+        "reworks": [
+          "Reformulação da trajetória dos chutes e das cobranças de pênalti, sem gol garantido."
+        ]
+      },
+      "preview": {
+        "development": [
+          "Atualizações incrementais com SHA-256, rollback seguro e preservação do conteúdo offline."
+        ],
+        "planned": [
+          "Ampliar o laboratório para milhares de partidas e validar dispositivos Android físicos."
+        ],
+        "evaluation": [
+          "Ajustar a transmissão cinematográfica em celulares modestos."
+        ]
+      }
     },
     {
       "version": "1.8.0",

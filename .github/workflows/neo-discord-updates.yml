@@ -45,12 +45,14 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          NEO_PING_EVERYONE: "1"
         run: python3 tools/neo_update_announcement.py publish
       - name: Retomar envio pendente após revisão do log
         if: inputs.action == 'retry_pending'
         env:
           GH_TOKEN: ${{ github.token }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          NEO_PING_EVERYONE: "1"
         run: python3 tools/neo_update_announcement.py publish --retry-pending
       - name: Resumo de segurança
         if: always()

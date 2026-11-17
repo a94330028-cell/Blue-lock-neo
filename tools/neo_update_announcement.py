@@ -22,7 +22,7 @@ from urllib.request import Request, urlopen
 BASE = Path(__file__).resolve().parents[1]
 CHANGELOG = BASE / "CHANGELOG.json"
 VERSION_FILE = BASE / "web" / "VERSION"
-NAME = "『⚡』𝐍𝐄𝐎 𝐔𝐏𝐃𝐀𝐓𝐄𝐒・𝐁𝐎𝐓"
+NAME = "⛩️ 𝐁𝐋𝐔𝐄 𝐋𝐎𝐂𝐊 : 𝐍𝐄𝐎 • UPDATES"
 SITE_URL = "https://a94330028-cell.github.io/Blue-lock-neo/"
 REPOSITORY = "a94330028-cell/Blue-lock-neo"
 CATEGORIES = (
@@ -80,6 +80,15 @@ def load_changelog(path=CHANGELOG):
                 raise AnnouncementError("Categoria inválida " + category + ": " + version)
         if not any(release.get(key) for key, _ in CATEGORIES):
             raise AnnouncementError("Versão sem alterações verificáveis: " + version)
+        for field, allowed in (("balance", ("buffs", "nerfs", "reworks")),
+                               ("preview", ("development", "planned", "evaluation"))):
+            value = release.get(field, {})
+            if not isinstance(value, dict) or any(
+                k not in allowed or not isinstance(v, list) or
+                any(not isinstance(item, str) or not item.strip() for item in v)
+                for k, v in value.items()
+            ):
+                raise AnnouncementError("Seção inválida no anúncio: " + field + " / " + version)
     current = Path(VERSION_FILE).read_text(encoding="utf-8").strip()
     if not VERSION_PATTERN.fullmatch(current):
         raise AnnouncementError("web/VERSION inválida.")
@@ -95,7 +104,7 @@ def load_changelog(path=CHANGELOG):
         item = data["media"].get(part)
         if not isinstance(item, dict) or not isinstance(item.get("path"), str):
             raise AnnouncementError("Manifesto de imagem ausente: " + part)
-        if not re.fullmatch(r"assets/updates/neo-update-(?:banner|avatar)\.png", item["path"]):
+        if not re.fullmatch(r"assets/updates/neo-update-(?:banner|avatar)\.(?:png|webp)", item["path"]):
             raise AnnouncementError("Caminho de imagem inesperado: " + part)
         if not re.fullmatch(r"[a-f0-9]{64}", str(item.get("sha256", ""))):
             raise AnnouncementError("SHA256 de mídia inválido: " + part)
@@ -118,6 +127,10 @@ def announcement_identity(data, version):
         "version": version,
         "build": build,
         "release": {category: release.get(category, []) for category, _ in CATEGORIES},
+        "balance": release.get("balance", {}),
+        "preview": release.get("preview", {}),
+        "media": {part: data["media"][part]["sha256"] for part in MEDIA},
+        "template": "official-notes-v2",
     }, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
     digest = hashlib.sha256(payload.encode("utf-8")).hexdigest()[:16]
     return {"version": version, "build": build, "digest": digest,
@@ -154,8 +167,9 @@ def verify_media(data, site_dir=None):
         if not file.is_file():
             raise AnnouncementError("Arquivo oficial " + part + " ainda não existe em " + entry["path"])
         raw = file.read_bytes()
-        if len(raw) < 2048 or not raw.startswith(bytes.fromhex("89504e470d0a1a0a")):
-            raise AnnouncementError("Imagem " + part + " não é um PNG válido.")
+        if len(raw) < 2048 or not (raw.startswith(bytes.fromhex("89504e470d0a1a0a")) or
+                                   (raw.startswith(b"RIFF") and raw[8:12] == b"WEBP")):
+            raise AnnouncementError("Imagem " + part + " não é PNG/WebP válido.")
         if hashlib.sha256(raw).hexdigest() != entry["sha256"]:
             raise AnnouncementError("A imagem " + part + " não corresponde ao original fornecido.")
     return True
@@ -202,81 +216,94 @@ def embed_length(embed):
 
 
 def build_payloads(data, version):
+    """Official update-sheet format. Only validated real patch changes are listed."""
     release = find_release(data, version)
-    if not release:
-        raise AnnouncementError("Versão inexistente no changelog: " + version)
-    if data.get("current_version") != version:
-        raise AnnouncementError("A versão solicitada não é a versão publicada.")
-    fields = []
-    for key, label in CATEGORIES:
-        items = release.get(key) or []
-        if items:
-            for i, part in enumerate(split_lines(items)):
-                fields.append({"name": label if i == 0 else label + " (continuação)", "value": part, "inline": False})
-    footer = "BLUE LOCK NEO • OFFICIAL UPDATE SYSTEM"
-    identity = announcement_identity(data, version)
-    description = ("**⚡ UMA NOVA ATUALIZAÇÃO CHEGOU!**\n"
-                   "Conteúdo **" + identity["build"] + "** · novidades verificadas do Blue Lock NEO.")
+    if not release or data.get("current_version") != version:
+        raise AnnouncementError("Versão inexistente ou diferente da publicada.")
     image = SITE_URL + data["media"]["banner"]["path"]
     avatar = SITE_URL + data["media"]["avatar"]["path"]
-    embeds, current = [], None
+    date = "/".join(release["date"].split("-")[::-1])
+    description = (
+        "**𝐎𝐅𝐅𝐈𝐂𝐈𝐀𝐋 𝐔𝐏𝐃𝐀𝐓𝐄 𝐍𝐎𝐓𝐄𝐒**\n\n"
+        "━━━━━━━━━━━━━━━━━━━━━━━━\n"
+        "### 「 ⚽ 」𝐏𝐀𝐓𝐂𝐇 𝐍𝐎𝐓𝐄𝐒 — V" + version + "\n"
+        "> **✦ NOVA ATUALIZAÇÃO DISPONÍVEL**\n"
+        "> 📅・**Lançamento:** " + date + "\n"
+        "> 🏷️・**Versão:** " + version + "\n"
+        "> 🖥️・**Plataformas:** Web & Mobile\n\n"
+        "*Uma nova etapa começa. O Blue Lock NEO continua evoluindo com novas"
+        " mecânicas, sistemas aprimorados e uma experiência cada vez mais imersiva.*")
+    fields = []
+    def add(heading, content, marker):
+        lines = ["> " + marker + " " + clean(x) for x in content if x and str(x).strip()]
+        if not lines:
+            return
+        for index, piece in enumerate(split_lines(lines, limit=930)):
+            fields.append({"name": heading if index == 0 else heading + " (continuação)",
+                           "value": piece.replace("• > ", "> "), "inline": False})
+    add("✦ 01 ┃ 𝐍𝐄𝐖 𝐂𝐎𝐍𝐓𝐄𝐍𝐓 🌀", release.get("novidades", []), "✧")
+    improvements = (release.get("jogabilidade", []) + release.get("visual", []) +
+                    release.get("otimizacoes", []))
+    add("✦ 02 ┃ 𝐈𝐌𝐏𝐑𝐎𝐕𝐄𝐌𝐄𝐍𝐓𝐒 ⚡", improvements, "01.")
+    balance = release.get("balance", {})
+    if isinstance(balance, dict):
+        for key, symbol in (("buffs", "🟢 BUFF"), ("nerfs", "🔴 NERF"),
+                            ("reworks", "🔵 REWORK")):
+            add("✦ 03 ┃ 𝐁𝐀𝐋𝐀𝐍𝐂𝐄 𝐂𝐇𝐀𝐍𝐆𝐄𝐒 — " + symbol,
+                balance.get(key, []), symbol)
+    add("✦ 04 ┃ 𝐁𝐔𝐆 𝐅𝐈𝐗𝐄𝐒 🛠️", release.get("correcoes", []), "✓")
+    add("📌 OBSERVAÇÕES", release.get("importantes", []), "!")
+    preview = release.get("preview", {})
+    if isinstance(preview, dict):
+        for key, label in (("development", "Em desenvolvimento"), ("planned", "Planejado"),
+                           ("evaluation", "Em avaliação")):
+            add("「 👁️ 」𝐃𝐄𝐕𝐄𝐋𝐎𝐏𝐌𝐄𝐍𝐓 𝐏𝐑𝐄𝐕𝐈𝐄𝐖",
+                [label + ": " + clean(v) for v in preview.get(key, [])], "◇")
+    if not fields:
+        raise AnnouncementError("Anúncio sem conteúdo verificável.")
+    fields.append({"name": "𝐎𝐍𝐋𝐘 𝐓𝐇𝐄 𝐁𝐄𝐒𝐓 𝐒𝐔𝐑𝐕𝐈𝐕𝐄.",
+                   "value": "[Acessar Blue Lock NEO](" + SITE_URL + ")\n"
+                            "*O campo não pertence aos mais fortes. Pertence àqueles que continuam evoluindo.*",
+                   "inline": False})
+    footer = "BLUE LOCK NEO ┃ Evolution Project • © 2026 Desenvolvimento: Dezinho"
+    base = {"title": "⛩️ 𝐁𝐋𝐔𝐄 𝐋𝐎𝐂𝐊 : 𝐍𝐄𝐎", "description": description,
+            "url": SITE_URL, "color": 0x175BFF, "fields": [],
+            "footer": {"text": footer}, "timestamp": release["date"] + "T12:00:00Z",
+            "image": {"url": image}, "thumbnail": {"url": avatar},
+            "author": {"name": "⛩️ BLUE LOCK NEO • OFFICIAL UPDATE NOTES", "icon_url": avatar}}
+    embeds, current = [], dict(base)
     for field in fields:
-        if current is None:
-            current = {
-                "title": "🚀 BLUE LOCK NEO — ATUALIZAÇÃO v" + version,
-                "description": description,
-                "url": SITE_URL,
-                "color": 0x00CFFF,
-                "fields": [],
-                "footer": {"text": footer},
-                "timestamp": release["date"] + "T12:00:00Z",
-                "image": {"url": image},
-                "thumbnail": {"url": avatar},
-                "author": {"name": "⚡ NEO UPDATE BOT • PATCH NOTES OFICIAIS", "icon_url": avatar},
-            }
-        if (len(current["fields"]) >= 25 or embed_length(current) +
-                len(field["name"]) + len(field["value"]) > 5100):
+        if (len(current["fields"]) >= 25 or
+            embed_length(current) + len(field["name"]) + len(field["value"]) > 5100):
             embeds.append(current)
-            current = {
-                "title": "⚡ NEO v" + version + " — continuação",
-                "color": 0x00CFFF,
-                "fields": [],
-                "footer": {"text": footer},
-                "timestamp": release["date"] + "T12:00:00Z",
-            }
+            current = {"title": "⛩️ NEO v" + version + " — continuação",
+                       "color": 0x175BFF, "fields": [], "footer": {"text": footer}}
         current["fields"].append(field)
-    if current:
-        current["fields"].append({
-            "name": "🌐 ACESSE O JOGO",
-            "value": "[Abrir Blue Lock NEO](" + SITE_URL + ")\n"
-                     "✅ **STATUS: ATUALIZAÇÃO PUBLICADA COM SUCESSO**\n"
-                     "📅 " + release["date"] + " · 🏆 v" + version,
-            "inline": False,
-        })
+    if current["fields"]:
         embeds.append(current)
-    if not embeds:
-        raise AnnouncementError("Anúncio não possui categorias válidas.")
-    packets = []
-    pending = []
+    packets, pending = [], []
     for embed in embeds:
-        if pending and (len(pending) >= 10 or sum(embed_length(e) for e in pending) + embed_length(embed) > 6000):
+        if pending and (len(pending) >= 10 or
+                sum(embed_length(e) for e in pending) + embed_length(embed) > 6000):
             packets.append(pending)
             pending = []
         pending.append(embed)
     if pending:
         packets.append(pending)
-    for batch in packets:
-        if len(batch) > 10 or sum(embed_length(e) for e in batch) > 6000:
-            raise AnnouncementError("Embed excede os limites da API do Discord.")
-        for e in batch:
-            if len(e.get("title", "")) > 256 or len(e.get("description", "")) > 4096:
-                raise AnnouncementError("Título ou descrição grande demais.")
-            if any(len(f["name"]) > 256 or len(f["value"]) > 1024 for f in e["fields"]):
-                raise AnnouncementError("Campo de embed grande demais.")
-    return [
-        {"username": NAME, "avatar_url": avatar, "embeds": batch, "allowed_mentions": {"parse": []}}
-        for batch in packets
-    ]
+    for packet in packets:
+        if len(packet) > 10 or sum(embed_length(e) for e in packet) > 6000:
+            raise AnnouncementError("Mensagem ultrapassou limites de embed Discord.")
+        for e in packet:
+            if len(e.get("description", "")) > 4096 or len(e.get("title", "")) > 256:
+                raise AnnouncementError("Título/descrição grande demais.")
+            if any(len(f["value"]) > 1024 or len(f["name"]) > 256 for f in e["fields"]):
+                raise AnnouncementError("Campo grande demais para o Discord.")
+    # Mass-ping requires explicit opt-in; never enabled for dry run.
+    ping = os.getenv("NEO_PING_EVERYONE") == "1"
+    return [{"username": NAME, "avatar_url": avatar,
+             "embeds": packet, "allowed_mentions": {"parse": ["everyone"] if ping and i == 0 else []},
+             **({"content": "||@everyone||"} if ping and i == 0 else {})}
+            for i, packet in enumerate(packets)]
 
 
 def github_ref(repo, token, marker):

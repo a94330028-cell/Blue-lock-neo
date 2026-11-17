@@ -33,7 +33,7 @@ class UpdateAnnouncementTests(unittest.TestCase):
             self.assertLessEqual(len(payload["embeds"]), 10)
             self.assertLessEqual(sum(announce.embed_length(e) for e in payload["embeds"]), 6000)
             for e in payload["embeds"]:
-                self.assertEqual(e["color"], 0x00CFFF)
+                self.assertEqual(e["color"], 0x175BFF)
                 self.assertLessEqual(len(e["title"]), 256)
                 self.assertLessEqual(len(e.get("fields", [])), 25)
                 for f in e["fields"]:
@@ -41,9 +41,9 @@ class UpdateAnnouncementTests(unittest.TestCase):
                     self.assertLessEqual(len(f["value"]), 1024)
                     self.assertLessEqual(len(f["name"]), 256)
         combined = json.dumps(packets, ensure_ascii=False)
-        self.assertIn("🚀 BLUE LOCK NEO", combined)
+        self.assertIn("⛩️ 𝐁𝐋𝐔𝐄 𝐋𝐎𝐂𝐊 : 𝐍𝐄𝐎", combined)
         self.assertIn("NEO", combined)
-        self.assertIn("BLUE LOCK NEO • OFFICIAL UPDATE SYSTEM", combined)
+        self.assertIn("Desenvolvimento: Dezinho", combined)
         self.assertIn(announce.SITE_URL, combined)
 
     def test_missing_changelog_version_blocks_announcements(self):
@@ -101,6 +101,33 @@ class UpdateAnnouncementTests(unittest.TestCase):
         payload = json.dumps(announce.build_payloads(sample, self.version), ensure_ascii=False)
         self.assertNotIn("@everyone", payload)
         self.assertNotIn("@here", payload)
+
+    def test_official_update_sections_are_verified_and_present(self):
+        packets = announce.build_payloads(self.data, self.version)
+        full = json.dumps(packets, ensure_ascii=False)
+        for heading in ("𝐍𝐄𝐖 𝐂𝐎𝐍𝐓𝐄𝐍𝐓", "𝐈𝐌𝐏𝐑𝐎𝐕𝐄𝐌𝐄𝐍𝐓𝐒",
+                        "𝐁𝐀𝐋𝐀𝐍𝐂𝐄", "𝐁𝐔𝐆 𝐅𝐈𝐗𝐄𝐒", "𝐃𝐄𝐕𝐄𝐋𝐎𝐏𝐌𝐄𝐍𝐓"):
+            self.assertIn(heading, full)
+        self.assertNotIn("[NOME DA NOVIDADE]", full)
+        self.assertNotIn("[Correção Nº 01]", full)
+        self.assertNotIn("DD/MM/AAAA", full)
+        self.assertNotIn("🟢 BUFF", full, "No unverified buffs must be announced")
+        self.assertNotIn("🔴 NERF", full, "No unverified nerfs must be announced")
+        self.assertIn("🔵 REWORK", full)
+
+    def test_mass_ping_requires_explicit_environment_opt_in(self):
+        from unittest.mock import patch
+        with patch.dict("os.environ", {"NEO_PING_EVERYONE": "1"}):
+            packets = announce.build_payloads(self.data, self.version)
+            self.assertEqual(packets[0]["content"], "||@everyone||")
+            self.assertEqual(packets[0]["allowed_mentions"], {"parse": ["everyone"]})
+            for packet in packets[1:]:
+                self.assertEqual(packet["allowed_mentions"], {"parse": []})
+                self.assertNotIn("content", packet)
+        with patch.dict("os.environ", {"NEO_PING_EVERYONE": "0"}):
+            packets = announce.build_payloads(self.data, self.version)
+            self.assertEqual(packets[0]["allowed_mentions"], {"parse": []})
+            self.assertNotIn("content", packets[0])
 
     def test_preview_creates_file_but_not_network_request(self):
         with tempfile.TemporaryDirectory() as folder:
