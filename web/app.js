@@ -431,8 +431,7 @@ window.NeoPortraitManager=Object.freeze({
   if(file.size>15*1024*1024||!(file.type?.startsWith('image/')||/\.(png|jpe?g|webp)$/i.test(file.name||'')))throw Error('Escolha JPG, PNG ou WebP (até 15 MB).');
   // Copy pixels into a real JPEG Blob, not the transient content:// File from Android.
   const data=await fileToPortrait(file);
-  await portraitStorageReady;
-  await putPortraitBlob('custom',name,dataPortraitToBlob(data));
+  await savePortraitImage('custom',name,data);
   refreshPortraits();
  },
  current:name=>portraitUrl(name)

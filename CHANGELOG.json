@@ -29,6 +29,7 @@
         "Ícone amarelo e banner azul oficiais enviados para o NEO UPDATE BOT."
       ],
       "correcoes": [
+        "Importação de fotos pela API NeoPortraitManager também usa a recuperação automática quando o armazenamento de imagens do Android está bloqueado.",
         "Backup de retratos passa a incluir também as fotos armazenadas no modo alternativo do Android; importação recupera imagens mesmo quando o IndexedDB está indisponível.",
         "Discord: validação das duas imagens incorporadas diretamente ao embed, mesmo quando a API omite mídias consumidas da lista de anexos.",
         "Bot de atualização passa a anexar fisicamente o banner azul e o ícone amarelo no Discord; a confirmação de envio exige que ambos constem nos anexos da mensagem.",
