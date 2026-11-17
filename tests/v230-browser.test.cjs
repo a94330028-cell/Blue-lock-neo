@@ -67,6 +67,7 @@ const server=http.createServer((req,res)=>{
     else await page.click('.nav button[data-tab="squads"]');
     await page.waitForFunction(()=>document.querySelectorAll('#neo980-squad-area .neo980-lineup-card').length===11,null,{timeout:12000});
     await page.selectOption('#neo980-select','mc');
+    assert.ok(await page.evaluate(()=>!!document.getElementById('squadCards')),'original squadCards target survives team switches');
     const metrics=await page.$eval('#neo980-squad-area',root=>{
      const cards=[...root.querySelectorAll('.neo980-lineup-card')],portraits=[...root.querySelectorAll('.neo980-lineup-card .neo980-headshot')];
      return {rows:[...root.querySelectorAll('.neo980-line-cards')].map(el=>el.querySelectorAll('.neo980-lineup-card').length),
