@@ -49,12 +49,23 @@ jobs:
           path: neo2-lab-report.json
           if-no-files-found: warn
           retention-days: 30
-      - name: Regressões importantes de partidas, liga, elenco e mercado
+      - name: Regressões integrais de todas as versões anteriores
         run: |
-          node tests/v1051.test.cjs
-          node tests/neo-lineup-cards-v112.test.cjs
-          node tests/neo-bids-v3.test.cjs
-          node tests/neo-master-market-v1.test.cjs
+          set -euo pipefail
+          for suite in \
+            navigation-v912.test.js broadcast-v920.test.js \
+            v970.test.cjs v980.test.cjs v981.test.cjs v990.test.cjs \
+            kaiser-icon-v991.test.cjs gallery-v992.test.cjs gallery-v993.test.cjs \
+            native-photo-v994.test.cjs v1000.test.cjs v1030.test.cjs v1040.test.cjs \
+            neo-lineup-cards-v112.test.cjs v1050.test.cjs v1051.test.cjs v1060.test.cjs \
+            v110.test.cjs v120.test.cjs v130.test.cjs v140.test.cjs \
+            v150.test.cjs v160.test.cjs v170.test.cjs v180.test.cjs \
+            v190.test.cjs v200.test.cjs v230.test.cjs v230-validation.test.cjs \
+            v250.test.cjs v255-season.test.cjs neo-team-logos.test.cjs \
+            neo-bids-v3.test.cjs neo-master-market-v1.test.cjs
+          do
+            node "tests/$suite"
+          done
       - name: Validar notas compactas e limite do Android
         run: |
           python3 -m unittest discover -s tests -p test_neo_v2_release.py -v
