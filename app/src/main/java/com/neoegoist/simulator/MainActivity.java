@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.MediaStore;
 import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
@@ -39,6 +40,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Collections;
@@ -56,6 +58,7 @@ public final class MainActivity extends Activity {
     private static final int REQUEST_PICK = 1501;
     private static final int REQUEST_EXPORT = 1502;
     private static final int REQUEST_NATIVE_PORTRAIT = 1503;
+    private static final int MAX_PORTRAIT_BYTES = 32 * 1024 * 1024;
     private static final String HOST = "appassets.androidplatform.net";
     private static final String HOME = "https://" + HOST + "/index.html";
     private static final String BUNDLED_WEB_VERSION = "10.6.25";
@@ -405,16 +408,20 @@ public final class MainActivity extends Activity {
                 return;
             }
             pendingPortraitName = playerName;
-            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            // Android 13+ has a dedicated photo picker that grants readable
+            // access to Samsung Gallery/Google Photos without storage access.
+            Intent intent = Build.VERSION.SDK_INT >= 33
+                ? new Intent(MediaStore.ACTION_PICK_IMAGES)
+                : new Intent(Intent.ACTION_GET_CONTENT);
+            if (Build.VERSION.SDK_INT < 33) intent.addCategory(Intent.CATEGORY_OPENABLE);
             intent.setType("image/*");
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             try {
                 startActivityForResult(intent, REQUEST_NATIVE_PORTRAIT);
             } catch (Exception e) {
-                // ACTION_GET_CONTENT works on older phones without DocumentsUI.
+                // Some Android distributions do not implement the Photo Picker.
                 try {
-                    Intent fallback = new Intent(Intent.ACTION_GET_CONTENT);
+                    Intent fallback = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                     fallback.addCategory(Intent.CATEGORY_OPENABLE);
                     fallback.setType("image/*");
                     fallback.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -442,12 +449,24 @@ public final class MainActivity extends Activity {
             Bitmap square = null;
             try {
                 if (uri == null) throw new IOException("Foto não selecionada.");
+                // Read exactly once. Gallery providers can return a one-shot
+                // content:// stream that cannot be reopened for bounds+pixels.
+                ByteArrayOutputStream original = new ByteArrayOutputStream();
+                try (InputStream input = getContentResolver().openInputStream(uri)) {
+                    if (input == null) throw new IOException("A Galeria não disponibilizou a imagem selecionada.");
+                    byte[] chunk = new byte[64 * 1024];
+                    int n;
+                    while ((n = input.read(chunk)) != -1) {
+                        if (original.size() + n > MAX_PORTRAIT_BYTES)
+                            throw new IOException("Imagem acima de 32 MB. Escolha outra foto.");
+                        original.write(chunk, 0, n);
+                    }
+                }
+                byte[] sourceBytes = original.toByteArray();
+                if (sourceBytes.length == 0) throw new IOException("A Galeria retornou uma imagem vazia.");
                 BitmapFactory.Options bounds = new BitmapFactory.Options();
                 bounds.inJustDecodeBounds = true;
-                try (InputStream input = getContentResolver().openInputStream(uri)) {
-                    if (input == null) throw new IOException("A galeria não forneceu o arquivo.");
-                    BitmapFactory.decodeStream(input, null, bounds);
-                }
+                BitmapFactory.decodeByteArray(sourceBytes, 0, sourceBytes.length, bounds);
                 // Decode common JPEG/PNG with BitmapFactory, including providers that
                 // do not report a MIME type. ImageDecoder supports newer HEIC/WebP photos.
                 BitmapFactory.Options opts = new BitmapFactory.Options();
@@ -457,13 +476,11 @@ public final class MainActivity extends Activity {
                     while (bounds.outWidth / sample > 1024 || bounds.outHeight / sample > 1024) sample *= 2;
                 }
                 opts.inSampleSize = sample;
-                try (InputStream input = getContentResolver().openInputStream(uri)) {
-                    if (input == null) throw new IOException("O acesso à foto foi negado.");
-                    bitmap = BitmapFactory.decodeStream(input, null, opts);
-                }
+                bitmap = BitmapFactory.decodeByteArray(sourceBytes, 0, sourceBytes.length, opts);
                 if (bitmap == null && Build.VERSION.SDK_INT >= 28) {
-                    final ImageDecoder.Source source = ImageDecoder.createSource(getContentResolver(), uri);
+                    final ImageDecoder.Source source = ImageDecoder.createSource(ByteBuffer.wrap(sourceBytes));
                     bitmap = ImageDecoder.decodeBitmap(source, (decoder, info, src) -> {
+                        decoder.setAllocator(ImageDecoder.ALLOCATOR_SOFTWARE);
                         int divisor = 1;
                         final int width = info.getSize().getWidth();
                         final int height = info.getSize().getHeight();
@@ -531,8 +548,12 @@ public final class MainActivity extends Activity {
         } else if (requestCode == REQUEST_NATIVE_PORTRAIT) {
             String name = pendingPortraitName;
             pendingPortraitName = null;
-            if (resultCode == RESULT_OK && data != null && data.getData() != null && name != null) {
-                processNativePortrait(data.getData(), name);
+            if (resultCode == RESULT_OK && data != null && name != null) {
+                Uri selected = data.getData();
+                if (selected == null && data.getClipData() != null && data.getClipData().getItemCount() > 0)
+                    selected = data.getClipData().getItemAt(0).getUri();
+                if (selected != null) processNativePortrait(selected, name);
+                else sendNativePortraitError("A Galeria não retornou um arquivo de imagem.");
             }
         } else if (requestCode == REQUEST_EXPORT) {
             if (resultCode == RESULT_OK && data != null && data.getData() != null && pendingExport != null) {

@@ -23,6 +23,6 @@ assert.ok(app.includes('BUNDLED_WEB_VERSION = "'+fs.readFileSync('web/UPDATE_BUI
 assert.ok(app.includes('appassets.androidplatform.net'),'WebView origin preserving saves must not change');
 assert.ok(app.includes('installed_web_version'),'Android updater continues to remember installed content');
 const gradle=text('app/build.gradle');
-assert.ok(gradle.includes('versionCode 118')&&gradle.includes("versionName '2.0.0'"));
+assert.ok(gradle.includes('versionCode 119')&&gradle.includes("versionName '2.0.0'"));
 assert.ok(!js.includes('localStorage.clear('),'must never erase saves to migrate patch versions');
 console.log('PASS NEO 2.0 foundation: new patch, archived history, compatibility and Android build numbers');

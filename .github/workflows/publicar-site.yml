@@ -45,6 +45,7 @@ jobs:
           node tests/gallery-v992.test.cjs
           node tests/gallery-v993.test.cjs
           node tests/native-photo-v994.test.cjs
+          node tests/samsung-gallery-v201.test.cjs
           node tests/v1000.test.cjs
           node tests/v1030.test.cjs
           node tests/v1040.test.cjs

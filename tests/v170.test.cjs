@@ -116,5 +116,5 @@ assert.equal(data.releases[0].version,'2.0.0');
 assert.equal(read('web/VERSION').trim(),'2.0.0');
 assert.ok(read('web/UPDATE_BUILD').trim().localeCompare('10.6.22',undefined,{numeric:true})>=0,'build cannot roll back');
 assert.ok(read('app/build.gradle').includes("versionName '2.0.0'"));
-assert.ok(read('app/build.gradle').includes('versionCode 118'));
+assert.ok(read('app/build.gradle').includes('versionCode 119'));
 console.log('PASS FIVE PILLARS: distinctive IA, contextual Ego, earned awakening, unique Flow, predictive legal Metavision, persistence and 40x');

@@ -1910,6 +1910,31 @@ function uniquePortraitMatch(filename){
   });
   return matches.length===1?matches[0]:null;
 }
+// Some Samsung/Android Gallery providers expose a File that FileReader cannot
+// reopen. Copy the selected bytes through a stream or blob URL before giving up.
+async function recoverGalleryPortraitBlob(file){
+  const mime=file.type?.startsWith('image/')?file.type:
+    /\.png$/i.test(file.name||'')?'image/png':/\.webp$/i.test(file.name||'')?'image/webp':'image/jpeg';
+  if(typeof file.stream==='function'&&typeof Response==='function'){
+    try{
+      const bytes=await new Response(file.stream()).arrayBuffer();
+      if(bytes.byteLength&&bytes.byteLength<=15*1024*1024)return new Blob([bytes],{type:mime});
+    }catch(error){console.warn('Galeria: leitura por stream indisponível:',error);}
+  }
+  if(typeof fetch==='function'&&typeof URL?.createObjectURL==='function'){
+    let link=null;
+    try{
+      link=URL.createObjectURL(file);
+      const reply=await fetch(link);
+      if(reply.ok){
+        const bytes=await reply.arrayBuffer();
+        if(bytes.byteLength&&bytes.byteLength<=15*1024*1024)return new Blob([bytes],{type:mime});
+      }
+    }catch(error){console.warn('Galeria: leitura por URL temporária indisponível:',error);}
+    finally{if(link)URL.revokeObjectURL(link);}
+  }
+  return null;
+}
 async function fileToPortrait(file){
   if(!file||!file.size)throw Error('Escolha uma imagem válida.');
   if(file.size>15*1024*1024)throw Error('Imagem maior que 15 MB. Reduza o arquivo.');
@@ -1955,7 +1980,18 @@ async function fileToPortrait(file){
           data='data:'+(file.type||'image/jpeg')+';base64,'+btoa(pieces.join(''));
         }catch(e){/* show a useful Android-specific error below */ }
       }
-      if(!data)throw Error('Não foi possível abrir esta foto no Android. Copie a imagem para Downloads ou Galeria e escolha novamente. Seus retratos salvos não foram apagados.');
+      if(!data){
+        const recovered=await recoverGalleryPortraitBlob(file);
+        if(recovered){
+          try{data=await new Promise((resolve,reject)=>{
+            const reader=new FileReader();
+            reader.onload=()=>resolve(reader.result);
+            reader.onerror=()=>reject(reader.error||Error('Falha ao preparar a cópia da imagem'));
+            reader.readAsDataURL(recovered);
+          });}catch(error){console.warn('Galeria: cópia não pôde ser convertida:',error);}
+        }
+      }
+      if(!data)throw Error('A Galeria não disponibilizou os dados desta foto ao navegador. Tente escolher novamente pelo seletor Fotos do Android. Nenhum retrato salvo foi apagado.');
     }
     picture=new Image();
     await new Promise((resolve,reject)=>{

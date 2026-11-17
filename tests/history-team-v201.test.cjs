@@ -9,7 +9,7 @@ const expected={
  'Saiko':['CA',92],'Gb':['MC',93],'Fuyuki':['MC',92],'Zenkai':['VOL',90],
  'Oliver Grace':['ZAG',92],'Zeus':['ZAG',93],'Charles':['ZAG',93],
  'Gin':['GOL',91],'Soul':['MC',88],'Toko':['GOL',90],'Kanzaku':['GOL',90],
- 'Taiju':['MC',90],'Akira':['ZAG',88],'Dots':['MC',87],
+ 'Taiju':['MC',90],'Akira':['ZAG',88],'Void':['CA',89],
  'Lacerda':['VOL',86],'Shiro':['PD',88]
 };
 const t=E.teamById('ht');
@@ -19,6 +19,8 @@ assert.equal(t.formationName,'3-3-4');
 assert.equal(t.players.length,11);
 assert.equal(t.reserves.length,8);
 assert.equal(new Set(t.players.concat(t.reserves)).size,19,'no duplicate roster entries');
+assert.ok(t.reserves.includes('Void')&&!t.reserves.includes('Dots'),
+ 'Void replaces Dots without duplicating an extra reserve');
 assert.equal(E.TEAMS.length,5,'existing league stays with original five clubs');
 assert.ok(E.EXTRA_TEAMS.some(x=>x.id==='ht'));
 assert.ok(E.allTeams().some(x=>x.id==='ht'));

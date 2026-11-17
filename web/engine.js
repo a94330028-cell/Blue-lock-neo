@@ -111,7 +111,7 @@ const BENCH_ROLE_HINTS=Object.freeze({
  'Driver':'M','Swift':'M','Arthur':'M','Kairu Saramadara':'D','Junichi Wanima':'F','Taiga Tsunzaki':'M',
  'Kento Cho':'F','Haruhiko Yuzu':'F','Akira Endoji':'M',
  'Gen Fukaku':'G','Abdi':'D','Kyohei Shiguma':'F','Yukio Ishikari':'D',
- 'Soul':'M','Toko':'G','Kanzaku':'G','Taiju':'M','Akira':'D','Dots':'M','Lacerda':'M','Shiro':'F'
+ 'Soul':'M','Toko':'G','Kanzaku':'G','Taiju':'M','Akira':'D','Void':'F','Lacerda':'M','Shiro':'F'
 });
 const roleGroup=(role)=>role==='GOL'?'G':(['ZAG','CB','LD','LE','RB','LB','ALA','LWB','RWB'].includes(role)?'D':['VOL','CDM','MC','CM','MEI','CAM'].includes(role)?'M':'F');
 const PLAYER_STYLES = Object.freeze({

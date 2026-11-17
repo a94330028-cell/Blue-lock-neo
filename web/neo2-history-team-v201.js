@@ -19,7 +19,7 @@
    ['Saiko','CA',92],['Gb','MC',93],['Fuyuki','MC',92],['Zenkai','VOL',90],
    ['Oliver Grace','ZAG',92],['Zeus','ZAG',93],['Charles','ZAG',93],
    ['Gin','GOL',91],['Soul','MC',88],['Toko','GOL',90],['Kanzaku','GOL',90],
-   ['Taiju','MC',90],['Akira','ZAG',88],['Dots','MC',87],
+   ['Taiju','MC',90],['Akira','ZAG',88],['Void','CA',89],
    ['Lacerda','VOL',86],['Shiro','PD',88]
   ]);
   for(const [name,role,ovr] of HISTORY_RATINGS)
@@ -31,9 +31,9 @@
    atk:94,def:92,pas:93,style:'build',master:'Gustavo Grace',
    players:['Gin','Oliver Grace','Zeus','Charles','Zenkai','Gb','Fuyuki',
             'Gustavo Grace','Dexter Morgan','Hao','Saiko'],
-   reserves:['Soul','Toko','Kanzaku','Taiju','Akira','Dots','Lacerda','Shiro'],
+   reserves:['Soul','Toko','Kanzaku','Taiju','Akira','Void','Lacerda','Shiro'],
    reserveRoles:{Soul:'MC',Toko:'GOL',Kanzaku:'GOL',Taiju:'MC',Akira:'ZAG',
-                 Dots:'MC',Lacerda:'VOL',Shiro:'PD'},
+                 Void:'CA',Lacerda:'VOL',Shiro:'PD'},
    suppliedRatings:Object.fromEntries(HISTORY_RATINGS.map(([name,role,ovr])=>[name,{role,ovr}]))
   });
   

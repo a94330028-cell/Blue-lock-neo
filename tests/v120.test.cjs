@@ -70,5 +70,5 @@ assert.ok(read('web/UPDATE_BUILD').trim().localeCompare('10.6.22',undefined,{num
 assert.equal(changelog.releases[0].version,'2.0.0');
 assert.ok(changelog.releases.some(r=>r.version==='1.0.0'),'history preserved');
 const gradle=read('app/build.gradle');
-assert.ok(gradle.includes('versionCode 118')&&gradle.includes("versionName '2.0.0'"));
+assert.ok(gradle.includes('versionCode 119')&&gradle.includes("versionName '2.0.0'"));
 console.log('PASS 1.2: real pass chemistry, matchup marking, mental fatigue, persistent history, idempotence and safe saves');

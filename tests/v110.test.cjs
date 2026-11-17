@@ -61,5 +61,5 @@ assert.deepEqual(json.releases.map(v=>v.version),['2.0.0','1.8.0','1.7.0','1.6.0
 assert.ok(read('web/neo-broadcast-v920.js').includes("const published=data.displayVersion||data.version"),'public and internal version are distinct');
 const java=read('app/src/main/java/com/neoegoist/simulator/MainActivity.java');
 assert.ok(java.includes('BUNDLED_WEB_VERSION = "'+fs.readFileSync('web/UPDATE_BUILD','utf8').trim()+'"'));
-const gradle=read('app/build.gradle');assert.ok(gradle.includes('versionCode 118')&&gradle.includes("versionName '2.0.0'"));
+const gradle=read('app/build.gradle');assert.ok(gradle.includes('versionCode 119')&&gradle.includes("versionName '2.0.0'"));
 console.log('PASS 1.1: Turbo 40x, defensive cover, safe passes, dynamic runs and premium updates, saves preserved');
