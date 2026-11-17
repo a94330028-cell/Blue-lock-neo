@@ -29,8 +29,8 @@ for(const f of ['kaiser-192.png','kaiser-512.png','favicon-32.png'])assert.ok(sw
 const sync=fs.readFileSync(path.join(base,'tools/sync_inline_v930.py'),'utf8');
 assert.ok(sync.includes('apple-touch-icon'));
 assert.ok(sync.includes('favicon-32.png?v=9.9.1'));
-assert.equal(fs.readFileSync(path.join(base,'web/VERSION'),'utf8').trim(),'1.8.0');
+assert.equal(fs.readFileSync(path.join(base,'web/VERSION'),'utf8').trim(),'2.0.0');
 const gradle=fs.readFileSync(path.join(base,'app/build.gradle'),'utf8');
-assert.ok(gradle.includes('versionCode 117'));
-assert.ok(gradle.includes("versionName '1.8.0'"));
+assert.ok(gradle.includes('versionCode 118'));
+assert.ok(gradle.includes("versionName '2.0.0'"));
 console.log('PASS: Kaiser icon assets, manifest, Android mipmaps, cache and version 9.9.1');
