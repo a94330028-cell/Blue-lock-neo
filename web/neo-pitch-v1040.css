@@ -41,6 +41,7 @@
 }
 #neo980-squad-area .neo980-formation-banner b{font-size:14px;font-weight:950}
 #neo980-squad-area .neo980-formation-banner small{font-size:10px;color:#a9d9f6}
+#neo980-squad-area .neo980-pitch.neo980-card-pitch{height:auto!important;min-height:0!important;max-height:none!important}
 #neo980-squad-area .neo980-card-pitch{
  width:100%;height:auto!important;min-height:0!important;max-height:none!important;
  padding:14px 11px 24px;overflow:hidden;border:2px solid #349772;
