@@ -67,6 +67,13 @@ for(let i=0;i<120;i++){
  const goalkeeper=match.players.find(p=>p.side===1-side&&p.i===0);
  const line=side===0?E.PITCH.right:E.PITCH.left;
  assert.equal(goalkeeper.x,line,'keeper must start on goal line');
+ const takerId=match.restart.takerId;
+ for(const player of match.players.filter(p=>p.i!==0&&p.id!==takerId)){
+  assert.ok(Math.abs(player.x-line)>E.PITCH.boxDepth,
+   'every outfield player other than kicker is outside the penalty area');
+  assert.ok(Math.hypot(player.x-match.restart.x,player.y-E.PITCH.cy)>152,
+   'every outfield player is at least 9.15 meters from the penalty mark');
+ }
  let delivered=false;
  for(let j=0;j<100;j++){
   match.step(E.TICK);

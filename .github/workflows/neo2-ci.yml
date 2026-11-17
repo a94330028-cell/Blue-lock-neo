@@ -33,6 +33,7 @@ jobs:
           node --check web/neo2-deep-ai-v202.js
           node tests/neo2-abilities-v200.test.cjs
           node tests/neo2-deep-ai-rules-v202.test.cjs
+          node tests/neo2-match-season-v203.test.cjs
       - name: Regressões importantes de partidas, liga, elenco e mercado
         run: |
           node tests/v1051.test.cjs

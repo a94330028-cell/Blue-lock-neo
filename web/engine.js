@@ -1558,8 +1558,11 @@ class Match {
     }
     if(kind==='penalty'){
       const a=team.filter(p=>p!==taker),d=enemies;
-      a.forEach((p,i)=>{p.x=clamp(r.x-dir*(145+(i%2)*22),PITCH.left+15,PITCH.right-15);p.y=clamp(PITCH.cy+((i%2===0?1:-1)*(138+Math.floor(i/2)*16)),PITCH.top+20,PITCH.bottom-20);p.run=null;});
-      d.forEach((p,i)=>{p.x=clamp(r.x-dir*(178+(i%3)*24),PITCH.left+15,PITCH.right-15);p.y=clamp(PITCH.cy+((i%2===0?-1:1)*(138+Math.floor(i/2)*12)),PITCH.top+20,PITCH.bottom-20);p.run=null;});
+      // Both teams' outfield players must be behind the penalty spot,
+      // OUTSIDE the penalty area and at least 9.15 m from the mark.
+      const clearance=PITCH.boxDepth-105+42;
+      a.forEach((p,i)=>{p.x=clamp(r.x-dir*(clearance+(i%2)*23),PITCH.left+15,PITCH.right-15);p.y=clamp(PITCH.cy+((i%2===0?1:-1)*(138+Math.floor(i/2)*16)),PITCH.top+20,PITCH.bottom-20);p.run=null;});
+      d.forEach((p,i)=>{p.x=clamp(r.x-dir*(clearance+10+(i%3)*25),PITCH.left+15,PITCH.right-15);p.y=clamp(PITCH.cy+((i%2===0?-1:1)*(138+Math.floor(i/2)*12)),PITCH.top+20,PITCH.bottom-20);p.run=null;});
       // Law 14: keeper starts ON the goal line; all outfield players behind
       // the spot and outside the area. The keeper can dive once it is kicked.
       const keeper=this.players.find(p=>p.side!==side&&p.i===0);if(keeper){keeper.x=oppGoal;keeper.y=PITCH.cy;keeper.decision=1.4;}
