@@ -24,10 +24,11 @@
       "version": "2.0.0",
       "date": "2026-11-17",
       "novidades": [
-        "Início do Blue Lock NEO 2.0: base técnica isolada para evoluir sem mexer na versão estável 1.8.0."
+        "Início do Blue Lock NEO 2.0, com IA contextual mais profunda e branch de desenvolvimento isolada da versão estável."
       ],
       "correcoes": [
-        "O histórico da 1.x permanece consultável, mas o patch atual deixa de acumular todas as alterações antigas."
+        "O histórico da 1.x permanece consultável, mas o patch atual deixa de acumular todas as alterações antigas.",
+        "Regras de impedimento e pênalti revisadas; chute usa a linha real do gol, goleiro permanece na linha e penais podem terminar em gol, defesa ou erro."
       ],
       "jogabilidade": [
         "2.520 novas técnicas procedurais em sete raridades, por posição e situação de jogo; custo, recarga, ativação e efeito realmente integrados ao motor."
@@ -40,7 +41,7 @@
         "Catálogo 2.0 definido por regras em um módulo compacto, sem adicionar milhares de arquivos ao aplicativo."
       ],
       "importantes": [
-        "2.0 em desenvolvimento separado da versão estável. Atualização diferencial do APK e IA reformulada ainda não foram lançadas."
+        "Versão 2.0 em testes. Ainda não lançada no app estável; economia, IA e partidas continuam em refinamento."
       ]
     },
     {

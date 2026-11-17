@@ -30,7 +30,9 @@ jobs:
           node --check web/neo2-abilities-v200.js
           node --check web/app.js
           node --check web/engine.js
+          node --check web/neo2-deep-ai-v202.js
           node tests/neo2-abilities-v200.test.cjs
+          node tests/neo2-deep-ai-rules-v202.test.cjs
       - name: Regressões importantes de partidas, liga, elenco e mercado
         run: |
           node tests/v1051.test.cjs
@@ -52,6 +54,9 @@ jobs:
           marker='<script src="neo2-abilities-v200.js?v=2.0.0"></script>'
           assert page.count(marker)==1, 'Module must appear exactly once'
           assert page.index(marker)<page.index('function renderScorerBoard(){'), 'Ability module must load before immediate app.init()'
+          deep='<script src="neo2-deep-ai-v202.js?v=2.0.0"></script>'
+          assert page.count(deep)==1, 'Deep AI module must appear once'
+          assert page.index(marker)<page.index(deep)<page.index('function renderScorerBoard(){'), 'AI must load before app boot'
           assert page.index('const TICK = 1/30')<page.index(marker), 'Match engine must load before ability expansion'
           print('PASS: original engine -> 2.0 techniques -> app startup, one copy only')
           PY

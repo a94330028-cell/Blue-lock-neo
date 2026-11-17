@@ -48,6 +48,8 @@ validar e aplicar esse tipo de pacote.**
 
 ## Fase 4 — Blue Lock NEO 2.0 de verdade
 
+- [x] Primeira camada de IA profunda: memória por partida, avaliação de linhas de passe, compactação defensiva, escolhas situacionais e ajustes de técnico com os fatos registrados.
+- [x] Regras 11 e 14 revisadas: posição da bola no impedimento, goleiro na linha do pênalti, mira na linha do gol e finalização da cobrança ao fim do tempo.
 - [ ] Ajustar IA e decisões táticas, melhorando variedade e leitura de jogo.
 - [x] Preservar as 754 habilidades existentes e adicionar **2.520 técnicas** novas, geradas em módulo separado, com raridades, posições, custo, recarga e seleção contextual.
 - [x] Ligar novas habilidades ao motor existente (ativação, bônus e cooldown) e à galeria do Arsenal, com 5 artes SVG compactas disponíveis offline e busca rápida no Arsenal.

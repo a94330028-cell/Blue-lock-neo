@@ -13,7 +13,7 @@ html=root/'index.html'
 src=html.read_text(encoding='utf-8')
 # The expansion must execute before the legacy app's immediate init() call.
 # Strip any previously inserted copy so repeating this build remains idempotent.
-src=re.sub(r'\s*<script[^>]*src="neo2-abilities-v200\.js[^"]*"[^>]*>\s*</script>', '', src)
+src=re.sub(r'\s*<script[^>]*src="neo2-(?:abilities-v200|deep-ai-v202)\.js[^"]*"[^>]*>\s*</script>', '', src)
 patterns=re.compile(r'(<script\b[^>]*>)(.*?)(</script\s*>)',re.DOTALL|re.IGNORECASE)
 paths={
  'attributes':root/'systems/attributes.js',
@@ -35,7 +35,7 @@ def change(m):
  content=paths[which].read_text(encoding='utf-8').strip()
  if '</script' in content.lower():raise ValueError('Unexpected script end tag in '+which)
  if which=='app':
-     return '<script src="neo2-abilities-v200.js?v=2.0.0"></script>\n'+m.group(1)+'\n'+content+'\n'+m.group(3)
+     return '<script src="neo2-abilities-v200.js?v=2.0.0"></script>\n<script src="neo2-deep-ai-v202.js?v=2.0.0"></script>\n'+m.group(1)+'\n'+content+'\n'+m.group(3)
  return m.group(1)+'\n'+content+'\n'+m.group(3)
 updated=patterns.sub(change,src)
 if 'window.NeoPortraitUI=Object.freeze' not in updated:
