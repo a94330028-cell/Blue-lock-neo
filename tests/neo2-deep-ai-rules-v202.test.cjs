@@ -59,6 +59,28 @@ assert.equal(law.offside(receiver,passer),true,'ahead of second-last defender an
 receiver.x=940;
 assert.equal(law.offside(receiver,passer),false,'no offside in own half');
 
+// Normal shots, headers and direct free kicks aim at the goal LINE as well.
+const geometry=new E.Match('bm','px',193830);
+for(const side of [0,1]){
+ const line=side===0?E.PITCH.right:E.PITCH.left;
+ for(const y0 of [150,500,900])for(const yGoal of [E.PITCH.cy-35,E.PITCH.cy+28,E.PITCH.cy+70]){
+  const p={x:side===0?1100:820,y:y0};
+  for(const overshoot of [38,40,45]){
+   const dst=geometry._goalLineTarget(p,line,yGoal,overshoot);
+   const t=(line-p.x)/(dst.x-p.x);
+   const crossing=p.y+(dst.y-p.y)*t;
+   assert.ok(Math.abs(crossing-yGoal)<.0001,
+     'target at virtual point must cross REAL goal line at the intended Y');
+  }
+ }
+}
+const interrupted=new E.Match('bm','ub',200100);
+interrupted.shotMap.push({side:0,onTarget:true,outcome:'pending',xg:.4,goal:false});
+interrupted.stats.onTarget[0]++;
+interrupted.finish();
+assert.equal(interrupted.shotMap.at(-1).outcome,'whistle');
+assert.equal(interrupted.shotMap.at(-1).onTarget,false);
+assert.equal(interrupted.stats.onTarget[0],0,'unresolved shot cannot inflate shots on target');
 const results={goals:0,saves:0,misses:0,other:0};
 for(let i=0;i<120;i++){
  const side=i%2,match=new E.Match('bm','px',i*133+411);

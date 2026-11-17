@@ -457,11 +457,21 @@ class Match {
     if(this.duelHistory.length>160)this.duelHistory.shift();
     winner.duelsWon=(winner.duelsWon||0)+1;
   }
+  _goalLineTarget(from,goalX,aimY,overshoot=40){
+    const sign=goalX>PITCH.cx?1:-1;
+    const x=goalX+sign*overshoot;
+    // Intent is where the ball CROSSES the real goal line, not 40px beyond.
+    const d=Math.max(1,Math.abs(goalX-from.x));
+    return {x,y:from.y+(aimY-from.y)*Math.abs(x-from.x)/d};
+  }
   _finalizePendingShots(reason='interrupted'){
     // A whistle, restart or goal can end a shot before it reaches the net.
     // Classify it as interrupted, NEVER invent a save, miss or goal.
     if(!Array.isArray(this.shotMap))return;
     for(const shot of this.shotMap)if(shot?.outcome==='pending'){
+      if(shot.onTarget&&[0,1].includes(shot.side)&&this.stats?.onTarget)
+        this.stats.onTarget[shot.side]=Math.max(0,this.stats.onTarget[shot.side]-1);
+      shot.predictedOnTarget=!!shot.onTarget;shot.onTarget=false;
       shot.outcome=reason;shot.goal=false;shot.endedAt=Math.floor(this.time/60);
     }
   }
@@ -898,7 +908,8 @@ class Match {
     const onTarget=this.random()<clamp(.48+(250-d)*.00075+(skill?.15:0),.22,.72);
     const aimY=onTarget?PITCH.cy+this.range(-PITCH.goalHalf+5,PITCH.goalHalf-5):PITCH.cy+(this.random()<.5?-1:1)*this.range(PITCH.goalHalf+12,110);
     const xg=clamp(.12+(252-d)*.00085+(skill?.07:0),.05,.38);
-    this._launch(p,goalX+dir*38,aimY,this.range(420,530),'shot');
+    const aim=this._goalLineTarget(p,goalX,aimY,38);
+    this._launch(p,aim.x,aim.y,this.range(420,530),'shot');
     b.onTarget=onTarget;b.shotXg=xg;b.height=0;b.airTime=0;b.crossType=null;b.shotStyle='header';
     this.stats.shots[p.side]++;this.stats.headers[p.side]++;if(this.lastPass?.setPiece==='corner')this.stats.cornerShots[p.side]++;this.stats.xg[p.side]+=xg;p.shots++;
     if(onTarget)this.stats.onTarget[p.side]++;
@@ -966,7 +977,8 @@ class Match {
     }else aimY=PITCH.cy+(this.random()<.5?-1:1)*this.range(PITCH.goalHalf+10,135);
     const basePower=(has(p,'impact')?820:has(p,'power')?755:has(p,'poacher')?720:690);
     const power=(basePower+this.range(-25,25))*(kind==='tap-in'?.67:kind==='chip'?.70:kind==='low-drive'?1.08:kind==='first-time'?1.06:1)*(.84+this._attributes(p,'power')/410);
-    this._launch(p,goal.x+dir*40,aimY,power,'shot');
+    const aim=this._goalLineTarget(p,goal.x,aimY,40);
+    this._launch(p,aim.x,aim.y,power,'shot');
     this.ball.shotStyle=kind;this.ball.shotLaunchX=p.x;this.ball.shotLaunchY=p.y;
     this.ball.onTarget=onTarget;this.ball.shotXg=xg;this.stats.shots[p.side]++;p.shots++;this.stats.xg[p.side]+=xg;this._ego(p,onTarget?3.5:-3,'finalização');
     if(kind==='box-combo'||kind==='first-time')this.stats.boxCombinations[p.side]++;
@@ -1640,7 +1652,8 @@ class Match {
         const accuracy=clamp(.37+(300-d)*.00062+(has(taker,'curve')?.1:0)+(has(taker,'impact')?.1:0),.2,.62);
         const onTarget=this.random()<accuracy;
         const aimY=onTarget?PITCH.cy+this.range(-PITCH.goalHalf+4,PITCH.goalHalf-4):PITCH.cy+(this.random()<.5?-1:1)*this.range(PITCH.goalHalf+8,96);
-        this._launch(taker,oppGoal+dir*45,aimY,this.range(465,565),'shot');this.ball.onTarget=onTarget;this.ball.shotXg=.085;this.ball.setPiece='freeKick';
+        const aim=this._goalLineTarget(taker,oppGoal,aimY,45);
+         this._launch(taker,aim.x,aim.y,this.range(465,565),'shot');this.ball.onTarget=onTarget;this.ball.shotXg=.085;this.ball.setPiece='freeKick';
         this.stats.shots[side]++;this.stats.directFreeKickShots[side]++;this.stats.xg[side]+=.085;taker.shots++;if(onTarget)this.stats.onTarget[side]++;
         this.shotMap.push({x:r.x,y:r.y,side,onTarget,xg:.085,outcome:'pending',header:false,goal:false,minute:Math.floor(this.time/60),setPiece:'freeKick'});
         this.log(`🎯 ${taker.name} bate a FALTA DIRETA buscando o gol!`,'freeKick',taker.name);return;

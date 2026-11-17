@@ -17,6 +17,7 @@ jobs:
   validate:
     name: Testar habilidades, saves e pacote offline
     runs-on: ubuntu-latest
+    timeout-minutes: 18
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -39,7 +40,15 @@ jobs:
           node tests/neo2-deep-ai-rules-v202.test.cjs
           node tests/neo2-match-season-v203.test.cjs
           node tests/neo2-world-insights-v214.test.cjs
-          node tools/neo2-lab.cjs --games=8 --report=/tmp/neo2-lab.json
+          node tools/neo2-lab.cjs --games=120 --seed=20261117 --report=neo2-lab-report.json
+      - name: Disponibilizar relatório completo de simulações reais
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: NEO-2.0-LAB-120-PARTIDAS
+          path: neo2-lab-report.json
+          if-no-files-found: warn
+          retention-days: 30
       - name: Regressões importantes de partidas, liga, elenco e mercado
         run: |
           node tests/v1051.test.cjs
