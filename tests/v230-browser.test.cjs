@@ -74,6 +74,15 @@ const server=http.createServer((req,res)=>{
       photoWidth:Math.min(...portraits.map(el=>el.getBoundingClientRect().width)),
       relative:cards.every(el=>getComputedStyle(el).position==='relative'),
       height:root.querySelector('.neo980-card-pitch').getBoundingClientRect().height,
+      noOverlap:cards.every((one,i)=>cards.every((two,j)=>{
+       if(i>=j)return true;
+       const a=one.getBoundingClientRect(),b=two.getBoundingClientRect();
+       return a.right<=b.left+1||b.right<=a.left+1||a.bottom<=b.top+1||b.bottom<=a.top+1;
+      })),
+      contained:cards.every(el=>{
+       const a=el.getBoundingClientRect(),p=root.querySelector('.neo980-card-pitch').getBoundingClientRect();
+       return a.top>=p.top-4&&a.bottom<=p.bottom+4&&a.left>=p.left-4&&a.right<=p.right+4;
+      }),
       overflow:document.documentElement.scrollWidth-window.innerWidth,
       ai:!!root.querySelector('.neo980-coach-card'),bench:!!root.querySelector('.neo980-reserves')};
     });
@@ -81,7 +90,7 @@ const server=http.createServer((req,res)=>{
     assert.deepEqual(metrics.rows,[3,4,3,1],'real Manshine 3-4-3 must be preserved');
     assert.equal(metrics.cards,11,'all eleven slots have rank-style cards');
     assert.ok(metrics.cardWidth>=60&&metrics.photoWidth>=56,'portrait cards much larger than circles');
-    assert.ok(metrics.relative&&metrics.height>550,'cards stay inside a growing pitch without overlap');
+    assert.ok(metrics.relative&&metrics.noOverlap&&metrics.contained,'cards stay within the pitch without overlapping or clipping');
     assert.ok(metrics.overflow<=5,'no app-wide horizontal overflow');
     assert.ok(metrics.ai&&metrics.bench,'coach and reserves remain accessible');
     if(width===390){
