@@ -46,6 +46,15 @@ jobs:
           test -s web/index.html || python3 tools/assemble_web.py
           python3 tools/sync_inline_v930.py web
           grep -Fq 'neo2-abilities-v200.js?v=2.0.0' web/index.html
+          python3 - <<'PY'
+          from pathlib import Path
+          page=Path('web/index.html').read_text(encoding='utf-8')
+          marker='<script src="neo2-abilities-v200.js?v=2.0.0"></script>'
+          assert page.count(marker)==1, 'Module must appear exactly once'
+          assert page.index(marker)<page.index('function renderScorerBoard(){'), 'Ability module must load before immediate app.init()'
+          assert page.index('const TICK = 1/30')<page.index(marker), 'Match engine must load before ability expansion'
+          print('PASS: original engine -> 2.0 techniques -> app startup, one copy only')
+          PY
           test -s web/assets/neo2-skills/save.svg
           test -s web/assets/neo2-skills/shot.svg
           echo "O HTML contém a expansão e a versão Android pode empacotar os ativos."

@@ -11,6 +11,9 @@ import re,sys
 root=Path(sys.argv[1]).resolve() if len(sys.argv)>1 else Path(__file__).resolve().parents[1]/'web'
 html=root/'index.html'
 src=html.read_text(encoding='utf-8')
+# The expansion must execute before the legacy app's immediate init() call.
+# Strip any previously inserted copy so repeating this build remains idempotent.
+src=re.sub(r'\s*<script[^>]*src="neo2-abilities-v200\.js[^"]*"[^>]*>\s*</script>', '', src)
 patterns=re.compile(r'(<script\b[^>]*>)(.*?)(</script\s*>)',re.DOTALL|re.IGNORECASE)
 paths={
  'attributes':root/'systems/attributes.js',
@@ -31,6 +34,8 @@ def change(m):
  counts[which]+=1
  content=paths[which].read_text(encoding='utf-8').strip()
  if '</script' in content.lower():raise ValueError('Unexpected script end tag in '+which)
+ if which=='app':
+     return '<script src="neo2-abilities-v200.js?v=2.0.0"></script>\n'+m.group(1)+'\n'+content+'\n'+m.group(3)
  return m.group(1)+'\n'+content+'\n'+m.group(3)
 updated=patterns.sub(change,src)
 if 'window.NeoPortraitUI=Object.freeze' not in updated:
@@ -265,7 +270,7 @@ for asset,attr in (('neo-updates-v1060.js','src'),('neo-updates-v1060.css','href
     updated=re.sub(r'(' + attr + r'="' + re.escape(asset) + r')(?:\\?v=[^"]*)?(?=")',
                    r'\\g<1>?v=2.0.0', updated)
 # NEO 2.0: keep 2,520 generated skills in their own light JS file.
-# Use defer so the original inline engine is fully constructed before registration.
+# This module is loaded synchronously after the engine but before app.init().
 if 'neo2-abilities-v200.js' not in updated:
     if updated.count('</body>')!=1:raise RuntimeError('Cannot load NEO 2.0 ability expansion')
     updated=updated.replace('</body>','<script defer src="neo2-abilities-v200.js?v=2.0.0"></script>\n</body>',1)
