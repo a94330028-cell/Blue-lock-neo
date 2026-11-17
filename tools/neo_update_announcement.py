@@ -36,6 +36,7 @@ CATEGORIES = (
 MEDIA = ("banner", "avatar")
 VERSION_PATTERN = re.compile(r"^[0-9]+\.[0-9]+\.[0-9]+$")
 BAD_MENTIONS = re.compile(r"@(?=(?:everyone|here)\b)", re.IGNORECASE)
+SAFE_MENTIONS = {"parse": []}  # explicit safety default; legacy regression contract
 
 
 class AnnouncementError(Exception):
@@ -301,7 +302,7 @@ def build_payloads(data, version):
     # Mass-ping requires explicit opt-in; never enabled for dry run.
     ping = os.getenv("NEO_PING_EVERYONE") == "1"
     return [{"username": NAME, "avatar_url": avatar,
-             "embeds": packet, "allowed_mentions": {"parse": ["everyone"] if ping and i == 0 else []},
+             "embeds": packet, "allowed_mentions": {"parse": ["everyone"]} if ping and i == 0 else SAFE_MENTIONS,
              **({"content": "||@everyone||"} if ping and i == 0 else {})}
             for i, packet in enumerate(packets)]
 
