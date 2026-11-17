@@ -76,7 +76,8 @@ function tuneToTarget(stats,role,index,target){
 const EXTRA_RATINGS=Object.create(null);
 function registerPlayerRatings(name,ovr,meta={}){
  if(typeof name!=='string'||!name.trim())return false;
- const v=Math.max(60,Math.min(90,Math.round(Number(ovr)||74)));
+ const cap=meta?.allowHigh?99:90;
+  const v=Math.max(60,Math.min(cap,Math.round(Number(ovr)||74)));
  EXTRA_RATINGS[name]={ovr:v,meta:{...meta}};return true;
 }
 const MASTER_NAMES=['Noel Noa','Lavinho','Chris Prince','Marc Snuffy','Julian Loki'];
@@ -98,11 +99,11 @@ function generate(name,role,index=1,experience){const h=hash(name),type=roleClas
  if(experience?.boosts)for(const [key,v] of Object.entries(experience.boosts))if(KEYS.includes(key))stats[key]=bound(stats[key]+v);
  // Carreiras antigas e treinos também respeitam a escala dos dois patamares.
  const isMaster=MASTER_NAMES.includes(name);
- const cap=isMaster?99:90;
+ const cap=isMaster||EXTRA_RATINGS[name]?.meta?.allowHigh?99:90;
  if(overall(stats,role,index)>cap)tuneToTarget(stats,role,index,cap);
  // A identidade Master vem da lista de personagens, jamais apenas da posição.
  if(isMaster&&overall(stats,role,index)<96)tuneToTarget(stats,role,index,96);
  stats.ovr=overall(stats,role,index);return stats;}
 function effective(p,key,multiplier=1){let value=p?.attributes?.[key]??70;const fatigue=Math.max(.66,Math.min(1,p?.stamina/100??1));const flow=p?.flowUntil>p?.matchTime?1.10:1;return Math.max(0,value*multiplier*(.83+.17*fatigue)*flow);}
-return {KEYS,LABELS,PROFILES,TARGET_OVR,MASTER_NAMES,registerPlayerRatings,EXTRA_RATINGS,roleClass,generate,overall,effective,hash,bound};
+return {KEYS,LABELS,PROFILES,TARGET_OVR,MASTER_NAMES,registerPlayerRatings,EXTRA_RATINGS,tuneToTarget,roleClass,generate,overall,effective,hash,bound};
 });

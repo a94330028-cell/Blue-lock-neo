@@ -61,6 +61,7 @@ jobs:
           node tests/v1050.test.cjs
           node tests/v1051.test.cjs
           node tests/v1060.test.cjs
+          node tests/history-team-v201.test.cjs
           node tests/v110.test.cjs
           node tests/v120.test.cjs
           node tests/v130.test.cjs

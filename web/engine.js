@@ -59,6 +59,13 @@ const SKILLS = Object.freeze({
   'Gurimu Igarashi':[{id:'press',label:'Pressão intensa',effect:'Disputa a segunda bola'}]
 });
 const FORMATIONS = Object.freeze({
+  ht:[
+    {role:'GOL',x:.045,y:.50},
+    {role:'ZAG',x:.15,y:.21},{role:'ZAG',x:.13,y:.50},{role:'ZAG',x:.15,y:.79},
+    {role:'VOL',x:.31,y:.50},{role:'MC',x:.42,y:.30},{role:'MC',x:.42,y:.70},
+    {role:'PD',x:.67,y:.14},{role:'PE',x:.67,y:.86},
+    {role:'CA',x:.78,y:.37},{role:'CA',x:.78,y:.63}
+  ],
   bm:[
     {role:'GOL',x:.045,y:.50}, {role:'LD',x:.19,y:.18}, {role:'ZAG',x:.15,y:.38},
     {role:'ZAG',x:.15,y:.62}, {role:'LE',x:.19,y:.82}, {role:'VOL',x:.34,y:.50},
@@ -103,7 +110,8 @@ const BENCH_ROLE_HINTS=Object.freeze({
  'Gomez':'D','Espresso':'M','Aiki Himizu':'M','Itsuki Wakatsuki':'M','Shizuka Haiji':'M','Tetsu Sokura':'D','Teru Kitsunezato':'F',
  'Driver':'M','Swift':'M','Arthur':'M','Kairu Saramadara':'D','Junichi Wanima':'F','Taiga Tsunzaki':'M',
  'Kento Cho':'F','Haruhiko Yuzu':'F','Akira Endoji':'M',
- 'Gen Fukaku':'G','Abdi':'D','Kyohei Shiguma':'F','Yukio Ishikari':'D'
+ 'Gen Fukaku':'G','Abdi':'D','Kyohei Shiguma':'F','Yukio Ishikari':'D',
+ 'Soul':'M','Toko':'G','Kanzaku':'G','Taiju':'M','Akira':'D','Dots':'M','Lacerda':'M','Shiro':'F'
 });
 const roleGroup=(role)=>role==='GOL'?'G':(['ZAG','CB','LD','LE','RB','LB','ALA','LWB','RWB'].includes(role)?'D':['VOL','CDM','MC','CM','MEI','CAM'].includes(role)?'M':'F');
 const PLAYER_STYLES = Object.freeze({
@@ -233,6 +241,30 @@ function registerTeam(team){
  const fresh={...team,players:team.players.slice(),reserves:team.reserves.slice(),formation:team.formation||DEFAULT_FORMATION};
  EXTRA_TEAMS.push(fresh);return fresh;
 }
+// History Team is available in exhibitions and cups. Preserve the five-club
+// original NEL league, its standings and all existing seasons.
+const HISTORY_RATINGS=Object.freeze([
+ ['Dexter Morgan','PE',94],['Gustavo Grace','PD',94],['Hao','CA',90],
+ ['Saiko','CA',92],['Gb','MC',93],['Fuyuki','MC',92],['Zenkai','VOL',90],
+ ['Oliver Grace','ZAG',92],['Zeus','ZAG',93],['Charles','ZAG',93],
+ ['Gin','GOL',91],['Soul','MC',88],['Toko','GOL',90],['Kanzaku','GOL',90],
+ ['Taiju','MC',90],['Akira','ZAG',88],['Dots','MC',87],
+ ['Lacerda','VOL',86],['Shiro','PD',88]
+]);
+for(const [name,role,ovr] of HISTORY_RATINGS)
+ Attr.registerPlayerRatings(name,ovr,{allowHigh:true,club:'ht',role});
+registerTeam({
+ id:'ht',country:'Fictício',name:'History Team',short:'HISTORY',crest:'HT',
+ formationName:'3-3-4',formation:FORMATIONS.ht,
+ color:'#f9ce46',dark:'#4c357f',accent:'#fff3b1',
+ atk:94,def:92,pas:93,style:'build',master:'Gustavo Grace',
+ players:['Gin','Oliver Grace','Zeus','Charles','Zenkai','Gb','Fuyuki',
+          'Gustavo Grace','Dexter Morgan','Hao','Saiko'],
+ reserves:['Soul','Toko','Kanzaku','Taiju','Akira','Dots','Lacerda','Shiro'],
+ reserveRoles:{Soul:'MC',Toko:'GOL',Kanzaku:'GOL',Taiju:'MC',Akira:'ZAG',
+               Dots:'MC',Lacerda:'VOL',Shiro:'PD'},
+ suppliedRatings:Object.fromEntries(HISTORY_RATINGS.map(([name,role,ovr])=>[name,{role,ovr}]))
+});
 function unregisterCreatedPlayer(id){
  const entry=userCreatedPlayers.get(id);if(!entry)return false;
  const t=teamById(entry.club);if(t){
@@ -413,8 +445,17 @@ class Match {
     }
   }
   _masterEntry(side){const cfg=Masters.CONFIG[this.teams[side].id];if(!cfg||this.masterStates[side])return false;
-    const slot=this.players.filter(p=>p.side===side&&p.i!==0&&p!==this.ball.owner&&p!==this.ball.to).sort((a,b)=>(b.i>=8?1:0)-(a.i>=8?1:0)||a.rating-b.rating)[0];if(!slot)return false;
-    const hidden={...slot,run:null};const master={...slot,name:cfg.name,attributes:Attr.generate(cfg.name,slot.role,slot.i),
+    const available=this.players.filter(p=>p.side===side&&p.i!==0&&p!==this.ball.owner&&p!==this.ball.to);
+    // The History Team master is also a starter. Swap the SAME player, not
+    // a teammate, so there cannot be two copies of Gustavo on the field.
+    const slot=(cfg.masterRole&&available.find(p=>p.name===cfg.name))||
+      available.sort((a,b)=>(b.i>=8?1:0)-(a.i>=8?1:0)||a.rating-b.rating)[0];if(!slot)return false;
+    const hidden={...slot,run:null};
+    const masterRole=cfg.masterRole||slot.role;
+    const masterAttrs=Attr.generate(cfg.name,masterRole,slot.i);
+    if(cfg.masterOvr)Attr.tuneToTarget(masterAttrs,masterRole,slot.i,cfg.masterOvr);
+    masterAttrs.ovr=Attr.overall(masterAttrs,masterRole,slot.i);
+    const master={...slot,name:cfg.name,role:masterRole,attributes:masterAttrs,
       isMaster:true,stamina:100,ego:65,flowUntil:0,flowCount:0,abilityCooldowns:{},activeAbility:null,activeAbilities:{},abilityUses:{},abilityGlobalUntil:0,skillFxCooldown:0,
       goals:0,assists:0,shots:0,pases:0,pasesOK:0,tackles:0,saves:0,dribblesWon:0,rating:7.5,
       speed:slot.speed*1.16,run:null};

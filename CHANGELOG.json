@@ -24,24 +24,30 @@
       "version": "2.0.0",
       "date": "2026-11-17",
       "novidades": [
+        "History Team adicionado aos amistosos e copas, com 11 titulares e 8 reservas, posições e OVRs cadastrados; retratos poderão ser adicionados individualmente.",
         "Nova ficha oficial de atualização com conteúdos, melhorias, balanceamento, correções e prévia de desenvolvimento.",
         "Ícone amarelo e banner azul oficiais enviados para o NEO UPDATE BOT."
       ],
       "correcoes": [
+        "Bot de atualização passa a anexar fisicamente o banner azul e o ícone amarelo no Discord; a confirmação de envio exige que ambos constem nos anexos da mensagem.",
         "Mira das finalizações, cabeceios, faltas e pênaltis alinhada à linha real do gol; defesas e erros continuam possíveis.",
-        "Anúncios baseados apenas em modificações verificadas, com proteção contra duplicação e validação das imagens."
+        "Anúncios baseados apenas em modificações verificadas, com proteção contra duplicação e validação das imagens.",
+        "Adicionada recuperação do envio de fotos se o IndexedDB estiver indisponível e opção de abrir a Galeria caso o seletor nativo falhe."
       ],
       "jogabilidade": [
+        "History Team estreia em formação 3-3-4 com Dexter Morgan, Gustavo Grace, Hao, Saiko e os demais titulares; Mestre Gustavo Grace entra com MEI e 98 OVR, sem duplicação.",
         "IA contextual, memória entre partidas, rivalidades e 2.520 habilidades novas com recargas e combinações."
       ],
       "visual": [
-        "Centro de Evolução com dossiês, mapas de calor, notícias e replays de lances realmente registrados."
+        "Centro de Evolução com dossiês, mapas de calor, notícias e replays de lances realmente registrados.",
+        "Histórico de personagens e novas cartas do History Team usam um escudo HT temporário até a arte definitiva e retratos individuais serem enviados."
       ],
       "otimizacoes": [
         "Laboratório de 120 partidas e regressão das versões anteriores aprovados; arquivos e saves preservados."
       ],
       "importantes": [
-        "Site 2.0 publicado; APK disponível como teste, podendo exigir assinatura original para atualizar sem reinstalar."
+        "Site 2.0 publicado; APK disponível como teste, podendo exigir assinatura original para atualizar sem reinstalar.",
+        "O History Team é um time de amistosos/copas; as temporadas em andamento da Liga Neo Egoísta original continuam com os cinco clubes anteriores."
       ],
       "balance": {
         "buffs": [],
@@ -52,7 +58,8 @@
       },
       "preview": {
         "development": [
-          "Atualizações incrementais com SHA-256, rollback seguro e preservação do conteúdo offline."
+          "Atualizações incrementais com SHA-256, rollback seguro e preservação do conteúdo offline.",
+          "Retratos oficiais do History Team chegarão gradualmente; a ausência de imagem não bloqueia o cadastro de nenhum atleta."
         ],
         "planned": [
           "Ampliar o laboratório para milhares de partidas e validar dispositivos Android físicos."

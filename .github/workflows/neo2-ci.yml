@@ -39,6 +39,7 @@ jobs:
           node tests/neo2-abilities-v200.test.cjs
           node tests/neo2-deep-ai-rules-v202.test.cjs
           node tests/neo2-match-season-v203.test.cjs
+          node tests/history-team-v201.test.cjs
           node tests/neo2-world-insights-v214.test.cjs
       - name: Regressões integrais de todas as versões anteriores
         run: |

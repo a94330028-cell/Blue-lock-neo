@@ -11,6 +11,8 @@ import datetime as dt
 import hashlib
 import json
 import os
+import mimetypes
+import secrets
 from pathlib import Path
 import re
 import sys
@@ -221,7 +223,8 @@ def build_payloads(data, version):
     release = find_release(data, version)
     if not release or data.get("current_version") != version:
         raise AnnouncementError("Versão inexistente ou diferente da publicada.")
-    image = SITE_URL + data["media"]["banner"]["path"]
+    image = "attachment://neo-update-banner.png"
+    avatar_attachment = "attachment://neo-update-avatar.png"
     avatar = SITE_URL + data["media"]["avatar"]["path"]
     date = "/".join(release["date"].split("-")[::-1])
     description = (
@@ -270,7 +273,7 @@ def build_payloads(data, version):
     base = {"title": "⛩️ 𝐁𝐋𝐔𝐄 𝐋𝐎𝐂𝐊 : 𝐍𝐄𝐎", "description": description,
             "url": SITE_URL, "color": 0x175BFF, "fields": [],
             "footer": {"text": footer}, "timestamp": release["date"] + "T12:00:00Z",
-            "image": {"url": image}, "thumbnail": {"url": avatar},
+            "image": {"url": image}, "thumbnail": {"url": avatar_attachment},
             "author": {"name": "⛩️ BLUE LOCK NEO • OFFICIAL UPDATE NOTES", "icon_url": avatar}}
     embeds, current = [], dict(base)
     for field in fields:
@@ -356,21 +359,63 @@ def verify_live_version(version, site_url=SITE_URL, attempts=8):
 
 
 def webhook_request(webhook, packet):
+    """Attach both verified images as multipart files to the Discord message.
+    A remote embed URL may be silently blocked by Discord/CDN; attachment:// is
+    resolved directly against the files in the SAME webhook payload.
+    """
     target = webhook + ("&" if "?" in webhook else "?") + "wait=true"
-    body = json.dumps(packet, ensure_ascii=False).encode("utf-8")
-    req = Request(target, data=body, method="POST",
-                  headers={"Content-Type": "application/json", "User-Agent": "BlueLockNEO-UpdateBot/1.0"})
+    embeds = packet.get("embeds") or []
+    has_banner = any(str(e.get("image", {}).get("url", "")).startswith("attachment://")
+                     for e in embeds)
+    has_avatar = any(str(e.get("thumbnail", {}).get("url", "")).startswith("attachment://")
+                     for e in embeds)
+    files = []
+    if has_banner:
+        files.append(("neo-update-banner.png", (BASE / "web/assets/updates/neo-update-banner.png").read_bytes()))
+    if has_avatar:
+        files.append(("neo-update-avatar.png", (BASE / "web/assets/updates/neo-update-avatar.png").read_bytes()))
+    if files:
+        enriched = dict(packet)
+        enriched["attachments"] = [{"id": i, "filename": filename, "description":
+                                    "Banner de atualização NEO" if "banner" in filename else "Ícone NEO"}
+                                   for i, (filename, _) in enumerate(files)]
+        boundary = "NeoUpdates" + secrets.token_hex(14)
+        payload = json.dumps(enriched, ensure_ascii=False).encode("utf-8")
+        parts = []
+        parts.append(("--" + boundary + "\r\nContent-Disposition: form-data; name=\"payload_json\""
+                      "\r\nContent-Type: application/json\r\n\r\n").encode("utf-8"))
+        parts.extend((payload, b"\r\n"))
+        for i, (filename, binary) in enumerate(files):
+            parts.append(("--" + boundary + "\r\nContent-Disposition: form-data; "
+                          "name=\"files[" + str(i) + "]\"; filename=\"" + filename + "\""
+                          "\r\nContent-Type: image/png\r\n\r\n").encode("utf-8"))
+            parts.extend((binary, b"\r\n"))
+        parts.append(("--" + boundary + "--\r\n").encode("utf-8"))
+        body = b"".join(parts)
+        content_type = "multipart/form-data; boundary=" + boundary
+    else:
+        body = json.dumps(packet, ensure_ascii=False).encode("utf-8")
+        content_type = "application/json"
     for attempt in range(5):
+        req = Request(target, data=body, method="POST",
+                      headers={"Content-Type": content_type,
+                               "User-Agent": "BlueLockNEO-UpdateBot/2.0"})
         try:
-            with urlopen(req, timeout=25) as resp:
+            with urlopen(req, timeout=35) as resp:
                 if resp.status != 200:
                     raise AnnouncementError("Discord não confirmou a mensagem.")
                 obj = json.load(resp)
             if not str(obj.get("id", "")).isdigit():
                 raise AnnouncementError("Discord respondeu sem ID de mensagem confirmada.")
+            # Verify Discord actually persisted the two media attachments.
+            if files:
+                received = {entry.get("filename") for entry in obj.get("attachments", [])}
+                expected = {name for name, _ in files}
+                if not expected.issubset(received):
+                    raise AnnouncementError("Discord recebeu texto, mas não confirmou os anexos: " +
+                                            ", ".join(sorted(expected - received)))
             return obj["id"]
         except HTTPError as exc:
-            # No secrets, full response bodies or webhook URLs in Actions logs.
             log("Discord retornou HTTP " + str(exc.code) + " (tentativa " + str(attempt + 1) + ").")
             if exc.code not in (429, 500, 502, 503, 504):
                 raise AnnouncementError("Discord rejeitou o anúncio (HTTP " + str(exc.code) + ").") from exc

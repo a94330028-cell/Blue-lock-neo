@@ -129,6 +129,31 @@ class UpdateAnnouncementTests(unittest.TestCase):
             self.assertEqual(packets[0]["allowed_mentions"], {"parse": []})
             self.assertNotIn("content", packets[0])
 
+    def test_discord_announcement_has_real_binary_attachments(self):
+        import io
+        from unittest.mock import patch
+        packets = announce.build_payloads(self.data, self.version)
+        first = packets[0]
+        self.assertEqual(first["embeds"][0]["image"]["url"], "attachment://neo-update-banner.png")
+        self.assertEqual(first["embeds"][0]["thumbnail"]["url"], "attachment://neo-update-avatar.png")
+        checked = []
+        def fake_open(request, timeout):
+            raw = request.data
+            self.assertIn(b'filename="neo-update-banner.png"', raw)
+            self.assertIn(b'filename="neo-update-avatar.png"', raw)
+            self.assertIn(b'payload_json', raw)
+            self.assertTrue(request.get_header('Content-type').startswith('multipart/form-data'))
+            checked.append(True)
+            reply = io.BytesIO(json.dumps({"id": "12345", "attachments": [
+                {"filename": "neo-update-banner.png"}, {"filename": "neo-update-avatar.png"}
+            ]}).encode("utf-8"))
+            reply.status = 200
+            return reply
+        with patch.object(announce, "urlopen", side_effect=fake_open):
+            self.assertEqual(announce.webhook_request(
+                "https://discord.com/api/webhooks/123/token", first), "12345")
+        self.assertEqual(checked, [True])
+
     def test_preview_creates_file_but_not_network_request(self):
         with tempfile.TemporaryDirectory() as folder:
             output = Path(folder) / "preview.json"
