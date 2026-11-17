@@ -2,6 +2,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs');
 const E=require('../web/engine.js');
 const History=require('../web/neo2-history-team-v201.js');
+const Coach=require('../web/neo-coach-v980.js');
 assert.ok(History.install(E),'History Team registered only when its module is loaded');
 assert.equal(History.install(E),false,'History registration is idempotent');
 const expected={
@@ -16,6 +17,7 @@ const t=E.teamById('ht');
 assert.ok(t,'History Team registered in engine');
 assert.equal(t.name,'History Team');
 assert.equal(t.formationName,'3-3-4');
+assert.ok(t.formation[8].y<t.formation[7].y,'Dexter (PE) stays on the left and Gustavo (PD) on the right');
 assert.equal(t.players.length,11);
 assert.equal(t.reserves.length,8);
 assert.equal(new Set(t.players.concat(t.reserves)).size,19,'no duplicate roster entries');
@@ -35,8 +37,11 @@ for(let i=0;i<t.players.length;i++){
 for(const name of t.reserves){
  const [role,ovr]=expected[name];
  assert.equal(t.reserveRoles[name],role);
+ assert.equal(Coach.reserveRole(t,name),role,name+' bench position is shown correctly by coach and squad cards');
  assert.equal(E.Attr.generate(name,role,role==='GOL'?0:1).ovr,ovr,name+' reserve OVR');
 }
+assert.deepEqual(Coach.planLineup(t,null,E.Attr).players,t.players,'coach does not rewrite starting positions');
+assert.equal(t.color,'#1550ff','History colors follow the supplied blue-and-black crest');
 const m=new E.Match('ht','bm',1001);
 assert.ok(m.players.some(x=>x.side===0&&x.name==='Gustavo Grace'));
 m.ball.owner=null;m.ball.to=null;
@@ -68,7 +73,10 @@ assert.ok(studio.includes('await window.NeoPortraitManager.saveFile(name,file)')
 assert.ok(!studio.includes("!['image/jpeg','image/png','image/webp'].includes(file.type)"),
  'editor must not reject Android photos with an empty MIME type');
 assert.ok(app.includes("E.allTeams?.()||TEAMS"),'History team available for match selection and portraits');
-assert.ok(app.includes("const historyCrestSVG="),'temporary logo avoids broken image');
+assert.ok(app.includes("ht:'assets/team-logos/ht.webp'"),'History uses the uploaded crest in match cards');
+const squads=fs.readFileSync('web/neo-squads-v980.js','utf8');
+assert.ok(squads.includes('masterConfig.masterRole')&&squads.includes('masterConfig.masterOvr'),
+ 'master MEI 98 must be distinct from the PD 94 starter');
 assert.ok(app.includes("Armazenamento de imagens cheio ou indisponível"),'portrait storage fallback with error guidance');
 assert.ok(app.includes("localStorage.setItem(key,JSON.stringify(collection))"),'fallback preserves compact pictures');
 assert.ok(app.includes("📂 Tentar pela Galeria"),'native photo-picker recovery');

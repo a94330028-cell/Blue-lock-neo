@@ -10,7 +10,7 @@
  const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const cash=n=>{const value=Math.max(0,Number(n)||0);return value>=1000000?'¥ '+(value/1000000).toLocaleString('pt-BR',{maximumFractionDigits:1})+' mi':'¥ '+Math.round(value).toLocaleString('pt-BR');};
  const mobile=()=>window.matchMedia('(max-width:700px)').matches;
- const LOGOS={bm:'bm.webp',ba:'ba.webp',mc:'mc.webp',px:'px.webp',ub:'ub.webp'};
+ const LOGOS={bm:'bm.webp',ba:'ba.webp',mc:'mc.webp',px:'px.webp',ub:'ub.webp',ht:'ht.webp'};
  const pic=(t,cls='neo-ux-logo')=>t&&LOGOS[t.id]?'<img class="'+esc(cls)+'" alt="Escudo '+esc(t.name)+'" src="./assets/team-logos/'+LOGOS[t.id]+'">':'<span class="neo-ux-logo-alt">'+esc(t?.short||'?')+'</span>';
  const img=name=>{
   const key=encodeURIComponent(name);

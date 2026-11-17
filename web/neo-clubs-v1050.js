@@ -7,12 +7,13 @@ const TEAMS=Object.freeze({
  mc:['MC','⚡','#ff729f','#432565','#ffe0ee'],px:['PXG','◇','#aa85f9','#221361','#ede1ff'],
  ub:['UB','◆','#e9edf1','#1d2631','#dae2ec'],'neo-bestxi':['XI','★','#f5c553','#2b3047','#fff2c2'],
  mu08:['MU','⚽','#f52d37','#66050f','#ffe9a2'],fla19:['CRF','◆','#e73539','#1c111b','#ffecdf'],
- sport15:['SCR','★','#c5222c','#181514','#fff1ad'],mir25:['MFC','✦','#2bc66a','#1c4632','#ecffe9']
+ sport15:['SCR','★','#c5222c','#181514','#fff1ad'],mir25:['MFC','✦','#2bc66a','#1c4632','#ecffe9'],
+ ht:['HT','★','#1550ff','#071021','#f5f8ff']
 });
 function design(t){const id=typeof t==='string'?t:t?.id;return TEAMS[id]||[String(t?.crest||'FC').slice(0,3),'★',t?.color||'#42aeec',t?.dark||'#11253c','#e3f6ff'];}
 function icon(t,cls='neo1050-crest'){
  const id=typeof t==='string'?t:t?.id;
- if(['bm','ba','mc','px','ub'].includes(id)){
+ if(['bm','ba','mc','px','ub','ht'].includes(id)){
   return '<img class="'+esc(cls)+' neo-team-icon" src="assets/team-logos/'+id+'.webp" alt="Escudo '+esc(id)+'" loading="lazy" decoding="async">';
  }
  const [name,symbol,accent,dark,light]=design(t);

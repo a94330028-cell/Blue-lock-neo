@@ -25,6 +25,10 @@ function compatible(role,backup){
 function reserveRole(team,name){
  const starterIndex=team.players?.indexOf(name)??-1;
  if(starterIndex>=0)return (team.formation||[])[starterIndex]?.role||'MC';
+ // Extra/custom teams provide their own precise bench positions. Never
+ // downgrade History goalkeepers, wingers or strikers to the generic MC hint.
+ const supplied=team.reserveRoles?.[name]||team.suppliedRatings?.[name]?.role;
+ if(supplied)return String(supplied).toUpperCase();
  const historical=typeof globalThis!=='undefined'?globalThis.NeoHistoric970?.getTeam?.(team.id):null;
  const stored=historical?.reserves?.find(r=>r[0]===name)||historical?.starters?.find(r=>r[0]===name);
  return stored?.[1]||BENCH_HINTS[name]||'MC';

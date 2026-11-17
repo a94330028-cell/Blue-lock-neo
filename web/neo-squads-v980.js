@@ -44,6 +44,7 @@ function formationRows(t,formation,spots){
 }
 function player(t,name,role,index,season,style={},captain=false){
  const ovr=rating(name,t,role,index,season),pos=labels[role]||role;
+ const shownRole=t.id==='ht'&&role==='GOL'?'GK':role;
  const highlight=captain?' neo980-lineup-star':'';
  const left=Number.isFinite(Number(style.lane))?Number(style.lane):Number(style.y??.5)*100;
  const top=Number.isFinite(Number(style.depth))?Number(style.depth):(1-Number(style.x??.45))*100;
@@ -51,9 +52,9 @@ function player(t,name,role,index,season,style={},captain=false){
  return '<button type="button" class="neo980-player neo980-lineup-card'+highlight+'" '+coords+
  ' data-neo960-profile="'+profileKey(name,t.id)+'" title="'+esc(name)+' · '+esc(pos)+' · '+ovr+' OVR"'+
  ' aria-label="Abrir ficha de '+esc(name)+', '+esc(pos)+', '+ovr+' overall">'+
- '<span class="neo980-card-portrait">'+portrait(name,t)+'<span class="neo980-card-role">'+esc(role)+'</span></span>'+
+ '<span class="neo980-card-portrait">'+portrait(name,t)+'<span class="neo980-card-role">'+esc(shownRole)+'</span></span>'+
  '<span class="neo980-card-body"><strong class="neo980-player-name">'+esc(name)+'</strong>'+
- '<span class="neo980-card-bottom"><span class="neo980-role">'+esc(role)+'</span><b class="neo980-ovr">'+ovr+'</b></span></span></button>';
+ '<span class="neo980-card-bottom"><span class="neo980-role">'+esc(shownRole)+'</span><b class="neo980-ovr">'+ovr+'</b></span></span></button>';
 }
 function chooseTeam(value){selected=value;localStorage.setItem('neo980-team',selected);render();}
 function render(){
@@ -62,6 +63,10 @@ function render(){
  const s=context(t),plan=C.planLineup(t,s,E.Attr),form=plan.form,f=t.formation||E.DEFAULT_FORMATION;
  const spots=window.NeoPitch1040?.layout(t,f)||null;
  const formationLabel=esc(t.formationName||'4-3-3');
+ const masterConfig=E.Masters?.CONFIG?.[t.id];
+ const masterCaption=t.id==='ht'&&masterConfig?
+  ' · Mestre: '+esc(t.master)+' ('+esc(masterConfig.masterRole)+' · '+Number(masterConfig.masterOvr)+' OVR)':
+  t.master?' · Master Striker: '+esc(t.master):'';
  const summary=form.played===0?'Sem jogos registrados: técnico mantém a formação inicial.'
  :form.underPressure?`Últimos 3 jogos: ${form.lossesLast3} derrota(s). ${plan.reason}.`
  :`Últimos jogos: ${form.streak} derrota(s) consecutiva(s). ${plan.reason}.`;
@@ -73,7 +78,7 @@ function render(){
  const all=teams();const select=all.map(x=>`<option value="${esc(x.id)}" ${x.id===t.id?'selected':''}>${esc(x.name)}</option>`).join('');
  root.innerHTML=`<div class="neo980-intro"><div><span class="neo980-kicker">CENTRAL TÁTICA · EGOIST</span><h2>👥 Escalação & técnico IA</h2><p>Escalação em cartas grandes: posição, rosto, nome e OVR. Toque em qualquer atleta para abrir a ficha.</p></div><span class="neo980-total">${all.length} equipes</span></div>
  <label class="neo980-selector">Escolher equipe<select id="neo980-select">${select}</select></label>
- <div class="neo980-team-header"><span class="neo980-crest" style="--team:${esc(t.color||'#47b8ff')}">${window.NeoCrests1050?.icon(t)||esc(t.crest||t.short?.slice(0,2)||'FC')}</span><div><strong>${esc(t.name)}</strong><small>${formationLabel} · ${esc(t.country||'')}${t.master?' · Master Striker: '+esc(t.master):''}</small></div><span class="neo980-ai-live">IA ATIVA</span></div>
+ <div class="neo980-team-header"><span class="neo980-crest" style="--team:${esc(t.color||'#47b8ff')}">${window.NeoCrests1050?.icon(t)||esc(t.crest||t.short?.slice(0,2)||'FC')}</span><div><strong>${esc(t.name)}</strong><small>${formationLabel} · ${esc(t.country||'')}${masterCaption}</small></div><span class="neo980-ai-live">IA ATIVA</span></div>
  <div class="neo980-formation-banner"><b>⚽ XI TITULAR · ${formationLabel}</b><small>11 jogadores · toque numa carta para ver todas as estatísticas</small></div>
  <div class="neo980-pitch neo980-card-pitch" role="group" aria-label="Escalação em cartas: ${esc(t.name)}, ${formationLabel}"><div class="neo980-pitch-markings"><span class="neo980-center-circle"></span><span class="neo980-penalty neo980-penalty-top"></span><span class="neo980-penalty neo980-penalty-bottom"></span></div><span class="neo980-goal goal-top"></span><span class="neo980-goal goal-bottom"></span>
  <div class="neo980-formation-rows">${formationRows(t,f,spots).map(line=>`<section class="neo980-tactical-line" aria-label="${line.title} · ${line.size} jogador(es)"><span class="neo980-line-title">${line.title}</span><div class="neo980-line-cards" style="--line-count:${line.size}">${line.indices.map(i=>player(t,plan.players[i],f[i]?.role||E.DEFAULT_FORMATION[i]?.role||'MC',i,s,spots?.[i]||f[i]||E.DEFAULT_FORMATION[i],i===plan.players.reduce((best,name,j)=>rating(name,t,f[j]?.role||E.DEFAULT_FORMATION[j]?.role||'MC',j,s)>rating(plan.players[best],t,f[best]?.role||E.DEFAULT_FORMATION[best]?.role||'MC',best,s)?j:best,0))).join('')}</div></section>`).join('')}</div>

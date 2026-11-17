@@ -63,7 +63,7 @@ const FORMATIONS = Object.freeze({
     {role:'GOL',x:.045,y:.50},
     {role:'ZAG',x:.15,y:.21},{role:'ZAG',x:.13,y:.50},{role:'ZAG',x:.15,y:.79},
     {role:'VOL',x:.31,y:.50},{role:'MC',x:.42,y:.30},{role:'MC',x:.42,y:.70},
-    {role:'PD',x:.67,y:.14},{role:'PE',x:.67,y:.86},
+    {role:'PD',x:.67,y:.86},{role:'PE',x:.67,y:.14},
     {role:'CA',x:.78,y:.37},{role:'CA',x:.78,y:.63}
   ],
   bm:[

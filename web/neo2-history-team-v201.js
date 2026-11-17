@@ -27,7 +27,7 @@
   registerTeam({
    id:'ht',country:'Fictício',name:'History Team',short:'HISTORY',crest:'HT',
    formationName:'3-3-4',formation:FORMATIONS.ht,
-   color:'#f9ce46',dark:'#4c357f',accent:'#fff3b1',
+   color:'#1550ff',dark:'#071021',accent:'#f5f8ff',
    atk:94,def:92,pas:93,style:'build',master:'Gustavo Grace',
    players:['Gin','Oliver Grace','Zeus','Charles','Zenkai','Gb','Fuyuki',
             'Gustavo Grace','Dexter Morgan','Hao','Saiko'],

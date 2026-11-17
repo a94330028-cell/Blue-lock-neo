@@ -140,7 +140,7 @@
  function heading(title,to,label){
   return '<div class="neo-ref-heading"><h2>'+title+'</h2>'+(to?'<button class="neo-ref-link" data-ref-go="'+safe(to)+'">'+safe(label||'Ver todos')+' →</button>':'')+'</div>';
  }
- const logoFiles=Object.freeze({bm:'bm.webp',ba:'ba.webp',mc:'mc.webp',px:'px.webp',ub:'ub.webp'});
+ const logoFiles=Object.freeze({bm:'bm.webp',ba:'ba.webp',mc:'mc.webp',px:'px.webp',ub:'ub.webp',ht:'ht.webp'});
  function logo(t,cls='neo-ref-logo'){
   if(!t)return '';
   const filename=logoFiles[t.id];
