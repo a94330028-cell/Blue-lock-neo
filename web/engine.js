@@ -457,8 +457,17 @@ class Match {
     if(this.duelHistory.length>160)this.duelHistory.shift();
     winner.duelsWon=(winner.duelsWon||0)+1;
   }
+  _finalizePendingShots(reason='interrupted'){
+    // A whistle, restart or goal can end a shot before it reaches the net.
+    // Classify it as interrupted, NEVER invent a save, miss or goal.
+    if(!Array.isArray(this.shotMap))return;
+    for(const shot of this.shotMap)if(shot?.outcome==='pending'){
+      shot.outcome=reason;shot.goal=false;shot.endedAt=Math.floor(this.time/60);
+    }
+  }
   log(text,type='info',player=null){const e={id:++this.seq,minute:Math.min(90,Math.floor(this.time/60)),text,type,player};this.events.unshift(e);if(this.events.length>180)this.events.length=180;if(['goal','card','penalty','corner','freeKick','halftime'].includes(type))this.keyEvents.push(e);this.lastAction=text;}
   kickoff(side){
+    this._finalizePendingShots('interrupted');
     this._applyPendingSubs();
     // Every kickoff resets each team wholly to its OWN half.
     // This applies after goals too. Dynamic attack is unrestricted once play resumes.
@@ -1516,6 +1525,7 @@ class Match {
     }
   }
   _setRestart(side,x,y,reason){
+    this._finalizePendingShots('interrupted');
     const kinds={'Escanteio':'corner','Lateral':'throwIn','Tiro de meta':'goalKick','Pênalti':'penalty','Falta':'freeKick','Impedimento':'indirect','Recuo ao goleiro':'indirect'};
     const kind=kinds[reason]||'indirect';
     this.phase='restart';this.wait=kind==='penalty'?1.55:kind==='corner'?1.1:.85;
@@ -1901,7 +1911,8 @@ class Match {
     }
   }
   _goal(side){const b=this.ball,thisSide=b.by?.side===side?b.by:null;
-    const shot=[...this.shotMap].reverse().find(s=>s.side===side&&!s.goal);if(shot){shot.goal=true;shot.outcome='goal';}
+    const shot=[...this.shotMap].reverse().find(s=>s.side===side&&s.outcome==='pending');if(shot){shot.goal=true;shot.outcome='goal';}
+    this._finalizePendingShots('interrupted');
     this.score[side]++;let scorer=thisSide;
     if(!scorer){const striker=this.players.filter(p=>p.side===side&&p.i>=8);scorer=striker.reduce((a,p)=>distance(p,b)<distance(a,b)?p:a,striker[0]);}
     scorer.goals++;scorer.rating=clamp(scorer.rating+.75,5,10);this._ego(scorer,39,'gol decisivo');let assister=null;
@@ -1938,6 +1949,7 @@ class Match {
     this.time=Math.min(this.fullTimeEnd,this.time+dt*(Number.isFinite(this.gameRate)&&this.gameRate>0?this.gameRate:GAME_RATE));this._updateMasters();
     // A penalty awarded at the end of a half must be completed before the whistle.
     if(!this.halftimeDone&&this.time>=this.firstHalfEnd&&!(this.ball.isPenalty&&this.ball.mode==='shot')){
+      this._finalizePendingShots('whistle');
       this.halftimeDone=true;this.time=this.firstHalfEnd;this.half=1;this.phase='halftime';this.wait=1.65;
       this.ball.owner=null;this.ball.mode='dead';this.ball.vx=this.ball.vy=0;
       this.lastPass=null;this.combination=null;this._applyPendingSubs();
@@ -1979,7 +1991,7 @@ class Match {
     this._snapshot(dt);
     if(this.time>=this.fullTimeEnd&&!(this.ball.isPenalty&&this.ball.mode==='shot'))this.finish();
   }
-  finish(){if(this.finished)return;this.time=this.fullTimeEnd;this._updateMasters(true);this.finished=true;this.phase='finished';this.log('🏁 Fim de jogo!','finish');}
+  finish(){if(this.finished)return;this._finalizePendingShots('whistle');this.time=this.fullTimeEnd;this._updateMasters(true);this.finished=true;this.phase='finished';this.log('🏁 Fim de jogo!','finish');}
   runToEnd(){let i=0;while(!this.finished&&i++<14000)this.step(TICK);if(!this.finished)this.finish();return this.result();}
   result(){return {home:this.teams[0].id,away:this.teams[1].id,score:[...this.score],startingLineups:this.startingLineups.map(rows=>rows.map(p=>({...p}))),coachPlans:this.coachPlans.map(x=>x?{reason:x.reason,form:x.form,changes:x.changes}:null),coachDecisions:this.coachDecisions.map(x=>({...x})),gameplayPreset:this.gameplayPreset,weather:this.weather,autoGameplan:!!this.autoGameplan,planNames:[...(this.planNames||[])],modernPatterns:[this.modernPattern(0),this.modernPattern(1)],specialMoments:this.specialMoments.map(m=>({...m})),shapeHistory:(this.shapeHistory||[[],[]]).map(h=>h.map(x=>({...x}))),tacticalSettings:{pressing:[...this.pressing],attackWidth:[...this.attackWidth],buildUp:[...this.buildUp],stance:[...this.tactics],crosses:[...this.crossPreference],corners:[...this.setPieceStyle]},stats:JSON.parse(JSON.stringify(this.stats)),players:[...this.retiredPlayers,...this.masterHidden,...this.players].map(p=>({name:p.name,side:p.side,role:p.role,attributes:p.attributes,ovr:p.attributes?.ovr||75,isMaster:!!p.isMaster,goals:p.goals,assists:p.assists,shots:p.shots,dribblesWon:p.dribblesWon||0,saves:Math.max(p.saves||0,p.i===0?this.shotMap.filter(s=>s.outcome==='saved'&&s.savedBy===p.name&&s.side!==p.side).length:0),passes:p.pases||0,flowCount:p.flowCount||0,abilityUses:{...(p.abilityUses||{})},tackles:p.tackles||0,interceptions:p.interceptions||0,shotBlocks:p.shotBlocks||0,aerialWins:p.aerialWins||0,duelsWon:p.duelsWon||0,keyPasses:p.keyPasses||0,runs:p.runCount,overlaps:p.overlapCount,distance:Math.round(p.distanceCovered),rating:+p.rating.toFixed(1)})),masterEntries:this.masterEntries.map(r=>({...r})),substitutions:this.subRecords.map(s=>({...s})),cards:this.cardRecords.map(c=>({...c})),shots:this.shotMap.map(s=>({...s})),events:this.keyEvents.map(e=>({...e})),goalRecords:this.goalRecords.map(r=>({...r,score:[...r.score]})),abilityHistory:this.abilityHistory.map(a=>({...a})),duelHistory:this.duelHistory.map(d=>({...d})),seed:this.seed};}
 }
