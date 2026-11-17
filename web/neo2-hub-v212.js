@@ -100,6 +100,11 @@ function mount(win){
      for(const [id,count] of record.skills.slice(0,8))
       textline(skills,E?.Abilities?.get(id)?.label||id,fmt(count)+' usos registrados');
     }
+    if(record.upgrades?.length){
+     const mastery=section('⭐ Maestria comprovada');
+     const labels={1:'Inicial',2:'Avançado',3:'Supremo'};
+     for(const [id,tier] of record.upgrades)textline(mastery,E?.Abilities?.get(id)?.label||id,labels[tier]||'Nível '+tier);
+    }
     if(record.partners.length){
      const pairs=section('Entrosamento em passes tentados');
      for(const [name,count] of record.partners.slice(0,6))textline(pairs,name,fmt(count));
@@ -117,6 +122,28 @@ function mount(win){
      textline(stats,(s.team===0?'Mandante':'Visitante')+' · passes progressivos tentados',fmt(r.progressivePassAttempts?.[s.team]));
     }
     box.append(stats);
+    const heatEntries=Object.entries(r.heat||{}).filter(([,counts])=>Array.isArray(counts)&&counts.some(v=>Number(v)>0));
+    if(heatEntries.length){
+     const hm=section('🔥 Mapa de calor de movimentação');
+     const picker=make('select','neo2-hub-select');
+     for(const [key] of heatEntries){
+      const opt=make('option',null,key.replace(/\|/g,' · '));opt.value=key;picker.append(opt);
+     }
+     const grid=make('div','neo2-hub-heatmap');
+     grid.setAttribute('role','img');grid.setAttribute('aria-label','Mapa de calor gerado das posições amostradas no jogo');
+     const draw=()=>{
+      const values=r.heat[picker.value]||[],peak=Math.max(1,...values);
+      grid.replaceChildren();
+      for(const n of values){
+       const cell=make('span','neo2-hub-heat');
+       cell.style.opacity=String(.1+.9*Math.min(1,Number(n)/peak));
+       cell.title=fmt(n)+' amostras';
+       grid.append(cell);
+      }
+     };
+     picker.addEventListener('change',draw);draw();
+     hm.append(picker,grid,make('p','neo2-hub-muted','Cada quadrado mostra ocupação real observada durante a partida. Quanto mais forte a cor, mais vezes o jogador ocupou a região.'));
+    }
     const clips=section('🎥 Momentos verificados');
     for(const x of r.highlights||[]){
      const card=make('article','neo2-news-card');
@@ -124,7 +151,25 @@ function mount(win){
      clips.append(card);
     }
     if(!(r.highlights||[]).length)clips.append(make('p','neo2-hub-muted','Nenhum lance decisivo foi registrado ainda.'));
-    clips.append(make('p','neo2-hub-muted','Replays em vídeo usam apenas os quadros já capturados durante a transmissão, sem reconstruir lances fictícios.'));
+    const liveClips=Array.isArray(match?.goalClips)?match.goalClips.slice(-7):[];
+    if(liveClips.length){
+     clips.append(make('h4',null,'Rever gols da transmissão atual'));
+     liveClips.forEach((clip,i)=>{
+      if(!Array.isArray(clip.frames)||!clip.frames.length)return;
+      const button=make('button','neo2-hub-replay','▶ Replay · '+clip.scorer+' · '+clip.minute+'’');
+      button.type='button';
+      button.addEventListener('click',()=>{
+       match.lastGoal=clip;hide();
+       if(typeof win.NeoReferenceMobile?.go==='function'&&win.matchMedia?.('(max-width:700px)').matches)
+        win.NeoReferenceMobile.go('match');
+       else doc.querySelector('.nav [data-tab="match"]')?.click();
+       const replay=doc.getElementById('replay');
+       if(replay){replay.disabled=false;replay.click();}
+      });
+      clips.append(button);
+     });
+    }
+    clips.append(make('p','neo2-hub-muted','Replays reproduzem apenas os quadros ainda disponíveis da partida atual. Temporadas antigas preservam dados e destaques, mas não quadros de vídeo.'));
    }else{
     const box=section('⚔️ Rivalidades nascidas de duelos reais');
     if(!data.rivalries.length){box.append(make('p','neo2-hub-muted','Rivalidades aparecem depois de confrontos registrados.'));return;}

@@ -71,4 +71,9 @@ for(const file of ['neo2-world-v210.js','neo2-insights-v211.js','neo2-synergy-v2
 const sync=fs.readFileSync('tools/sync_inline_v930.py','utf8');
 for(const file of ['neo2-world-v210.js','neo2-insights-v211.js','neo2-synergy-v213.js','neo2-hub-v212.js'])
  assert.ok(sync.includes(file),'site + APK load '+file);
+const hubUI=fs.readFileSync('web/neo2-hub-v212.js','utf8');
+const hubCSS=fs.readFileSync('web/neo2-hub-v212.css','utf8');
+assert.ok(hubUI.includes('neo2-hub-heatmap')&&hubCSS.includes('grid-template-columns:repeat(10'), 'true grid-based player heat map exposed');
+assert.ok(hubUI.includes('match.goalClips.slice(-7)')&&hubUI.includes('replay.click()'),'live replay opens existing real goal frames');
+assert.ok(hubUI.includes('Maestria comprovada'),'career mastery shown in dossier');
 console.log('PASS NEO 2.0: verified newsroom, dossiers, heat maps, replay moments and live skill combinations');

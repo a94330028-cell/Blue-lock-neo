@@ -69,3 +69,19 @@ body.neo2-hub-open{overflow:hidden}
  .neo2-hub-stats{grid-template-columns:1fr}
 }
 @media(prefers-reduced-motion:reduce){.neo2-hub-toggle,.neo2-hub *{scroll-behavior:auto!important}}
+
+
+/* Visualizations added after baseline world-model integration. */
+.neo2-hub-heatmap{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));
+ gap:3px;padding:8px;border:1px solid #49a885;border-radius:10px;
+ background:linear-gradient(90deg,#125439,#164731);aspect-ratio:10/6;
+ max-width:550px;width:100%;
+}
+.neo2-hub-heat{display:block;background:radial-gradient(circle at 50% 40%,#ffe69b,#fd944f 66%,#b2394d);
+ border-radius:2px;min-width:0;min-height:0;transition:opacity .12s ease}
+.neo2-hub-replay{width:100%;padding:9px 12px;text-align:left;
+ border:1px solid #387ac3;border-radius:10px;background:#0c3b73;
+ color:#d8f6ff;font-size:11px;font-weight:850;cursor:pointer}
+.neo2-hub-replay:hover,.neo2-hub-replay:focus-visible{
+ outline:2px solid #87e9ff;background:#1760ab;
+}
