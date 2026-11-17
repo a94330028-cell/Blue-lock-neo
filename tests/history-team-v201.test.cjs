@@ -54,4 +54,6 @@ assert.ok(app.includes("const historyCrestSVG="),'temporary logo avoids broken i
 assert.ok(app.includes("Armazenamento de imagens cheio ou indisponível"),'portrait storage fallback with error guidance');
 assert.ok(app.includes("localStorage.setItem(key,JSON.stringify(collection))"),'fallback preserves compact pictures');
 assert.ok(app.includes("📂 Tentar pela Galeria"),'native photo-picker recovery');
+assert.ok(app.includes("const records=await readPortraitDB().catch("),'backup must work without IndexedDB');
+assert.ok(app.includes("await savePortraitImage(rec.type,rec.name,rec.data)"),'backup import respects localStorage fallback');
 console.log('PASS History Team: 11 starters, 8 reserves, exact OVRs, unique 98 OVR master, photos recoverable, existing NEL intact');

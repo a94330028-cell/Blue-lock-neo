@@ -331,13 +331,28 @@ portraitStorageReady.catch(()=>{});
 window.NeoPortraitsReady=portraitStorageReady;
 
 async function exportPortraitBackup(){
-  await portraitStorageReady;
-  const records=await readPortraitDB();
-  if(!records.images.length)throw Error('Ainda não existem imagens personalizadas para exportar.');
-  const images=[];
-  for(const x of records.images)images.push({name:x.name,type:x.type,data:await blobToPortraitData(x.blob)});
-  const payload={app:'blue-lock-neo-portraits',version:1,exportedAt:new Date().toISOString(),images,choices:records.choices};
-  // Android APK: use SAF to export a real file from the app's private storage.
+  // Backups must include both IndexedDB photos and Android fallbacks.
+  await portraitStorageReady.catch(()=>null);
+  const records=await readPortraitDB().catch(()=>({images:[],choices:[]}));
+  const images=[],used=new Set();
+  for(const item of records.images||[]){
+    if(!item?.blob||!['custom','manga'].includes(item.type))continue;
+    const name=item.name,type=item.type;
+    images.push({name,type,data:await blobToPortraitData(item.blob)});
+    used.add(type+'|'+name);
+  }
+  for(const [type,collection] of [['custom',customPortraits],['manga',mangaPortraits]]){
+    for(const [name,data] of Object.entries(collection||{})){
+      if(typeof data!=='string'||!data.startsWith('data:image/')||used.has(type+'|'+name))continue;
+      images.push({name,type,data});used.add(type+'|'+name);
+    }
+  }
+  if(!images.length)throw Error('Ainda não existem imagens personalizadas para exportar.');
+  const choices=[...new Map([
+    ...(records.choices||[]).map(x=>[x.name,x]),
+    ...Object.entries(portraitStyles).map(([name,style])=>[name,{name,style}])
+  ])].map(([,choice])=>choice);
+  const payload={app:'blue-lock-neo-portraits',version:1,exportedAt:new Date().toISOString(),images,choices};
   if(window.BlueLockAndroid?.saveJson){window.BlueLockAndroid.saveJson('blue-lock-retratos-backup.json',JSON.stringify(payload));}
   else{
     const url=URL.createObjectURL(new Blob([JSON.stringify(payload)],{type:'application/json'}));
@@ -350,16 +365,15 @@ async function importPortraitBackup(file){
   if(!file||file.size>30*1024*1024)throw Error('Backup inválido ou maior que 30 MB.');
   const backup=JSON.parse(await file.text());
   if(backup?.app!=='blue-lock-neo-portraits'||!Array.isArray(backup.images))throw Error('Arquivo de backup de retratos inválido.');
-  await portraitStorageReady;
   let count=0;
   for(const rec of backup.images){
     if(!rec||!['custom','manga'].includes(rec.type)||typeof rec.name!=='string'||rec.name.length>120)continue;
-    await putPortraitBlob(rec.type,rec.name,dataPortraitToBlob(rec.data),true);count++;
+    await savePortraitImage(rec.type,rec.name,rec.data);count++;
   }
   for(const choice of backup.choices||[]){
     if(!choice?.name||typeof choice.style!=='string')continue;
     portraitStyles[choice.name]=choice.style;
-    await idbTransaction(['choices'],'readwrite',tx=>tx.objectStore('choices').put({name:choice.name,style:choice.style}));
+    await rememberPortraitChoice(choice.name,choice.style);
   }
   if(!(backup.choices||[]).length){
     for(const rec of backup.images){if(rec?.name&&['custom','manga'].includes(rec.type)){
