@@ -183,7 +183,11 @@ const server=http.createServer((req,res)=>{
     console.log('PODIUM PORTRAITS',width+'x'+height,JSON.stringify(portraits));
     assert.equal(portraits.length,3,'podium shows three existing registered player portraits');
     assert.ok(portraits.every(p=>p.hasName&&p.fit==='contain'&&p.alt));
-    const podiumVisibility=await page.$eval('#neo250-podium .neo250-position-1',el=>({
+    await page.waitForFunction(()=>{
+      const el=document.querySelector('#neo250-podium .neo250-position-1');
+      return !!el&&!!el.getClientRects().length&&getComputedStyle(el).visibility==='visible';
+     },null,{timeout:12000});
+     const podiumVisibility=await page.$eval('#neo250-podium .neo250-position-1',el=>({
       visible:!!el.getClientRects().length&&getComputedStyle(el).visibility==='visible',
       details:!!el.closest('details:not([open])'),
       rect:el.getBoundingClientRect().toJSON(),
