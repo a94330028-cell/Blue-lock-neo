@@ -407,13 +407,47 @@ def webhook_request(webhook, packet):
                 obj = json.load(resp)
             if not str(obj.get("id", "")).isdigit():
                 raise AnnouncementError("Discord respondeu sem ID de mensagem confirmada.")
-            # Verify Discord actually persisted the two media attachments.
+            # Discord may consume uploaded images as EMBED media, leaving
+            # message.attachments empty. This is documented behavior, not an
+            # upload failure. Confirm both media in either list.
             if files:
-                received = {entry.get("filename") for entry in obj.get("attachments", [])}
-                expected = {name for name, _ in files}
-                if not expected.issubset(received):
-                    raise AnnouncementError("Discord recebeu texto, mas não confirmou os anexos: " +
-                                            ", ".join(sorted(expected - received)))
+                names = {entry.get("filename") for entry in obj.get("attachments", [])}
+                embeds_sent = obj.get("embeds", [])
+                embeds_sent = embeds_sent if isinstance(embeds_sent, list) else []
+                def has_media(filename, kind):
+                    if filename in names:
+                        return True
+                    for embed in embeds_sent:
+                        media = embed.get(kind, {}) or {}
+                        for field in ("url", "proxy_url"):
+                            url = str(media.get(field, ""))
+                            if filename in url:
+                                return True
+                    return False
+                missing = [name for name, _ in files if not has_media(
+                    name, "image" if "banner" in name else "thumbnail")]
+                if missing:
+                    # Avoid blind re-posting after a 200 + message ID.
+                    # Read back the exact message once before calling it a
+                    # failure; it may take a moment for Discord to resolve URLs.
+                    time.sleep(1)
+                    try:
+                        url = webhook.rstrip("/") + "/messages/" + str(obj["id"])
+                        with urlopen(Request(url, headers={
+                            "User-Agent": "BlueLockNEO-UpdateBot/2.0"}), timeout=20) as reply:
+                            persisted = json.load(reply)
+                        embeds_sent = persisted.get("embeds") or []
+                        names = {entry.get("filename") for entry in persisted.get("attachments", [])}
+                        missing = [name for name, _ in files if not has_media(
+                            name, "image" if "banner" in name else "thumbnail")]
+                    except (HTTPError, URLError, TimeoutError, ValueError):
+                        pass
+                if missing:
+                    log("Discord confirmou mensagem ID " + str(obj["id"]) +
+                        " mas mídia embutida não foi confirmada: " + ", ".join(missing))
+                    raise AnnouncementError("Discord não confirmou os embeds de imagem; mensagem pendente para revisão.")
+                log("Mídia incorporada confirmada no Discord: " +
+                    ", ".join(name for name, _ in files))
             return obj["id"]
         except HTTPError as exc:
             log("Discord retornou HTTP " + str(exc.code) + " (tentativa " + str(attempt + 1) + ").")

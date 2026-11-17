@@ -144,9 +144,10 @@ class UpdateAnnouncementTests(unittest.TestCase):
             self.assertIn(b'payload_json', raw)
             self.assertTrue(request.get_header('Content-type').startswith('multipart/form-data'))
             checked.append(True)
-            reply = io.BytesIO(json.dumps({"id": "12345", "attachments": [
-                {"filename": "neo-update-banner.png"}, {"filename": "neo-update-avatar.png"}
-            ]}).encode("utf-8"))
+            reply = io.BytesIO(json.dumps({"id": "12345", "attachments": [],
+                "embeds": [{"image": {"url": "https://cdn.discordapp.com/attachments/example/neo-update-banner.png"},
+                            "thumbnail": {"url": "https://cdn.discordapp.com/attachments/example/neo-update-avatar.png"}}]
+            }).encode("utf-8"))
             reply.status = 200
             return reply
         with patch.object(announce, "urlopen", side_effect=fake_open):
