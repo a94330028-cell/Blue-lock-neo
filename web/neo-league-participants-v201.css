@@ -1,0 +1,15 @@
+/* Registered clubs can join the next official Neo Egoist League season. */
+.neo-league-customize{margin:14px 0;border-color:#286995;background:linear-gradient(145deg,#112b44,#101c31 80%)}
+.neo-league-customize .card-head{align-items:center;flex-wrap:wrap}
+.neo-league-team-picker{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:9px;margin-top:14px}
+.neo-league-team-choice{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid #34516d;border-radius:12px;background:#091a2f;cursor:pointer;min-width:0;transition:background .15s,border-color .15s}
+.neo-league-team-choice:has(input:checked){background:#123552;border-color:#219ee9;box-shadow:inset 0 0 0 1px #178fe84d}
+.neo-league-team-choice:focus-within{outline:2px solid #8fd9ff;outline-offset:2px}
+.neo-league-team-choice input{width:17px;height:17px;accent-color:#119ff5;flex:none}
+.neo-league-team-choice .neo-club-crest,.neo-league-team-choice .crest{flex:none}
+.neo-league-team-name{display:grid;gap:3px;min-width:0}
+.neo-league-team-name strong{font-size:12px;line-height:1.25;overflow-wrap:anywhere}
+.neo-league-team-name small{font-size:10px;color:#9ebfdb}
+.neo-league-schedule-preview{border-radius:10px;padding:10px 12px;background:#0b2942;color:#9fd4ff;font-size:12px;margin:12px 0 0}
+.neo-league-schedule-preview[data-invalid="true"]{background:#42252c;color:#ffb9bf}
+@media(max-width:600px){.neo-league-team-picker{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.neo-league-team-choice{padding:9px 7px;gap:6px}.neo-league-team-name strong{font-size:11px}}

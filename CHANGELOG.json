@@ -24,34 +24,23 @@
       "version": "2.0.0",
       "date": "2026-11-17",
       "novidades": [
-        "History Team adicionado aos amistosos e copas, com 11 titulares e 8 reservas, posições e OVRs cadastrados; retratos poderão ser adicionados individualmente.",
-        "Nova ficha oficial de atualização com conteúdos, melhorias, balanceamento, correções e prévia de desenvolvimento.",
-        "Ícone amarelo e banner azul oficiais enviados para o NEO UPDATE BOT."
+        "Liga Neo Egoísta permite escolher entre os dez clubes cadastrados, incluindo History Team e históricos, na próxima temporada.",
+        "Calendário, tabela e campo ao vivo com 22 atletas se adaptam ao número de participantes, de 2 a 10 clubes."
       ],
       "correcoes": [
-        "Importação de fotos pela API NeoPortraitManager também usa a recuperação automática quando o armazenamento de imagens do Android está bloqueado.",
-        "Backup de retratos passa a incluir também as fotos armazenadas no modo alternativo do Android; importação recupera imagens mesmo quando o IndexedDB está indisponível.",
-        "Discord: validação das duas imagens incorporadas diretamente ao embed, mesmo quando a API omite mídias consumidas da lista de anexos.",
-        "Bot de atualização passa a anexar fisicamente o banner azul e o ícone amarelo no Discord; a confirmação de envio exige que ambos constem nos anexos da mensagem.",
-        "Mira das finalizações, cabeceios, faltas e pênaltis alinhada à linha real do gol; defesas e erros continuam possíveis.",
-        "Anúncios baseados apenas em modificações verificadas, com proteção contra duplicação e validação das imagens.",
-        "Adicionada recuperação do envio de fotos se o IndexedDB estiver indisponível e opção de abrir a Galeria caso o seletor nativo falhe."
+        "Saves antigos da liga continuam compatíveis; backup da edição anterior é criado antes de iniciar uma nova.",
+        "History Team atualizado: Void substitui Dots, com posições e OVRs oficiais preservados."
       ],
       "jogabilidade": [
-        "History Team estreia em formação 3-3-4 com Dexter Morgan, Gustavo Grace, Hao, Saiko e os demais titulares; Mestre Gustavo Grace entra com MEI e 98 OVR, sem duplicação.",
-        "IA contextual, memória entre partidas, rivalidades e 2.520 habilidades novas com recargas e combinações."
+        "Escolha dois, quatro ou seis encontros por dupla, com mandos equilibrados e folgas automáticas quando necessárias."
       ],
       "visual": [
-        "Centro de Evolução com dossiês, mapas de calor, notícias e replays de lances realmente registrados.",
-        "Histórico de personagens e novas cartas do History Team usam um escudo HT temporário até a arte definitiva e retratos individuais serem enviados."
+        "Novo seletor de clubes com escudos, contador de participantes e prévia de rodadas na página da liga."
       ],
       "otimizacoes": [
-        "Laboratório de 120 partidas e regressão das versões anteriores aprovados; arquivos e saves preservados."
+        "Calendário dinâmico validado de dois a dez clubes, sem duplicar partidas na mesma rodada."
       ],
-      "importantes": [
-        "Site 2.0 publicado; APK disponível como teste, podendo exigir assinatura original para atualizar sem reinstalar.",
-        "O History Team é um time de amistosos/copas; as temporadas em andamento da Liga Neo Egoísta original continuam com os cinco clubes anteriores."
-      ],
+      "importantes": [],
       "balance": {
         "buffs": [],
         "nerfs": [],

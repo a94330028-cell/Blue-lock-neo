@@ -584,10 +584,18 @@ function showCameraHud(){
   $('zoomPlus').disabled=!cameraFollow||cameraZoom>=2.7;
 }
 
+function validLeagueSeason(saved){
+  if(saved?.schema!==2||!Array.isArray(saved.rounds)||saved.rounds.length<2||saved.rounds.length>100)return false;
+  if(!saved.rounds.every(r=>Array.isArray(r.games)&&r.games.length>0&&r.games.length<=10&&r.games.every(f=>
+    typeof f.home==='string'&&typeof f.away==='string'&&f.home!==f.away&&
+    (f.result===null||f.result===undefined||Array.isArray(f.result)&&f.result.length===2&&f.result.every(Number.isFinite)))))return false;
+  const ids=new Set(saved.rounds.flatMap(r=>r.games.flatMap(f=>[f.home,f.away])));
+  return ids.size>=2&&ids.size<=20&&(!saved.teamIds||Array.isArray(saved.teamIds)&&saved.teamIds.length===ids.size&&saved.teamIds.every(id=>ids.has(id)));
+}
 function loadSeason(){
   try{
     const saved=JSON.parse(localStorage.getItem('neo-season-v2'));
-    if(saved?.schema===2&&[10,20,30].includes(saved.rounds?.length)){
+    if(validLeagueSeason(saved)){
       if(saved.career?.bidVersion!==E.Progression.BID_VERSION||saved.career?.masterBidVersion!==1){
         try{
           // Restore earned regular and Master Striker offers ONLY from recorded matches.
@@ -1709,11 +1717,35 @@ function renderMastersLive(){const el=$('mastersLive');if(!el||!match)return;con
 function renderSeasonHistory(){const el=$('seasonHistory');if(!el)return;const past=season.pastSeasons||[];
   el.innerHTML=past.length?past.slice().reverse().map(p=>`<div class="archive-row"><strong>Edição ${p.number}: ${esc(p.champion?'🏆 '+p.champion:'Líder: '+p.leader)}</strong><small>${p.played}/${p.total} jogos registrados · tabela arquivada</small></div>`).join(''):'<p class="hint">Ao iniciar outra edição, a tabela anterior será arquivada aqui. Nenhuma partida será inventada.</p>';
 }
+function selectedLeagueTeamIds(){return [...document.querySelectorAll('#leagueTeamPicker input[data-league-team]:checked')].map(el=>el.value);}
+function updateLeagueTeamSelection(){
+  const count=selectedLeagueTeamIds().length;
+  const available=(E.allTeams?.()||TEAMS).filter(t=>t.id!=='neo-bestxi').length;
+  const meetings=Number($('seasonFormat')?.value)||4;
+  const rounds=(count%2?count:count-1)*meetings;
+  const games=count*(count-1)/2*meetings;
+  $('leagueSelectionCount').textContent=count+' clube'+(count===1?'':'s')+' selecionado'+(count===1?'':'s');
+  const preview=$('leagueSchedulePreview');preview.dataset.invalid=String(count<2||count>available);
+  preview.textContent=count<2?'⚠️ Escolha pelo menos 2 clubes para iniciar uma edição.':
+    count>available?'⚠️ Quantidade de clubes inválida.':
+    `✓ Próxima edição: ${count} clubes · ${rounds} rodadas · ${games} partidas · ${count%2?'1 clube folga por rodada':'sem folgas'}.`;
+  $('newSeason').disabled=simBusy||count<2||count>available;
+  for(const opt of $('seasonFormat').options){const cycles=Number(opt.value);opt.textContent=`${cycles} confrontos por dupla · ${(count%2?count:count-1)*cycles||'—'} rodadas`;}
+}
+function renderLeagueTeamPicker(){
+  const picker=$('leagueTeamPicker');if(!picker)return;
+  const clubs=(E.allTeams?.()||TEAMS).filter(t=>t.id!=='neo-bestxi');
+  const active=Array.isArray(season.teamIds)?season.teamIds:TEAMS.map(t=>t.id);
+  picker.innerHTML=clubs.map(t=>`<label class="neo-league-team-choice"><input type="checkbox" data-league-team value="${esc(t.id)}" ${active.includes(t.id)?'checked':''}><span>${crest(t,'crest-xs')}</span><span class="neo-league-team-name"><strong>${esc(t.name)}</strong><small>${esc(t.short)} · ${esc(t.formationName||'Time disponível')}</small></span></label>`).join('');
+  picker.onchange=updateLeagueTeamSelection;
+  updateLeagueTeamSelection();
+}
 function renderLeague(){const round=currentRound();$('round').textContent=round?`RODADA ${round.round} / ${season.rounds.length}`:'TEMPORADA ENCERRADA';$('simulateRound').disabled=!round||simBusy;$('simulateSeason').disabled=!round&& !simBusy;
   const ranks=E.standings(season);
+  $('leagueTeamCount').textContent=`TEMPORADA · ${ranks.length} CLUBES`;
   $('standings').innerHTML=ranks.map((r,i)=>`<tr><td>${i+1}º</td><td><div class="club-row">${teamArt(r.team,'club-art-table')}<span>${esc(r.team.short)}</span></div></td><td>${r.J}</td><td>${r.V}</td><td>${r.E}</td><td>${r.D}</td><td>${r.GP}</td><td>${r.GC}</td><td>${r.SG>0?'+':''}${r.SG}</td><td>${r.PTS}</td></tr>`).join('');
   $('champion').hidden=!!round;if(!round)$('champion').textContent=`🏆 CAMPEÃO: ${ranks[0].team.name} — ${ranks[0].PTS} pontos!`;
-  $('fixtures').innerHTML=round?round.games.map((f,i)=>`<div class="fixture"><div class="fixture-title fixture-title-rich"><span class="fixture-club">${crest(team(f.home),'crest-xs')} ${esc(team(f.home).short)}</span><span style="color:#8294a9">×</span><span class="fixture-club">${crest(team(f.away),'crest-xs')} ${esc(team(f.away).short)}</span></div><span class="fixture-score">${f.result?line(...f.result):'—'}</span>${f.result?'':`<button class="button" data-watch="${i}">Assistir</button>`}</div>`).join(''):'<p class="hint">Todos os 40 jogos foram disputados! 🏆</p>';
+  $('fixtures').innerHTML=round?round.games.map((f,i)=>`<div class="fixture"><div class="fixture-title fixture-title-rich"><span class="fixture-club">${crest(team(f.home),'crest-xs')} ${esc(team(f.home).short)}</span><span style="color:#8294a9">×</span><span class="fixture-club">${crest(team(f.away),'crest-xs')} ${esc(team(f.away).short)}</span></div><span class="fixture-score">${f.result?line(...f.result):'—'}</span>${f.result?'':`<button class="button" data-watch="${i}">Assistir</button>`}</div>`).join(''):`<p class="hint">Todos os ${season.rounds.flatMap(r=>r.games).length} jogos foram disputados! 🏆</p>`;
   document.querySelectorAll('[data-watch]').forEach(b=>b.addEventListener('click',()=>{const r=currentRound(),f=r.games[Number(b.dataset.watch)];prepare(f.home,f.away,f);setTab('match');window.scrollTo({top:0,behavior:'smooth'});}));
   if(!roundView||roundView>season.rounds.length)roundView=round?.round||season.rounds.length;renderCalendar();renderSeasonHistory();
 }
@@ -1796,7 +1828,7 @@ function setSimButtons(){
   $('simulateRound').textContent=simBusy?'⏳ Simulando...':'⚡ Simular rodada';
   $('simulateSeason').textContent=simBusy?'⏹ Parar simulação':'⏩ Simular temporada';
   $('simulateRound').disabled=simBusy||!currentRound();
-  $('newSeason').disabled=simBusy;
+  $('newSeason').disabled=simBusy||selectedLeagueTeamIds().length<2;
   $('simulateSeason').disabled=!simBusy&&!currentRound();
 }
 async function simulateRound(){
@@ -2218,21 +2250,31 @@ function init(){
     try{
       if(file.size>15*1024*1024)throw Error('Arquivo muito grande');
       const data=JSON.parse(await file.text());const restored=data?.app==='blue-lock-neo'?data.season:data;
-      if(restored?.schema!==2||![10,20,30].includes(restored.rounds?.length)||!Array.isArray(restored.rounds?.[0]?.games))throw Error('Backup incompatível com a Liga Neo Egoísta');
+      if(!validLeagueSeason(restored))throw Error('Backup incompatível com a Liga Neo Egoísta');
       if(!confirm('Restaurar a temporada escolhida? A liga salva neste navegador será substituída. Faça um backup antes de continuar.'))return;
       // Persist first: never wipe the in-memory season if the storage write fails.
       localStorage.setItem('neo-season-v2',JSON.stringify(restored));
       season=restored;playing=false;replaying=false;roundView=currentRound()?.round||1;
-      prepare('bm','px');renderLeague();renderStats();renderCareerRanking();renderRecords();
+      renderLeagueTeamPicker();const first=season.rounds[0].games[0];prepare(first.home,first.away);renderLeague();renderStats();renderCareerRanking();renderRecords();
       alert('Liga restaurada com sucesso. Retratos personalizados não foram alterados.');
     }catch(error){alert('Não foi possível restaurar: '+error.message);}
   };
-  $('newSeason').onclick=()=>{if(simBusy)return;if(!confirm('Iniciar nova temporada? Isso apaga a tabela, artilharia e os resultados salvos desta liga.'))return;const played=season.rounds.flatMap(r=>r.games).filter(f=>f.result).length;
+  $('newSeason').onclick=()=>{if(simBusy)return;const clubs=selectedLeagueTeamIds();if(clubs.length<2){alert('Selecione pelo menos dois clubes.');return;}
+    const names=clubs.map(id=>team(id)?.name||id);
+    if(!confirm(`Iniciar a próxima Liga Neo Egoísta com ${clubs.length} clubes?\n\n${names.join(', ')}\n\nA temporada atual será arquivada e terá um backup automático neste aparelho. Os jogos e rankings da nova edição começam do zero.`))return;
+    const played=season.rounds.flatMap(r=>r.games).filter(f=>f.result).length;
     const past=[...(season.pastSeasons||[])];if(played){const leader=E.standings(season)[0];past.push({number:past.length+1,champion:currentRound()?null:leader.team.name,leader:leader.team.name,played,total:season.rounds.flatMap(r=>r.games).length,standings:E.standings(season).map(r=>({club:r.team.name,pts:r.PTS,gp:r.GP,gc:r.GC}))});}
-    season=E.createSchedule(Number($('seasonFormat').value));season.pastSeasons=past;
+    const next=E.createSchedule(Number($('seasonFormat').value),clubs);next.pastSeasons=past;
     // Uma temporada NOVA sempre recomeça o leilão e os atributos da liga do zero.
-    season.career={players:{},history:[],version:2,links:{},rivals:{},stories:[]};
-    saveSeason();roundView=1;renderLeague();renderStats();renderCareerRanking();};
+    next.career={players:{},history:[],version:2,links:{},rivals:{},stories:[]};
+    try{
+      localStorage.setItem('neo-season-previous-v2',JSON.stringify(season));
+      localStorage.setItem('neo-season-v2',JSON.stringify(next));
+    }catch(error){alert('Não foi possível guardar o backup e iniciar a nova liga. Libere espaço ou exporte a temporada antes de tentar novamente.');return;}
+    season=next;playing=false;replaying=false;roundView=1;
+    const first=season.rounds[0].games[0];prepare(first.home,first.away);renderLeagueTeamPicker();renderLeague();renderStats();renderCareerRanking();renderRecords();};
+  $('seasonFormat').addEventListener('change',updateLeagueTeamSelection);
+  window.addEventListener('load',renderLeagueTeamPicker,{once:true});
   $('prevRound').onclick=()=>{roundView=Math.max(1,roundView-1);renderCalendar();};$('nextRound').onclick=()=>{roundView=Math.min(season.rounds.length,roundView+1);renderCalendar();};
   canvas.addEventListener('click',e=>openPlayer(e.clientX,e.clientY));$('closePlayer').onclick=()=>$('playerModal').classList.add('hidden');$('playerModal').onclick=e=>{if(e.target===$('playerModal'))$('playerModal').classList.add('hidden');};
   const effects=$('skillFxLevel');

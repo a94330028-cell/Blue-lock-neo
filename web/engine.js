@@ -229,8 +229,8 @@ function mulberry32(seed) { let a=seed>>>0;return function(){a=(a+0x6D2B79F5)|0;
 const clamp=(x,lo,hi)=>Math.max(lo,Math.min(hi,x));
 const length=(dx,dy)=>Math.hypot(dx,dy);
 const distance=(a,b)=>length(a.x-b.x,a.y-b.y);
-// External squads are exhibition/cup-only; the original Neo Egoist schedule
-// continues to use the five immutable league teams (TEAMS).
+// Additional registered squads are eligible for user-selected Neo Egoist
+// seasons. The default season still starts with the original five TEAMS.
 const EXTRA_TEAMS=[];
 const userCreatedPlayers=new Map();
 const teamById=id=>TEAMS.find(t=>t.id===id)||EXTRA_TEAMS.find(t=>t.id===id);
@@ -275,25 +275,34 @@ function listCreatedPlayers(){return [...userCreatedPlayers.values()].map(p=>({.
 const has=(p,key)=>(SKILLS[p.name]||[]).some(v=>v.id===key);
 const minLabel=t=>`${Math.min(90,Math.max(0,Math.floor(t/60)))}'`;
 function rankQuality(t,axis){return (t[axis]-75)/25;}
-function createSchedule(meetings=4) {
+function createSchedule(meetings=4,selectedTeamIds=null) {
   const cycles=[2,4,6].includes(Number(meetings))?Number(meetings):4;
-  // Four round-robins. Each pair meets four times, home and away twice; 20 rounds, two matches per round.
-  const teams=TEAMS.map(t=>t.id),arr=[...teams,null],single=[];
-  for(let r=0;r<5;r++) {
+  // Without a selection, retain the original five clubs and their 20-round format.
+  // A new season may instead contain any 2+ registered clubs, including History.
+  const requested=Array.isArray(selectedTeamIds)?[...new Set(selectedTeamIds)]:TEAMS.map(t=>t.id);
+  const teams=requested.filter(id=>typeof id==='string'&&teamById(id));
+  if(teams.length<2||teams.length>allTeams().length)throw new Error('Selecione de 2 a '+allTeams().length+' clubes cadastrados.');
+  const arr=[...teams];if(arr.length%2)arr.push(null);
+  const single=[];
+  for(let r=0;r<arr.length-1;r++) {
     const games=[];
-    for(let k=0;k<3;k++){const a=arr[k],b=arr[5-k];if(a&&b)games.push({home:a,away:b});}
+    for(let k=0;k<arr.length/2;k++){const a=arr[k],b=arr[arr.length-1-k];if(a&&b)games.push({home:a,away:b});}
     single.push(games);arr.splice(1,0,arr.pop());
   }
   const rounds=[];
-  for(let cycle=0;cycle<cycles;cycle++)for(let r=0;r<5;r++) {
+  for(let cycle=0;cycle<cycles;cycle++)for(let r=0;r<single.length;r++) {
     const games=single[r].map(({home,away})=>cycle%2?{home:away,away:home,result:null}: {home,away,result:null});
-    rounds.push({round:cycle*5+r+1,games});
+    rounds.push({round:cycle*single.length+r+1,games});
   }
-  return {schema:2,rounds,format:{meetings:cycles},scorers:{},assists:{},goalLog:[],created:Date.now()};
+  return {schema:2,rounds,teamIds:teams,format:{meetings:cycles},scorers:{},assists:{},goalLog:[],created:Date.now()};
 }
 function standings(season) {
-  const rows=TEAMS.map(team=>({team,J:0,V:0,E:0,D:0,GP:0,GC:0,SG:0,PTS:0}));
-  for(const round of season.rounds)for(const f of round.games){if(!f.result)continue;const a=rows.find(x=>x.team.id===f.home),b=rows.find(x=>x.team.id===f.away),[h,w]=f.result;
+  // Older saves predate teamIds. Derive membership from actual fixtures in those saves.
+  const ids=Array.isArray(season.teamIds)&&season.teamIds.length?season.teamIds:
+    [...new Set(season.rounds.flatMap(r=>r.games.flatMap(f=>[f.home,f.away])))];
+  const rows=ids.map(teamById).filter(Boolean).map(team=>({team,J:0,V:0,E:0,D:0,GP:0,GC:0,SG:0,PTS:0}));
+  const byId=new Map(rows.map(row=>[row.team.id,row]));
+  for(const round of season.rounds)for(const f of round.games){if(!f.result)continue;const a=byId.get(f.home),b=byId.get(f.away);if(!a||!b)continue;const [h,w]=f.result;
     a.J++;b.J++;a.GP+=h;a.GC+=w;b.GP+=w;b.GC+=h;
     if(h>w){a.V++;b.D++;a.PTS+=3}else if(h<w){b.V++;a.D++;b.PTS+=3}else{a.E++;b.E++;a.PTS++;b.PTS++;}}
   rows.forEach(r=>r.SG=r.GP-r.GC);
