@@ -134,7 +134,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          NEO_PING_EVERYONE: "1"
+          NEO_PING_EVERYONE: "0"
         run: python3 tools/neo_update_announcement.py publish
       - name: Registrar motivo do bloqueio de anúncio
         if: steps.deployment.outcome == 'success' && steps.neo_media.outcome != 'success'
