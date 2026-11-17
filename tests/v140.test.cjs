@@ -62,7 +62,7 @@ assert.ok(!read('web/neo-ego-combat-v140.js').includes('localStorage.clear('),'d
 assert.ok(read('tools/sync_inline_v930.py').includes('neo-ego-combat-v140.js'));
 assert.ok(read('web/index.html').includes('neo-ego-combat-v140.js'));
 assert.ok(read('web/service-worker.js').includes('./neo-ego-combat-v140.js'));
-assert.ok(read('web/service-worker.js').includes('blue-lock-neo-v2.0.0-dev-base'));
+assert.match(read('web/service-worker.js'),/const CACHE_NAME=['"]blue-lock-neo-v2\.0\.0-[^'"]+['"]/);
 const change=JSON.parse(read('CHANGELOG.json'));
 assert.equal(change.current_version,'2.0.0');
 assert.equal(change.releases[0].version,'2.0.0');

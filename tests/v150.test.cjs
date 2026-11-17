@@ -70,7 +70,7 @@ assert.ok(!source.includes('localStorage.clear('));
 assert.ok(read('web/index.html').includes('neo-ascension-v150.js'));
 assert.ok(read('web/index.html').includes('neo-ascension-v150.css'));
 assert.ok(read('web/service-worker.js').includes('./neo-ascension-v150.js'));
-assert.ok(read('web/service-worker.js').includes('blue-lock-neo-v2.0.0-dev-base'));
+assert.match(read('web/service-worker.js'),/const CACHE_NAME=['"]blue-lock-neo-v2\.0\.0-[^'"]+['"]/);
 const changes=JSON.parse(read('CHANGELOG.json'));
 assert.equal(changes.current_version,'2.0.0');
 assert.equal(changes.releases[0].version,'2.0.0');

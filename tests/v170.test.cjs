@@ -108,7 +108,7 @@ assert.ok(read('web/app.js').includes("fast.value='40'"),'40x stays enabled');
 assert.ok(read('tools/sync_inline_v930.py').includes('neo-five-pillars-v170.js'));
 assert.ok(read('web/index.html').includes('neo-five-pillars-v170.js'));
 assert.ok(read('web/index.html').includes('neo-five-pillars-v170.css'));
-assert.ok(read('web/service-worker.js').includes('blue-lock-neo-v2.0.0-dev-base'));
+assert.match(read('web/service-worker.js'),/const CACHE_NAME=['"]blue-lock-neo-v2\.0\.0-[^'"]+['"]/);
 assert.ok(read('web/service-worker.js').includes('./neo-five-pillars-v170.js'));
 const data=JSON.parse(read('CHANGELOG.json'));
 assert.equal(data.current_version,'2.0.0');

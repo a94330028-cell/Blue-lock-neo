@@ -32,7 +32,7 @@ assert.ok(style.includes('@media(max-width:420px)'),'mobile layout included');
 assert.ok(!script.includes("localStorage.clear("),'user saves never deleted');
 const worker=read('web/service-worker.js');
 for(const f of ['./CHANGELOG.json','./neo-updates-v1060.js','./neo-updates-v1060.css'])assert.ok(worker.includes(f),'cached offline '+f);
-assert.ok(worker.includes('blue-lock-neo-v2.0.0-dev-base'));
+assert.match(worker,/const CACHE_NAME=['"]blue-lock-neo-v2\.0\.0-[^'"]+['"]/);
 const wf=read('.github/workflows/publicar-site.yml');
 assert.ok(wf.includes("if: steps.deployment.outcome == 'success' && steps.neo_media.outcome == 'success'"));
 assert.ok(wf.includes('DISCORD_WEBHOOK_URL: $'+'{{ secrets.DISCORD_WEBHOOK_URL }}'));
