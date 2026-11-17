@@ -24,24 +24,22 @@
       "version": "2.0.0",
       "date": "2026-11-17",
       "novidades": [
-        "Início do Blue Lock NEO 2.0, com IA contextual mais profunda e branch de desenvolvimento isolada da versão estável."
+        "Nova camada do mundo persistente: notícias de resultados oficiais, dossiês individuais e memória das duplas entre partidas."
       ],
       "correcoes": [
-        "O histórico da 1.x permanece consultável, mas o patch atual deixa de acumular todas as alterações antigas.",
-        "Regras de impedimento e pênalti revisadas; chute usa a linha real do gol, goleiro permanece na linha e penais podem terminar em gol, defesa ou erro."
+        "Regras de pênalti/impedimento preservadas; inspeção de integridade por laboratório automático de partidas reais."
       ],
       "jogabilidade": [
-        "2.520 novas técnicas procedurais em sete raridades, por posição e situação de jogo; custo, recarga, ativação e efeito realmente integrados ao motor."
+        "2.520 técnicas da expansão, combos contextuais limitados e contra-ataques com recarga e efeitos físicos moderados."
       ],
       "visual": [
-        "Arsenal 2.0: arte offline por tipo de jogada, filtros de raridade e catálogo completo paginado; histórico da 1.x recolhido.",
-        "Busca rápida no Arsenal por nome, efeito ou identificador, sem renderizar milhares de cartas de uma vez."
+        "Centro de Evolução com histórico, rivalidades, mapas de calor, xG e momentos decisivos baseados em dados reais."
       ],
       "otimizacoes": [
-        "Catálogo 2.0 definido por regras em um módulo compacto, sem adicionar milhares de arquivos ao aplicativo."
+        "Módulos independentes e relatório de regressões para o APK; pacote incremental e otimização completa ainda pendentes."
       ],
       "importantes": [
-        "Versão 2.0 em testes. Ainda não lançada no app estável; economia, IA e partidas continuam em refinamento."
+        "2.0 continua em desenvolvimento isolado: lançamento público somente após testes no aparelho e revisão geral."
       ]
     },
     {

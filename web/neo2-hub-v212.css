@@ -1,0 +1,71 @@
+/* BLUE LOCK NEO 2.0 — accessible evolution/newspaper hub.
+   Mounted as a compact separate overlay: original navigation remains untouched. */
+.neo2-hub-toggle{
+ position:fixed;right:19px;bottom:20px;z-index:650;
+ border:1px solid #4ac4ff;border-radius:999px;
+ background:linear-gradient(115deg,#0d4d9b,#071b42);
+ color:#f2fcff;box-shadow:0 4px 17px #020d1dbb,0 0 10px #0ba0ff65;
+ padding:12px 16px;font-size:12px;font-weight:950;
+ letter-spacing:.2px;max-width:min(310px,calc(100vw - 34px));
+ cursor:pointer;
+}
+.neo2-hub-toggle:focus-visible,.neo2-hub button:focus-visible,.neo2-hub select:focus-visible{
+ outline:2px solid #b7f4ff;outline-offset:2px;
+}
+body.neo-ref-mobile .neo2-hub-toggle{bottom:calc(env(safe-area-inset-bottom,0px) + 72px);right:12px;font-size:10px;padding:10px}
+.neo2-hub[hidden]{display:none!important}
+.neo2-hub{position:fixed;inset:0;z-index:5100;padding:clamp(8px,3vw,32px);
+ display:flex;align-items:center;justify-content:center;background:#020b20cf;
+ backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+}
+body.neo2-hub-open{overflow:hidden}
+.neo2-hub-panel{display:flex;flex-direction:column;width:min(810px,100%);max-height:min(92dvh,920px);
+ overflow:hidden;border:1px solid #2e84c9;border-radius:19px;
+ color:#eaf8ff;background:linear-gradient(160deg,#0b2b5e,#061429 65%);
+ box-shadow:0 12px 70px #010916aa,0 0 28px #228ce54d;
+}
+.neo2-hub-top{display:flex;align-items:center;justify-content:space-between;gap:12px;
+ padding:15px 18px;border-bottom:1px solid #317ab674}
+.neo2-hub-heading{display:grid;gap:3px}
+.neo2-hub-heading strong{font-weight:1000;font-size:16px;letter-spacing:.4px}
+.neo2-hub-heading span{font-size:11px;color:#9dccf1}
+.neo2-hub-close,.neo2-hub-tab{border:1px solid #2c74b6;color:#d9f1ff;background:#0c315f;
+ border-radius:10px;padding:9px 11px;cursor:pointer;font-size:11px;font-weight:850}
+.neo2-hub-close:hover,.neo2-hub-tab:hover{border-color:#86d9ff;background:#124e9b}
+.neo2-hub-nav{display:flex;gap:6px;overflow-x:auto;padding:11px 14px;
+ border-bottom:1px solid #1d558a}
+.neo2-hub-tab{flex-shrink:0}
+.neo2-hub-tab.active{background:#1262b9;border-color:#8edfff;color:white}
+.neo2-hub-body{min-height:110px;flex:1;overflow:auto;padding:13px;
+ scrollbar-width:thin}
+.neo2-hub-section{background:#082147a8;border:1px solid #2d638b85;
+ padding:12px;border-radius:13px;margin-bottom:11px;display:grid;gap:9px}
+.neo2-hub-section h3{font-weight:950;font-size:14px;margin:0 0 3px;color:#b4e6ff}
+.neo2-hub-section h4{font-size:12px;margin:8px 0 3px}
+.neo2-news-card{display:grid;gap:5px;padding:12px;border:1px solid #2977bbab;
+ border-left:3px solid #42bfff;border-radius:10px;background:#0a315c}
+.neo2-news-card strong{font-size:12px;line-height:1.5}
+.neo2-news-card small{font-size:10px;color:#8dccf4}
+.neo2-news-card span{font-size:11px;color:#d2eafe}
+.neo2-hub-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.neo2-hub-line{min-width:0;display:flex;align-items:center;justify-content:space-between;gap:6px;
+ background:#0b3662aa;border:1px solid #2b638b66;border-radius:9px;padding:9px}
+.neo2-hub-line span{font-size:10px;color:#b9d9f5;overflow-wrap:anywhere}
+.neo2-hub-line strong{font-size:11px;color:#ffde7b;text-align:right;overflow-wrap:anywhere}
+.neo2-hub-form{display:grid;gap:6px}
+.neo2-hub-select{width:100%;border:1px solid #3998ce;background:#0b2851;
+ border-radius:10px;color:#edfaff;padding:10px}
+.neo2-hub-muted{color:#a1c3e5;font-size:11px;line-height:1.6;margin:5px 0}
+@media(max-width:700px){
+ .neo2-hub{padding:0;align-items:stretch}
+ .neo2-hub-panel{width:100%;max-height:100dvh;height:100dvh;border-radius:0;border:0}
+ .neo2-hub-top{padding:13px 12px}
+ .neo2-hub-heading strong{font-size:13px}
+ .neo2-hub-body{padding:9px}
+ .neo2-hub-stats{grid-template-columns:1fr 1fr}
+}
+@media(max-width:390px){
+ .neo2-hub-close{padding:7px;font-size:10px}
+ .neo2-hub-stats{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){.neo2-hub-toggle,.neo2-hub *{scroll-behavior:auto!important}}

@@ -55,6 +55,11 @@ validar e aplicar esse tipo de pacote.**
 - [x] Ligar novas habilidades ao motor existente (ativação, bônus e cooldown) e à galeria do Arsenal, com 5 artes SVG compactas disponíveis offline e busca rápida no Arsenal.
 - [ ] Validar equilíbrio em campeonatos completos, variabilidade de ativação e desempenho real no Android antes do lançamento público.
 - [ ] Tornar habilidades mais perceptíveis sem garantir gols artificialmente.
+- [x] Notícias e Dossiês com memória entre partidas, linhas de passe observadas e evolução registrada em saves oficiais.
+- [x] Indicadores avançados: xG, tentativas de passe progressivo, mapas de calor e destaques de lances registrados.
+- [x] Combinações moderadas de habilidades com durações, desgaste e contrajogo baseados em situações reais.
+- [x] Laboratório com partidas simuladas, relatório exportável, verificações de gols, pênaltis, saves, erros e desempenho.
+- [ ] Testar milhares de partidas e estabilizar física/replay completo em Android antes de lançar.
 - [ ] Melhorar campo, replays, narração e responsividade da tela.
 - [ ] Unificar Rankings, Mercado, Campeonatos, Elencos e Perfis.
 - [ ] Proteger os dados de Mestres, titulares, reservas e transferências.

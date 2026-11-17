@@ -6,7 +6,7 @@
 (function(root,factory){
  const api=factory();
  if(typeof module==='object'&&module.exports)module.exports=api;
- if(root?.NeoEngine)api.adapt(root.NeoEngine);
+ if(root){root.Neo2DeepAI=api;if(root.NeoEngine)api.adapt(root.NeoEngine);}
 })(typeof window!=='undefined'?window:null,function(){
 'use strict';
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
@@ -39,9 +39,15 @@ function passScore(m,p,q,st=memory(m)){
  const time=(m.time||0)/60;
  const fatigue=clamp((100-(q.stamina??90))*.36,0,24);
  const rivalReads=st.passLanes.filter(x=>x.side===p.side&&x.to===q.name&&m.time-x.time<330).length;
+ // Persistent memories come only from previously verified fixture reports.
+ const seasonMemory=m.neoCareerContext?.neo2World?.players?.[p.name+'|'+m.teams?.[p.side]?.id];
+ const priorPartner=Math.min(80,Number(seasonMemory?.partners?.[q.name])||0);
+ const rivals=m.neoCareerContext?.neo2World?.rivals||{};
+ const rivalPressure=m.players?.filter(d=>d.side!==p.side&&d.i!==0&&Math.hypot(d.x-q.x,d.y-q.y)<115)
+  .reduce((n,d)=>{const r=rivals[[p.name,d.name].sort().join(' × ')];return n+(r?Math.min(15,(r.duels||0)*.8):0)},0)||0;
  const move=q.run?.type||'';
  let score=lane*.38-ahead*.014-d*.072+clamp(ahead,-250,340)*.19-defenders*31-carrier*4
-  +(vision-76)*.12+(technique-76)*.12+(attrs.positioning||78)*.035-fatigue-rivalReads*3;
+  +(vision-76)*.12+(technique-76)*.12+(attrs.positioning||78)*.035-fatigue-rivalReads*3+Math.min(8,priorPartner*.22)-Math.min(18,rivalPressure);
  if(move==='third-man'||move==='blindside'||move==='half-space'||move==='late-box')score+=18;
  if(move==='decoy')score-=34;
  if(q.i>=8&&ahead>20&&lane>38)score+=9;
@@ -120,8 +126,11 @@ function coachingPlan(m,side){
 function recordPass(m,p,q){
  if(!p||!q||m.ball?.mode!=='pass'||m.ball.by!==p)return;
  const st=memory(m);
- st.passLanes.push({time:m.time||0,side:p.side,from:p.name,to:q.name,
-   lane:Math.round(m.safeLane?.(p,q)||0)});
+ const lane={time:m.time||0,side:p.side,from:p.name,to:q.name,
+   lane:Math.round(m.safeLane?.(p,q)||0)};
+ st.passLanes.push(lane);
+ if(!Array.isArray(m._neo2PassAttempts))m._neo2PassAttempts=[];
+ m._neo2PassAttempts.push(lane);if(m._neo2PassAttempts.length>80)m._neo2PassAttempts.shift();
  if(st.passLanes.length>80)st.passLanes.shift();
 }
 function recordDuel(m,a,b,w){
