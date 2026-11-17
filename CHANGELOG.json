@@ -50,6 +50,7 @@
         "Universo Vivo em Recordes: Rei do Campo baseado no desempenho, prêmios apenas após conclusão, linha do tempo, olheiros, fórmulas e enciclopédia com dados reais."
       ],
       "correcoes": [
+        "Conteúdo 10.6.21: correção do limite antigo de altura no PC, permitindo que as cartas completas da escalação apareçam sem serem cortadas pelo campo.",
         "Corrigidos os atletas minúsculos e os nomes cortados na visualização do campo; nova disposição em cartas adaptada ao celular, com acesso às fichas e reservas sem alterar a IA do técnico nem o save.",
         "O Discord recebe identificador novo quando o changelog de conteúdo muda; a proteção contra repetição de um anúncio já confirmado continua ativa.",
         "Transferências não modificam os elencos-base do repositório e não deixam atletas duplicados nem equipes com menos de 11 titulares.",

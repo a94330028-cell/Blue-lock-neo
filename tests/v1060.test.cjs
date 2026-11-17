@@ -31,7 +31,7 @@ assert.ok(style.includes('@media(max-width:420px)'),'mobile layout included');
 assert.ok(!script.includes("localStorage.clear("),'user saves never deleted');
 const worker=read('web/service-worker.js');
 for(const f of ['./CHANGELOG.json','./neo-updates-v1060.js','./neo-updates-v1060.css'])assert.ok(worker.includes(f),'cached offline '+f);
-assert.ok(worker.includes('blue-lock-neo-v1.10.1-lineup-cards'));
+assert.ok(worker.includes('blue-lock-neo-v1.10.1-lineup-cards-fix'));
 const wf=read('.github/workflows/publicar-site.yml');
 assert.ok(wf.includes("if: steps.deployment.outcome == 'success' && steps.neo_media.outcome == 'success'"));
 assert.ok(wf.includes('DISCORD_WEBHOOK_URL: $'+'{{ secrets.DISCORD_WEBHOOK_URL }}'));
