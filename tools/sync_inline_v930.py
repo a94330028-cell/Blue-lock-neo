@@ -274,10 +274,8 @@ if 'neo2-abilities-v200.js' not in updated:
     updated=updated.replace('</body>','<script defer src="neo2-abilities-v200.js?v=2.0.0"></script>\n</body>',1)
 updated=re.sub(r'src="neo2-abilities-v200\.js(?:\?v=[^"]*)?"',
                'src="neo2-abilities-v200.js?v=2.0.0"',updated)
-# 2.0: lightweight skill catalogue search stylesheet on both site and APK.
-if 'neo2-abilities-v200.css' not in updated:
-    if updated.count('</head>')!=1:raise RuntimeError('Cannot load NEO 2.0 Arsenal search styling')
-    updated=updated.replace('</head>','<link rel="stylesheet" href="neo2-abilities-v200.css?v=2.0.0">\n</head>',1)
+# 2.0: the canonical stylesheet is installed after all generated modules.
+# Remove duplicate older tags first to keep repeated sync strictly idempotent.
 # NEO 2.0: one synchronous skill script and one deep-AI script, between
 # the real inline match engine and app.init(). Idempotent across Android/site.
 for module in ('neo2-abilities-v200.js','neo2-deep-ai-v202.js','neo2-world-v210.js','neo2-insights-v211.js','neo2-synergy-v213.js','neo2-hub-v212.js'):
@@ -290,8 +288,11 @@ updated=updated[:boot]+tags+updated[boot:]
 for module in ('neo2-abilities-v200.js','neo2-deep-ai-v202.js','neo2-world-v210.js','neo2-insights-v211.js','neo2-synergy-v213.js','neo2-hub-v212.js'):
     if updated.count(module+'?v=2.0.0')!=1:raise RuntimeError('NEO 2.0 module not loaded once: '+module)
 print('NEO 2.0 boot order checked: inline engine → ability registry → deep AI → app')
-if 'neo2-hub-v212.css' not in updated:
-    if updated.count('</head>')!=1:raise RuntimeError('Cannot inject NEO 2.0 hub styling')
-    updated=updated.replace('</head>','<link rel="stylesheet" href="neo2-hub-v212.css?v=2.0.0">\n</head>',1)
+# Normalise the two versioned stylesheets: never append a second copy.
+for stylesheet in ('neo2-abilities-v200.css','neo2-hub-v212.css'):
+    updated=re.sub(r'<link\b[^>]*\bhref="(?:\./)?'+re.escape(stylesheet)+r'(?:\?[^"]*)?"[^>]*>\s*','',updated,flags=re.I)
+if updated.count('</head>')!=1:raise RuntimeError('Cannot attach NEO 2.0 stylesheets')
+for stylesheet in ('neo2-abilities-v200.css','neo2-hub-v212.css'):
+    updated=updated.replace('</head>','<link rel="stylesheet" href="'+stylesheet+'?v=2.0.0">\n</head>',1)
 html.write_text(updated,encoding='utf-8')
 print('Inline game modules synchronized:',counts)
