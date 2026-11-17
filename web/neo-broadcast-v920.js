@@ -3,7 +3,7 @@
 (() => {
   'use strict';
   if (window.NeoBroadcast92) return;
-  const VERSION='1.8.0', HOST='https://a94330028-cell.github.io/Blue-lock-neo/';
+  const VERSION='2.0.0', HOST='https://a94330028-cell.github.io/Blue-lock-neo/';
   const MODES=Object.freeze({classic:{label:'Clássica',rate:18,physics:1,mins:5},long:{label:'Estendida',rate:12,physics:.75,mins:10},cinema:{label:'Cinematográfica',rate:10,physics:.60,mins:15},epic:{label:'Épica',rate:9,physics:.50,mins:20}});
   const $=id=>document.getElementById(id);
   const APP_KEY='neo-broadcast-mode-v92', HISTORY_KEY='neo-broadcast-history-v92';
