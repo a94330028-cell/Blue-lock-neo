@@ -40,18 +40,10 @@ jobs:
           node tests/neo2-deep-ai-rules-v202.test.cjs
           node tests/neo2-match-season-v203.test.cjs
           node tests/neo2-world-insights-v214.test.cjs
-          node tools/neo2-lab.cjs --games=120 --seed=20261117 --report=neo2-lab-report.json
-      - name: Disponibilizar relatório completo de simulações reais
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: NEO-2.0-LAB-120-PARTIDAS
-          path: neo2-lab-report.json
-          if-no-files-found: warn
-          retention-days: 30
       - name: Regressões integrais de todas as versões anteriores
         run: |
           set -euo pipefail
+          python3 tools/sync_inline_v930.py web
           for suite in \
             navigation-v912.test.js broadcast-v920.test.js \
             v970.test.cjs v980.test.cjs v981.test.cjs v990.test.cjs \
@@ -66,6 +58,16 @@ jobs:
           do
             node "tests/$suite"
           done
+      - name: Laboratório de 120 partidas após as regressões integrais
+        run: node tools/neo2-lab.cjs --games=120 --seed=20261117 --report=neo2-lab-report.json
+      - name: Disponibilizar relatório completo de simulações reais
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: NEO-2.0-LAB-120-PARTIDAS
+          path: neo2-lab-report.json
+          if-no-files-found: warn
+          retention-days: 30
       - name: Validar notas compactas e limite do Android
         run: |
           python3 -m unittest discover -s tests -p test_neo_v2_release.py -v
