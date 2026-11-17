@@ -34,8 +34,6 @@ def change(m):
  counts[which]+=1
  content=paths[which].read_text(encoding='utf-8').strip()
  if '</script' in content.lower():raise ValueError('Unexpected script end tag in '+which)
- if which=='app':
-     return '<script src="neo2-abilities-v200.js?v=2.0.0"></script>\n<script src="neo2-deep-ai-v202.js?v=2.0.0"></script>\n'+m.group(1)+'\n'+content+'\n'+m.group(3)
  return m.group(1)+'\n'+content+'\n'+m.group(3)
 updated=patterns.sub(change,src)
 if 'window.NeoPortraitUI=Object.freeze' not in updated:
@@ -280,5 +278,16 @@ updated=re.sub(r'src="neo2-abilities-v200\.js(?:\?v=[^"]*)?"',
 if 'neo2-abilities-v200.css' not in updated:
     if updated.count('</head>')!=1:raise RuntimeError('Cannot load NEO 2.0 Arsenal search styling')
     updated=updated.replace('</head>','<link rel="stylesheet" href="neo2-abilities-v200.css?v=2.0.0">\n</head>',1)
+# NEO 2.0: one synchronous skill script and one deep-AI script, between
+# the real inline match engine and app.init(). Idempotent across Android/site.
+for module in ('neo2-abilities-v200.js','neo2-deep-ai-v202.js'):
+    updated=re.sub(r'\s*<script\b[^>]*src="' + re.escape(module) + r'(?:\?[^"]*)?"[^>]*>\s*</script>', '', updated, flags=re.I)
+app_scripts=[m for m in patterns.finditer(updated) if 'function renderScorerBoard(){' in m.group(2) and 'const $=id=>document.getElementById(id);' in m.group(2)]
+if len(app_scripts)!=1:raise RuntimeError('NEO 2.0 app entrypoint missing or ambiguous: '+str(len(app_scripts)))
+boot=app_scripts[0].start()
+tags='<script src="neo2-abilities-v200.js?v=2.0.0"></script>\n<script src="neo2-deep-ai-v202.js?v=2.0.0"></script>\n'
+updated=updated[:boot]+tags+updated[boot:]
+if updated.count('neo2-deep-ai-v202.js?v=2.0.0')!=1:raise RuntimeError('NEO 2.0 AI script duplicated')
+print('NEO 2.0 boot order checked: inline engine → ability registry → deep AI → app')
 html.write_text(updated,encoding='utf-8')
 print('Inline game modules synchronized:',counts)
