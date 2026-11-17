@@ -115,19 +115,17 @@ class UpdateAnnouncementTests(unittest.TestCase):
         self.assertNotIn("🔴 NERF", full, "No unverified nerfs must be announced")
         self.assertIn("🔵 REWORK", full)
 
-    def test_mass_ping_requires_explicit_environment_opt_in(self):
+    def test_mass_ping_is_disabled_even_with_old_environment_variable(self):
         from unittest.mock import patch
-        with patch.dict("os.environ", {"NEO_PING_EVERYONE": "1"}):
-            packets = announce.build_payloads(self.data, self.version)
-            self.assertEqual(packets[0]["content"], "||@everyone||")
-            self.assertEqual(packets[0]["allowed_mentions"], {"parse": ["everyone"]})
-            for packet in packets[1:]:
-                self.assertEqual(packet["allowed_mentions"], {"parse": []})
-                self.assertNotIn("content", packet)
-        with patch.dict("os.environ", {"NEO_PING_EVERYONE": "0"}):
-            packets = announce.build_payloads(self.data, self.version)
-            self.assertEqual(packets[0]["allowed_mentions"], {"parse": []})
-            self.assertNotIn("content", packets[0])
+        for value in ("1", "0"):
+            with patch.dict("os.environ", {"NEO_PING_EVERYONE": value}):
+                packets = announce.build_payloads(self.data, self.version)
+                self.assertGreater(len(packets), 0)
+                self.assertNotIn("@everyone", json.dumps(packets, ensure_ascii=False))
+                self.assertNotIn("@here", json.dumps(packets, ensure_ascii=False))
+                for packet in packets:
+                    self.assertEqual(packet["allowed_mentions"], {"parse": []})
+                    self.assertNotIn("content", packet)
 
     def test_discord_announcement_has_real_binary_attachments(self):
         import io
