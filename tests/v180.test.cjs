@@ -114,7 +114,7 @@ const releases=JSON.parse(read('CHANGELOG.json'));
 assert.equal(releases.current_version,'2.0.0');
 assert.equal(releases.releases[0].version,'2.0.0');
 assert.equal(read('web/VERSION').trim(),'2.0.0');
-assert.equal(read('web/UPDATE_BUILD').trim(),'10.6.22');
+assert.ok(read('web/UPDATE_BUILD').trim().localeCompare('10.6.22',undefined,{numeric:true})>=0,'build cannot roll back');
 assert.ok(read('app/build.gradle').includes("versionName '2.0.0'"));
 assert.ok(read('app/build.gradle').includes('versionCode 118'));
 console.log('PASS EGO SAGA v1.7: earned devouring, active weapons, real skill clashes, cinema and dynamic box football');

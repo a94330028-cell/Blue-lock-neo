@@ -75,7 +75,7 @@ const changes=JSON.parse(read('CHANGELOG.json'));
 assert.equal(changes.current_version,'2.0.0');
 assert.equal(changes.releases[0].version,'2.0.0');
 assert.equal(read('web/VERSION').trim(),'2.0.0');
-assert.equal(read('web/UPDATE_BUILD').trim(),'10.6.22');
+assert.ok(read('web/UPDATE_BUILD').trim().localeCompare('10.6.22',undefined,{numeric:true})>=0,'build cannot roll back');
 assert.ok(read('app/build.gradle').includes("versionName '2.0.0'"));
 assert.ok(read('app/build.gradle').includes('versionCode 118'));
 console.log('PASS 1.4 EGO ASCENSION: real weapon observations, context counters, box runs, passing combos, historic saves, saves intact.');

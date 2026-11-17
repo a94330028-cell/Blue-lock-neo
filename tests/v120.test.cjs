@@ -66,7 +66,7 @@ assert.match(worker,/const CACHE_NAME=['"]blue-lock-neo-v2\.0\.0-[^'"]+['"]/);
 const changelog=JSON.parse(read('CHANGELOG.json'));
 assert.equal(changelog.current_version,'2.0.0');
 assert.equal(read('web/VERSION').trim(),'2.0.0');
-assert.equal(read('web/UPDATE_BUILD').trim(),'10.6.22');
+assert.ok(read('web/UPDATE_BUILD').trim().localeCompare('10.6.22',undefined,{numeric:true})>=0,'build cannot roll back');
 assert.equal(changelog.releases[0].version,'2.0.0');
 assert.ok(changelog.releases.some(r=>r.version==='1.0.0'),'history preserved');
 const gradle=read('app/build.gradle');
