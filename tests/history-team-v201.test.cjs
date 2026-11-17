@@ -49,6 +49,22 @@ assert.equal(schedule.rounds.reduce((n,r)=>n+r.games.length,0),40,'existing 5-cl
 const r=new E.Match('ht','px',812812).runToEnd();
 assert.ok(r.score.every(v=>Number.isInteger(v)&&v>=0),'History match plays to completion');
 const app=fs.readFileSync('web/app.js','utf-8');
+const studio=fs.readFileSync('web/neo-studio-v970.js','utf-8');
+const start=studio.indexOf('function photoTeams(){');
+const end=studio.indexOf('\nconst optionHtml',start);
+assert.ok(start>=0&&end>start,'History photo editor helper exists');
+const photoTeams=new Function('E','H',studio.slice(start,end)+'\nreturn photoTeams();');
+const photoClubs=photoTeams(E,{teams:[]});
+assert.equal(photoClubs.length,1);
+assert.equal(photoClubs[0].id,'ht');
+assert.deepEqual(photoClubs[0].starters.map(([name])=>name),t.players);
+assert.deepEqual(photoClubs[0].reserves.map(([name])=>name),t.reserves);
+assert.equal(photoClubs[0].starters.find(([name])=>name==='Dexter Morgan')[3],94);
+assert.equal(photoClubs[0].reserves.find(([name])=>name==='Shiro')[3],88);
+assert.ok(studio.includes('await window.NeoPortraitManager.saveFile(name,file)'),
+ 'photo editor uses the same resilient Android portrait storage');
+assert.ok(!studio.includes("!['image/jpeg','image/png','image/webp'].includes(file.type)"),
+ 'editor must not reject Android photos with an empty MIME type');
 assert.ok(app.includes("E.allTeams?.()||TEAMS"),'History team available for match selection and portraits');
 assert.ok(app.includes("const historyCrestSVG="),'temporary logo avoids broken image');
 assert.ok(app.includes("Armazenamento de imagens cheio ou indisponível"),'portrait storage fallback with error guidance');

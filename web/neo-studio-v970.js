@@ -15,6 +15,18 @@ function load(){try{const x=JSON.parse(localStorage.getItem(SAVED_PLAYER_KEY)||'
 const persistOwn=()=>localStorage.setItem(SAVED_PLAYER_KEY,JSON.stringify(own));
 const persistCups=()=>C.save(localStorage,cups);
 const clubs=()=>E.allTeams();
+// History Team is an extra squad, not one of the four original historic clubs.
+// Show its players in the same photo editor without assigning fake portraits.
+function photoTeams(){
+ const history=E.teamById('ht');
+ if(!history)return H.teams;
+ const rating=name=>history.suppliedRatings?.[name]||{};
+ return [...H.teams,{
+  id:history.id,name:history.name,
+  starters:history.players.map((name,i)=>[name,history.formation?.[i]?.role||rating(name).role||'JOG',null,rating(name).ovr]),
+  reserves:history.reserves.map(name=>[name,history.reserveRoles?.[name]||rating(name).role||'JOG',null,rating(name).ovr])
+ }];
+}
 const optionHtml=(selected=null)=>clubs().map(t=>`<option value="${esc(t.id)}" ${t.id===selected?'selected':''}>${esc(t.name)}</option>`).join('');
 function portraitHtml(name,t,cls='neo970-photo'){
  if(window.NeoPortraitUI?.html)return window.NeoPortraitUI.html(name,t,cls);
@@ -69,16 +81,16 @@ function renderCreated(){const el=$('neo970-my-players');if(!el)return;
   '<p class="neo970-hint">Nenhum personagem próprio criado ainda.</p>';
 }
 async function importPortrait(name,file){
- if(!file||!['image/jpeg','image/png','image/webp'].includes(file.type))throw Error('Use JPG, PNG ou WebP.');
- if(file.size>8*1024*1024)throw Error('Imagem acima de 8 MB.');
+ if(!file)throw Error('Escolha uma foto JPG, PNG ou WebP.');
  if(!window.NeoPortraitManager?.saveFile)throw Error('Biblioteca de retratos ainda não está disponível.');
+ // The shared manager handles blank Android MIME types, resizing and safe storage.
  await window.NeoPortraitManager.saveFile(name,file);
 }
 function setupPhotos(){const root=$('squads')||$('more');if(!root)return;
  const sec=document.createElement('section');sec.className='neo970-panel';sec.id='neo970-new-squads';
- sec.innerHTML=`<div class="neo970-heading"><span>📸</span><div><strong>Novos elencos — imagens por jogador</strong><small>4 times históricos completos; escolha a foto de cada atleta</small></div></div>
+ sec.innerHTML=`<div class="neo970-heading"><span>📸</span><div><strong>Novos elencos — imagens por jogador</strong><small>Clubes históricos e History Team; adicione cada foto no seu ritmo</small></div></div>
  <label class="neo970-search">Buscar jogador ou time<input id="neo970-photo-search" type="search" placeholder="Cristiano Ronaldo, Flamengo..." autocomplete="off"></label>
- <label class="neo970-search">Equipe<select id="neo970-photo-club"><option value="all">Todos os quatro times</option>${H.teams.map(t=>`<option value="${esc(t.id)}">${esc(t.name)}</option>`).join('')}</select></label>
+ <label class="neo970-search">Equipe<select id="neo970-photo-club"><option value="all">Todas as equipes</option>${photoTeams().map(t=>`<option value="${esc(t.id)}">${esc(t.name)}</option>`).join('')}</select></label>
  <div id="neo970-photo-list" class="neo970-photo-list"></div><p id="neo970-photo-status" role="status" class="neo970-feedback">Não coloquei imagens inventadas: você adiciona cada retrato aqui.</p>
  <input id="neo970-photo-input" type="file" accept="image/png,image/jpeg,image/webp" hidden>`;
  root.append(sec);
@@ -104,19 +116,20 @@ function setupPhotos(){const root=$('squads')||$('more');if(!root)return;
   }
   file.dataset.player=b.dataset.neo970Photo;file.value='';file.click();
 });
- file.addEventListener('change',async()=>{const name=file.dataset.player,photo=file.files[0];if(!photo||!name)return;
+ file.addEventListener('change',async()=>{const name=file.dataset.player,photo=file.files[0];file.value='';if(!photo||!name)return;
   setStatus('neo970-photo-status','Salvando retrato de '+name+'...');
   try{await importPortrait(name,photo);setStatus('neo970-photo-status','✅ Foto salva para '+name+'. Será usada nas listas, nas partidas e na ficha.');renderPhotos();refreshExternal();}
   catch(err){setStatus('neo970-photo-status',errtext(err),true)}
  });
+ window.addEventListener('neo:portraits-changed',()=>{if($('neo970-photo-list'))renderPhotos();});
  renderPhotos();
 }
 function renderPhotos(){const el=$('neo970-photo-list');if(!el)return;
  const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('pt-BR');
- const q=norm(photoQuery);
+ const q=norm(photoQuery),teams=photoTeams();
  // Searching shows just name + club, not a huge open panel for every player.
  if(q){
-   const hits=H.teams.filter(t=>photoTeam==='all'||photoTeam===t.id)
+   const hits=teams.filter(t=>photoTeam==='all'||photoTeam===t.id)
      .flatMap(t=>[...t.starters,...t.reserves].filter(([name])=>norm(name).includes(q)||norm(t.name).includes(q))
        .map(([name])=>({name,t})));
    el.innerHTML='<div class="neo992-search-results" role="list">'+hits.map(({name,t})=>
@@ -124,10 +137,10 @@ function renderPhotos(){const el=$('neo970-photo-list');if(!el)return;
    ).join('')+'</div>'+(hits.length?'':'<p class="neo970-hint">Nenhum atleta corresponde à busca.</p>');
    return;
  }
- el.innerHTML=H.teams.filter(t=>photoTeam==='all'||photoTeam===t.id).map(t=>{
+ el.innerHTML=teams.filter(t=>photoTeam==='all'||photoTeam===t.id).map(t=>{
   const all=[...t.starters,...t.reserves].filter(([name])=>!q||norm(name).includes(q)||norm(t.name).includes(q));if(!all.length)return '';
   return `<details class="neo970-club-roster" ${q||photoTeam===t.id?'open':''}><summary><strong>${esc(t.name)}</strong><span>${all.length} jogadores · titulares e reservas</span></summary>
-   <div>${all.map(([name,role,number])=>`<div class="neo970-photo-row">${portraitHtml(name,E.teamById(t.id))}<div><b>${esc(name)}</b><small>#${number} · ${esc(ROLE_LABELS[role]||role)}</small></div><button type="button" data-neo970-photo="${esc(name)}" aria-label="Adicionar imagem de ${esc(name)}">📷 Foto</button></div>`).join('')}</div></details>`;
+   <div>${all.map(([name,role,number,ovr])=>`<div class="neo970-photo-row">${portraitHtml(name,E.teamById(t.id))}<div><b>${esc(name)}</b><small>${number?'#'+number+' · ':''}${esc(ROLE_LABELS[role]||role)}${ovr?' · '+ovr+' OVR':''}</small></div><button type="button" data-neo970-photo="${esc(name)}" aria-label="Adicionar imagem de ${esc(name)}">📷 Foto</button></div>`).join('')}</div></details>`;
  }).join('')||'<p class="neo970-hint">Nenhum atleta corresponde à busca.</p>';
 }
 function setupCups(){const root=$('more')||$('league');if(!root)return;

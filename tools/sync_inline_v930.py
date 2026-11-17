@@ -103,7 +103,8 @@ if 'kaiser-192.png?v=9.9.1' not in updated:
     if updated.count('</head>') != 1: raise RuntimeError('Cannot install Kaiser site favicon')
     updated=updated.replace('</head>','<link rel="icon" type="image/png" href="./icons/favicon-32.png?v=9.9.1">\n<link rel="apple-touch-icon" href="./icons/kaiser-192.png?v=9.9.1">\n</head>')
 # v9.9.2: invalidate previous gallery styling and new-club photo search resources.
-updated=updated.replace('neo-studio-v970.js?v=9.7.0','neo-studio-v970.js?v=9.9.4')
+updated=updated.replace('neo-studio-v970.js?v=9.7.0','neo-studio-v970.js?v=2.0.0-history-photos')
+updated=updated.replace('neo-studio-v970.js?v=9.9.4','neo-studio-v970.js?v=2.0.0-history-photos')
 updated=updated.replace('neo-v990.css?v=9.9.0','neo-v990.css?v=9.9.4')
 # v10.0: Bust stale Mobile Edition assets when building the Android web bundle.
 updated=re.sub(r'src="mobile-upgrade\.js(?:\?v=[^"]*)?"','src="mobile-upgrade.js?v=10.6.0"',updated)
