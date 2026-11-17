@@ -22,22 +22,24 @@
   "releases": [
     {
       "version": "2.0.0",
-      "date": "2026-11-16",
+      "date": "2026-11-17",
       "novidades": [
         "Início do Blue Lock NEO 2.0: base técnica isolada para evoluir sem mexer na versão estável 1.8.0."
       ],
       "correcoes": [
         "O histórico da 1.x permanece consultável, mas o patch atual deixa de acumular todas as alterações antigas."
       ],
-      "jogabilidade": [],
+      "jogabilidade": [
+        "2.520 novas técnicas procedurais em sete raridades, por posição e situação de jogo; custo, recarga, ativação e efeito realmente integrados ao motor."
+      ],
       "visual": [
-        "Central de atualizações com patch 2.0 em destaque e versões anteriores em arquivo recolhido."
+        "Arsenal 2.0: arte offline por tipo de jogada, filtros de raridade e catálogo completo paginado; histórico da 1.x recolhido."
       ],
       "otimizacoes": [
-        "Validação automática do tamanho das notas e diagnóstico do pacote de atualização antes de cada lançamento."
+        "Catálogo 2.0 definido por regras em um módulo compacto, sem adicionar milhares de arquivos ao aplicativo."
       ],
       "importantes": [
-        "Esta é uma base de desenvolvimento. A nova geração da IA, a divisão do motor em módulos e atualizações diferenciais ainda não estão concluídas."
+        "2.0 em desenvolvimento separado da versão estável. Atualização diferencial do APK e IA reformulada ainda não foram lançadas."
       ]
     },
     {

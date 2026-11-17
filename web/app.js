@@ -4,7 +4,7 @@
 'use strict';
 const E=window.NeoEngine,{TEAMS,COUNTRY_KITS,PITCH,TICK,SKILLS,Match,avatarTheme,avatarHTML,avatarSVG,REAL_PORTRAITS}=E;
 const $=id=>document.getElementById(id);
-function skillArtUrl(id){return window.NeoOfflineSkillArts?.[id]||window.NeoCommonArts?.[id]||window.NeoRarityArts?.[id]||`assets/skill-arts/${id}.svg`;}
+function skillArtUrl(id){if(String(id).startsWith('neo2-'))return 'assets/neo2-skills/'+(E.Abilities.get(id)?.contexts?.[0]||'pass')+'.svg';return window.NeoOfflineSkillArts?.[id]||window.NeoCommonArts?.[id]||window.NeoRarityArts?.[id]||`assets/skill-arts/${id}.svg`;}
 let lastBroadcastGoalCount=0,entranceShown=false,lastScorerBoardKey="",lastMobilePanAt=0,lastMobilePanValue="";
 let lastHudTeamsKey='',lastGoalHudKey='',lastSkillHudKey='',lastHeavyUiAt=0,lastEgoUiAt=0,lastRunsUiAt=0,lastUiMatch=null;
 const setIfChanged=(el,html)=>{if(el&&el.innerHTML!==html)el.innerHTML=html;};

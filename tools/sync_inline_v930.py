@@ -264,5 +264,12 @@ for file in ('neo-match-pulse-v240.css','neo-universe-spotlight-v250.css'):
 for asset,attr in (('neo-updates-v1060.js','src'),('neo-updates-v1060.css','href')):
     updated=re.sub(r'(' + attr + r'="' + re.escape(asset) + r')(?:\\?v=[^"]*)?(?=")',
                    r'\\g<1>?v=2.0.0', updated)
+# NEO 2.0: keep 2,520 generated skills in their own light JS file.
+# Use defer so the original inline engine is fully constructed before registration.
+if 'neo2-abilities-v200.js' not in updated:
+    if updated.count('</body>')!=1:raise RuntimeError('Cannot load NEO 2.0 ability expansion')
+    updated=updated.replace('</body>','<script defer src="neo2-abilities-v200.js?v=2.0.0"></script>\n</body>',1)
+updated=re.sub(r'src="neo2-abilities-v200\.js(?:\?v=[^"]*)?"',
+               'src="neo2-abilities-v200.js?v=2.0.0"',updated)
 html.write_text(updated,encoding='utf-8')
 print('Inline game modules synchronized:',counts)
