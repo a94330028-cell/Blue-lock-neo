@@ -61,6 +61,36 @@ const server=http.createServer((req,res)=>{
    assert.ok(details.closed,'the new Records section must start collapsed');
    assert.ok(details.nav,'desktop and mobile menus remain in DOM');
    assert.ok(details.list,'XI tactical/list toggle is mounted');
+   // Eleven rank-style player cards in the real tactical formation on mobile and PC.
+   if([1366,390,360].includes(width)){
+    if(width<=700)await page.evaluate(()=>window.NeoReferenceMobile?.go?.('squads'));
+    else await page.click('.nav button[data-tab="squads"]');
+    await page.waitForFunction(()=>document.querySelectorAll('#neo980-squad-area .neo980-lineup-card').length===11,null,{timeout:12000});
+    await page.selectOption('#neo980-select','mc');
+    const metrics=await page.$eval('#neo980-squad-area',root=>{
+     const cards=[...root.querySelectorAll('.neo980-lineup-card')],portraits=[...root.querySelectorAll('.neo980-lineup-card .neo980-headshot')];
+     return {rows:[...root.querySelectorAll('.neo980-line-cards')].map(el=>el.querySelectorAll('.neo980-lineup-card').length),
+      cards:cards.length,cardWidth:Math.min(...cards.map(el=>el.getBoundingClientRect().width)),
+      photoWidth:Math.min(...portraits.map(el=>el.getBoundingClientRect().width)),
+      relative:cards.every(el=>getComputedStyle(el).position==='relative'),
+      height:root.querySelector('.neo980-card-pitch').getBoundingClientRect().height,
+      overflow:document.documentElement.scrollWidth-window.innerWidth,
+      ai:!!root.querySelector('.neo980-coach-card'),bench:!!root.querySelector('.neo980-reserves')};
+    });
+    console.log('XI CARDS',width+'x'+height,JSON.stringify(metrics));
+    assert.deepEqual(metrics.rows,[3,4,3,1],'real Manshine 3-4-3 must be preserved');
+    assert.equal(metrics.cards,11,'all eleven slots have rank-style cards');
+    assert.ok(metrics.cardWidth>=60&&metrics.photoWidth>=56,'portrait cards much larger than circles');
+    assert.ok(metrics.relative&&metrics.height>550,'cards stay inside a growing pitch without overlap');
+    assert.ok(metrics.overflow<=5,'no app-wide horizontal overflow');
+    assert.ok(metrics.ai&&metrics.bench,'coach and reserves remain accessible');
+    if(width===390){
+     await page.click('#neo980-squad-area .neo980-lineup-card');
+     assert.ok(await page.$eval('#neo960-profile-modal',el=>!el.hidden),'player profile opens from card');
+     await page.click('#neo960-profile-modal [data-neo960-close]');
+    }
+    if(width<=700)await page.evaluate(()=>window.NeoReferenceMobile?.go?.('home'));
+   }
    if(width>=1100){
     await page.click('.nav button[data-tab="league"]');
     await page.waitForFunction(()=>getComputedStyle(document.getElementById('league')).display!=='none');

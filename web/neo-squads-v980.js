@@ -16,13 +16,44 @@ function portrait(name,t){
  return '<span class="neo980-headshot neo980-no-photo" aria-hidden="true">'+esc(initial)+'</span>';
 }
 function rating(name,t,role,slot,season){return C.overall(E.Attr,t,name,role,slot,season)}
-function player(t,name,role,index,season,style={}){
- const ovr=rating(name,t,role,index,season),isGK=index===0,pos=labels[role]||role;
+// Build tactical lines from the actual chosen formation (no fake lineup
+// changes). Attackers appear at the top, keeper at the bottom.
+function formationRows(t,formation,spots){
+ const raw=window.NeoPitch1040?.formationKey(t.formationName)||String(t.formationName||'').match(/\d+(?:-\d+){2,4}/)?.[0];
+ const sizes=String(raw||'').split('-').map(Number);
+ let backToFront=[];
+ if(sizes.length>=3&&sizes.length<=5&&sizes.every(n=>Number.isInteger(n)&&n>0)&&sizes.reduce((a,b)=>a+b,0)===10){
+  let offset=1;
+  backToFront=sizes.map(n=>{const indices=Array.from({length:n},(_,i)=>offset+i);offset+=n;return indices;});
+ }else{
+  const types=[[],[],[]];
+  for(let i=1;i<11;i++){
+   const role=String(formation[i]?.role||'').toUpperCase();
+   const group=/^(LD|LE|ZAG|CB|LB|RB|LIB|LWB|RWB)$/.test(role)?0:/^(CA|ST|CF|SA|PD|PE|RW|LW)$/.test(role)?2:1;
+   types[group].push(i);
+  }
+  backToFront=types.filter(a=>a.length);
+ }
+ return [...backToFront].reverse().map((line,lineIndex,all)=>{
+  const ordered=[...line].sort((a,b)=>(Number(spots?.[a]?.lane)||50)-(Number(spots?.[b]?.lane)||50));
+  const size=ordered.length;
+  const title=lineIndex===all.length-1?'DEFESA':lineIndex===0?'ATAQUE':
+   (all.length>3&&lineIndex===1?'MEIAS OFENSIVOS':all.length>3&&lineIndex===all.length-2?'VOLANTES':'MEIO-CAMPO');
+  return {indices:ordered,title,size};
+ }).concat([{indices:[0],title:'GOLEIRO',size:1}]);
+}
+function player(t,name,role,index,season,style={},captain=false){
+ const ovr=rating(name,t,role,index,season),pos=labels[role]||role;
+ const highlight=captain?' neo980-lineup-star':'';
  const left=Number.isFinite(Number(style.lane))?Number(style.lane):Number(style.y??.5)*100;
  const top=Number.isFinite(Number(style.depth))?Number(style.depth):(1-Number(style.x??.45))*100;
- const coords=`style="--lane:${Math.max(10,Math.min(90,left)).toFixed(1)}%;--depth:${Math.max(18,Math.min(91,top)).toFixed(1)}%"`;
- return `<button type="button" class="neo980-player" ${coords} data-neo960-profile="${profileKey(name,t.id)}" title="${esc(name)} · ${esc(pos)} · ${ovr} OVR" aria-label="Abrir ficha de ${esc(name)}, ${esc(pos)}, ${ovr} overall">
- ${portrait(name,t)}<span class="neo980-role">${esc(role)}</span><span class="neo980-player-name">${esc(name)}</span><b class="neo980-ovr">${ovr}</b></button>`;
+ const coords='style="--lane:'+Math.max(10,Math.min(90,left)).toFixed(1)+'%;--depth:'+Math.max(18,Math.min(91,top)).toFixed(1)+'%"';
+ return '<button type="button" class="neo980-player neo980-lineup-card'+highlight+'" '+coords+
+ ' data-neo960-profile="'+profileKey(name,t.id)+'" title="'+esc(name)+' · '+esc(pos)+' · '+ovr+' OVR"'+
+ ' aria-label="Abrir ficha de '+esc(name)+', '+esc(pos)+', '+ovr+' overall">'+
+ '<span class="neo980-card-portrait">'+portrait(name,t)+'<span class="neo980-card-role">'+esc(role)+'</span></span>'+
+ '<span class="neo980-card-body"><strong class="neo980-player-name">'+esc(name)+'</strong>'+
+ '<span class="neo980-card-bottom"><span class="neo980-role">'+esc(role)+'</span><b class="neo980-ovr">'+ovr+'</b></span></span></button>';
 }
 function chooseTeam(value){selected=value;localStorage.setItem('neo980-team',selected);render();}
 function render(){
@@ -35,12 +66,13 @@ function render(){
  :form.underPressure?`Últimos 3 jogos: ${form.lossesLast3} derrota(s). ${plan.reason}.`
  :`Últimos jogos: ${form.streak} derrota(s) consecutiva(s). ${plan.reason}.`;
  const all=teams();const select=all.map(x=>`<option value="${esc(x.id)}" ${x.id===t.id?'selected':''}>${esc(x.name)}</option>`).join('');
- root.innerHTML=`<div class="neo980-intro"><div><span class="neo980-kicker">CENTRAL TÁTICA · EGOIST</span><h2>👥 Escalação & técnico IA</h2><p>Veja os 11 titulares nas posições de jogo. Toque em qualquer atleta para abrir a ficha.</p></div><span class="neo980-total">${all.length} equipes</span></div>
+ root.innerHTML=`<div class="neo980-intro"><div><span class="neo980-kicker">CENTRAL TÁTICA · EGOIST</span><h2>👥 Escalação & técnico IA</h2><p>Escalação em cartas grandes: posição, rosto, nome e OVR. Toque em qualquer atleta para abrir a ficha.</p></div><span class="neo980-total">${all.length} equipes</span></div>
  <label class="neo980-selector">Escolher equipe<select id="neo980-select">${select}</select></label>
  <div class="neo980-team-header"><span class="neo980-crest" style="--team:${esc(t.color||'#47b8ff')}">${window.NeoCrests1050?.icon(t)||esc(t.crest||t.short?.slice(0,2)||'FC')}</span><div><strong>${esc(t.name)}</strong><small>${formationLabel} · ${esc(t.country||'')}${t.master?' · Master Striker: '+esc(t.master):''}</small></div><span class="neo980-ai-live">IA ATIVA</span></div>
- <div class="neo980-pitch" role="group" aria-label="Escalação visual: ${esc(t.name)}, ${formationLabel}"><div class="neo980-pitch-markings"><span class="neo980-center-circle"></span><span class="neo980-penalty neo980-penalty-top"></span><span class="neo980-penalty neo980-penalty-bottom"></span></div><span class="neo980-goal goal-top"></span><span class="neo980-goal goal-bottom"></span>
- ${plan.players.map((name,i)=>player(t,name,f[i]?.role||E.DEFAULT_FORMATION[i]?.role||'MC',i,s,spots?.[i]||f[i]||E.DEFAULT_FORMATION[i])).join('')}
- </div><div class="neo980-pitch-caption">⬆ Ataque · OVR calculado para a posição de cada jogador · 🧤 goleiro na base</div>
+ <div class="neo980-formation-banner"><b>⚽ XI TITULAR · ${formationLabel}</b><small>11 jogadores · toque numa carta para ver todas as estatísticas</small></div>
+ <div class="neo980-pitch neo980-card-pitch" role="group" aria-label="Escalação em cartas: ${esc(t.name)}, ${formationLabel}"><div class="neo980-pitch-markings"><span class="neo980-center-circle"></span><span class="neo980-penalty neo980-penalty-top"></span><span class="neo980-penalty neo980-penalty-bottom"></span></div><span class="neo980-goal goal-top"></span><span class="neo980-goal goal-bottom"></span>
+ <div class="neo980-formation-rows">${formationRows(t,f,spots).map(line=>`<section class="neo980-tactical-line" aria-label="${line.title} · ${line.size} jogador(es)"><span class="neo980-line-title">${line.title}</span><div class="neo980-line-cards" style="--line-count:${line.size}">${line.indices.map(i=>player(t,plan.players[i],f[i]?.role||E.DEFAULT_FORMATION[i]?.role||'MC',i,s,spots?.[i]||f[i]||E.DEFAULT_FORMATION[i],i===plan.players.reduce((best,name,j)=>rating(name,t,f[j]?.role||E.DEFAULT_FORMATION[j]?.role||'MC',j,s)>rating(plan.players[best],t,f[best]?.role||E.DEFAULT_FORMATION[best]?.role||'MC',best,s)?j:best,0))).join('')}</div></section>`).join('')}</div>
+ </div><div class="neo980-pitch-caption">⬆ Ataque · cartas na posição tática correta · 🧤 goleiro na base · toque em um jogador para abrir a ficha</div>
  <div class="neo980-coach-card"><div class="neo980-coach-title"><span>🧠 Técnico inteligente</span><b>${form.underPressure?'REVENDO TIME':'ANALISANDO'}</b></div><p>${esc(summary)}</p>${plan.changes.length?`<div class="neo980-coach-changes">${plan.changes.map(x=>`<span>🔄 ${esc(x.out)} <b>→</b> ${esc(x.in)} <small>${esc(x.role)}</small></span>`).join('')}</div>`:''}<small>Se houver sequência de derrotas, o técnico avalia reservas da mesma posição. Durante o jogo, ajusta pressão e substituições conforme o placar. Mudanças não alteram seus dados salvos.</small></div>
  <details class="neo980-reserves"><summary>🪑 Banco de reservas <span>${plan.reserves.length} jogadores</span></summary><div class="neo980-bench">${plan.reserves.map((name,i)=>{const role=C.reserveRole(t,name),o=rating(name,t,role,11+i,s);return `<button class="neo980-bench-row" type="button" data-neo960-profile="${profileKey(name,t.id)}" aria-label="Ver ficha de ${esc(name)}">${portrait(name,t)}<span><b>${esc(name)}</b><small>${esc(labels[role]||role)}</small></span><strong>${o} OVR</strong></button>`}).join('')||'<p>Nenhum reserva cadastrado.</p>'}</div></details>
  <details class="neo980-old-list"><summary>📚 Listagem completa e habilidades</summary><div id="neo980-legacy-anchor"></div></details>`;
@@ -56,7 +88,7 @@ function boot(){const root=$('squads');if(!root)return;
  observer.observe(root,{attributes:true,attributeFilter:['class']});
  document.addEventListener('click',e=>{if(e.target.closest('[data-tab="squads"],[data-neo-tab="squads"],[data-neo-open="squads"]'))setTimeout(render,90)});
  window.addEventListener('storage',e=>{if(['neo-season-v2','neo-custom-cups-v970'].includes(e.key))render()});
- window.NeoSquads980={render,chooseTeam,labels};
+ window.NeoSquads980={render,chooseTeam,labels,formationRows};
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();

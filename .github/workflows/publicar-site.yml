@@ -48,6 +48,7 @@ jobs:
           node tests/v1000.test.cjs
           node tests/v1030.test.cjs
           node tests/v1040.test.cjs
+          node tests/neo-lineup-cards-v112.test.cjs
           node tests/v1050.test.cjs
           node tests/v1051.test.cjs
           node tests/v1060.test.cjs

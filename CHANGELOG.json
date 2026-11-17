@@ -24,6 +24,7 @@
       "version": "1.8.0",
       "date": "2026-11-16",
       "novidades": [
+        "Conteúdo 10.6.20: escalação de todos os clubes redesenhada com cartas grandes, retratos cadastrados, posições, OVR e linhas táticas fiéis a cada formação, inclusive o 3-4-3 de Manshine City.",
         "Conteúdo 10.6.13: novas verificações de temporada completa para as ideias 31–55, com quarenta partidas oficiais, narração baseada em lances reais, amostras táticas, Hall da Fama e enciclopédia com dados comprovados.",
         "Carreira personalizada: personagens criados recebem histórico de jogos, marcos conquistados e foco de treino configurável, com evolução baseada em súmulas.",
         "Rivalidades de temporada evoluem de inicial a intensa e lendária conforme duelos reais, com resultados e reações de Ego.",
@@ -49,6 +50,7 @@
         "Universo Vivo em Recordes: Rei do Campo baseado no desempenho, prêmios apenas após conclusão, linha do tempo, olheiros, fórmulas e enciclopédia com dados reais."
       ],
       "correcoes": [
+        "Corrigidos os atletas minúsculos e os nomes cortados na visualização do campo; nova disposição em cartas adaptada ao celular, com acesso às fichas e reservas sem alterar a IA do técnico nem o save.",
         "O Discord recebe identificador novo quando o changelog de conteúdo muda; a proteção contra repetição de um anúncio já confirmado continua ativa.",
         "Transferências não modificam os elencos-base do repositório e não deixam atletas duplicados nem equipes com menos de 11 titulares.",
         "A mesma súmula da temporada não aumenta novamente os marcos, rivalidades, evolução ou notícias.",

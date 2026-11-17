@@ -52,14 +52,14 @@ assert.ok(read('web/index.html').includes('neo-ai-v110.js'),'AI script is instal
 assert.ok(read('web/index.html').includes('neo-ai-v110.css'),'Turbo style installed in actual shipped HTML');
 const worker=read('web/service-worker.js');
 assert.ok(worker.includes('./neo-ai-v110.js')&&worker.includes('./neo-ai-v110.css'));
-assert.ok(worker.includes('blue-lock-neo-v1.10.1-masters-final'));
+assert.ok(worker.includes('blue-lock-neo-v1.10.1-lineup-cards'));
 assert.equal(read('web/VERSION').trim(),'1.8.0');
-assert.equal(read('web/UPDATE_BUILD').trim(),'10.6.19');
+assert.equal(read('web/UPDATE_BUILD').trim(),'10.6.20');
 const json=JSON.parse(read('CHANGELOG.json'));
 assert.equal(json.current_version,'1.8.0');
 assert.deepEqual(json.releases.map(v=>v.version),['1.8.0','1.7.0','1.6.0','1.5.0','1.4.0','1.3.0','1.2.0','1.1.0','1.0.0']);
 assert.ok(read('web/neo-broadcast-v920.js').includes("const published=data.displayVersion||data.version"),'public and internal version are distinct');
 const java=read('app/src/main/java/com/neoegoist/simulator/MainActivity.java');
-assert.ok(java.includes('BUNDLED_WEB_VERSION = "10.6.19"'));
+assert.ok(java.includes('BUNDLED_WEB_VERSION = "10.6.20"'));
 const gradle=read('app/build.gradle');assert.ok(gradle.includes('versionCode 117')&&gradle.includes("versionName '1.8.0'"));
 console.log('PASS 1.1: Turbo 40x, defensive cover, safe passes, dynamic runs and premium updates, saves preserved');
