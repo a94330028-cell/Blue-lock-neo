@@ -259,5 +259,10 @@ for file in ('neo-match-pulse-v240.css','neo-universe-spotlight-v250.css'):
     if file not in updated:
         if updated.count('</head>') != 1: raise RuntimeError('No valid document head for '+file)
         updated = updated.replace('</head>', '<link rel="stylesheet" href="'+file+'?v=10.6.12">\n</head>')
+# NEO 2.0 development: version only the updated release-history UI.
+# Keep all legacy asset paths, save keys and loading order intact.
+for asset,attr in (('neo-updates-v1060.js','src'),('neo-updates-v1060.css','href')):
+    updated=re.sub(r'(' + attr + r'="' + re.escape(asset) + r')(?:\\?v=[^"]*)?(?=")',
+                   r'\\g<1>?v=2.0.0', updated)
 html.write_text(updated,encoding='utf-8')
 print('Inline game modules synchronized:',counts)

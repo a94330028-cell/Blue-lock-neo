@@ -67,7 +67,9 @@ function mount(win){
       highlights.append(item);
     });
   }
-  for(const [i,r] of data.releases.entries()){
+  // The 1.x patch had grown into dozens of items. Render only the current
+  // version at startup; older patch notes stay intact in a lazy archive.
+  const releaseCard=(r,i)=>{
    const article=el('article','neo1060-release'),details=el('details','neo1060-entry');
    details.open=i===0;
    const header=el('summary','neo1060-summary');
@@ -79,13 +81,31 @@ function mount(win){
    details.append(header);
    const body=el('div','neo1060-body');
    for(const [key,label] of ITEMS){
-    const values=(Array.isArray(r[key])?r[key]:[]).filter(v=>v.trim());
+    const values=(Array.isArray(r[key])?r[key]:[]).filter(v=>typeof v==='string'&&v.trim());
     if(!values.length)continue;
-    const section=el('section','neo1060-group'),heading=el('h4',null,label),list=el('ul');
-    for(const item of values)list.append(el('li',null,item));
-    section.append(heading,list);body.append(section);
+    const section=el('section','neo1060-group'),heading=el('h4',null,label),bullets=el('ul');
+    for(const item of values)bullets.append(el('li',null,item));
+    section.append(heading,bullets);body.append(section);
    }
-   details.append(body);article.append(details);list.append(article);
+   details.append(body);article.append(details);
+   return article;
+  };
+  list.append(releaseCard(data.releases[0],0));
+  if(data.releases.length>1){
+   const archive=el('details','neo1060-archive');
+   archive.id='neo1060-archive';
+   const archiveToggle=el('summary','neo1060-archive-toggle',
+    '📚 Histórico anterior · '+(data.releases.length-1)+' versões');
+   const archiveList=el('div','neo1060-archive-list');
+   archive.append(archiveToggle,archiveList);
+   archive.addEventListener('toggle',()=>{
+    if(!archive.open||archive.dataset.loaded==='1')return;
+    archive.dataset.loaded='1';
+    // Generate historic notes only when requested; avoid inflating the
+    // mobile DOM for every patch accumulated since the 1.x series.
+    data.releases.slice(1).forEach((r,i)=>archiveList.append(releaseCard(r,i+1)));
+   });
+   list.append(archive);
   }
   const banner=data.media?.banner?.path;
   const preview=doc.getElementById('neo1060-banner');

@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "project": "Blue Lock NEO",
-  "current_version": "1.8.0",
+  "current_version": "2.0.0",
   "site_url": "https://a94330028-cell.github.io/Blue-lock-neo/",
   "media": {
     "banner": {
@@ -20,6 +20,26 @@
     }
   },
   "releases": [
+    {
+      "version": "2.0.0",
+      "date": "2026-11-16",
+      "novidades": [
+        "Início do Blue Lock NEO 2.0: base técnica isolada para evoluir sem mexer na versão estável 1.8.0."
+      ],
+      "correcoes": [
+        "O histórico da 1.x permanece consultável, mas o patch atual deixa de acumular todas as alterações antigas."
+      ],
+      "jogabilidade": [],
+      "visual": [
+        "Central de atualizações com patch 2.0 em destaque e versões anteriores em arquivo recolhido."
+      ],
+      "otimizacoes": [
+        "Validação automática do tamanho das notas e diagnóstico do pacote de atualização antes de cada lançamento."
+      ],
+      "importantes": [
+        "Esta é uma base de desenvolvimento. A nova geração da IA, a divisão do motor em módulos e atualizações diferenciais ainda não estão concluídas."
+      ]
+    },
     {
       "version": "1.8.0",
       "date": "2026-11-16",
