@@ -236,7 +236,7 @@ const userCreatedPlayers=new Map();
 const teamById=id=>TEAMS.find(t=>t.id===id)||EXTRA_TEAMS.find(t=>t.id===id);
 const allTeams=()=>[...TEAMS,...EXTRA_TEAMS];
 function registerTeam(team){
- if(!team||!/^[a-z][a-z0-9-]{2,18}$/.test(team.id||'')||!Array.isArray(team.players)||team.players.length!==11||!Array.isArray(team.reserves))throw Error('Elenco incompleto: 11 titulares e reservas obrigatórios.');
+ if(!team||!/^[a-z][a-z0-9-]{1,18}$/.test(team.id||'')||!Array.isArray(team.players)||team.players.length!==11||!Array.isArray(team.reserves))throw Error('Elenco incompleto: 11 titulares e reservas obrigatórios.');
  if(teamById(team.id))return teamById(team.id);
  const fresh={...team,players:team.players.slice(),reserves:team.reserves.slice(),formation:team.formation||DEFAULT_FORMATION};
  EXTRA_TEAMS.push(fresh);return fresh;
