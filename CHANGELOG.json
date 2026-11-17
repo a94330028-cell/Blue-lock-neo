@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "project": "Blue Lock NEO",
-  "current_version": "1.8.0",
+  "current_version": "2.0.0",
   "site_url": "https://a94330028-cell.github.io/Blue-lock-neo/",
   "media": {
     "banner": {
@@ -20,6 +20,28 @@
     }
   },
   "releases": [
+    {
+      "version": "2.0.0",
+      "date": "2026-11-17",
+      "novidades": [
+        "Nova camada do mundo persistente: notícias de resultados oficiais, dossiês individuais e memória das duplas entre partidas."
+      ],
+      "correcoes": [
+        "Regras de pênalti/impedimento preservadas; inspeção de integridade por laboratório automático de partidas reais."
+      ],
+      "jogabilidade": [
+        "2.520 técnicas da expansão, combos contextuais limitados e contra-ataques com recarga e efeitos físicos moderados."
+      ],
+      "visual": [
+        "Centro de Evolução com histórico, rivalidades, mapas de calor, xG e momentos decisivos baseados em dados reais."
+      ],
+      "otimizacoes": [
+        "Módulos independentes e relatório de regressões para o APK; pacote incremental e otimização completa ainda pendentes."
+      ],
+      "importantes": [
+        "2.0 continua em desenvolvimento isolado: lançamento público somente após testes no aparelho e revisão geral."
+      ]
+    },
     {
       "version": "1.8.0",
       "date": "2026-11-16",

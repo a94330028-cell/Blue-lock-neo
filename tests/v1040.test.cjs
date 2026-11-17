@@ -51,5 +51,5 @@ assert.ok(rounds.includes('neo990-xi-list'), 'list stays available for accessibi
 assert.ok(style.includes('#neo980-squad-area .neo980-player'), 'existing squad portraits responsive');
 assert.ok(worker.includes('./neo-pitch-layout-v1040.js')&&worker.includes('./neo-pitch-v1040.css'), 'offline cache contains pitch');
 assert.ok(html.includes('neo-pitch-layout-v1040.js')&&html.includes('neo-pitch-v1040.css'),'the actual HTML loads lineup helper and pitch style');
-assert.equal(fs.readFileSync('web/VERSION','utf8').trim(),'1.8.0');
+assert.equal(fs.readFileSync('web/VERSION','utf8').trim(),'2.0.0');
 console.log('PASS NEO 10.4: XI field, Ubers 3-5-2, all team lineups, no mobile overlaps and offline pitch');

@@ -1,0 +1,80 @@
+name: NEO 2.0 - Validacao da base (sem publicacao)
+
+on:
+  push:
+    branches: [neo-2.0]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: neo-2-dev-validate
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Reconstruir HTML offline com os modulos reais
+        run: python3 tools/sync_inline_v930.py web
+      - name: Verificar patch compacto, historico preservado e tamanho dos arquivos
+        run: |
+          python3 tools/neo_v2_release_guard.py --write-report > /tmp/neo-v2-report.json
+          cat /tmp/neo-v2-report.json
+      - name: Testar versoes, saves, mercado e navegacao
+        run: |
+          set -euo pipefail
+          node tests/neo-v2-release.test.cjs
+          node tests/v1060.test.cjs
+          node tests/v1050.test.cjs
+          node tests/v110.test.cjs
+          node tests/v120.test.cjs
+          node tests/v140.test.cjs
+          node tests/v150.test.cjs
+          node tests/v160.test.cjs
+          node tests/v170.test.cjs
+          node tests/v180.test.cjs
+          node tests/v190.test.cjs
+          node tests/neo-team-logos.test.cjs
+          node tests/neo-bids-v3.test.cjs
+          node tests/neo-master-market-v1.test.cjs
+          node tests/v980.test.cjs
+          node tests/v1040.test.cjs
+          node tests/neo-lineup-cards-v112.test.cjs
+          node --check web/neo-updates-v1060.js
+          node --check web/neo-mobile-ux-v111.js
+      - name: Testar anuncios localmente sem enviar mensagens ao Discord
+        run: |
+          python3 -m unittest discover -s tests -p 'test_neo*.py'
+          python3 tools/neo_update_announcement.py validate
+      - name: Construir ZIP completo de compatibilidade sem publicar no site
+        run: |
+          python3 tools/gerar_atualizacao.py
+          python3 - <<'PY'
+          import json, pathlib, zipfile
+          from tools import neo_v2_release_guard as guard
+          root=pathlib.Path('web')
+          manifest=json.loads((root/'updates/latest.json').read_text(encoding='utf-8'))
+          assert manifest['version']=='10.6.22'
+          archive=root/'updates'/pathlib.Path(manifest['url']).name
+          assert archive.stat().st_size <= guard.MAX_PACKAGE_BYTES
+          with zipfile.ZipFile(archive) as z:
+              assert len(z.infolist()) <= guard.MAX_FILES
+              assert sum(item.file_size for item in z.infolist()) <= guard.MAX_UNPACKED_BYTES
+              assert 'index.html' in z.namelist()
+          print('ZIP compativel com Android atual:', archive.stat().st_size, 'bytes')
+          PY
+      - name: Registrar resultado da base 2.0
+        run: |
+          echo '### NEO 2.0 — base verificada sem publicacao' >> "$GITHUB_STEP_SUMMARY"
+          echo 'O APK da main e o site publico permanecem na versao estavel.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Os patches 1.x estao arquivados. O instalador Android ainda usa ZIP completo.' >> "$GITHUB_STEP_SUMMARY"

@@ -4,7 +4,7 @@
 'use strict';
 const E=window.NeoEngine,{TEAMS,COUNTRY_KITS,PITCH,TICK,SKILLS,Match,avatarTheme,avatarHTML,avatarSVG,REAL_PORTRAITS}=E;
 const $=id=>document.getElementById(id);
-function skillArtUrl(id){return window.NeoOfflineSkillArts?.[id]||window.NeoCommonArts?.[id]||window.NeoRarityArts?.[id]||`assets/skill-arts/${id}.svg`;}
+function skillArtUrl(id){if(String(id).startsWith('neo2-'))return 'assets/neo2-skills/'+(E.Abilities.get(id)?.contexts?.[0]||'pass')+'.svg';return window.NeoOfflineSkillArts?.[id]||window.NeoCommonArts?.[id]||window.NeoRarityArts?.[id]||`assets/skill-arts/${id}.svg`;}
 let lastBroadcastGoalCount=0,entranceShown=false,lastScorerBoardKey="",lastMobilePanAt=0,lastMobilePanValue="";
 let lastHudTeamsKey='',lastGoalHudKey='',lastSkillHudKey='',lastHeavyUiAt=0,lastEgoUiAt=0,lastRunsUiAt=0,lastUiMatch=null;
 const setIfChanged=(el,html)=>{if(el&&el.innerHTML!==html)el.innerHTML=html;};
@@ -1602,6 +1602,16 @@ function renderMasterProfiles(){const box=$('masterProfiles');if(!box)return;box
 
 // Galeria original: 239 SVGs locais, sem bloqueios de CDN nem artes de rosto trocado.
 function initArsenal(){const team=$('arsenalTeam');if(!team)return;
+ // Thousands of skills remain navigable on Android without rendering them all.
+ if($('arsenalRarity')&&!$('neo2ArsenalSearch')){
+  const find=document.createElement('input');
+  find.id='neo2ArsenalSearch';find.type='search';find.className='neo2-arsenal-search';
+  find.placeholder='Buscar habilidade pelo nome, efeito ou ID...';
+  find.setAttribute('aria-label','Pesquisar no catálogo de habilidades');
+  find.setAttribute('autocomplete','off');
+  $('arsenalRarity').insertAdjacentElement('afterend',find);
+  find.addEventListener('input',()=>{arsenalPageSize=36;renderArsenal();});
+ }
  team.innerHTML=TEAMS.map(t=>`<option value="${t.id}">${esc(t.name)}</option>`).join('');team.value='bm';
  team.addEventListener('change',()=>{fillArsenalPlayers();renderArsenal();});
  $('arsenalPlayer').addEventListener('change',renderArsenal);
@@ -1617,7 +1627,7 @@ function fillArsenalPlayers(preferred=null){const club=TEAMS.find(t=>t.id===$('a
  select.value=names.includes(prev)?prev:names.find(n=>n==='Yoichi Isagi')||names.find(n=>n==='Michael Kaiser')||names.find(n=>E.Abilities.forPlayer(n))||names[0];
 }
 function openArsenalFor(name){const club=TEAMS.find(t=>[...t.players,...t.reserves,t.master].includes(name));if(!club)return;
- $('arsenalTeam').value=club.id;fillArsenalPlayers(name);$('arsenalCategory').value='all';$('arsenalMode').value='all';$('arsenalRarity').value='all';setTab('arsenal');
+ $('arsenalTeam').value=club.id;fillArsenalPlayers(name);$('arsenalCategory').value='all';$('arsenalMode').value='all';$('arsenalRarity').value='all';if($('neo2ArsenalSearch'))$('neo2ArsenalSearch').value='';setTab('arsenal');
  $('playerModal')?.classList.add('hidden');
 }
 let arsenalPageSize=36;
@@ -1631,7 +1641,9 @@ function renderArsenal(){const box=$('arsenalGrid');if(!box)return;
  const usable=arsenal.filter(a=>!a.locked),signature=arsenal.filter(a=>a.owner===name);
  const selectedCategory=$('arsenalCategory').value,mode=$('arsenalMode').value,rarity=$('arsenalRarity')?.value||'all';
  const collection=mode==='common-catalog'?E.Abilities.commonCatalog():mode==='full-catalog'?E.Abilities.fullCatalog():arsenal;
- const filtered=collection.filter(a=>(selectedCategory==='all'||a.contexts.includes(selectedCategory))&&(rarity==='all'||a.rarity===rarity)&&
+ const needle=String($('neo2ArsenalSearch')?.value||'').trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('pt-BR');
+ const filtered=collection.filter(a=>(!needle||[a.label,a.description,a.category,a.id].join(' ').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('pt-BR').includes(needle))&&
+   (selectedCategory==='all'||a.contexts.includes(selectedCategory))&&(rarity==='all'||a.rarity===rarity)&&
    (mode==='common-catalog'||mode==='full-catalog'||mode==='all'||mode==='available'&&!a.locked||mode==='locked'&&a.locked||mode==='signature'&&a.owner===name));
  $('arsenalTotal').textContent=E.Abilities.list().length+' ARTES';
  $('arsenalPlayerInfo').innerHTML=`${portrait(name,t,'arsenal-featured-portrait')}<div><small>${esc(t.short)} · ${esc(role)}</small><h3>${esc(name)}</h3><p>${arsenal.length} técnicas no arsenal · ${usable.length} desbloqueadas · ${signature.length} exclusivas · ${arsenal.filter(a=>a.rarity==='Comum').length} Comuns · 7 raridades</p></div>`;

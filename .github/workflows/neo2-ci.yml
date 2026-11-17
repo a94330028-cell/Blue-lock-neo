@@ -1,0 +1,141 @@
+name: NEO 2.0 — Catálogo e compatibilidade (branch de desenvolvimento)
+on:
+  push:
+    branches: [neo-2.0]
+    paths:
+      - 'web/**'
+      - 'app/**'
+      - 'tools/**'
+      - 'tests/**'
+      - 'CHANGELOG.json'
+      - 'docs/NEO-2.0.md'
+      - '.github/workflows/neo2-ci.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    name: Testar habilidades, saves e pacote offline
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Garantir que as técnicas e artes SVG estão válidas
+        run: |
+          node --check web/neo2-abilities-v200.js
+          node --check web/app.js
+          node --check web/engine.js
+          node --check web/neo2-deep-ai-v202.js
+          node --check web/neo2-world-v210.js
+          node --check web/neo2-insights-v211.js
+          node --check web/neo2-synergy-v213.js
+          node --check web/neo2-hub-v212.js
+          node tests/neo2-abilities-v200.test.cjs
+          node tests/neo2-deep-ai-rules-v202.test.cjs
+          node tests/neo2-match-season-v203.test.cjs
+          node tests/neo2-world-insights-v214.test.cjs
+      - name: Regressões integrais de todas as versões anteriores
+        run: |
+          set -euo pipefail
+          python3 tools/sync_inline_v930.py web
+          for suite in \
+            navigation-v912.test.js broadcast-v920.test.js \
+            v970.test.cjs v980.test.cjs v981.test.cjs v990.test.cjs \
+            kaiser-icon-v991.test.cjs gallery-v992.test.cjs gallery-v993.test.cjs \
+            native-photo-v994.test.cjs v1000.test.cjs v1030.test.cjs v1040.test.cjs \
+            neo-lineup-cards-v112.test.cjs v1050.test.cjs v1051.test.cjs v1060.test.cjs \
+            v110.test.cjs v120.test.cjs v130.test.cjs v140.test.cjs \
+            v150.test.cjs v160.test.cjs v170.test.cjs v180.test.cjs \
+            v190.test.cjs v200.test.cjs v230.test.cjs v230-validation.test.cjs \
+            v250.test.cjs v255-season.test.cjs neo-team-logos.test.cjs \
+            neo-bids-v3.test.cjs neo-master-market-v1.test.cjs
+          do
+            node "tests/$suite"
+          done
+      - name: Laboratório de 120 partidas após as regressões integrais
+        run: node tools/neo2-lab.cjs --games=120 --seed=20261117 --report=neo2-lab-report.json
+      - name: Disponibilizar relatório completo de simulações reais
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: NEO-2.0-LAB-120-PARTIDAS
+          path: neo2-lab-report.json
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Validar notas compactas e limite do Android
+        run: |
+          python3 -m unittest discover -s tests -p test_neo_v2_release.py -v
+          python3 tools/neo_v2_release_guard.py --write-report
+      - name: Montar a mesma página usada pelo site e APK
+        run: |
+          test -s web/index.html || python3 tools/assemble_web.py
+          python3 tools/sync_inline_v930.py web
+          grep -Fq 'neo2-abilities-v200.js?v=2.0.0' web/index.html
+          python3 - <<'PY'
+          from pathlib import Path
+          page=Path('web/index.html').read_text(encoding='utf-8')
+          marker='<script src="neo2-abilities-v200.js?v=2.0.0"></script>'
+          assert page.count(marker)==1, 'Module must appear exactly once'
+          assert page.index(marker)<page.index('function renderScorerBoard(){'), 'Ability module must load before immediate app.init()'
+          sequence=["neo2-abilities-v200.js","neo2-deep-ai-v202.js","neo2-world-v210.js","neo2-insights-v211.js","neo2-synergy-v213.js","neo2-hub-v212.js"]
+          tags=['<script src="'+name+'?v=2.0.0"></script>' for name in sequence]
+          assert all(page.count(tag)==1 for tag in tags), 'Each integration script loads exactly once'
+          order=[page.index(tag) for tag in tags]
+          assert order==sorted(order) and max(order)<page.index('function renderScorerBoard(){'), 'World, insight, skill and UI modules must load before app boot'
+          assert page.count('neo2-hub-v212.css?v=2.0.0')==1, 'The new UI must have only one stylesheet'
+          assert page.index('const TICK = 1/30')<page.index(marker), 'Match engine must load before ability expansion'
+          print('PASS: original engine -> 2.0 techniques -> app startup, one copy only')
+          PY
+          test -s web/assets/neo2-skills/save.svg
+          test -s web/assets/neo2-skills/shot.svg
+          echo "O HTML contém a expansão e a versão Android pode empacotar os ativos."
+      - name: Checar atualização completa de fallback (APK antigo)
+        run: |
+          python3 tools/gerar_atualizacao.py
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          r=json.loads(Path('web/updates/size-report.json').read_text(encoding='utf-8'))
+          print('Arquivos web:',r['files']['total_web_files'])
+          print('Descompactado:',r['files']['uncompressed_bytes'],'bytes')
+          print('Maiores ativos:',r['files']['biggest'][:5])
+          PY
+  android:
+    name: Compilar APK de teste da branch 2.0 (sem publicar)
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+      - name: Empacotar web local da branch 2.0
+        run: |
+          test -s web/index.html || python3 tools/assemble_web.py
+          python3 tools/sync_inline_v930.py web
+          mkdir -p app/src/main/assets/site
+          rsync -a --exclude='/updates/' --exclude='/.nojekyll' --exclude='/_headers' --exclude='/service-worker.js' web/ app/src/main/assets/site/
+      - name: Preparar Android SDK 35
+        run: |
+          SDK="${ANDROID_HOME:-/usr/local/lib/android/sdk}"
+          SDKMANAGER="$(find "$SDK/cmdline-tools" -name sdkmanager -type f | sort -V | tail -n 1)"
+          test -n "$SDKMANAGER"
+          yes | "$SDKMANAGER" --licenses >/dev/null || true
+          "$SDKMANAGER" 'platforms;android-35' 'build-tools;35.0.0'
+      - name: Construir APK isolado
+        run: gradle :app:assembleDebug --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: NEO-2.0-DEV-APK-TESTE
+          path: app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 7

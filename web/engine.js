@@ -457,8 +457,27 @@ class Match {
     if(this.duelHistory.length>160)this.duelHistory.shift();
     winner.duelsWon=(winner.duelsWon||0)+1;
   }
+  _goalLineTarget(from,goalX,aimY,overshoot=40){
+    const sign=goalX>PITCH.cx?1:-1;
+    const x=goalX+sign*overshoot;
+    // Intent is where the ball CROSSES the real goal line, not 40px beyond.
+    const d=Math.max(1,Math.abs(goalX-from.x));
+    return {x,y:from.y+(aimY-from.y)*Math.abs(x-from.x)/d};
+  }
+  _finalizePendingShots(reason='interrupted'){
+    // A whistle, restart or goal can end a shot before it reaches the net.
+    // Classify it as interrupted, NEVER invent a save, miss or goal.
+    if(!Array.isArray(this.shotMap))return;
+    for(const shot of this.shotMap)if(shot?.outcome==='pending'){
+      if(shot.onTarget&&[0,1].includes(shot.side)&&this.stats?.onTarget)
+        this.stats.onTarget[shot.side]=Math.max(0,this.stats.onTarget[shot.side]-1);
+      shot.predictedOnTarget=!!shot.onTarget;shot.onTarget=false;
+      shot.outcome=reason;shot.goal=false;shot.endedAt=Math.floor(this.time/60);
+    }
+  }
   log(text,type='info',player=null){const e={id:++this.seq,minute:Math.min(90,Math.floor(this.time/60)),text,type,player};this.events.unshift(e);if(this.events.length>180)this.events.length=180;if(['goal','card','penalty','corner','freeKick','halftime'].includes(type))this.keyEvents.push(e);this.lastAction=text;}
   kickoff(side){
+    this._finalizePendingShots('interrupted');
     this._applyPendingSubs();
     // Every kickoff resets each team wholly to its OWN half.
     // This applies after goals too. Dynamic attack is unrestricted once play resumes.
@@ -741,10 +760,18 @@ class Match {
     for(const p of this.players)if(p.side!==a.side){const ratio=clamp(((p.x-a.x)*dx+(p.y-a.y)*dy)/len2,0,1);if(ratio<=.03||ratio>=.97)continue;const d=length(p.x-a.x-ratio*dx,p.y-a.y-ratio*dy);closest=Math.min(closest,d);}
     return closest;
   }
-  offside(receiver,passer){if(receiver.i===0)return false;const dir=passer.side===0?1:-1;
-    if((receiver.x-PITCH.cx)*dir<=0 || (receiver.x-passer.x)*dir<=2)return false;
-    const defense=this.players.filter(p=>p.side!==passer.side).map(p=>p.x).sort((a,b)=>dir===1?b-a:a-b);
-    const penultimate=defense[1];return (receiver.x-penultimate)*dir>6;
+  offside(receiver,passer){
+    // Law 11: player must be in the opponents' half and ahead of BOTH the
+    // ball and the second-last opponent at the instant the pass is played.
+    // Goalkeeper is not necessarily one of the final two defenders.
+    if(!receiver||!passer||receiver.i===0||receiver.side!==passer.side)return false;
+    const dir=passer.side===0?1:-1;
+    const ballX=Number.isFinite(this.ball?.x)?this.ball.x:passer.x;
+    if((receiver.x-PITCH.cx)*dir<=0||(receiver.x-ballX)*dir<=1)return false;
+    const defenders=this.players.filter(p=>p.side!==passer.side&&Number.isFinite(p.x))
+      .map(p=>p.x).sort((a,b)=>dir===1?b-a:a-b);
+    if(defenders.length<2)return false;
+    return (receiver.x-defenders[1])*dir>1;
   }
   passCandidate(p){
     const dir=p.side===0?1:-1;const t=this.teams[p.side];let ranked=[];
@@ -881,7 +908,8 @@ class Match {
     const onTarget=this.random()<clamp(.48+(250-d)*.00075+(skill?.15:0),.22,.72);
     const aimY=onTarget?PITCH.cy+this.range(-PITCH.goalHalf+5,PITCH.goalHalf-5):PITCH.cy+(this.random()<.5?-1:1)*this.range(PITCH.goalHalf+12,110);
     const xg=clamp(.12+(252-d)*.00085+(skill?.07:0),.05,.38);
-    this._launch(p,goalX+dir*38,aimY,this.range(420,530),'shot');
+    const aim=this._goalLineTarget(p,goalX,aimY,38);
+    this._launch(p,aim.x,aim.y,this.range(420,530),'shot');
     b.onTarget=onTarget;b.shotXg=xg;b.height=0;b.airTime=0;b.crossType=null;b.shotStyle='header';
     this.stats.shots[p.side]++;this.stats.headers[p.side]++;if(this.lastPass?.setPiece==='corner')this.stats.cornerShots[p.side]++;this.stats.xg[p.side]+=xg;p.shots++;
     if(onTarget)this.stats.onTarget[p.side]++;
@@ -949,7 +977,8 @@ class Match {
     }else aimY=PITCH.cy+(this.random()<.5?-1:1)*this.range(PITCH.goalHalf+10,135);
     const basePower=(has(p,'impact')?820:has(p,'power')?755:has(p,'poacher')?720:690);
     const power=(basePower+this.range(-25,25))*(kind==='tap-in'?.67:kind==='chip'?.70:kind==='low-drive'?1.08:kind==='first-time'?1.06:1)*(.84+this._attributes(p,'power')/410);
-    this._launch(p,goal.x+dir*40,aimY,power,'shot');
+    const aim=this._goalLineTarget(p,goal.x,aimY,40);
+    this._launch(p,aim.x,aim.y,power,'shot');
     this.ball.shotStyle=kind;this.ball.shotLaunchX=p.x;this.ball.shotLaunchY=p.y;
     this.ball.onTarget=onTarget;this.ball.shotXg=xg;this.stats.shots[p.side]++;p.shots++;this.stats.xg[p.side]+=xg;this._ego(p,onTarget?3.5:-3,'finalização');
     if(kind==='box-combo'||kind==='first-time')this.stats.boxCombinations[p.side]++;
@@ -1508,6 +1537,7 @@ class Match {
     }
   }
   _setRestart(side,x,y,reason){
+    this._finalizePendingShots('interrupted');
     const kinds={'Escanteio':'corner','Lateral':'throwIn','Tiro de meta':'goalKick','Pênalti':'penalty','Falta':'freeKick','Impedimento':'indirect','Recuo ao goleiro':'indirect'};
     const kind=kinds[reason]||'indirect';
     this.phase='restart';this.wait=kind==='penalty'?1.55:kind==='corner'?1.1:.85;
@@ -1550,9 +1580,14 @@ class Match {
     }
     if(kind==='penalty'){
       const a=team.filter(p=>p!==taker),d=enemies;
-      a.forEach((p,i)=>{p.x=clamp(r.x-dir*(145+(i%2)*22),PITCH.left+15,PITCH.right-15);p.y=clamp(PITCH.cy+((i%2===0?1:-1)*(138+Math.floor(i/2)*16)),PITCH.top+20,PITCH.bottom-20);p.run=null;});
-      d.forEach((p,i)=>{p.x=clamp(r.x-dir*(178+(i%3)*24),PITCH.left+15,PITCH.right-15);p.y=clamp(PITCH.cy+((i%2===0?-1:1)*(138+Math.floor(i/2)*12)),PITCH.top+20,PITCH.bottom-20);p.run=null;});
-      const keeper=this.players.find(p=>p.side!==side&&p.i===0);if(keeper){keeper.x=oppGoal-dir*8;keeper.y=PITCH.cy+this.range(-17,17);keeper.decision=1.4;}
+      // Both teams' outfield players must be behind the penalty spot,
+      // OUTSIDE the penalty area and at least 9.15 m from the mark.
+      const clearance=PITCH.boxDepth-105+42;
+      a.forEach((p,i)=>{p.x=clamp(r.x-dir*(clearance+(i%2)*23),PITCH.left+15,PITCH.right-15);p.y=clamp(PITCH.cy+((i%2===0?1:-1)*(138+Math.floor(i/2)*16)),PITCH.top+20,PITCH.bottom-20);p.run=null;});
+      d.forEach((p,i)=>{p.x=clamp(r.x-dir*(clearance+10+(i%3)*25),PITCH.left+15,PITCH.right-15);p.y=clamp(PITCH.cy+((i%2===0?-1:1)*(138+Math.floor(i/2)*12)),PITCH.top+20,PITCH.bottom-20);p.run=null;});
+      // Law 14: keeper starts ON the goal line; all outfield players behind
+      // the spot and outside the area. The keeper can dive once it is kicked.
+      const keeper=this.players.find(p=>p.side!==side&&p.i===0);if(keeper){keeper.x=oppGoal;keeper.y=PITCH.cy;keeper.decision=1.4;}
     }
     if(kind==='freeKick'&&distance(r,{x:oppGoal,y:PITCH.cy})<360){
       const wall=enemies.filter(p=>p.role!=='GOL').sort((a,b)=>distance(a,r)-distance(b,r)).slice(0,3);
@@ -1579,13 +1614,24 @@ class Match {
     const mates=this.players.filter(p=>p.side===side&&p!==taker&&p.i!==0);
     const select=(arr,near)=>arr.slice().sort((a,b)=>distance(a,near)-distance(b,near))[0];
     if(kind==='penalty'){
-      const onTarget=this.random()<.87;
-      const aimY=onTarget?PITCH.cy+this.range(-PITCH.goalHalf+5,PITCH.goalHalf-5):PITCH.cy+(this.random()<.5?-1:1)*this.range(PITCH.goalHalf+10,PITCH.goalHalf+85);
-      this._launch(taker,oppGoal+dir*40,aimY,this.range(395,485),'shot');
-      this.ball.onTarget=onTarget;this.ball.isPenalty=true;this.ball.setPiece='penalty';this.ball.shotXg=.75;
-      this.stats.shots[side]++;taker.shots++;this.stats.xg[side]+=.75;if(onTarget)this.stats.onTarget[side]++;
-      this.shotMap.push({x:r.x,y:r.y,side,onTarget,xg:.75,outcome:'pending',header:false,goal:false,minute:Math.floor(this.time/60),setPiece:'penalty'});
-      this.log(`🎯 ${taker.name} cobra o PÊNALTI!`,'penalty',taker.name);return;
+      // The goal mouth is evaluated at the GOAL LINE (not at an imaginary
+      // target 40px beyond it). Keeping that geometry consistent prevents
+      // on-target kicks from drifting wide on the way to the real line.
+      const skill=this._attributes(taker,'accuracy')*.52+this._attributes(taker,'finishing')*.48;
+      const composure=clamp((skill-75)*.0016,-.055,.045);
+      const onTarget=this.random()<clamp(.938+composure,.86,.974);
+      const goalY=onTarget?PITCH.cy+this.range(-PITCH.goalHalf+6,PITCH.goalHalf-6)
+        :PITCH.cy+(this.random()<.5?-1:1)*this.range(PITCH.goalHalf+9,PITCH.goalHalf+77);
+      const xTarget=oppGoal+dir*40;
+      const xSpan=Math.max(1,Math.abs(oppGoal-r.x));
+      const targetY=r.y+(goalY-r.y)*(Math.abs(xTarget-r.x)/xSpan);
+      this._launch(taker,xTarget,targetY,this.range(470,570),'shot');
+      this.ball.onTarget=onTarget;this.ball.isPenalty=true;this.ball.setPiece='penalty';this.ball.shotStyle='penalty';
+      this.ball.shotXg=.76;
+      this.stats.shots[side]++;taker.shots++;this.stats.xg[side]+=.76;
+      if(onTarget)this.stats.onTarget[side]++;
+      this.shotMap.push({x:r.x,y:r.y,side,shooter:taker.name,onTarget,xg:.76,outcome:'pending',header:false,goal:false,minute:Math.floor(this.time/60),setPiece:'penalty',style:'penalty'});
+      this.log(`🎯 ${taker.name} bate o PÊNALTI!`,'penalty',taker.name);return;
     }
     if(kind==='corner'){
       const style=this.setPieceStyle[side]||'mixed';
@@ -1606,7 +1652,8 @@ class Match {
         const accuracy=clamp(.37+(300-d)*.00062+(has(taker,'curve')?.1:0)+(has(taker,'impact')?.1:0),.2,.62);
         const onTarget=this.random()<accuracy;
         const aimY=onTarget?PITCH.cy+this.range(-PITCH.goalHalf+4,PITCH.goalHalf-4):PITCH.cy+(this.random()<.5?-1:1)*this.range(PITCH.goalHalf+8,96);
-        this._launch(taker,oppGoal+dir*45,aimY,this.range(465,565),'shot');this.ball.onTarget=onTarget;this.ball.shotXg=.085;this.ball.setPiece='freeKick';
+        const aim=this._goalLineTarget(taker,oppGoal,aimY,45);
+         this._launch(taker,aim.x,aim.y,this.range(465,565),'shot');this.ball.onTarget=onTarget;this.ball.shotXg=.085;this.ball.setPiece='freeKick';
         this.stats.shots[side]++;this.stats.directFreeKickShots[side]++;this.stats.xg[side]+=.085;taker.shots++;if(onTarget)this.stats.onTarget[side]++;
         this.shotMap.push({x:r.x,y:r.y,side,onTarget,xg:.085,outcome:'pending',header:false,goal:false,minute:Math.floor(this.time/60),setPiece:'freeKick'});
         this.log(`🎯 ${taker.name} bate a FALTA DIRETA buscando o gol!`,'freeKick',taker.name);return;
@@ -1645,7 +1692,9 @@ class Match {
     b.vy=(b.y<PITCH.cy?-1:1)*245;
   }
   _shotBlock(b,oldX,oldY){
-    if(b.mode!=='shot'||!b.by)return false;
+    // Law 14: outfield players cannot block a directly struck penalty while
+    // waiting outside the area/arc. The goalkeeper still saves it physically.
+    if(b.isPenalty||b.mode!=='shot'||!b.by)return false;
     const vx=b.x-oldX,vy=b.y-oldY,len2=Math.max(1,vx*vx+vy*vy);
     const blockers=this.players.filter(p=>p.side!==b.by.side&&p.i!==0&&
       this.progress(p.side,p.x)<500&&Math.abs(p.y-PITCH.cy)<PITCH.boxHalf+100);
@@ -1684,11 +1733,11 @@ class Match {
     // Styles change the *kind* of save and chance slightly, never force a result.
     const style=b.shotStyle||'placed';
     const tricky=(style==='chip'||style==='acrobatic'||style==='first-time');
-    const chance=b.isPenalty?clamp((has(keeper,'wild')?.46:.36)+(d<20?.10:0),.28,.60):
+    const chance=b.isPenalty?clamp((has(keeper,'wild')?.23:.19)+(d<20?.025:0),.14,.29):
       clamp((has(keeper,'wild')?.83:.73)+(d<23?.10:0)-(b.shotXg>.30?.07:0)+(this.gameplayPreset==='fast'?.04:0),.53,.96);
     this._activateAbility(keeper,'save');
     const adjusted=clamp(chance+profile.reflex-(tricky?.035:0)+(this._attributes(keeper,'reflexes')-78)*.0023+
-      Abilities.tacticalBonus(keeper,'save',this.time)*.072,.23,.94);
+      Abilities.tacticalBonus(keeper,'save',this.time)*.072,b.isPenalty?.12:.23,b.isPenalty?.36:.94);
     if(this.random()>=adjusted)return false;
     const savedShot=this.shotMap.slice().reverse().find(x=>x.side===b.by?.side&&x.outcome==='pending');
     if(savedShot){savedShot.outcome='saved';savedShot.savedBy=keeper.name;}
@@ -1875,7 +1924,8 @@ class Match {
     }
   }
   _goal(side){const b=this.ball,thisSide=b.by?.side===side?b.by:null;
-    const shot=[...this.shotMap].reverse().find(s=>s.side===side&&!s.goal);if(shot){shot.goal=true;shot.outcome='goal';}
+    const shot=[...this.shotMap].reverse().find(s=>s.side===side&&s.outcome==='pending');if(shot){shot.goal=true;shot.outcome='goal';}
+    this._finalizePendingShots('interrupted');
     this.score[side]++;let scorer=thisSide;
     if(!scorer){const striker=this.players.filter(p=>p.side===side&&p.i>=8);scorer=striker.reduce((a,p)=>distance(p,b)<distance(a,b)?p:a,striker[0]);}
     scorer.goals++;scorer.rating=clamp(scorer.rating+.75,5,10);this._ego(scorer,39,'gol decisivo');let assister=null;
@@ -1910,7 +1960,9 @@ class Match {
       return;
     }
     this.time=Math.min(this.fullTimeEnd,this.time+dt*(Number.isFinite(this.gameRate)&&this.gameRate>0?this.gameRate:GAME_RATE));this._updateMasters();
-    if(!this.halftimeDone&&this.time>=this.firstHalfEnd){
+    // A penalty awarded at the end of a half must be completed before the whistle.
+    if(!this.halftimeDone&&this.time>=this.firstHalfEnd&&!(this.ball.isPenalty&&this.ball.mode==='shot')){
+      this._finalizePendingShots('whistle');
       this.halftimeDone=true;this.time=this.firstHalfEnd;this.half=1;this.phase='halftime';this.wait=1.65;
       this.ball.owner=null;this.ball.mode='dead';this.ball.vx=this.ball.vy=0;
       this.lastPass=null;this.combination=null;this._applyPendingSubs();
@@ -1950,9 +2002,9 @@ class Match {
     }
     this._coachDecisions();
     this._snapshot(dt);
-    if(this.time>=this.fullTimeEnd)this.finish();
+    if(this.time>=this.fullTimeEnd&&!(this.ball.isPenalty&&this.ball.mode==='shot'))this.finish();
   }
-  finish(){if(this.finished)return;this.time=this.fullTimeEnd;this._updateMasters(true);this.finished=true;this.phase='finished';this.log('🏁 Fim de jogo!','finish');}
+  finish(){if(this.finished)return;this._finalizePendingShots('whistle');this.time=this.fullTimeEnd;this._updateMasters(true);this.finished=true;this.phase='finished';this.log('🏁 Fim de jogo!','finish');}
   runToEnd(){let i=0;while(!this.finished&&i++<14000)this.step(TICK);if(!this.finished)this.finish();return this.result();}
   result(){return {home:this.teams[0].id,away:this.teams[1].id,score:[...this.score],startingLineups:this.startingLineups.map(rows=>rows.map(p=>({...p}))),coachPlans:this.coachPlans.map(x=>x?{reason:x.reason,form:x.form,changes:x.changes}:null),coachDecisions:this.coachDecisions.map(x=>({...x})),gameplayPreset:this.gameplayPreset,weather:this.weather,autoGameplan:!!this.autoGameplan,planNames:[...(this.planNames||[])],modernPatterns:[this.modernPattern(0),this.modernPattern(1)],specialMoments:this.specialMoments.map(m=>({...m})),shapeHistory:(this.shapeHistory||[[],[]]).map(h=>h.map(x=>({...x}))),tacticalSettings:{pressing:[...this.pressing],attackWidth:[...this.attackWidth],buildUp:[...this.buildUp],stance:[...this.tactics],crosses:[...this.crossPreference],corners:[...this.setPieceStyle]},stats:JSON.parse(JSON.stringify(this.stats)),players:[...this.retiredPlayers,...this.masterHidden,...this.players].map(p=>({name:p.name,side:p.side,role:p.role,attributes:p.attributes,ovr:p.attributes?.ovr||75,isMaster:!!p.isMaster,goals:p.goals,assists:p.assists,shots:p.shots,dribblesWon:p.dribblesWon||0,saves:Math.max(p.saves||0,p.i===0?this.shotMap.filter(s=>s.outcome==='saved'&&s.savedBy===p.name&&s.side!==p.side).length:0),passes:p.pases||0,flowCount:p.flowCount||0,abilityUses:{...(p.abilityUses||{})},tackles:p.tackles||0,interceptions:p.interceptions||0,shotBlocks:p.shotBlocks||0,aerialWins:p.aerialWins||0,duelsWon:p.duelsWon||0,keyPasses:p.keyPasses||0,runs:p.runCount,overlaps:p.overlapCount,distance:Math.round(p.distanceCovered),rating:+p.rating.toFixed(1)})),masterEntries:this.masterEntries.map(r=>({...r})),substitutions:this.subRecords.map(s=>({...s})),cards:this.cardRecords.map(c=>({...c})),shots:this.shotMap.map(s=>({...s})),events:this.keyEvents.map(e=>({...e})),goalRecords:this.goalRecords.map(r=>({...r,score:[...r.score]})),abilityHistory:this.abilityHistory.map(a=>({...a})),duelHistory:this.duelHistory.map(d=>({...d})),seed:this.seed};}
 }

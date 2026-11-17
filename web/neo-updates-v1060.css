@@ -130,3 +130,20 @@
 .neo920-pane .neo920-link{border-color:#3b85a9!important}
 .neo920-up-btn{background:linear-gradient(105deg,#0072b7,#00b7cf)!important;border-color:#72ecff!important;box-shadow:0 7px 21px #0089d177!important}
 @media(max-width:420px){.neo920-pane{padding:12px!important}.neo110-bot-header{margin:0 0 10px}}
+
+
+/* NEO 2.0 — last patch upfront, full 1.x archive behind one deliberate tap. */
+#neo1060-updates .neo1060-archive{
+ margin-top:11px;padding:0;border:1px solid #2a668c;border-radius:11px;
+ background:linear-gradient(120deg,#0a2848,#071a30);overflow:hidden;
+}
+#neo1060-updates .neo1060-archive-toggle{
+ list-style:none;cursor:pointer;display:flex;align-items:center;min-height:47px;
+ padding:13px;color:#d9f5ff;font-size:12px;font-weight:900;letter-spacing:.1px;
+}
+#neo1060-updates .neo1060-archive-toggle::-webkit-details-marker{display:none}
+#neo1060-updates .neo1060-archive-toggle:after{content:"⌄";margin-left:auto;color:#6dddff;font-size:17px}
+#neo1060-updates .neo1060-archive[open]>.neo1060-archive-toggle:after{content:"⌃"}
+#neo1060-updates .neo1060-archive-toggle:focus-visible{outline:2px solid #7defff;outline-offset:-3px}
+#neo1060-updates .neo1060-archive-list{padding:4px 9px 10px;display:grid;gap:8px}
+#neo1060-updates .neo1060-archive-list .neo1060-entry[open] .neo1060-body{max-height:60vh;overflow-y:auto}

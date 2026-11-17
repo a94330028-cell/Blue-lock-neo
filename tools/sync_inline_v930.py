@@ -11,6 +11,9 @@ import re,sys
 root=Path(sys.argv[1]).resolve() if len(sys.argv)>1 else Path(__file__).resolve().parents[1]/'web'
 html=root/'index.html'
 src=html.read_text(encoding='utf-8')
+# The expansion must execute before the legacy app's immediate init() call.
+# Strip any previously inserted copy so repeating this build remains idempotent.
+src=re.sub(r'\s*<script[^>]*src="neo2-(?:abilities-v200|deep-ai-v202)\.js[^"]*"[^>]*>\s*</script>', '', src)
 patterns=re.compile(r'(<script\b[^>]*>)(.*?)(</script\s*>)',re.DOTALL|re.IGNORECASE)
 paths={
  'attributes':root/'systems/attributes.js',
@@ -259,5 +262,37 @@ for file in ('neo-match-pulse-v240.css','neo-universe-spotlight-v250.css'):
     if file not in updated:
         if updated.count('</head>') != 1: raise RuntimeError('No valid document head for '+file)
         updated = updated.replace('</head>', '<link rel="stylesheet" href="'+file+'?v=10.6.12">\n</head>')
+# NEO 2.0 development: version only the updated release-history UI.
+# Keep all legacy asset paths, save keys and loading order intact.
+for asset,attr in (('neo-updates-v1060.js','src'),('neo-updates-v1060.css','href')):
+    updated=re.sub(r'(' + attr + r'="' + re.escape(asset) + r')(?:\\?v=[^"]*)?(?=")',
+                   r'\\g<1>?v=2.0.0', updated)
+# NEO 2.0: keep 2,520 generated skills in their own light JS file.
+# This module is loaded synchronously after the engine but before app.init().
+if 'neo2-abilities-v200.js' not in updated:
+    if updated.count('</body>')!=1:raise RuntimeError('Cannot load NEO 2.0 ability expansion')
+    updated=updated.replace('</body>','<script defer src="neo2-abilities-v200.js?v=2.0.0"></script>\n</body>',1)
+updated=re.sub(r'src="neo2-abilities-v200\.js(?:\?v=[^"]*)?"',
+               'src="neo2-abilities-v200.js?v=2.0.0"',updated)
+# 2.0: the canonical stylesheet is installed after all generated modules.
+# Remove duplicate older tags first to keep repeated sync strictly idempotent.
+# NEO 2.0: one synchronous skill script and one deep-AI script, between
+# the real inline match engine and app.init(). Idempotent across Android/site.
+for module in ('neo2-abilities-v200.js','neo2-deep-ai-v202.js','neo2-world-v210.js','neo2-insights-v211.js','neo2-synergy-v213.js','neo2-hub-v212.js'):
+    updated=re.sub(r'\s*<script\b[^>]*src="' + re.escape(module) + r'(?:\?[^"]*)?"[^>]*>\s*</script>', '', updated, flags=re.I)
+app_scripts=[m for m in patterns.finditer(updated) if 'function renderScorerBoard(){' in m.group(2) and 'const $=id=>document.getElementById(id);' in m.group(2)]
+if len(app_scripts)!=1:raise RuntimeError('NEO 2.0 app entrypoint missing or ambiguous: '+str(len(app_scripts)))
+boot=app_scripts[0].start()
+tags='<script src="neo2-abilities-v200.js?v=2.0.0"></script>\n<script src="neo2-deep-ai-v202.js?v=2.0.0"></script>\n<script src="neo2-world-v210.js?v=2.0.0"></script>\n<script src="neo2-insights-v211.js?v=2.0.0"></script>\n<script src="neo2-synergy-v213.js?v=2.0.0"></script>\n<script src="neo2-hub-v212.js?v=2.0.0"></script>\n'
+updated=updated[:boot]+tags+updated[boot:]
+for module in ('neo2-abilities-v200.js','neo2-deep-ai-v202.js','neo2-world-v210.js','neo2-insights-v211.js','neo2-synergy-v213.js','neo2-hub-v212.js'):
+    if updated.count(module+'?v=2.0.0')!=1:raise RuntimeError('NEO 2.0 module not loaded once: '+module)
+print('NEO 2.0 boot order checked: inline engine → ability registry → deep AI → app')
+# Normalise the two versioned stylesheets: never append a second copy.
+for stylesheet in ('neo2-abilities-v200.css','neo2-hub-v212.css'):
+    updated=re.sub(r'<link\b[^>]*\bhref="(?:\./)?'+re.escape(stylesheet)+r'(?:\?[^"]*)?"[^>]*>\s*','',updated,flags=re.I)
+if updated.count('</head>')!=1:raise RuntimeError('Cannot attach NEO 2.0 stylesheets')
+for stylesheet in ('neo2-abilities-v200.css','neo2-hub-v212.css'):
+    updated=updated.replace('</head>','<link rel="stylesheet" href="'+stylesheet+'?v=2.0.0">\n</head>',1)
 html.write_text(updated,encoding='utf-8')
 print('Inline game modules synchronized:',counts)
