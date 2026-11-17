@@ -302,11 +302,9 @@ def build_payloads(data, version):
                 raise AnnouncementError("Título/descrição grande demais.")
             if any(len(f["value"]) > 1024 or len(f["name"]) > 256 for f in e["fields"]):
                 raise AnnouncementError("Campo grande demais para o Discord.")
-    # Mass-ping requires explicit opt-in; never enabled for dry run.
-    ping = os.getenv("NEO_PING_EVERYONE") == "1"
+    # Updates never mention @everyone/@here, including manual re-sends.
     return [{"username": NAME, "avatar_url": avatar,
-             "embeds": packet, "allowed_mentions": {"parse": ["everyone"]} if ping and i == 0 else SAFE_MENTIONS,
-             **({"content": "||@everyone||"} if ping and i == 0 else {})}
+             "embeds": packet, "allowed_mentions": SAFE_MENTIONS}
             for i, packet in enumerate(packets)]
 
 
