@@ -65,6 +65,8 @@ const server=http.createServer((req,res)=>{
    // original DOM, controls and styles remain in their established places.
    if(width>=1024){
     await page.waitForFunction(()=>window.NeoArena300?.mode==='broadcast',null,{timeout:15000});
+    await page.waitForFunction(()=>document.querySelector('#match .neo-arena-deep-dive #neo920-broadcast')&&
+     document.querySelector('#match .neo-arena-insights #neo1000-pulse'),null,{timeout:15000});
     const arena=await page.evaluate(()=>{
      const box=selector=>{const el=document.querySelector(selector);if(!el)return null;
       const r=el.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height,bottom:r.bottom};};
