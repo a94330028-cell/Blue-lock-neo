@@ -134,3 +134,73 @@
  }
  @media(prefers-reduced-motion:reduce){body.neo-arena-active #match *,body.neo-arena-active #match *::before,body.neo-arena-active #match *::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 }
+
+/* EGO ARENA 3.1 — second PC pass: accessible controls, calm league hub,
+   richer scouting cards. Mobile and tablets inherit no changes here. */
+@media(min-width:1024px){
+ body.neo-arena-active #match .match-controls{margin:3px 0 7px!important;min-height:46px!important;padding:5px 8px!important;background:linear-gradient(100deg,#0c2d3e,#091a2c)!important;border-color:#2c6680!important;box-shadow:inset 0 1px #7cdeff17!important}
+ body.neo-arena-active #match .match-controls>#play{min-width:122px;min-height:36px!important;font-size:13px!important;letter-spacing:.1px}
+ body.neo-arena-active #match .match-controls>#replay,body.neo-arena-active #match .match-controls>#reset{font-size:11px!important}
+ body.neo-arena-active #match .match-controls .speed-group{margin-left:3px!important;color:#91c9d7!important;font-size:10px!important}
+ body.neo-arena-active #match .match-controls .focus-toggle{font-size:10px!important}
+ body.neo-arena-active #match .neo-arena-shortcuts{position:relative;flex:none}
+ body.neo-arena-active #match .neo-arena-shortcuts>summary{list-style:none;cursor:pointer;white-space:nowrap;padding:9px 10px;border-radius:7px;border:1px solid #234c62;background:#092438;color:#a3dbe7;font-size:11px;font-weight:850}
+ body.neo-arena-active #match .neo-arena-shortcuts>summary::-webkit-details-marker{display:none}
+ body.neo-arena-active #match .neo-arena-shortcuts>div{position:absolute;z-index:65;right:0;top:calc(100% + 9px);display:flex;flex-direction:column;gap:10px;min-width:220px;padding:14px;border:1px solid #329fb9;border-radius:10px;background:#081d2d;box-shadow:0 16px 35px #000b}
+ body.neo-arena-active #match .neo-arena-shortcuts>div>b{font-size:9px;letter-spacing:1px;color:#71dae9}
+ body.neo-arena-active #match .neo-arena-shortcuts>div>span{display:flex;align-items:center;gap:5px;color:#d2ebf7;font-size:11px;white-space:nowrap}
+ body.neo-arena-active #match .neo-arena-shortcuts kbd{display:inline-block;min-width:23px;text-align:center;padding:3px 5px;border:1px solid #33657d;border-radius:5px;background:#113c51;color:#e6fdff;font-weight:900}
+ body.neo-arena-active #match .neo-arena-view-tabs button:focus-visible,body.neo-arena-active #match .match-controls button:focus-visible,body.neo-arena-active .neo-arena-league-bar button:focus-visible{outline:2px solid #8ef9fa;outline-offset:3px}
+ /* Repeated legacy navigational tabs were bare browser-default gray buttons. */
+ body.neo-arena-active #match #neoRefMatchTabs{display:none!important}
+ /* The true momentum gauge is useful during live commentary, not only Analysis. */
+ body.neo-arena-active #match[data-arena-mode="broadcast"] .neo-arena-insights>.pulse-card{display:block!important;margin-top:12px!important;padding:10px!important;border:1px solid #1d635e!important;border-radius:10px!important;background:#10302f!important}
+ body.neo-arena-active #match .neo-arena-insights>.fc-options,body.neo-arena-active #match .neo-arena-insights>.card:has(#homeTactic){display:none!important;margin:0!important}
+ body.neo-arena-active #match[data-arena-mode="coach"] .neo-arena-insights>.fc-options,body.neo-arena-active #match[data-arena-mode="coach"] .neo-arena-insights>.card:has(#homeTactic){display:block!important;margin-top:10px!important;padding:10px!important;background:#0b2635!important;border:1px solid #275570!important;border-radius:9px!important}
+ body.neo-arena-active #match[data-arena-mode="coach"] .neo-arena-insights select{max-width:100%;font-size:11px!important;padding:7px!important}
+ /* Update launcher is accessible but cannot cover the match toolbar. */
+ body.neo-arena-active #neo920-up-btn{position:fixed!important;left:19px!important;right:auto!important;top:auto!important;bottom:16px!important;z-index:70!important;max-width:160px!important;padding:8px 12px!important;box-shadow:0 8px 30px #0007!important}
+ body.neo-arena-active #neo2HubToggle{right:17px!important;bottom:13px!important}
+ /* Championship: actual actions and table first; editor and Best XI one click away. */
+ body.neo-arena-active #league .neo-arena-league-bar{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:76px;padding:13px 17px;margin:0 0 10px;border:1px solid #2b95a0;border-left:4px solid #40e5df;border-radius:12px;background:linear-gradient(108deg,#12384a,#0b2035 58%,#081526);box-shadow:0 13px 28px #0005}
+ body.neo-arena-active .neo-arena-league-bar-copy{display:flex;flex-direction:column;gap:4px;min-width:0}
+ body.neo-arena-active .neo-arena-league-bar-copy small{font-size:9px;letter-spacing:1.3px;color:#65d9dc;font-weight:950}
+ body.neo-arena-active .neo-arena-league-bar-copy strong{font-size:19px;font-weight:950;color:#eafaff;white-space:nowrap}
+ body.neo-arena-active .neo-arena-league-bar-copy span{font-size:11px;color:#90b5c8}
+ body.neo-arena-active .neo-arena-league-bar-actions{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:7px}
+ body.neo-arena-active .neo-arena-league-bar-actions button{min-height:39px!important;padding:9px 12px!important;border-radius:8px!important;border:1px solid #335d79!important;background:#112e48!important;color:#e7f8ff!important;font-size:11px!important;font-weight:900!important;white-space:nowrap}
+ body.neo-arena-active .neo-arena-league-bar-actions #simulateRound{background:linear-gradient(110deg,#05a3c1,#126b9b)!important;border-color:#40d7e5!important;color:white!important;box-shadow:0 0 16px #04bdda29!important}
+ body.neo-arena-active .neo-arena-league-bar-actions button:disabled{opacity:.45!important;cursor:not-allowed}
+ body.neo-arena-active #league .hero-card{padding:12px 17px!important;min-height:80px!important;margin-bottom:9px!important}
+ body.neo-arena-active #league .hero-card h2{font-size:19px!important;margin:2px 0!important}
+ body.neo-arena-active #league .hero-card p{font-size:11px!important;margin:3px 0!important}
+ body.neo-arena-active #league .neo-arena-league-fold{margin:7px 0;overflow:hidden;border:1px solid #294c63;border-radius:10px;background:#0c1f30;scroll-margin-top:78px}
+ body.neo-arena-active #league .neo-arena-league-fold>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:44px;padding:11px 14px;color:#b9e5f0;font-weight:900;font-size:12px}
+ body.neo-arena-active #league .neo-arena-league-fold>summary::-webkit-details-marker{display:none}
+ body.neo-arena-active #league .neo-arena-league-fold>summary>span{font-size:9px;letter-spacing:.7px;color:#70bbc9}
+ body.neo-arena-active #league .neo-arena-league-fold>summary:hover{background:#14384c;color:white}
+ body.neo-arena-active #league .neo-arena-league-fold[open]>summary{border-bottom:1px solid #285470;background:#163b4c;color:white}
+ body.neo-arena-active #league .neo-arena-league-fold>section{margin:10px!important}
+ body.neo-arena-active #league .league-grid{margin-top:13px!important;gap:12px!important}
+ body.neo-arena-active #league .league-grid>.card{margin-top:0!important}
+ body.neo-arena-active #league #standings tr{height:39px}
+ body.neo-arena-active #league #fixtures button{min-height:33px!important}
+ /* Ranking: three useful scouting cards per row, with readable portraits. */
+ body.neo-arena-active #ranking #neo940-ranking{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px!important}
+ body.neo-arena-active #ranking #neo940-ranking .neo960-row{min-width:0!important;min-height:125px!important;display:grid!important;grid-template-columns:28px 72px minmax(0,1fr) 9px!important;grid-template-rows:auto auto!important;gap:4px 8px!important;padding:12px 10px!important;border-radius:11px!important;border:1px solid #2b526b!important;background:linear-gradient(145deg,#142e44,#0d1d31)!important;box-shadow:0 5px 17px #0004!important}
+ body.neo-arena-active #ranking #neo940-ranking .neo960-row:hover{transform:translateY(-2px);border-color:#43c5e3!important;background:#183b52!important;box-shadow:0 9px 24px #0007!important}
+ body.neo-arena-active #ranking #neo940-ranking .neo940-order{grid-column:1;grid-row:1 / span 2;align-self:start;font-size:13px!important;color:#76d9ed!important}
+ body.neo-arena-active #ranking #neo940-ranking .neo960-avatar{grid-column:2;grid-row:1 / span 2;width:72px!important;height:96px!important;border-radius:8px!important;object-fit:cover!important}
+ body.neo-arena-active #ranking #neo940-ranking .neo940-person{grid-column:3;grid-row:1;align-self:end;font-size:13px!important}
+ body.neo-arena-active #ranking #neo940-ranking .neo940-person strong{font-size:14px!important;line-height:1.2!important}
+ body.neo-arena-active #ranking #neo940-ranking .neo940-person small{font-size:10px!important;line-height:1.35!important;margin-top:7px!important}
+ body.neo-arena-active #ranking #neo940-ranking .neo940-price{grid-column:3;grid-row:2;align-self:start;margin:3px 0 0!important;font-size:12px!important}
+ body.neo-arena-active #ranking #neo940-ranking .neo960-open{grid-column:4;grid-row:1 / span 2;align-self:center;font-size:17px!important}
+ body.neo-arena-active #ranking .neo960-search input,body.neo-arena-active #ranking #neo940-filter{min-height:37px!important;padding:7px 11px!important;font-size:12px!important}
+ @media(max-width:1350px){
+  body.neo-arena-active #ranking #neo940-ranking{grid-template-columns:repeat(2,minmax(0,1fr))}
+  body.neo-arena-active .neo-arena-league-bar{align-items:flex-start!important;flex-wrap:wrap!important}
+ }
+ body.neo-arena-active #match #stadium:not(:fullscreen):not(.fullscreen-active) #pitch{max-height:calc(100dvh - 440px)!important}
+ @media(prefers-reduced-motion:reduce){body.neo-arena-active #ranking #neo940-ranking .neo960-row:hover{transform:none!important}}
+}

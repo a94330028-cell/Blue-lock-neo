@@ -61,7 +61,7 @@ const server=http.createServer((req,res)=>{
    assert.ok(details.closed,'the new Records section must start collapsed');
    assert.ok(details.nav,'desktop and mobile menus remain in DOM');
    assert.ok(details.list,'XI tactical/list toggle is mounted');
-   // EGO ARENA 3.0 must rearrange real gameplay only on PC. On mobile the
+   // EGO ARENA 3.1 must rearrange real gameplay only on PC. On mobile the
    // original DOM, controls and styles remain in their established places.
    if(width>=1024){
     await page.waitForFunction(()=>window.NeoArena300?.mode==='broadcast',null,{timeout:15000});
@@ -71,6 +71,7 @@ const server=http.createServer((req,res)=>{
      const box=selector=>{const el=document.querySelector(selector);if(!el)return null;
       const r=el.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height,bottom:r.bottom};};
      return {toolbar:box('#match .neo-arena-toolbar'),pitch:box('#stadium #pitch'),
+      dock:box('#match .match-controls'),legacyTabs:getComputedStyle(document.querySelector('#neoRefMatchTabs')).display,
       aside:box('#match .neo-arena-insights'),nav:box('.shell>.nav'),
       score:box('#match .broadcast-scoreboard'),settings:!!document.querySelector('.neo-arena-settings'),
       mobileActive:document.body.classList.contains('neo-arena-active'),
@@ -83,6 +84,8 @@ const server=http.createServer((req,res)=>{
      'PC layout is navigation / stadium / live-side panel');
     assert.ok(arena.pitch.width>arena.aside.width*1.6,'stadium is the visual protagonist');
     assert.ok(arena.pitch.y>arena.score.y&&arena.pitch.height>250,'broadcast score sits over full stadium');
+    assert.ok(arena.dock?.y>arena.score.y&&arena.dock.bottom<arena.pitch.y,'playback controls are visible BEFORE the stadium');
+    assert.equal(arena.legacyTabs,'none','redundant unstyled tabs stay hidden on PC');
     assert.ok(arena.preservedIds,'moving panels cannot clone or delete engine targets');
     assert.deepEqual(arena.blockers,[],'legacy editions must not insert extra panels above the PC stadium');
     if(width===1366||width===1280)
@@ -91,12 +94,14 @@ const server=http.createServer((req,res)=>{
      await page.click('#match [data-arena-view="coach"]');
      assert.equal(await page.$eval('#match',el=>el.dataset.arenaMode),'coach');
      assert.ok(await page.$eval('#match .neo-arena-insights .coach-card',el=>getComputedStyle(el).display!=='none'));
+     assert.ok(await page.$eval('#match .neo-arena-insights #homeTactic',el=>getComputedStyle(el.closest('.card')).display!=='none'),'real coach gameplan is visible');
      await page.click('#match [data-arena-view="analysis"]');
      assert.equal(await page.$eval('#match',el=>el.dataset.arenaMode),'analysis');
      assert.ok(await page.$eval('#match .neo-arena-insights #matchStats',el=>getComputedStyle(el.closest('.card')).display!=='none'));
      assert.ok(await page.$eval('#match .neo-arena-insights #shotMap',el=>getComputedStyle(el.closest('.shot-map-card')).display!=='none'));
      await page.click('#match [data-arena-view="broadcast"]');
      assert.ok(await page.$eval('#events',el=>getComputedStyle(el.closest('.card')).display!=='none'));
+     assert.ok(await page.$eval('#match .neo-arena-insights .pulse-card',el=>getComputedStyle(el).display!=='none'),'real moment-of-match gauge accompanies commentary');
      await page.click('#neoArenaOptions');
      assert.ok(await page.$eval('.neo-arena-settings',el=>el.open),'secondary field settings open in one place');
      await page.click('#neoArenaOptions');
@@ -149,6 +154,10 @@ const server=http.createServer((req,res)=>{
    if(width>=1100){
     await page.click('.nav button[data-tab="league"]');
     await page.waitForFunction(()=>getComputedStyle(document.getElementById('league')).display!=='none');
+    assert.ok(await page.$eval('#league .neo-arena-league-bar #simulateRound',el=>el.isConnected),'league quick bar uses the original simulation button');
+    assert.equal(await page.$eval('#league .neo-arena-league-xi',el=>el.open),false,'advanced XI starts collapsed');
+    await page.click('#neoArenaLeagueXI');
+    assert.equal(await page.$eval('#league .neo-arena-league-xi',el=>el.open),true,'one click opens Best XI');
     assert.ok(details.overflow<=5,'desktop horizontal overflow at '+width+': '+details.overflow);
     await page.evaluate(()=>{
      const dest=document.querySelector('#neo990-xi');
@@ -212,6 +221,7 @@ const server=http.createServer((req,res)=>{
     });
     assert.ok(result.recorded>=18,'match must record player data for real podium');
     await page.click('.nav button[data-tab="ranking"]');
+    assert.ok(await page.$eval('#neo940-ranking',el=>getComputedStyle(el).gridTemplateColumns.split(' ').length>=2),'ranking presents a compact portrait grid on desktop');
     const rankState=await page.evaluate(()=>{
       const r=document.getElementById('ranking'),e=document.getElementById('rankMode');
       return {tabClass:r?.className,tabDisplay:r?getComputedStyle(r).display:null,

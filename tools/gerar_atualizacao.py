@@ -38,7 +38,7 @@ manifest = {
     "url": f"{HOST}/updates/{ARCHIVE.name}",
     "sha256": sha,
     "minAndroidVersion": 85,
-    "changes": f"Blue Lock NEO {PUBLIC_VERSION} · conteúdo {UPDATE_BUILD}: EGO ARENA 3.0 para PC, campo protagonista, placar integrado, modos Transmissão/Técnico/Análise, configurações recolhidas e celular preservado."
+    "changes": f"Blue Lock NEO {PUBLIC_VERSION} · conteúdo {UPDATE_BUILD}: EGO ARENA 3.1 para PC, controles de partida acessíveis, seleção e rodadas da Liga em um clique, ranking com retratos maiores, atalhos e celular preservado."
 }
 (DEST / "latest.json").write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 print(f"Pacote: {ARCHIVE} ({ARCHIVE.stat().st_size} bytes)")
