@@ -54,7 +54,7 @@ P.record(season,fixture2,{result:()=>({
 })},2);
 assert.ok(prince.value>first&&prince.games===2,'master offer increases with registered decisive appearances');
 assert.equal(prince.bidHistory.length,2);
-assert.equal(season.career.masterBidVersion,1);
+assert.equal(season.career.masterBidVersion,2);
 assert.equal(P.reconcileMasterBids(season),0,'recorded new appearance cannot replay old history');
 const mobile=fs.readFileSync('web/neo-mobile-ux-v111.js','utf8');
 const css=fs.readFileSync('web/neo-mobile-ux-v111.css','utf8');

@@ -29,7 +29,7 @@
   const passing=N(p.passes??p.pases)*.012;
   const group=roleGroup(role),score=rating*1.9+passing+(
     group==='G'?keeper+defensive*.14:group==='D'?defensive+attacking*.65:group==='M'?attacking+defensive*.72:attacking+defensive*.27);
-  return {name:p.name,club:team,role,rating,score:+score.toFixed(2),stats:{goals:N(p.goals),assists:N(p.assists),saves:N(p.saves),tackles:N(p.tackles),interceptions:N(p.interceptions),blocks:N(p.shotBlocks),passes:N(p.passes??p.pases)}};
+  return {name:p.name,club:team,role,rating,ovr:N(p.ovr||p.attributes?.ovr),score:+score.toFixed(2),stats:{goals:N(p.goals),assists:N(p.assists),saves:N(p.saves),tackles:N(p.tackles),interceptions:N(p.interceptions),blocks:N(p.shotBlocks),passes:N(p.passes??p.pases)}};
  }
  function completeRound(round){return Array.isArray(round?.games)&&round.games.length>0&&round.games.every(g=>Array.isArray(g.result)&&g.result.length===2&&Array.isArray(g.details?.players));}
  function latestCompletedRound(competition){return [...(competition?.rounds||[])].reverse().find(completeRound)||null;}
@@ -61,6 +61,22 @@
   return {round:round.round,players,reserves,candidateCount:pool.length};
  }
  function currentXI(competition){const round=latestCompletedRound(competition);return round?selectXI(round):{round:0,players:[],reserves:[],candidateCount:0};}
+ function xiCardsHTML(xi,imageHTML,mode='desktop'){
+  const groups=[['ATAQUE',['PD','CA','PE']],['MEIO-CAMPO',['MC','VOL','MEI']],['DEFESA',['LD','ZAG','ZAG','LE']],['GOLEIRO',['GOL']]];
+  const players=(xi?.players||[]).slice();
+  const card=p=>{
+   const profile=encodeURIComponent(p.name+'|'+p.club),attr=mode==='mobile'?'data-neo-ux-profile="'+profile+'"':'data-profile="'+profile+'"';
+   const overall=p.ovr||75,photo=imageHTML(p.name,p.club);
+   return '<button type="button" class="neo-xi-card'+(overall>=92?' neo-xi-elite':'')+'" '+attr+' aria-label="'+esc(p.name)+' · '+esc(p.slot)+' · OVR '+overall+'">'+
+    '<span class="neo-xi-photo">'+photo+'<span class="neo-xi-top-role">'+esc(p.slot)+'</span></span>'+
+    '<span class="neo-xi-card-name">'+esc(p.name)+'</span><span class="neo-xi-card-footer"><small>'+esc(p.slot)+'</small><strong>'+overall+'</strong></span></button>';
+  };
+  return '<div class="neo-xi-field" role="group" aria-label="Seleção do campeonato, formação 4-3-3">'+
+   groups.map(([title,roles])=>{
+    const group=roles.map(role=>{const index=players.findIndex(p=>p.slot===role);return index<0?null:players.splice(index,1)[0];}).filter(Boolean);
+    return '<section class="neo-xi-line"><h4>'+title+'</h4><div class="neo-xi-row neo-xi-count-'+roles.length+'">'+group.map(card).join('')+'</div></section>';
+   }).join('')+'</div>';
+ }
  function registerDynamicTeam(E,xi){
   if(!E?.registerTeam||xi?.players?.length!==11)return null;
   let team=E.teamById('neo-bestxi');
@@ -202,9 +218,9 @@
      return '<button type="button" class="neo990-pitch-player" data-profile="'+encodeURIComponent(p.name+'|'+p.club)+'" style="--lane:'+spot.lane+'%;--depth:'+spot.depth+'%" title="'+esc(p.name)+' · '+esc(p.slot)+' · '+p.score.toFixed(1)+'" aria-label="Abrir ficha de '+esc(p.name)+', posição '+esc(p.slot)+'">'+
        photo(p.name,p.club)+'<span class="neo990-position">'+esc(p.slot)+'</span><span class="neo990-name">'+esc(p.name)+'</span><strong class="neo990-score" aria-label="Nota '+p.rating.toFixed(1)+'">'+p.rating.toFixed(1)+'</strong></button>';
    }).join('');
-   const pitch='<div class="neo990-xi-pitch" role="group" aria-label="Seleção do Campeonato em campo, formação 4-3-3"><div class="neo980-pitch-markings"><span class="neo980-center-circle"></span><span class="neo980-penalty neo980-penalty-top"></span><span class="neo980-penalty neo980-penalty-bottom"></span></div><span class="neo980-goal goal-top"></span><span class="neo980-goal goal-bottom"></span>'+pitchPlayers+'</div>';
+   const pitch=xiCardsHTML(xi,(name,club)=>photo(name,club),'desktop');
    target.innerHTML='<div class="neo990-team-summary"><b>4-3-3 · Melhor XI</b><small>'+xi.candidateCount+' atletas avaliados · notas 0 a 10 e posições corretas</small></div>'+
-      pitch+'<p class="neo990-xi-caption">⬆ Ataque · 🧤 Goleiro na base · Toque em um atleta para abrir sua ficha</p>'+
+      pitch+'<p class="neo990-xi-caption">⬆ Ataque · 🧤 Goleiro na base · Toque na carta para abrir a ficha</p>'+
       '<details class="neo990-xi-list"><summary>☷ Ver escalação em lista</summary><div class="neo990-grid">'+starters+'</div></details>'+
       '<details class="neo990-bench"><summary>Banco e destaques ('+xi.reserves.length+')</summary>'+xi.reserves.map(p=>'<div>'+photo(p.name,p.club)+'<span>'+esc(p.name)+' · '+esc(p.role)+'</span><b>'+p.score.toFixed(1)+'</b></div>').join('')+'</details>';
    const lineUp=target.querySelector('.neo990-xi-list');
@@ -224,5 +240,5 @@
   // Keep the gallery options available when returning after an image upload.
   win.setInterval(()=>{if($('galleryTeam'))injectGallery();},6000);
  }
- return {SLOTS,scoredPlayer,completeRound,latestCompletedRound,candidates,selectXI,currentXI,registerDynamicTeam,adaptAI,mount};
+ return {SLOTS,scoredPlayer,completeRound,latestCompletedRound,candidates,selectXI,currentXI,xiCardsHTML,registerDynamicTeam,adaptAI,mount};
 });

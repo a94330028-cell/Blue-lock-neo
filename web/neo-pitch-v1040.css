@@ -167,3 +167,28 @@
  #neo980-squad-area .neo980-bench{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(prefers-reduced-motion:reduce){#neo980-squad-area .neo980-lineup-card{transition:none!important}}
+
+/* 10.6.35: championship XI as full-sized portrait cards on a green pitch. */
+.neo-xi-field{position:relative;isolation:isolate;overflow:hidden;border:2px solid #45835d;border-radius:17px;padding:12px 11px 19px;background:repeating-linear-gradient(to bottom,#12553f 0%,#12553f 12.5%,#156048 12.5%,#156048 25%);box-shadow:inset 0 0 40px #06291e99;color:#fff}
+.neo-xi-field:before{content:"";position:absolute;inset:9px 10px;border:2px solid #b5dcc052;pointer-events:none}
+.neo-xi-field:after{content:"";position:absolute;left:50%;top:50%;width:19%;aspect-ratio:1;border:2px solid #b5dcc04b;border-radius:50%;transform:translate(-50%,-50%);pointer-events:none}
+.neo-xi-line{position:relative;z-index:1;padding:2px 0 12px;border-radius:14px;background:#07564414}
+.neo-xi-line:not(:last-child){margin-bottom:9px;border-bottom:2px solid #80c69550}
+.neo-xi-line>h4{font:900 11px/1.5 system-ui,sans-serif;letter-spacing:3px;text-align:center;color:#d9fff1;margin:0 0 8px;text-shadow:0 2px 5px #000a}
+.neo-xi-row{display:grid;gap:9px;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch}
+.neo-xi-count-4{grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.neo-xi-count-1{display:flex;justify-content:center}
+.neo-xi-card{appearance:none;display:flex;position:relative;flex-direction:column;min-width:0;min-height:170px;border:2px solid #3994e6;border-radius:13px;overflow:hidden;background:linear-gradient(#113968,#07162f);color:#fff;text-align:center;padding:0;box-shadow:0 4px 11px #001525c9;cursor:pointer}
+.neo-xi-card:focus-visible{outline:3px solid #f9d57d;outline-offset:2px}
+.neo-xi-card.neo-xi-elite{border-color:#edcc61;box-shadow:0 0 12px #efd16483,0 4px 10px #001525c9}
+.neo-xi-photo{display:block;position:relative;height:108px;width:100%;overflow:hidden;background:#d4dce1}
+.neo-xi-photo>img,.neo-xi-photo .neo-ux-player-img{display:block!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;object-fit:cover!important;object-position:center 22%!important;border:0!important;border-radius:0!important}
+.neo-xi-top-role{position:absolute;top:5px;left:5px;z-index:1;background:#12456a;border:1px solid #7ccaff;border-radius:8px;color:white;padding:2px 4px;font:900 10px/1.25 system-ui,sans-serif;box-shadow:0 1px 3px #001e33}
+.neo-xi-card-name{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden;min-height:29px;padding:6px 2px 2px;font:850 11px/1.15 system-ui,sans-serif;overflow-wrap:anywhere}
+.neo-xi-card-footer{display:flex;justify-content:space-between;align-items:end;gap:4px;margin-top:auto;padding:5px 6px 7px}
+.neo-xi-card-footer small{background:#094475;border:1px solid #3289d7;border-radius:6px;padding:2px 5px;font:900 9px system-ui,sans-serif;color:#d5f3ff}
+.neo-xi-card-footer strong{background:linear-gradient(#fff0ad,#f6ca5a);color:#34250b;border-radius:8px;padding:4px 7px;font:900 13px system-ui,sans-serif;box-shadow:0 0 10px #ffeb9980}
+.neo-xi-count-1 .neo-xi-card{width:48%;max-width:230px}
+@media(min-width:701px){#neo990-xi .neo-xi-field{max-width:780px;margin:12px auto}.neo-xi-photo{height:clamp(120px,16vw,175px)}.neo-xi-card{min-height:205px}.neo-xi-card-name{font-size:13px}}
+@media(max-width:700px){.neo-ux-xi-feature .neo-xi-field{margin:9px -8px 12px;padding:10px 6px 12px}.neo-ux-xi-feature .neo-xi-row{gap:5px}.neo-ux-xi-feature .neo-xi-card{min-height:144px;border-radius:11px}.neo-ux-xi-feature .neo-xi-photo{height:89px}.neo-ux-xi-feature .neo-xi-card-name{font-size:9px;min-height:27px}.neo-ux-xi-feature .neo-xi-card-footer{padding:3px 4px 6px}.neo-ux-xi-feature .neo-xi-card-footer strong{font-size:11px;padding:3px 5px}.neo-ux-xi-feature .neo-xi-card-footer small{font-size:8px;padding:2px 4px}.neo-ux-xi-feature .neo-xi-line>h4{font-size:10px;letter-spacing:2px}}
+@media(max-width:350px){.neo-ux-xi-feature .neo-xi-photo{height:75px}.neo-ux-xi-feature .neo-xi-card{min-height:130px}.neo-ux-xi-feature .neo-xi-top-role{font-size:8px}}

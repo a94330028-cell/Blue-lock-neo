@@ -125,10 +125,19 @@ function masterEvidence(fixture){
  if(!Array.isArray(fixture?.result)||!Array.isArray(details?.players))return [];
  const entries=Array.isArray(details.masterEntries)?details.masterEntries:[];
  if(!entries.length)return [];
- return details.players.filter(p=>
-  p?.isMaster===true&&p.name&&[0,1].includes(p.side)&&
-  entries.some(e=>e.master===p.name&&e.side===p.side)
- ).map(p=>({player:p,entry:entries.find(e=>e.master===p.name&&e.side===p.side)}));
+ // Old engines allowed two windows for one Master in a single match. Their
+ // result contains two player records, but a footballer played ONE match.
+ const grouped=new Map();
+ for(const p of details.players){
+  if(p?.isMaster!==true||!p.name||![0,1].includes(p.side))continue;
+  const entry=entries.find(e=>e.master===p.name&&e.side===p.side);if(!entry)continue;
+  const id=p.side+'|'+p.name,existing=grouped.get(id);
+  if(!existing){grouped.set(id,{player:{...p},entry});continue;}
+  for(const key of ['goals','assists','passes','shots','tackles','saves','interceptions'])
+   existing.player[key]=num(existing.player[key])+num(p[key]);
+  existing.player.rating=(num(existing.player.rating)+num(p.rating))/2;
+ }
+ return [...grouped.values()];
 }
 function masterAppearance(career,fixture,round,p,entry){
  const club=p.side===0?fixture.home:fixture.away,id=key(p.name,club);
@@ -162,7 +171,7 @@ function masterAppearance(career,fixture,round,p,entry){
 }
 function reconcileMasterBids(season,skipFixture=null){
  const career=ensure(season);
- if(career.masterBidVersion===1)return 0;
+ if(career.masterBidVersion===2)return 0;
  // Start with the match reports, not starting OVR or a fictional signing bonus.
  // Historical fixtures are not edited; only a separate ledger is added.
  const previous=career.masterBids||{},clean={};
@@ -178,15 +187,27 @@ function reconcileMasterBids(season,skipFixture=null){
  for(const [id,old] of Object.entries(previous)){
   if(!old||num(old.games)<=0)continue;
   const current=clean[id];
-  if(!current){clean[id]={...old};continue;}
+  const played=(season?.rounds||[]).flatMap(r=>r.games||[])
+   .filter(g=>Array.isArray(g.result)&&(g.home===old.club||g.away===old.club)).length;
+  if(!current){
+   const unique=items=>{const seen=new Set();return (items||[]).filter(x=>{
+    const identity=x.round+'|'+x.match;if(seen.has(identity))return false;
+    seen.add(identity);return true;
+   });};
+   const bids=unique(old.bidHistory),history=unique(old.history);
+   const games=Math.min(played,bids.length||history.length||num(old.games));
+   clean[id]={...old,games,masterApps:games,bidHistory:bids,history};
+   continue;
+  }
   if(num(old.value)>num(current.value)){
    current.value=num(old.value);
    current.change=num(old.change);
-   if(Array.isArray(old.bidHistory)&&old.bidHistory.length)
-    current.bidHistory=old.bidHistory.map(x=>({...x}));
   }
+  // Never copy an inflated old games counter or repeated bid rows back over
+  // the verified number of distinct fixture appearances.
+  current.games=Math.min(played,current.games);current.masterApps=current.games;
  }
- career.masterBidVersion=1;
+ career.masterBidVersion=2;
  return appearances;
 }
 

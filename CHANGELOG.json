@@ -24,19 +24,19 @@
       "version": "2.0.0",
       "date": "2026-11-17",
       "novidades": [
-        "Conteúdo 10.6.34: Liga Neo com botões para simular o próximo jogo ou a rodada inteira e Time da Rodada visível na mesma tela do celular.",
+        "Conteúdo 10.6.35: seleção do campeonato em cartas grandes no campo, três partidas reais simultâneas com bolinhas animadas e acesso rápido na Liga.",
         "Liga Neo Egoísta com 2 a 10 clubes escolhidos, calendário, tabela e partidas com 22 atletas, incluindo History Team e times históricos."
       ],
       "correcoes": [
-        "Sae substitui um meio-campista sem duplicações; Gustavo permanece PD 94 OVR. History Team mantém Void, posições, OVRs e saves antigos.",
+        "Mestres entram uma única vez por partida; jogos dos mestres são contados uma vez por confronto nos rankings e históricos existentes. Sae mantém posição MEI e 98 OVR.",
         "Salvamento corrigido para temporadas longas: súmulas compactas mantêm gols, assistências, ofertas e notas; backups anteriores ficam protegidos no armazenamento de arquivos do dispositivo.",
         "Pênaltis não geram assistências invisíveis, e quem faz o cruzamento não cabeceia a própria bola no instante do lançamento."
       ],
       "jogabilidade": [
-        "Dois, quatro ou seis encontros por dupla, com mandos equilibrados; no ataque, jogadores procuram mais companheiros livres para passes decisivos e assistências reais."
+        "Dois, quatro ou seis encontros por dupla; finalizações mais frequentes, chances reais de gols aumentadas e força coletiva baseada no OVR dos 11 jogadores para favorecer equipes superiores, como History Team, sem resultados garantidos."
       ],
       "visual": [
-        "Sae Itoshi segue mestre exclusivo do History Team (MEI, 98 OVR), com carta separada e foto editável; 129 retratos por jogador, sem atribuir fotos a quem ainda não foi cadastrado."
+        "Seleção 4-3-3 com cartas por setor, retratos, posição e OVR, conforme referência; fotos editáveis e 129 retratos por jogador, sem atribuir fotos a quem ainda não foi cadastrado."
       ],
       "otimizacoes": [
         "Simulação para ao detectar falha de gravação, com progresso por partida; histórico tático antigo reduzido apenas quando necessário para liberar espaço."

@@ -1931,6 +1931,48 @@ async function simulateNextFixture(){
  finally{simBusy=false;cancelSim=false;setSimButtons();renderLeague();renderStats();}
  return completed;
 }
+// Three authentic Match engines run side by side. The callback receives actual
+// ball/player coordinates, never a decorative or pre-generated animation.
+async function simulateTripleLive(onFrame){
+ if(simBusy||!currentRound()||(playing&&!match?.finished))return 0;
+ const fixtures=season.rounds.flatMap(r=>r.games.map(f=>({f,round:r.round})))
+  .filter(({f})=>!Array.isArray(f.result)).slice(0,3);
+ if(!fixtures.length)return 0;
+ simBusy=true;cancelSim=false;playing=false;replaying=false;setSimButtons();
+ let completed=0;
+ const sims=fixtures.map(({f,round})=>{
+  const game=new Match(f.home,f.away,Math.floor(Math.random()*0xffffffff),E.Progression.ensure(season),season);
+  game.rollGameplan();return {f,round,game};
+ });
+ const frame=()=>{
+  if(typeof onFrame!=='function')return;
+  try{onFrame(sims.map(({f,round,game})=>({home:f.home,away:f.away,round,
+   minute:Math.min(90,Math.floor(game.time/60)),score:game.score.slice(),finished:game.finished,
+   players:game.players.map(p=>({x:p.x,y:p.y,side:p.side})),ball:{x:game.ball.x,y:game.ball.y}})));}
+  catch(error){console.warn('Visualização dos três jogos:',error);}
+ };
+ try{
+  frame();
+  // The engines progress in parallel within each animation batch, even when
+  // fixtures span a round boundary (e.g. two fixtures per five-club round).
+  for(let batch=0;batch<205&&!sims.every(s=>s.game.finished)&&!cancelSim;batch++){
+   for(const {game} of sims)for(let tick=0;tick<75&&!game.finished;tick++)game.step(TICK);
+   frame();await new Promise(resolve=>setTimeout(resolve,38));
+  }
+  if(cancelSim)return 0;
+  for(const {f,round,game} of sims){
+   if(!game.finished)game.finish();
+   E.recordFixture(season,f,game);
+   if(!saveSeason()){cancelSim=true;break;}
+   completed++;
+   window.dispatchEvent(new CustomEvent('neo:league-progress',{detail:{
+    played:season.rounds.flatMap(r=>r.games).filter(g=>Array.isArray(g.result)).length,round
+   }}));
+  }
+  frame();
+ }finally{simBusy=false;cancelSim=false;setSimButtons();renderLeague();renderStats();}
+ return completed;
+}
 async function simulateSeason(){
   if(simBusy){cancelSim=true;$('simulateSeason').textContent='⏳ Parando...';return;}
   if(!currentRound())return;
@@ -2446,6 +2488,7 @@ window.NeoCareerBridge={
  save:()=>saveSeason(),
  simulateRound:()=>simulateRound(),
  simulateNextFixture:()=>simulateNextFixture(),
+ simulateTripleLive:onFrame=>simulateTripleLive(onFrame),
  isSimulating:()=>simBusy,
  busy:()=>!!(simBusy||(match&&!match.finished)),
  refresh:()=>{renderLeague();renderRecords();renderSquads();}

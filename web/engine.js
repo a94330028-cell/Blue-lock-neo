@@ -385,6 +385,13 @@ class Match {
     }
     return value;
   }
+  // The eleven real ratings decide team strength; club names and fictional
+  // attack labels never receive a hidden victory bonus.
+  _qualityEdge(side){
+    const avg=s=>{const squad=this.players.filter(p=>p.side===s);
+      return squad.reduce((sum,p)=>sum+(Number(p.attributes?.ovr)||75),0)/Math.max(1,squad.length);};
+    return clamp((avg(side)-avg(1-side))/12,-1,1);
+  }
   _activateAbility(p,context){
     // Cada atleta possui um arsenal extenso. IA seleciona a arma certa para o lance,
     // respeitando energia, recarga global, evolução, Flow e histórico de repetição.
@@ -429,7 +436,7 @@ class Match {
       this.log(`⚡ FLOW! ${p.name} desperta após ${reason}!`,'flow',p.name);
     }
   }
-  _masterEntry(side){const cfg=Masters.CONFIG[this.teams[side].id];if(!cfg||this.masterStates[side])return false;
+  _masterEntry(side){const cfg=Masters.CONFIG[this.teams[side].id];if(!cfg||this.masterStates[side]||this.masterEntries.some(e=>e.side===side))return false;
     const available=this.players.filter(p=>p.side===side&&p.i!==0&&p!==this.ball.owner&&p!==this.ball.to);
     // A dedicated MEI master replaces a midfielder, never creates a second
     // copy of a starter or removes an unrelated forward from the pitch.
@@ -1000,7 +1007,9 @@ class Match {
     this._activateAbility(p,'shot');
     const accuracy=clamp(.44+(380-d)*.00066-pressure*.038+(tech?.08:0)+(inside?.14:0)+(quickBoxPlay?.08:0)+(acrobatic?.07:0)+
        (kind==='tap-in'?.09:kind==='first-time'?.035:kind==='chip'?-.035:kind==='far-post'?-.01:kind==='low-drive'?.03:0)+(this._attributes(p,'finishing')-77)*.0032+(this._attributes(p,'accuracy')-77)*.0021+(this._attributes(p,'positioning')-77)*.0014+Abilities.tacticalBonus(p,'shot',this.time)*.065,.19,.87);
-    const onTarget=this.random()<accuracy*.89;
+    // Better finishers get a genuine accuracy advantage, while all sides
+    // produce a livelier number of shots on target.
+    const onTarget=this.random()<clamp((accuracy+this._qualityEdge(p.side)*.09)*.98,.19,.93);
     let aimY;
     if(onTarget){
       if(kind==='far-post')aimY=PITCH.cy+(angle<0?1:-1)*this.range(PITCH.goalHalf*.42,PITCH.goalHalf-7);
@@ -1082,7 +1091,7 @@ class Match {
       !this.offside(attackingReceiver,p);
     if(!solo&&layoff&&this.random()<.60){this.pass(p,attackingReceiver);return;}
     // Long-range goals remain possible, but most attackers now seek the box before shooting.
-    const takesShot=this.canShoot(p),shotChance=takesShot?clamp(.17+(370-goalDist)*.00070+pressure*.009+(p.i>=8?.045:0)+(aggressive?.040:0)-(defensive?.015:0)+(profile?.shoot||0)*.65+(this._attributes(p,'finishing')-75)*.0013,.045,.62)*(inside?1.62:goalDist>345?(solo?.31:.17):goalDist>270?.58:1):0;
+    const takesShot=this.canShoot(p),shotChance=takesShot?clamp(.205+(370-goalDist)*.00076+pressure*.009+(p.i>=8?.055:0)+(aggressive?.040:0)-(defensive?.015:0)+(profile?.shoot||0)*.65+(this._attributes(p,'finishing')-75)*.0017,.055,.68)*(inside?1.74:goalDist>345?(solo?.34:.20):goalDist>270?.65:1)*(1+this._qualityEdge(p.side)*.24):0;
     if(takesShot&&Math.abs(p.y-PITCH.cy)<265&&this.random()<shotChance){this.shoot(p);return;}
     if(solo&&goalDist>205&&pressure<2){p.decision=this.range(.55,.90);return;}
     const isWide=Math.abs(p.y-PITCH.cy)>230,closeToEnd=goalDist<495,progress=this.progress(p.side,p.x),nearCorner=progress>1150&&Math.abs(p.y-PITCH.cy)>240;
@@ -1515,13 +1524,12 @@ class Match {
     for(let s=0;s<2;s++){
       const roll=this.masterRoll[s]||0;
       const slots=Masters.ENTRY_MINUTES||[29,66];
-      if(roll<(Masters.MAX_ENTRIES||2)&&min>=slots[roll]&&!this.pendingMasters[s]&&!this.masterStates[s]){
+      if(roll<Math.min(1,Masters.MAX_ENTRIES||1)&&min>=slots[roll]&&!this.pendingMasters[s]&&!this.masterStates[s]&&!this.masterEntries.some(e=>e.side===s)){
         this.masterRoll[s]=roll+1;
         const c=Masters.CONFIG[this.teams[s].id];
         const need=this.score[s]<this.score[1-s]||this.tactics[s]==='attack';
-        // Primeira entrada muito provável; segunda é tática, sem obrigação
-        // de virar a partida ou garantir gols ao mestre.
-        const chance=Math.min(.99,(c?.entryProbability||.9)-(roll?.13:0)+(need?.06:0));
+        // Um único período real de jogo por mestre e por partida.
+        const chance=Math.min(.99,(c?.entryProbability||.9)+(need?.06:0));
         if(c&&this.random()<chance){
           this.pendingMasters[s]=true;
           this.log(`🌟 ${c.name} se prepara para uma ${roll===0?'primeira':'nova'} entrada na próxima parada!`,'coach');
@@ -1777,7 +1785,7 @@ class Match {
     const style=b.shotStyle||'placed';
     const tricky=(style==='chip'||style==='acrobatic'||style==='first-time');
     const chance=b.isPenalty?clamp((has(keeper,'wild')?.23:.19)+(d<20?.025:0),.14,.29):
-      clamp((has(keeper,'wild')?.83:.73)+(d<23?.10:0)-(b.shotXg>.30?.07:0)+(this.gameplayPreset==='fast'?.04:0),.53,.96);
+      clamp((has(keeper,'wild')?.72:.62)+(d<23?.08:0)-(b.shotXg>.30?.08:0)+(this.gameplayPreset==='fast'?.025:0)-this._qualityEdge(b.by.side)*.08,.41,.90);
     this._activateAbility(keeper,'save');
     const adjusted=clamp(chance+profile.reflex-(tricky?.035:0)+(this._attributes(keeper,'reflexes')-78)*.0023+
       Abilities.tacticalBonus(keeper,'save',this.time)*.072,b.isPenalty?.12:.23,b.isPenalty?.36:.94);
