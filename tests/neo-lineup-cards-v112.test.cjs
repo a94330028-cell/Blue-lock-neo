@@ -39,7 +39,7 @@ const customRows=formationRows(custom,custom.formation,Layout.layout(custom,cust
 assert.deepEqual(customRows.map(r=>r.size),[1,3,2,4,1],'more complex shapes remain readable');
 const fallback={formationName:'Custom',formation:mc.formation};
 assert.equal(formationRows(fallback,fallback.formation,Layout.layout(fallback,fallback.formation)).flatMap(x=>x.indices).length,11,'unknown custom formations still contain all players');
-for(const piece of ['neo980-lineup-card','neo980-card-portrait','neo980-formation-rows','neo980-card-pitch','data-neo960-profile','NeoPortraitUI','neo980-ovr','neo980-select','NeoPitch1040?.layout(t,f)']){
+for(const piece of ['neo980-lineup-card','neo980-card-portrait','neo980-formation-rows','neo980-card-pitch','data-neo960-profile','NeoPortraitUI','neo980-ovr','neo980-select','NeoPitch1040?.layout(tacticalTeam,f)']){
  assert.ok(source.includes(piece),piece+' must be used in the active squad view');
 }
 for(const piece of ['#neo980-squad-area .neo980-card-pitch','.neo980-lineup-card','.neo980-card-portrait','.neo980-card-body','.neo980-formation-rows','grid-template-columns:repeat(var(--line-count)','@media(max-width:370px)']){

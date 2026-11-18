@@ -62,7 +62,7 @@ const FORMATIONS = Object.freeze({
   ht:[
     {role:'GOL',x:.045,y:.50},
     {role:'ZAG',x:.15,y:.21},{role:'ZAG',x:.13,y:.50},{role:'ZAG',x:.15,y:.79},
-    {role:'VOL',x:.31,y:.50},{role:'MC',x:.42,y:.30},{role:'MC',x:.42,y:.70},
+    {role:'MC',x:.42,y:.30},{role:'MC',x:.42,y:.70},{role:'MEI',x:.52,y:.50},
     {role:'PD',x:.67,y:.86},{role:'PE',x:.67,y:.14},
     {role:'CA',x:.78,y:.37},{role:'CA',x:.78,y:.63}
   ],
@@ -329,7 +329,12 @@ class Match {
     // Pre-match coaching uses only genuine results; clones prevent league roster mutation.
     const Coach=(typeof globalThis!=='undefined'?globalThis.NeoCoach980:null);
     this.coachPlans=this.teams.map(t=>Coach?.planLineup?.(t,seasonContext,Attr)||null);
-    this.teams=this.teams.map((t,i)=>this.coachPlans[i]?.changes.length?{...t,players:this.coachPlans[i].players.slice(),reserves:this.coachPlans[i].reserves.slice(),formation:(t.formation||DEFAULT_FORMATION).map(x=>({...x}))}:t);
+    this.teams=this.teams.map((t,i)=>this.coachPlans[i]?.changes.length||this.coachPlans[i]?.formation?{
+      ...t,players:this.coachPlans[i].players.slice(),reserves:this.coachPlans[i].reserves.slice(),
+      formation:(this.coachPlans[i].formation||t.formation||DEFAULT_FORMATION).map(x=>({...x})),
+      formationName:this.coachPlans[i].formationName||t.formationName,
+      reserveRoles:{...t.reserveRoles,...Object.fromEntries(t.players.map((name,j)=>[name,t.formation[j]?.role||'MC']))}
+    }:t);
     this.startingLineups=this.teams.map(t=>t.players.map((name,i)=>({name,role:(t.formation||DEFAULT_FORMATION)[i]?.role||'MC',slot:i})));
     this.coachDecisions=[];this.gameplayPreset='authentic';this.weather='clear';this.pressing=['balanced','balanced'];this.attackWidth=['normal','normal'];this.buildUp=['balanced','balanced'];this.half=1;this.halftimeDone=false;this.firstKickoffSide=0;this.addedTimeFirst=60+Math.floor(this.random()*121);this.addedTimeSecond=120+Math.floor(this.random()*121);this.firstHalfEnd=45*60+this.addedTimeFirst;this.fullTimeEnd=90*60+this.addedTimeSecond;
     this.neoCareerContext=careerPlayers?.players?careerPlayers:null;this.neoSeasonContext=seasonContext||null;this.careerPlayers=careerPlayers?.players||careerPlayers||{};this.careerLinks=careerPlayers?.links||{};this.careerRivals=careerPlayers?.rivals||{};this.masterStates=[null,null];this.pendingMasters=[false,false];this.masterEntries=[];this.masterRoll=[0,0];this.masterHidden=[];
@@ -1009,7 +1014,7 @@ class Match {
        (kind==='tap-in'?.09:kind==='first-time'?.035:kind==='chip'?-.035:kind==='far-post'?-.01:kind==='low-drive'?.03:0)+(this._attributes(p,'finishing')-77)*.0032+(this._attributes(p,'accuracy')-77)*.0021+(this._attributes(p,'positioning')-77)*.0014+Abilities.tacticalBonus(p,'shot',this.time)*.065,.19,.87);
     // Better finishers get a genuine accuracy advantage, while all sides
     // produce a livelier number of shots on target.
-    const onTarget=this.random()<clamp((accuracy+this._qualityEdge(p.side)*.09)*.98,.19,.93);
+    const onTarget=this.random()<clamp((accuracy+this._qualityEdge(p.side)*.14)*.98,.19,.93);
     let aimY;
     if(onTarget){
       if(kind==='far-post')aimY=PITCH.cy+(angle<0?1:-1)*this.range(PITCH.goalHalf*.42,PITCH.goalHalf-7);
@@ -1091,7 +1096,7 @@ class Match {
       !this.offside(attackingReceiver,p);
     if(!solo&&layoff&&this.random()<.60){this.pass(p,attackingReceiver);return;}
     // Long-range goals remain possible, but most attackers now seek the box before shooting.
-    const takesShot=this.canShoot(p),shotChance=takesShot?clamp(.205+(370-goalDist)*.00076+pressure*.009+(p.i>=8?.055:0)+(aggressive?.040:0)-(defensive?.015:0)+(profile?.shoot||0)*.65+(this._attributes(p,'finishing')-75)*.0017,.055,.68)*(inside?1.74:goalDist>345?(solo?.34:.20):goalDist>270?.65:1)*(1+this._qualityEdge(p.side)*.24):0;
+    const takesShot=this.canShoot(p),shotChance=takesShot?clamp(.205+(370-goalDist)*.00076+pressure*.009+(p.i>=8?.055:0)+(aggressive?.040:0)-(defensive?.015:0)+(profile?.shoot||0)*.65+(this._attributes(p,'finishing')-75)*.0017,.055,.68)*(inside?1.74:goalDist>345?(solo?.34:.20):goalDist>270?.65:1)*(1+this._qualityEdge(p.side)*.34):0;
     if(takesShot&&Math.abs(p.y-PITCH.cy)<265&&this.random()<shotChance){this.shoot(p);return;}
     if(solo&&goalDist>205&&pressure<2){p.decision=this.range(.55,.90);return;}
     const isWide=Math.abs(p.y-PITCH.cy)>230,closeToEnd=goalDist<495,progress=this.progress(p.side,p.x),nearCorner=progress>1150&&Math.abs(p.y-PITCH.cy)>240;
@@ -1785,7 +1790,7 @@ class Match {
     const style=b.shotStyle||'placed';
     const tricky=(style==='chip'||style==='acrobatic'||style==='first-time');
     const chance=b.isPenalty?clamp((has(keeper,'wild')?.23:.19)+(d<20?.025:0),.14,.29):
-      clamp((has(keeper,'wild')?.72:.62)+(d<23?.08:0)-(b.shotXg>.30?.08:0)+(this.gameplayPreset==='fast'?.025:0)-this._qualityEdge(b.by.side)*.08,.41,.90);
+      clamp((has(keeper,'wild')?.72:.62)+(d<23?.08:0)-(b.shotXg>.30?.08:0)+(this.gameplayPreset==='fast'?.025:0)-this._qualityEdge(b.by.side)*.12,.41,.90);
     this._activateAbility(keeper,'save');
     const adjusted=clamp(chance+profile.reflex-(tricky?.035:0)+(this._attributes(keeper,'reflexes')-78)*.0023+
       Abilities.tacticalBonus(keeper,'save',this.time)*.072,b.isPenalty?.12:.23,b.isPenalty?.36:.94);
@@ -2057,7 +2062,7 @@ class Match {
   }
   finish(){if(this.finished)return;this._finalizePendingShots('whistle');this.time=this.fullTimeEnd;this._updateMasters(true);this.finished=true;this.phase='finished';this.log('🏁 Fim de jogo!','finish');}
   runToEnd(){let i=0;while(!this.finished&&i++<14000)this.step(TICK);if(!this.finished)this.finish();return this.result();}
-  result(){return {home:this.teams[0].id,away:this.teams[1].id,score:[...this.score],startingLineups:this.startingLineups.map(rows=>rows.map(p=>({...p}))),coachPlans:this.coachPlans.map(x=>x?{reason:x.reason,form:x.form,changes:x.changes}:null),coachDecisions:this.coachDecisions.map(x=>({...x})),gameplayPreset:this.gameplayPreset,weather:this.weather,autoGameplan:!!this.autoGameplan,planNames:[...(this.planNames||[])],modernPatterns:[this.modernPattern(0),this.modernPattern(1)],specialMoments:this.specialMoments.map(m=>({...m})),shapeHistory:(this.shapeHistory||[[],[]]).map(h=>h.map(x=>({...x}))),tacticalSettings:{pressing:[...this.pressing],attackWidth:[...this.attackWidth],buildUp:[...this.buildUp],stance:[...this.tactics],crosses:[...this.crossPreference],corners:[...this.setPieceStyle]},stats:JSON.parse(JSON.stringify(this.stats)),players:[...this.retiredPlayers,...this.masterHidden,...this.players].map(p=>({name:p.name,side:p.side,role:p.role,attributes:p.attributes,ovr:p.attributes?.ovr||75,isMaster:!!p.isMaster,goals:p.goals,assists:p.assists,shots:p.shots,dribblesWon:p.dribblesWon||0,saves:Math.max(p.saves||0,p.i===0?this.shotMap.filter(s=>s.outcome==='saved'&&s.savedBy===p.name&&s.side!==p.side).length:0),passes:p.pases||0,flowCount:p.flowCount||0,abilityUses:{...(p.abilityUses||{})},tackles:p.tackles||0,interceptions:p.interceptions||0,shotBlocks:p.shotBlocks||0,aerialWins:p.aerialWins||0,duelsWon:p.duelsWon||0,keyPasses:p.keyPasses||0,runs:p.runCount,overlaps:p.overlapCount,distance:Math.round(p.distanceCovered),rating:+p.rating.toFixed(1)})),masterEntries:this.masterEntries.map(r=>({...r})),substitutions:this.subRecords.map(s=>({...s})),cards:this.cardRecords.map(c=>({...c})),shots:this.shotMap.map(s=>({...s})),events:this.keyEvents.map(e=>({...e})),goalRecords:this.goalRecords.map(r=>({...r,score:[...r.score]})),abilityHistory:this.abilityHistory.map(a=>({...a})),duelHistory:this.duelHistory.map(d=>({...d})),seed:this.seed};}
+  result(){return {home:this.teams[0].id,away:this.teams[1].id,score:[...this.score],startingLineups:this.startingLineups.map(rows=>rows.map(p=>({...p}))),coachPlans:this.coachPlans.map(x=>x?{reason:x.reason,form:x.form,changes:x.changes,formationName:x.formationName||null,formationChanged:!!x.formationChanged}:null),coachDecisions:this.coachDecisions.map(x=>({...x})),gameplayPreset:this.gameplayPreset,weather:this.weather,autoGameplan:!!this.autoGameplan,planNames:[...(this.planNames||[])],modernPatterns:[this.modernPattern(0),this.modernPattern(1)],specialMoments:this.specialMoments.map(m=>({...m})),shapeHistory:(this.shapeHistory||[[],[]]).map(h=>h.map(x=>({...x}))),tacticalSettings:{pressing:[...this.pressing],attackWidth:[...this.attackWidth],buildUp:[...this.buildUp],stance:[...this.tactics],crosses:[...this.crossPreference],corners:[...this.setPieceStyle]},stats:JSON.parse(JSON.stringify(this.stats)),players:[...this.retiredPlayers,...this.masterHidden,...this.players].map(p=>({name:p.name,side:p.side,role:p.role,attributes:p.attributes,ovr:p.attributes?.ovr||75,isMaster:!!p.isMaster,goals:p.goals,assists:p.assists,shots:p.shots,dribblesWon:p.dribblesWon||0,saves:Math.max(p.saves||0,p.i===0?this.shotMap.filter(s=>s.outcome==='saved'&&s.savedBy===p.name&&s.side!==p.side).length:0),passes:p.pases||0,flowCount:p.flowCount||0,abilityUses:{...(p.abilityUses||{})},tackles:p.tackles||0,interceptions:p.interceptions||0,shotBlocks:p.shotBlocks||0,aerialWins:p.aerialWins||0,duelsWon:p.duelsWon||0,keyPasses:p.keyPasses||0,runs:p.runCount,overlaps:p.overlapCount,distance:Math.round(p.distanceCovered),rating:+p.rating.toFixed(1)})),masterEntries:this.masterEntries.map(r=>({...r})),substitutions:this.subRecords.map(s=>({...s})),cards:this.cardRecords.map(c=>({...c})),shots:this.shotMap.map(s=>({...s})),events:this.keyEvents.map(e=>({...e})),goalRecords:this.goalRecords.map(r=>({...r,score:[...r.score]})),abilityHistory:this.abilityHistory.map(a=>({...a})),duelHistory:this.duelHistory.map(d=>({...d})),seed:this.seed};}
 }
 // A complete season with 10 clubs can exceed localStorage's quota if every
 // tactical duel and full attribute grid is repeated in every match report.

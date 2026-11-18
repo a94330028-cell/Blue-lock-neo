@@ -44,14 +44,14 @@ const PROFILES={
 // Elenco principal limitado a 90. Só os cinco Master Strikers ultrapassam 90.
 // O cálculo da nota continua usando atributos reais da posição.
 const TARGET_OVR=Object.freeze({
- 'Michael Kaiser':90,'Yoichi Isagi':89,'Rin Itoshi':90,'Ryusei Shido':89,
- 'Shoei Baro':89,'Seishiro Nagi':87,'Meguru Bachira':88,'Hyoma Chigiri':87,
- 'Reo Mikage':88,'Charles Chevalier':89,'Yo Hiori':88,'Alexis Ness':85,
- 'Oliver Aiku':90,'Don Lorenzo':90,'Ikki Niko':87,'Gin Gagamaru':89,
- 'Jingo Raichi':85,'Tabito Karasu':87,'Ranze Kurona':84,'Kenyu Yukimiya':85,
- 'Rensuke Kunigami':87,'Eita Otoya':84,'Jyubei Aryu':86,
- 'Aoshi Tokimitsu':84,'Zantetsu Tsurugi':85,'Reiji Hiiragi':82,
- 'Agi':86,'Nijiro Nanase':81,'Shuto Sendo':82,'Hajime Nishioka':81,
+ 'Michael Kaiser':88,'Yoichi Isagi':86,'Rin Itoshi':88,'Ryusei Shido':87,
+ 'Shoei Baro':87,'Seishiro Nagi':84,'Meguru Bachira':85,'Hyoma Chigiri':84,
+ 'Reo Mikage':84,'Charles Chevalier':86,'Yo Hiori':85,'Alexis Ness':81,
+ 'Oliver Aiku':87,'Don Lorenzo':88,'Ikki Niko':83,'Gin Gagamaru':85,
+ 'Jingo Raichi':81,'Tabito Karasu':83,'Ranze Kurona':79,'Kenyu Yukimiya':80,
+ 'Rensuke Kunigami':83,'Eita Otoya':79,'Jyubei Aryu':81,
+ 'Aoshi Tokimitsu':79,'Zantetsu Tsurugi':80,'Reiji Hiiragi':77,
+ 'Agi':81,'Nijiro Nanase':76,'Shuto Sendo':77,'Hajime Nishioka':76,
  'Noel Noa':99,'Julian Loki':99,'Chris Prince':98,'Marc Snuffy':98,'Lavinho':98
 });
 function tuneToTarget(stats,role,index,target){
@@ -85,7 +85,13 @@ const hash=s=>{let n=2166136261;for(let i=0;i<s.length;i++)n=Math.imul(n^s.charC
 const bound=n=>Math.max(0,Math.min(100,Math.round(n)));
 function roleClass(role,index=0){if(index===0||['GK','GOL'].includes(role))return 'GK';if(['ZAG','CB'].includes(role))return 'DEF';if(['LD','LE','LB','RB','ALA','LWB','RWB'].includes(role))return 'FB';if(['PD','PE','LW','RW'].includes(role))return 'WING';if(['CA','ST','CF','SA'].includes(role))return 'ST';return 'MID';}
 function overall(stats,role,index){const weights=ROLE_WEIGHTS[roleClass(role,index)];let a=0,b=0;for(const [key,w] of Object.entries(weights)){a+=(stats[key]||0)*w;b+=w;}return bound(a/b);}
-function generate(name,role,index=1,experience){const h=hash(name),type=roleClass(role,index),base=MASTER_NAMES.includes(name)?93:76;const stats={};KEYS.forEach((k,i)=>{const delta=(((h>>((i%4)*7))^(h*(i+11)))%17+17)%17-8;stats[k]=bound(base+delta+(type==='GK'&&k==='reflexes'?11:0)+(type==='DEF'&&['tackling','defense'].includes(k)?10:0)+(type==='WING'&&['speed','dribbling'].includes(k)?8:0)+(type==='ST'&&k==='finishing'?10:0));});
+function generate(name,role,index=1,experience){const h=hash(name),type=roleClass(role,index),base=MASTER_NAMES.includes(name)?93:(TARGET_OVR[name]||EXTRA_RATINGS[name]?76:70);const stats={};KEYS.forEach((k,i)=>{const delta=(((h>>((i%4)*7))^(h*(i+11)))%17+17)%17-8;stats[k]=bound(base+delta+(type==='GK'&&k==='reflexes'?11:0)+(type==='DEF'&&['tackling','defense'].includes(k)?10:0)+(type==='WING'&&['speed','dribbling'].includes(k)?8:0)+(type==='ST'&&k==='finishing'?10:0));});
+ // Each athlete has a genuine specialization and a gap to train. This spread
+ // makes two players with similar OVR behave differently in their actions.
+ const specialties=Object.keys(ROLE_WEIGHTS[type]);
+ const strong=specialties[h%specialties.length],weak=KEYS.filter(k=>k!==strong&&!['ego'].includes(k));
+ stats[strong]=bound(stats[strong]+6);
+ stats[weak[(h>>>9)%weak.length]]=bound(stats[weak[(h>>>9)%weak.length]]-7);
  Object.assign(stats,PROFILES[name]||{});
  if(TARGET_OVR[name])tuneToTarget(stats,role,index,TARGET_OVR[name]);
  if(EXTRA_RATINGS[name]){

@@ -44,7 +44,7 @@ const rounds=fs.readFileSync('web/neo-round-v990.js','utf8');
 const style=fs.readFileSync('web/neo-pitch-v1040.css','utf8');
 const worker=fs.readFileSync('web/service-worker.js','utf8');
 const html=fs.readFileSync('web/index.html','utf8');
-assert.ok(squad.includes('NeoPitch1040?.layout(t,f)'), 'all team squad boards use corrected slots');
+assert.ok(squad.includes('NeoPitch1040?.layout(tacticalTeam,f)'), 'all team squad boards use the real coached formation slots');
 assert.ok(rounds.includes('xiCardsHTML(xi')&&rounds.includes('neo-xi-field'), 'team of the championship now uses the large portrait-card pitch');
 assert.ok(rounds.includes('neo-xi-count-')&&style.includes('.neo-xi-count-4'), 'each of the eleven positions receives its own responsive card');
 assert.ok(rounds.includes('neo990-xi-list'), 'list stays available for accessibility');

@@ -118,4 +118,13 @@ body.neo960-modal-open{overflow:hidden!important}
 .neo960-empty{font-size:11px;color:#92b3c8}
 .neo960-attribute{display:grid;grid-template-columns:100px 1fr 30px;gap:9px;align-items:center;padding:6px 0;font-size:10px;color:#b6d2e5}
 .neo960-attribute>div{height:6px;background:#1a4561;border-radius:4px;overflow:hidden}.neo960-attribute i{display:block;height:100%;background:linear-gradient(90deg,#3186de,#5ae0e4)}.neo960-attribute strong{text-align:right;color:#fff}
+.neo960-skill-identity{margin:13px 0;padding:13px;border-radius:13px;background:#0a2135;border:1px solid #285c78}
+.neo960-skill-identity h3{margin:0 0 4px;color:#ebfaff;font-size:14px}.neo960-skill-identity p{font-size:11px;line-height:1.5;color:#a5cadc;margin:0 0 10px}
+.neo960-skill-leaders{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.neo960-skill-leaders>span{display:flex;flex-direction:column;justify-content:space-between;gap:8px;min-width:0;padding:9px 7px;border-radius:9px;background:#133348;border:1px solid #316a82}
+.neo960-skill-leaders small{font-size:10px;color:#b5d2e4;line-height:1.3;overflow-wrap:anywhere}.neo960-skill-leaders b{font-size:19px;font-variant-numeric:tabular-nums;color:#bce6fe}
+.neo960-skill-leaders .elite b{color:#ffdc72}.neo960-skill-leaders .forte b{color:#7ef6c7}
+.neo960-growth{display:block;color:#adc3d6;font-size:10px;margin-top:10px}
+.neo960-attribute.elite i{background:linear-gradient(90deg,#cc8b25,#ffd974)}.neo960-attribute.forte i{background:linear-gradient(90deg,#168a73,#76efc5)}
+.neo960-attribute.regular i{background:linear-gradient(90deg,#3186de,#5ae0e4)}.neo960-attribute.evolucao i{background:linear-gradient(90deg,#835a6b,#c97d96)}
 @media(max-width:700px){.neo960-modal{align-items:flex-end;padding:0}.neo960-modal-sheet{width:100%;max-height:93dvh;border-radius:17px 17px 0 0;padding:12px 12px 22px}.neo960-profile-picture{width:75px;height:94px}.neo960-profile-head{min-height:99px;padding-right:38px;gap:10px}.neo960-profile-head h2{font-size:17px}.neo960-profile-meta{font-size:10px}.neo960-avatar{width:42px;height:49px}.neo960-row .neo940-price{font-size:11px}.neo960-row .neo960-open{font-size:16px}#neo940-ranking .neo960-row{gap:7px;padding:9px 7px;min-height:68px}.neo960-mini-avatar{width:35px;height:38px}.neo960-mvp-avatar{width:53px;height:62px}.neo960-stat-grid{gap:5px}}

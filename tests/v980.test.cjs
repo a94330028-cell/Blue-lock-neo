@@ -25,7 +25,8 @@ const match=new E.Match('bm','px',149,null,bad);
 assert.ok(match.coachPlans[0].changes.length,'Pre-match plan used by actual game engine');
 assert.deepEqual(bm.players,original,'No permanent changes to original club squad');
 assert.deepEqual(bm.reserves,bench,'No permanent changes to original bench');
-assert.ok(match.startingLineups[0].every((x,i)=>x.role===(bm.formation||E.DEFAULT_FORMATION)[i].role));
+assert.ok(match.startingLineups[0].every((x,i)=>x.role===match.teams[0].formation[i].role),
+ 'o XI deve usar as posições da formação escolhida pelo técnico, sem alterar o elenco registrado');
 match.time=55*60;match.phase='play';match.score=[0,2];match.lastCoachCheck=-999;match.ball.owner=null;
 match._coachDecisions();
 assert.equal(match.tactics[0],'attack','Losing coach changes to attack early');

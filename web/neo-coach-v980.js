@@ -45,7 +45,8 @@ function form(season,id){
   if(!Array.isArray(game.result)||!game.result.every(Number.isFinite))continue;
   if(game.home!==id&&game.away!==id)continue;
   const side=game.home===id?0:1,own=game.result[side],opp=game.result[1-side];
-  all.push({round:r.round||0,won:own>opp,draw:own===opp,lost:own<opp,own,opp});
+  all.push({round:r.round||0,won:own>opp,draw:own===opp,lost:own<opp,own,opp,
+   formationName:game.details?.coachPlans?.[side]?.formationName||null});
  }
  const recent=all.slice(-5),last3=recent.slice(-3);
  let streak=0;for(let i=recent.length-1;i>=0;i--){if(!recent[i].lost)break;streak++;}
@@ -81,6 +82,129 @@ function overall(Attr,team,name,role,index,season){
  const saved=season?.career?.players?.[name+'|'+team.id];
  try{return Attr?.generate?.(name,role,index,saved)?.ovr||N(saved?.ovr)||75;}catch(e){return N(saved?.ovr)||75;}
 }
+// Formations are real match slots, not decorative labels. Each candidate must
+// have a playable XI with an actual keeper, defenders, midfielders and forwards.
+const SHAPES=Object.freeze({
+ '3-2-5':['ZAG','ZAG','ZAG','MC','MC','PD','PE','CA','CA','SA'],
+ '3-3-4':['ZAG','ZAG','ZAG','MC','MC','MEI','PD','PE','CA','CA'],
+ '3-4-3':['ZAG','ZAG','ZAG','MC','MC','MC','MEI','PD','CA','PE'],
+ '3-5-2':['ZAG','ZAG','ZAG','VOL','MC','MC','MEI','ALA','CA','SA'],
+ '4-3-3':['LD','ZAG','ZAG','LE','VOL','MC','MEI','PD','CA','PE'],
+ '4-4-2':['LD','ZAG','ZAG','LE','MC','MC','MC','MEI','CA','SA'],
+ '4-2-3-1':['LD','ZAG','ZAG','LE','VOL','MC','PD','MEI','PE','CA']
+});
+function shapeSlots(name){
+ const roles=SHAPES[name];if(!roles)return null;
+ const types=roles.map(r=>group(r));
+ return [{role:'GOL',x:.045,y:.5},...roles.map((role,i)=>{
+  const g=types[i],same=types.reduce((a,v)=>a+(v===g),0),at=types.slice(0,i).filter(x=>x===g).length;
+  return {role,x:g==='D'?.16:g==='M'?.45:.75,y:(at+1)/(same+1)};
+ })];
+}
+function preferredRole(team,name){
+ const original=team.players.indexOf(name);
+ return String(team.suppliedRatings?.[name]?.role||team.reserveRoles?.[name]||
+  (original>=0?team.formation?.[original]?.role:null)||reserveRole(team,name)).toUpperCase();
+}
+function rolePenalty(position,role){
+ if(position===role)return 0;
+ if(compatible(position,role))return 2.5;
+ if(group(position)===group(role))return group(position)==='D'?9:7;
+ return 28;
+}
+// Minimum-cost rectangular assignment: unlike a greedy roster sort, this does
+// not use the only natural center-back in a fullback slot before filling CB.
+function assign(roles,pool,score){
+ const n=roles.length,m=pool.length;if(m<n)return null;
+ const u=Array(n+1).fill(0),v=Array(m+1).fill(0),p=Array(m+1).fill(0),way=Array(m+1).fill(0);
+ for(let i=1;i<=n;i++){
+  p[0]=i;let j0=0;const min=Array(m+1).fill(Infinity),used=Array(m+1).fill(false);
+  do{
+   used[j0]=true;const i0=p[j0];let delta=Infinity,j1=0;
+   for(let j=1;j<=m;j++)if(!used[j]){
+    const cur=110-score(i0-1,j-1)-u[i0]-v[j];
+    if(cur<min[j]){min[j]=cur;way[j]=j0;}
+    if(min[j]<delta){delta=min[j];j1=j;}
+   }
+   for(let j=0;j<=m;j++){if(used[j]){u[p[j]]+=delta;v[j]-=delta;}else min[j]-=delta;}
+   j0=j1;
+  }while(p[j0]!==0);
+  do{const j1=way[j0];p[j0]=p[j1];j0=j1;}while(j0!==0);
+ }
+ const picked=Array(n).fill(null);
+ for(let j=1;j<=m;j++)if(p[j])picked[p[j]-1]=pool[j-1];
+ return picked;
+}
+function chooseFormation(team,season,Attr,result){
+ const history=result.form,last=history.recent.at(-1),lastShape=last?.formationName;
+ if(history.played<2&&!lastShape)return result;
+ if(!history.underPressure&&!result.changes.length&&!lastShape)return result;
+ const initial=team.players.slice(),everyone=[...new Set([...initial,...team.reserves])];
+ const keep=typeof globalThis!=='undefined'?globalThis.NeoEngine?.listCreatedPlayers?.()
+  .filter(p=>p.club===team.id).map(p=>p.name)||[]:[];
+ const gk=initial[0],pool=everyone.filter(n=>n!==gk&&group(preferredRole(team,n))!=='G');
+ const scored=history.recent.slice(-3).reduce((a,x)=>a+x.own,0);
+ const conceded=history.recent.slice(-3).reduce((a,x)=>a+x.opp,0);
+ const attackerNeeded=scored<=2,defenderNeeded=conceded>=4;
+ const quality=(name,role)=>{
+  const natural=preferredRole(team,name),f=perf(name,team,season);
+  return overall(Attr,team,name,natural,1,season)-rolePenalty(role,natural)
+   -(f?.poor?8:0)+(initial.includes(name)?1.2:0);
+ };
+ const originalShape=team.formationName||'4-3-3';
+ const options=[...new Set([originalShape,...Object.keys(SHAPES)])].filter(x=>SHAPES[x]);
+ let best=null;
+ for(const name of options){
+  const formation=shapeSlots(name),roles=SHAPES[name];
+  const picked=assign(roles,pool,(i,j)=>quality(pool[j],roles[i]));
+  if(!picked||keep.some(x=>!picked.includes(x)))continue;
+  if(roles.some((role,i)=>!compatible(role,preferredRole(team,picked[i]))))continue;
+  const players=[gk,...picked],promoted=players.filter(x=>!initial.includes(x)),benched=initial.filter(x=>!players.includes(x));
+  if(promoted.length>3||promoted.length!==benched.length)continue;
+  const rolesByName=Object.fromEntries(players.map((x,i)=>[x,formation[i].role]));
+  if(promoted.some(x=>overall(Attr,team,x,preferredRole(team,x),1,season)<80))continue;
+  const defs=roles.filter(r=>group(r)==='D').length,mids=roles.filter(r=>group(r)==='M').length,front=10-defs-mids;
+  let score=roles.reduce((a,r,i)=>a+quality(picked[i],r),0)/10;
+  score+=1.5*Math.min(mids,3)+.65*Math.min(defs,4)-Math.max(0,front-4)*2.2;
+  if(defenderNeeded)score+=defs*1.8;
+  if(attackerNeeded)score+=front*.75;
+  if(history.streak>=2&&name===(lastShape||originalShape))score-=8;
+  // A losing experiment cannot be repeated indefinitely. A winning switch
+  // stays in place until results offer a reason to change it again.
+  if(lastShape===name)score+=last?.lost?-6:5;
+  if(name===originalShape&&!lastShape)score+=1;
+  if(!best||score>best.score)best={name,formation,players,promoted,benched,rolesByName,score};
+ }
+ if(!best)return result;
+ if(best.name===originalShape&&best.promoted.length===0&&!lastShape)return result;
+ // Do not punish a successful experimental formation for the absence of a
+ // fresh losing streak; continue that approach until it stops working.
+ if(lastShape&&last&&!last.lost&&best.name!==lastShape){
+  const saved=shapeSlots(lastShape);if(saved){const selected=options.includes(lastShape)?lastShape:null;
+   if(selected){const stable=assign(SHAPES[selected],pool,(i,j)=>quality(pool[j],SHAPES[selected][i]));
+    if(stable&&keep.every(x=>stable.includes(x))&&SHAPES[selected].every((role,i)=>compatible(role,preferredRole(team,stable[i]))))
+     best={...best,name:selected,formation:saved,players:[gk,...stable],promoted:stable.filter(x=>!initial.includes(x)),benched:initial.filter(x=>![gk,...stable].includes(x))};
+   }
+  }
+ }
+ const changes=best.promoted.map((name,i)=>{
+  const out=best.benched[i],index=best.players.indexOf(name),role=best.formation[index].role;
+  return {out,in:name,role,position:index,oldOvr:overall(Attr,team,out,preferredRole(team,out),1,season),
+   newOvr:overall(Attr,team,name,preferredRole(team,name),1,season)};
+ });
+ if(changes.some(x=>x.newOvr<x.oldOvr-8))return result;
+ result.players=best.players;
+ result.reserves=[...team.reserves.filter(n=>!best.promoted.includes(n)),...best.benched];
+ result.changes=changes;
+ result.formation=best.formation;
+ result.formationName=best.name;
+ result.formationChanged=best.name!==originalShape;
+ result.reason='🧠 Técnico '+(lastShape&&last?.lost?'reage à formação que falhou':
+  history.underPressure?'ajusta o esquema após resultados ruins':
+  result.changes.length?'avalia Notas baixas e ajusta a formação':'mantém a tática que funcionou')+
+  ': '+best.name+(changes.length?' · '+changes.length+' mudança(s) no XI':'');
+ return result;
+}
 function planLineup(team,season,Attr){
  const current=team.players.slice(0,11),bench=team.reserves.slice();const history=form(season,team.id);
  const result={teamId:team.id,players:current.slice(),reserves:bench.slice(),changes:[],form:history,reason:history.underPressure?'Técnico analisa sequência negativa':'Escalação titular mantida'};
@@ -92,7 +216,7 @@ function planLineup(team,season,Attr){
   // Goalkeeper stays at position 0; only similar-role and sensible-quality changes.
   slots.push({index:i,name:current[i],role,ovr,score,perf:p,poor:!!p?.poor});
  }
- if(!history.underPressure&&!slots.some(s=>s.poor))return result;
+ if(!history.underPressure&&!slots.some(s=>s.poor))return chooseFormation(team,season,Attr,result);
  slots.sort((a,b)=>Number(b.poor)-Number(a.poor)||a.score-b.score);
  for(const s of slots){
   if(result.changes.length>=2)break;
@@ -112,7 +236,7 @@ function planLineup(team,season,Attr){
  }
  const cause=history.underPressure?(history.streak?history.streak+' derrota(s) seguida(s)':'Sequência de resultados ruins'):'Notas baixas em partidas recentes';
  result.reason=result.changes.length?`🧠 ${cause}: ${result.changes.length} alteração(ões) na escalação`:'🧠 '+cause+'; reservas analisados, titulares mantidos por qualidade e posição';
- return result;
+ return chooseFormation(team,season,Attr,result);
 }
-return {group,compatible,reserveRole,contextFor,form,recentRatings,perf,overall,planLineup};
+return {group,compatible,reserveRole,contextFor,form,recentRatings,perf,overall,planLineup,shapeSlots,chooseFormation};
 });

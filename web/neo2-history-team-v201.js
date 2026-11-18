@@ -16,24 +16,26 @@
   // original NEL league, its standings and all existing seasons.
   const HISTORY_RATINGS=Object.freeze([
    ['Dexter Morgan','PE',94],['Gustavo Grace','PD',94],['Hao','CA',90],
-   ['Saiko','CA',92],['Gb','MC',93],['Fuyuki','MC',92],['Zenkai','VOL',90],
+   ['Saiko','CA',92],['Gb','MC',93],['Fuyuki','MC',92],['Zenkai','CA',90],
    ['Oliver Grace','ZAG',92],['Zeus','ZAG',93],['Charles','ZAG',93],
    ['Gin','GOL',91],['Soul','MC',88],['Toko','GOL',90],['Kanzaku','GOL',90],
    ['Taiju','MC',90],['Akira','ZAG',88],['Void','CA',89],
-   ['Lacerda','VOL',86],['Shiro','PD',88]
+   ['Lacerda','VOL',86],['Shiro','PD',88],['Kash','MEI',89],
+   ['Rodinha','SA',90]
   ]);
   for(const [name,role,ovr] of HISTORY_RATINGS)
    Attr.registerPlayerRatings(name,ovr,{allowHigh:true,club:'ht',role});
+  Attr.registerPlayerRatings('Sae Itoshi',98,{allowHigh:true,club:'ht',role:'MEI',master:true});
   registerTeam({
    id:'ht',country:'Fictício',name:'History Team',short:'HISTORY',crest:'HT',
    formationName:'3-3-4',formation:FORMATIONS.ht,
    color:'#1550ff',dark:'#071021',accent:'#f5f8ff',
    atk:94,def:92,pas:93,style:'build',master:'Sae Itoshi',
-   players:['Gin','Oliver Grace','Zeus','Charles','Zenkai','Gb','Fuyuki',
-            'Gustavo Grace','Dexter Morgan','Hao','Saiko'],
-   reserves:['Soul','Toko','Kanzaku','Taiju','Akira','Void','Lacerda','Shiro'],
+   players:['Gin','Oliver Grace','Zeus','Charles','Gb','Fuyuki','Kash',
+            'Gustavo Grace','Dexter Morgan','Zenkai','Saiko'],
+   reserves:['Soul','Toko','Kanzaku','Taiju','Akira','Void','Lacerda','Shiro','Hao','Rodinha'],
    reserveRoles:{Soul:'MC',Toko:'GOL',Kanzaku:'GOL',Taiju:'MC',Akira:'ZAG',
-                 Void:'CA',Lacerda:'VOL',Shiro:'PD'},
+                 Void:'CA',Lacerda:'VOL',Shiro:'PD',Hao:'CA',Rodinha:'SA'},
    suppliedRatings:Object.fromEntries(HISTORY_RATINGS.map(([name,role,ovr])=>[name,{role,ovr}]))
   });
   

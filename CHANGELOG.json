@@ -24,10 +24,14 @@
       "version": "2.0.0",
       "date": "2026-11-18",
       "novidades": [
+        "Conteúdo 10.6.40: History FC com Zenkai atacante (CA 90), Kash (MEI 89) como meia titular e Rodinha (SA 90) como nova opção de ataque; técnico IA escolhe formações conforme elenco, placares e atuações.",
+        "Rebalanceamento global dos overalls automáticos: jogadores de base, titulares, craques e mestres têm faixas mais separadas; fichas mostram os três melhores atributos, pontos de evolução e barras por categoria.",
         "Conteúdo 10.6.39: EGO ARENA 3.1 no PC — comandos de partida visíveis antes do campo, atalhos de teclado, Liga com acesso direto a rodadas e seleção e Ranking em cards com retratos maiores. Interface do celular preservada.",
         "Liga Neo Egoísta com 2 a 10 clubes escolhidos, calendário, tabela e partidas com 22 atletas, incluindo History Team e times históricos."
       ],
       "correcoes": [
+        "Treinadores agora aplicam a formação selecionada ao jogo real e registram a escolha na súmula; depois de derrotas podem testar novo esquema, manter um vencedor ou abandonar o que falhou, sem modificar saves anteriores.",
+        "Atributos gerados ficaram mais variados por posição e especialidade, com efeito real em passes, dribles e finalizações. Overalls personalizados já definidos para History FC e histórico salvo continuam preservados.",
         "Mestres entram uma única vez por partida e aparecem nos rankings de desempenho, MVP, premiações, seleção da rodada e aba própria; histórico antigo reconcilia jogos duplicados. Sae mantém posição MEI e 98 OVR.",
         "Escalação corrigida: jogadores com notas ruins repetidas podem ir ao banco mesmo quando o clube vence, substituídos por reservas da posição compatível; a mudança vale no jogo real e não apaga o elenco original.",
         "Salvamento corrigido para temporadas longas: súmulas compactas mantêm gols, assistências, ofertas e notas; backups anteriores ficam protegidos no armazenamento de arquivos do dispositivo.",
@@ -47,7 +51,8 @@
         "buffs": [],
         "nerfs": [],
         "reworks": [
-          "Reformulação da trajetória dos chutes e das cobranças de pênalti, sem gol garantido."
+          "Reformulação da trajetória dos chutes e das cobranças de pênalti, sem gol garantido.",
+          "Nova escala de atributos automáticos separa reservas dos craques e mantém os overalls personalizados pelo criador."
         ]
       },
       "preview": {

@@ -7,11 +7,12 @@ assert.ok(History.install(E),'History Team registered only when its module is lo
 assert.equal(History.install(E),false,'History registration is idempotent');
 const expected={
  'Dexter Morgan':['PE',94],'Gustavo Grace':['PD',94],'Hao':['CA',90],
- 'Saiko':['CA',92],'Gb':['MC',93],'Fuyuki':['MC',92],'Zenkai':['VOL',90],
+ 'Saiko':['CA',92],'Gb':['MC',93],'Fuyuki':['MC',92],'Zenkai':['CA',90],
  'Oliver Grace':['ZAG',92],'Zeus':['ZAG',93],'Charles':['ZAG',93],
  'Gin':['GOL',91],'Soul':['MC',88],'Toko':['GOL',90],'Kanzaku':['GOL',90],
  'Taiju':['MC',90],'Akira':['ZAG',88],'Void':['CA',89],
- 'Lacerda':['VOL',86],'Shiro':['PD',88]
+ 'Lacerda':['VOL',86],'Shiro':['PD',88],'Kash':['MEI',89],
+ 'Rodinha':['SA',90]
 };
 const t=E.teamById('ht');
 assert.ok(t,'History Team registered in engine');
@@ -19,12 +20,15 @@ assert.equal(t.name,'History Team');
 assert.equal(t.master,'Sae Itoshi','the dedicated master must not also be a starting player');
 assert.ok(!t.players.includes(t.master)&&!t.reserves.includes(t.master));
 assert.equal(t.formationName,'3-3-4');
-assert.ok(t.formation[8].y<t.formation[7].y,'Dexter (PE) stays on the left and Gustavo (PD) on the right');
+assert.ok(t.formation[t.players.indexOf('Dexter Morgan')].y<t.formation[t.players.indexOf('Gustavo Grace')].y,
+ 'Dexter (PE) stays on the left and Gustavo (PD) on the right');
 assert.equal(t.players.length,11);
-assert.equal(t.reserves.length,8);
-assert.equal(new Set(t.players.concat(t.reserves)).size,19,'no duplicate roster entries');
+assert.equal(t.reserves.length,10);
+assert.equal(new Set(t.players.concat(t.reserves)).size,21,'no duplicate roster entries');
 assert.ok(t.reserves.includes('Void')&&!t.reserves.includes('Dots'),
  'Void replaces Dots without duplicating an extra reserve');
+assert.ok(t.players.includes('Kash')&&t.reserves.includes('Rodinha'),
+ 'Kash strengthens the midfield while Rodinha starts as the second striker option');
 assert.equal(E.TEAMS.length,5,'existing league stays with original five clubs');
 assert.ok(E.EXTRA_TEAMS.some(x=>x.id==='ht'));
 assert.ok(E.allTeams().some(x=>x.id==='ht'));
@@ -58,7 +62,7 @@ assert.equal(sae.length,1,'the unique History master enters once');
 assert.equal(sae[0].isMaster,true);
 assert.equal(sae[0].role,'MEI');
 assert.equal(sae[0].attributes.ovr,98,'History master actual match stats');
-assert.ok(['Gb','Fuyuki','Zenkai'].includes(m.masterEntries[0].out),'master replaces a midfielder');
+assert.ok(['Gb','Fuyuki','Kash'].includes(m.masterEntries[0].out),'master replaces a midfielder');
 const schedule=E.createSchedule(4);
 assert.equal(schedule.rounds.reduce((n,r)=>n+r.games.length,0),40,'existing 5-club league untouched');
 const r=new E.Match('ht','px',812812).runToEnd();
@@ -95,4 +99,4 @@ assert.ok(app.includes("📂 Tentar pela Galeria"),'native photo-picker recovery
 assert.ok(app.includes("const records=await readPortraitDB().catch("),'backup must work without IndexedDB');
 assert.ok(app.includes("await savePortraitImage(rec.type,rec.name,rec.data)"),'backup import respects localStorage fallback');
 assert.ok(app.includes("await savePortraitImage('custom',name,data);"),'all external portrait upload APIs honor Android fallback');
-console.log('PASS History Team: 11 starters, 8 reserves, exact OVRs, unique 98 OVR master, photos recoverable, existing NEL intact');
+console.log('PASS History Team: Zenkai forward, Kash starting midfield and Rodinha second-striker reserve, exact OVRs, unique master, photos and NEL intact');
