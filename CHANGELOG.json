@@ -24,6 +24,7 @@
       "version": "2.0.0",
       "date": "2026-11-18",
       "novidades": [
+        "Conteúdo 10.6.43: corrigida a orientação tática em formações com pontas: PE aparece à esquerda, PD à direita e atacantes centrais entre eles; LE/LD também respeitam os lados. Correção aplicada ao técnico IA, escalações e seleção do campeonato, preservando elencos, saves e fotos.",
         "Conteúdo 10.6.42: equilíbrio de desempenho revisado. Overalls muito altos agora fazem diferença real em dribles, desarmes, cabeceios, finalizações e defesas, com vantagem limitada para manter zebras e o peso de tática, cansaço e atributos; jogadores e fotos personalizados preservados.",
         "Conteúdo 10.6.41: novas imagens oficiais do History FC: Rodinha usa a aparência de Nagi enviada pelo criador e Kash usa a aparência de Akashi. As imagens originais de Seishiro Nagi permanecem intactas.",
         "Conteúdo 10.6.40: History FC com Zenkai atacante (CA 90), Kash (MEI 89) como meia titular e Rodinha (SA 90) como nova opção de ataque; técnico IA escolhe formações conforme elenco, placares e atuações.",

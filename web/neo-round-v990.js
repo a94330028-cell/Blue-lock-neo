@@ -71,7 +71,7 @@
   return round?selectXI(round,{allowPartial:true}):{round:0,players:[],reserves:[],candidateCount:0,gamesPlayed:0,gamesTotal:0,provisional:false};
  }
  function xiCardsHTML(xi,imageHTML,mode='desktop'){
-  const groups=[['ATAQUE',['PD','CA','PE']],['MEIO-CAMPO',['MC','VOL','MEI']],['DEFESA',['LD','ZAG','ZAG','LE']],['GOLEIRO',['GOL']]];
+  const groups=[['ATAQUE',['PE','CA','PD']],['MEIO-CAMPO',['MC','VOL','MEI']],['DEFESA',['LE','ZAG','ZAG','LD']],['GOLEIRO',['GOL']]];
   const players=(xi?.players||[]).slice();
   const card=p=>{
    const profile=encodeURIComponent(p.name+'|'+p.club+(p.isMaster?'|master':'')),attr=mode==='mobile'?'data-neo-ux-profile="'+profile+'"':'data-profile="'+profile+'"';

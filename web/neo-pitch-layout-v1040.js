@@ -80,6 +80,19 @@ function layout(team,formation){
  const source=Array.isArray(formation)&&formation.length===11?formation:team?.formation||[];
  const preset=SLOTS[shape];
  const points=(preset||fallback(source)).map(x=>x.slice());
+ // The game uses different slot orders across clubs and dynamic formations.
+ // Keep each winger and fullback on the correct visual side of the pitch.
+ const role=i=>String(source[i]?.role||'').toUpperCase();
+ for(const [leftRoles,rightRoles] of [
+  [['PE','LW'],['PD','RW']],
+  [['LE','LB','LWB'],['LD','RB','RWB']]
+ ]){
+  const left=source.findIndex((_,i)=>leftRoles.includes(role(i)));
+  const right=source.findIndex((_,i)=>rightRoles.includes(role(i)));
+  if(left>=0&&right>=0&&points[left]&&points[right]&&points[left][0]>points[right][0]){
+   const lane=points[left][0];points[left][0]=points[right][0];points[right][0]=lane;
+  }
+ }
  return adjust(points);
 }
 function collisions(points,screenWidth=330,pitchHeight=540,cardWidth=55,cardHeight=68){

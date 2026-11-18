@@ -96,9 +96,19 @@ const SHAPES=Object.freeze({
 function shapeSlots(name){
  const roles=SHAPES[name];if(!roles)return null;
  const types=roles.map(r=>group(r));
+ // A changed formation must respect actual wings, not the order in SHAPES:
+ // PE/LE stay on the visual left, PD/LD on the right, central roles between.
+ const flank=role=>['PE','LW','LE','LB','LWB'].includes(role)?-1:
+  ['PD','RW','LD','RB','RWB'].includes(role)?1:0;
+ const lanes=new Map();
+ for(const g of ['D','M','F']){
+  const ordered=roles.map((role,i)=>({role,i})).filter(x=>types[x.i]===g)
+   .sort((a,b)=>flank(a.role)-flank(b.role)||a.i-b.i);
+  ordered.forEach((x,i)=>lanes.set(x.i,(i+1)/(ordered.length+1)));
+ }
  return [{role:'GOL',x:.045,y:.5},...roles.map((role,i)=>{
-  const g=types[i],same=types.reduce((a,v)=>a+(v===g),0),at=types.slice(0,i).filter(x=>x===g).length;
-  return {role,x:g==='D'?.16:g==='M'?.45:.75,y:(at+1)/(same+1)};
+  const g=types[i];
+  return {role,x:g==='D'?.16:g==='M'?.45:.75,y:lanes.get(i)};
  })];
 }
 function preferredRole(team,name){

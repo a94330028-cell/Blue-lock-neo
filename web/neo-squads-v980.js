@@ -39,7 +39,13 @@ function formationRows(t,formation,spots){
   backToFront=types.filter(a=>a.length);
  }
  return [...backToFront].reverse().map((line,lineIndex,all)=>{
-  const ordered=[...line].sort((a,b)=>(Number(spots?.[a]?.lane)||50)-(Number(spots?.[b]?.lane)||50));
+  // Card order follows the pitch: PE / central strikers / PD, and
+  // LE / centre-backs / LD. This also protects old saved formations.
+  const flank=role=>['PE','LW','LE','LB','LWB'].includes(role)?-1:
+   ['PD','RW','LD','RB','RWB'].includes(role)?1:0;
+  const ordered=[...line].sort((a,b)=>
+   flank(String(formation[a]?.role||'').toUpperCase())-flank(String(formation[b]?.role||'').toUpperCase())||
+   (Number(spots?.[a]?.lane??50)-Number(spots?.[b]?.lane??50))||a-b);
   const size=ordered.length;
   const title=lineIndex===all.length-1?'DEFESA':lineIndex===0?'ATAQUE':
    (all.length>3&&lineIndex===1?'MEIAS OFENSIVOS':all.length>3&&lineIndex===all.length-2?'VOLANTES':'MEIO-CAMPO');

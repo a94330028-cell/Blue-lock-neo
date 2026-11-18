@@ -183,7 +183,7 @@ function boot(){
  makeNav();setupGalleryTools();beautifyCards();
  if(!document.getElementById("neo920-script")){const script=document.createElement("script");script.id="neo920-script";script.src="./neo-broadcast-v920.js?v=1.8.0";script.onerror=()=>toast("Falha ao carregar a transmissão v9.2. Reabra o jogo após atualizar.");document.body.appendChild(script);}
  if(!document.getElementById('neo960-script')){
-  const addon=document.createElement('script');addon.id='neo960-script';addon.src='./neo-v960.js?v=10.6.42';
+  const addon=document.createElement('script');addon.id='neo960-script';addon.src='./neo-v960.js?v=10.6.43';
   addon.onerror=()=>toast('Não foi possível carregar o ranking por posições. Confira a versão do jogo.');
   const source=document.getElementById('neo920-script');
   if(source&&!window.NeoBroadcast92){
@@ -224,10 +224,10 @@ function bootWithReference(){
   addon.onload=()=>{
    if(document.getElementById('neo-mobile-ux-v111-script'))return;
    const style=document.createElement('link');
-   style.rel='stylesheet';style.href='./neo-mobile-ux-v111.css?v=10.6.42';style.id='neo-mobile-ux-v111-style';
+   style.rel='stylesheet';style.href='./neo-mobile-ux-v111.css?v=10.6.43';style.id='neo-mobile-ux-v111-style';
    document.head.appendChild(style);
    const ux=document.createElement('script');
-   ux.id='neo-mobile-ux-v111-script';ux.src='./neo-mobile-ux-v111.js?v=10.6.42';
+   ux.id='neo-mobile-ux-v111-script';ux.src='./neo-mobile-ux-v111.js?v=10.6.43';
    ux.onerror=()=>console.warn('Central de Campeonatos/Mercado não carregou; páginas originais preservadas.');
    document.body.appendChild(ux);
   };
