@@ -23,14 +23,14 @@ for(const club of selected){
  assert.ok(active.every(p=>p.value>=100000),club+' must earn bids from the match sheet');
 }
 const historyRegular=participants.find(p=>p.name==='Gustavo Grace'&&p.club==='ht'&&!p.isMaster);
-const historyMaster=participants.find(p=>p.name==='Gustavo Grace'&&p.club==='ht'&&p.isMaster);
+const historyMaster=participants.find(p=>p.name==='Sae Itoshi'&&p.club==='ht'&&p.isMaster);
 assert.equal(historyRegular.role,'PD');
 assert.equal(historyRegular.value,season.career.players['Gustavo Grace|ht'].value);
-assert.equal(historyMaster.value,season.career.masterBids['Gustavo Grace|ht'].value);
+assert.equal(historyMaster.value,season.career.masterBids['Sae Itoshi|ht'].value);
 assert.ok(historyRegular.value>0&&historyMaster.value>0);
 
 const regularProfile=D.profile(E,season,'Gustavo Grace','ht',{isMaster:false});
-const masterProfile=D.profile(E,season,'Gustavo Grace','ht',{isMaster:true});
+const masterProfile=D.profile(E,season,'Sae Itoshi','ht',{isMaster:true});
 assert.equal(regularProfile.entry.isMaster,false);
 assert.equal(masterProfile.entry.isMaster,true);
 assert.ok(regularProfile.matched.every(x=>!x.raw.isMaster));

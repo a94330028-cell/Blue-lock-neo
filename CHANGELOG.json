@@ -24,11 +24,11 @@
       "version": "2.0.0",
       "date": "2026-11-17",
       "novidades": [
-        "Liga Neo Egoísta permite escolher entre os dez clubes cadastrados, incluindo History Team e históricos, na próxima temporada.",
-        "Calendário, tabela e campo ao vivo com 22 atletas se adaptam ao número de participantes, de 2 a 10 clubes."
+        "Conteúdo 10.6.32: Sae Itoshi assume como mestre exclusivo do History Team (MEI, 98 OVR), sem ocupar vaga entre os 11 titulares nem nos reservas.",
+        "Liga Neo Egoísta com 2 a 10 clubes escolhidos, calendário, tabela e partidas com 22 atletas, incluindo History Team e times históricos."
       ],
       "correcoes": [
-        "Saves antigos da liga continuam compatíveis e recebem backup; History Team atualizado: Void substitui Dots, com posições e OVRs preservados.",
+        "Sae substitui um meio-campista sem duplicações; Gustavo permanece PD 94 OVR. History Team mantém Void, posições, OVRs e saves antigos.",
         "Clubes adicionados à Liga Neo Egoísta aparecem nas estatísticas, nos rankings e no mercado de ofertas da própria temporada.",
         "Pênaltis não geram assistências invisíveis, e quem faz o cruzamento não cabeceia a própria bola no instante do lançamento."
       ],
@@ -36,7 +36,7 @@
         "Dois, quatro ou seis encontros por dupla, com mandos equilibrados; no ataque, jogadores procuram mais companheiros livres para passes decisivos e assistências reais."
       ],
       "visual": [
-        "Novo seletor de clubes com escudos, contador de participantes e prévia de rodadas na página da liga."
+        "Carta separada do mestre e foto editável na galeria, sem imagem automática; seletor da liga com escudos, participantes e prévia de rodadas."
       ],
       "otimizacoes": [
         "Calendário dinâmico validado de dois a dez clubes, sem duplicar partidas na mesma rodada."

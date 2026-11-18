@@ -16,6 +16,8 @@ const expected={
 const t=E.teamById('ht');
 assert.ok(t,'History Team registered in engine');
 assert.equal(t.name,'History Team');
+assert.equal(t.master,'Sae Itoshi','the dedicated master must not also be a starting player');
+assert.ok(!t.players.includes(t.master)&&!t.reserves.includes(t.master));
 assert.equal(t.formationName,'3-3-4');
 assert.ok(t.formation[8].y<t.formation[7].y,'Dexter (PE) stays on the left and Gustavo (PD) on the right');
 assert.equal(t.players.length,11);
@@ -47,10 +49,16 @@ assert.ok(m.players.some(x=>x.side===0&&x.name==='Gustavo Grace'));
 m.ball.owner=null;m.ball.to=null;
 assert.equal(m._masterEntry(0),true);
 const gustavo=m.players.filter(p=>p.side===0&&p.name==='Gustavo Grace');
-assert.equal(gustavo.length,1,'master cannot duplicate the same starter');
-assert.equal(gustavo[0].isMaster,true);
-assert.equal(gustavo[0].role,'MEI');
-assert.equal(gustavo[0].attributes.ovr,98,'History master actual match stats');
+assert.equal(gustavo.length,1,'Gustavo remains the original winger');
+assert.equal(!!gustavo[0].isMaster,false);
+assert.equal(gustavo[0].role,'PD');
+assert.equal(gustavo[0].attributes.ovr,94);
+const sae=m.players.filter(p=>p.side===0&&p.name==='Sae Itoshi');
+assert.equal(sae.length,1,'the unique History master enters once');
+assert.equal(sae[0].isMaster,true);
+assert.equal(sae[0].role,'MEI');
+assert.equal(sae[0].attributes.ovr,98,'History master actual match stats');
+assert.ok(['Gb','Fuyuki','Zenkai'].includes(m.masterEntries[0].out),'master replaces a midfielder');
 const schedule=E.createSchedule(4);
 assert.equal(schedule.rounds.reduce((n,r)=>n+r.games.length,0),40,'existing 5-club league untouched');
 const r=new E.Match('ht','px',812812).runToEnd();
@@ -66,6 +74,8 @@ assert.equal(photoClubs.length,1);
 assert.equal(photoClubs[0].id,'ht');
 assert.deepEqual(photoClubs[0].starters.map(([name])=>name),t.players);
 assert.deepEqual(photoClubs[0].reserves.map(([name])=>name),t.reserves);
+assert.deepEqual(photoClubs[0].masters.map(([name,role,,ovr])=>[name,role,ovr]),[['Sae Itoshi','MEI',98]],
+ 'the master receives an editable portrait slot without joining the reserve bench');
 assert.equal(photoClubs[0].starters.find(([name])=>name==='Dexter Morgan')[3],94);
 assert.equal(photoClubs[0].reserves.find(([name])=>name==='Shiro')[3],88);
 assert.ok(studio.includes('await window.NeoPortraitManager.saveFile(name,file)'),
@@ -77,6 +87,8 @@ assert.ok(app.includes("ht:'assets/team-logos/ht.webp'"),'History uses the uploa
 const squads=fs.readFileSync('web/neo-squads-v980.js','utf8');
 assert.ok(squads.includes('masterConfig.masterRole')&&squads.includes('masterConfig.masterOvr'),
  'master MEI 98 must be distinct from the PD 94 starter');
+assert.ok(squads.includes('neo980-master-card')&&studio.includes('...(t.masters||[])'),
+ 'master portrait is visible in the team card and photo editor');
 assert.ok(app.includes("Armazenamento de imagens cheio ou indisponível"),'portrait storage fallback with error guidance');
 assert.ok(app.includes("localStorage.setItem(key,JSON.stringify(collection))"),'fallback preserves compact pictures');
 assert.ok(app.includes("📂 Tentar pela Galeria"),'native photo-picker recovery');

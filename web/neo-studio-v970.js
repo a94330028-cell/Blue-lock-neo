@@ -24,7 +24,8 @@ function photoTeams(){
  return [...H.teams,{
   id:history.id,name:history.name,
   starters:history.players.map((name,i)=>[name,history.formation?.[i]?.role||rating(name).role||'JOG',null,rating(name).ovr]),
-  reserves:history.reserves.map(name=>[name,history.reserveRoles?.[name]||rating(name).role||'JOG',null,rating(name).ovr])
+  reserves:history.reserves.map(name=>[name,history.reserveRoles?.[name]||rating(name).role||'JOG',null,rating(name).ovr]),
+  masters:[[history.master,E.Masters?.CONFIG?.ht?.masterRole||'MEI',null,E.Masters?.CONFIG?.ht?.masterOvr||98]]
  }];
 }
 const optionHtml=(selected=null)=>clubs().map(t=>`<option value="${esc(t.id)}" ${t.id===selected?'selected':''}>${esc(t.name)}</option>`).join('');
@@ -130,7 +131,7 @@ function renderPhotos(){const el=$('neo970-photo-list');if(!el)return;
  // Searching shows just name + club, not a huge open panel for every player.
  if(q){
    const hits=teams.filter(t=>photoTeam==='all'||photoTeam===t.id)
-     .flatMap(t=>[...t.starters,...t.reserves].filter(([name])=>norm(name).includes(q)||norm(t.name).includes(q))
+     .flatMap(t=>[...t.starters,...t.reserves,...(t.masters||[])].filter(([name])=>norm(name).includes(q)||norm(t.name).includes(q))
        .map(([name])=>({name,t})));
    el.innerHTML='<div class="neo992-search-results" role="list">'+hits.map(({name,t})=>
      `<button type="button" class="neo992-search-result" data-neo992-photo-select="${esc(name)}" data-neo992-photo-team="${esc(t.id)}"><strong>${esc(name)}</strong><small>${esc(t.name)}</small></button>`
@@ -138,8 +139,8 @@ function renderPhotos(){const el=$('neo970-photo-list');if(!el)return;
    return;
  }
  el.innerHTML=teams.filter(t=>photoTeam==='all'||photoTeam===t.id).map(t=>{
-  const all=[...t.starters,...t.reserves].filter(([name])=>!q||norm(name).includes(q)||norm(t.name).includes(q));if(!all.length)return '';
-  return `<details class="neo970-club-roster" ${q||photoTeam===t.id?'open':''}><summary><strong>${esc(t.name)}</strong><span>${all.length} jogadores · titulares e reservas</span></summary>
+  const all=[...t.starters,...t.reserves,...(t.masters||[])].filter(([name])=>!q||norm(name).includes(q)||norm(t.name).includes(q));if(!all.length)return '';
+  return `<details class="neo970-club-roster" ${q||photoTeam===t.id?'open':''}><summary><strong>${esc(t.name)}</strong><span>${all.length} jogadores · titulares, reservas e mestres</span></summary>
    <div>${all.map(([name,role,number,ovr])=>`<div class="neo970-photo-row">${portraitHtml(name,E.teamById(t.id))}<div><b>${esc(name)}</b><small>${number?'#'+number+' · ':''}${esc(ROLE_LABELS[role]||role)}${ovr?' · '+ovr+' OVR':''}</small></div><button type="button" data-neo970-photo="${esc(name)}" aria-label="Adicionar imagem de ${esc(name)}">📷 Foto</button></div>`).join('')}</div></details>`;
  }).join('')||'<p class="neo970-hint">Nenhum atleta corresponde à busca.</p>';
 }

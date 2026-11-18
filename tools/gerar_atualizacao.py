@@ -38,7 +38,7 @@ manifest = {
     "url": f"{HOST}/updates/{ARCHIVE.name}",
     "sha256": sha,
     "minAndroidVersion": 85,
-    "changes": f"Blue Lock NEO {PUBLIC_VERSION} · conteúdo {UPDATE_BUILD}: Inteligência de jogo, universo vivo, Seleção Mundial NEO e melhorias de campo."
+    "changes": f"Blue Lock NEO {PUBLIC_VERSION} · conteúdo {UPDATE_BUILD}: mestre exclusivo Sae Itoshi no History Team, fotos editáveis, calendário e assistências reais preservados."
 }
 (DEST / "latest.json").write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 print(f"Pacote: {ARCHIVE} ({ARCHIVE.stat().st_size} bytes)")

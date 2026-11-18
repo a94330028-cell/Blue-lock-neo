@@ -431,10 +431,12 @@ class Match {
   }
   _masterEntry(side){const cfg=Masters.CONFIG[this.teams[side].id];if(!cfg||this.masterStates[side])return false;
     const available=this.players.filter(p=>p.side===side&&p.i!==0&&p!==this.ball.owner&&p!==this.ball.to);
-    // The History Team master is also a starter. Swap the SAME player, not
-    // a teammate, so there cannot be two copies of Gustavo on the field.
-    const slot=(cfg.masterRole&&available.find(p=>p.name===cfg.name))||
-      available.sort((a,b)=>(b.i>=8?1:0)-(a.i>=8?1:0)||a.rating-b.rating)[0];if(!slot)return false;
+    // A dedicated MEI master replaces a midfielder, never creates a second
+    // copy of a starter or removes an unrelated forward from the pitch.
+    const midfield=cfg.masterRole==='MEI'?available.filter(p=>['MC','MEI','VOL'].includes(p.role)):[];
+    const candidates=midfield.length?midfield:available;
+    const slot=candidates.find(p=>p.name===cfg.name)||
+      candidates.sort((a,b)=>(b.i>=8?1:0)-(a.i>=8?1:0)||a.rating-b.rating)[0];if(!slot)return false;
     const hidden={...slot,run:null};
     const masterRole=cfg.masterRole||slot.role;
     const masterAttrs=Attr.generate(cfg.name,masterRole,slot.i);
