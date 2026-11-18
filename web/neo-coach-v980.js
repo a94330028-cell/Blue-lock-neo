@@ -33,6 +33,12 @@ function reserveRole(team,name){
  const stored=historical?.reserves?.find(r=>r[0]===name)||historical?.starters?.find(r=>r[0]===name);
  return stored?.[1]||BENCH_HINTS[name]||'MC';
 }
+function contextFor(team,league,cups=[]){
+ // The league can include history and newly registered clubs. Trust actual
+ // membership/fixtures instead of the original five-team engine constant.
+ if(league&&(Array.isArray(league.teamIds)&&league.teamIds.includes(team.id)||league.rounds?.some(r=>r.games?.some(g=>g.home===team.id||g.away===team.id))))return league;
+ return (Array.isArray(cups)?cups:[]).find(c=>c.teams?.includes(team.id))||null;
+}
 function form(season,id){
  const all=[];
  for(const r of season?.rounds||[])for(const game of r.games||[]){
@@ -47,10 +53,29 @@ function form(season,id){
  const underPressure=streak>=2||losses>=2||(last3.length>=3&&goals<=1&&last3.filter(x=>x.won).length===0);
  return {played:all.length,streak,lossesLast3:losses,last3Goals:goals,last3Conceded:conceded,underPressure,recent};
 }
+function recentRatings(name,club,season){
+ const ratings=[];
+ for(const round of season?.rounds||[])for(const game of round.games||[]){
+  if(!Array.isArray(game.result)||!Array.isArray(game.details?.players))continue;
+  const side=game.home===club?0:game.away===club?1:-1;
+  if(side<0)continue;
+  const athlete=game.details.players.find(p=>p.name===name&&p.side===side&&!p.isMaster&&
+   p.rating!==null&&p.rating!==undefined&&Number.isFinite(Number(p.rating)));
+  if(athlete)ratings.push(Math.max(0,Math.min(10,Number(athlete.rating))));
+ }
+ return ratings.slice(-3);
+}
 function perf(name,team,season){
  const s=season?.career?.players?.[name+'|'+team.id]||{};
- if(!N(s.games))return null;
- return {games:N(s.games),rating:N(s.ratingSum)/N(s.games),goals:N(s.goals),assists:N(s.assists)};
+ const recent=recentRatings(name,team.id,season),games=Math.max(N(s.games),recent.length);
+ if(!games)return null;
+ const careerRating=N(s.ratingSum)>0&&N(s.games)>0?N(s.ratingSum)/N(s.games):null;
+ const rating=recent.length?recent.reduce((sum,n)=>sum+n,0)/recent.length:careerRating;
+ const poorRun=recent.length>=2&&recent.slice(-2).every(n=>n<=6.3);
+ const poorAverage=recent.length>=3&&recent.reduce((sum,n)=>sum+n,0)/recent.length<6.2;
+ const poorSeason=!recent.length&&N(s.games)>=3&&careerRating!==null&&careerRating<6;
+ return {games,rating,goals:N(s.goals),assists:N(s.assists),recent,
+  poor:poorRun||poorAverage||poorSeason};
 }
 function overall(Attr,team,name,role,index,season){
  const saved=season?.career?.players?.[name+'|'+team.id];
@@ -59,17 +84,19 @@ function overall(Attr,team,name,role,index,season){
 function planLineup(team,season,Attr){
  const current=team.players.slice(0,11),bench=team.reserves.slice();const history=form(season,team.id);
  const result={teamId:team.id,players:current.slice(),reserves:bench.slice(),changes:[],form:history,reason:history.underPressure?'Técnico analisa sequência negativa':'Escalação titular mantida'};
- if(!history.underPressure||current.length!==11)return result;
+ if(current.length!==11)return result;
  const formation=team.formation||[],slots=[],originalBench=bench.slice(),usedBench=new Set();
  for(let i=1;i<11;i++){
   const role=formation[i]?.role||'MC',p=perf(current[i],team,season),ovr=overall(Attr,team,current[i],role,i,season);
-  const score=ovr+(p?Math.max(-12,Math.min(5,(p.rating-6.4)*6)):0);
+  const score=ovr+(p?.rating!==null&&p?.rating!==undefined?Math.max(-12,Math.min(5,(p.rating-6.4)*6)):0)-(p?.poor?7:0);
   // Goalkeeper stays at position 0; only similar-role and sensible-quality changes.
-  slots.push({index:i,name:current[i],role,ovr,score,perf:p});
+  slots.push({index:i,name:current[i],role,ovr,score,perf:p,poor:!!p?.poor});
  }
- slots.sort((a,b)=>a.score-b.score);
+ if(!history.underPressure&&!slots.some(s=>s.poor))return result;
+ slots.sort((a,b)=>Number(b.poor)-Number(a.poor)||a.score-b.score);
  for(const s of slots){
   if(result.changes.length>=2)break;
+  if(!history.underPressure&&!s.poor)continue;
   // Protect player characters explicitly created by the user.
   if(typeof globalThis!=='undefined'&&globalThis.NeoEngine?.listCreatedPlayers?.().some(p=>p.club===team.id&&p.name===s.name))continue;
   const choices=originalBench.map((name,index)=>{
@@ -77,14 +104,15 @@ function planLineup(team,season,Attr){
   }).filter(b=>!usedBench.has(b.name)&&compatible(s.role,b.role)&&b.ovr>=s.ovr-8)
     .sort((a,b)=>b.ovr-a.ovr);
   if(!choices.length)continue;
-  const reserve=choices[0],lowest=s.perf&&s.perf.rating<6.7;
+  const reserve=choices[0],lowest=s.poor||s.perf?.rating!==null&&s.perf?.rating!==undefined&&s.perf.rating<6.7;
   if(!lowest&&reserve.ovr<s.ovr-3)continue;
   const original=result.players[s.index];result.players[s.index]=reserve.name;
   const reserveIndex=result.reserves.indexOf(reserve.name);if(reserveIndex>=0)result.reserves.splice(reserveIndex,1);usedBench.add(reserve.name);result.reserves.push(original);
   result.changes.push({out:original,in:reserve.name,role:s.role,position:s.index,oldOvr:s.ovr,newOvr:reserve.ovr});
  }
- result.reason=result.changes.length?`🧠 ${history.streak?history.streak+' derrota(s) seguida(s)':'Fase ruim'}: ${result.changes.length} alteração(ões) na escalação`:'🧠 Fase ruim; reservas analisados, titulares mantidos por qualidade e posição';
+ const cause=history.underPressure?(history.streak?history.streak+' derrota(s) seguida(s)':'Sequência de resultados ruins'):'Notas baixas em partidas recentes';
+ result.reason=result.changes.length?`🧠 ${cause}: ${result.changes.length} alteração(ões) na escalação`:'🧠 '+cause+'; reservas analisados, titulares mantidos por qualidade e posição';
  return result;
 }
-return {group,compatible,reserveRole,form,perf,overall,planLineup};
+return {group,compatible,reserveRole,contextFor,form,recentRatings,perf,overall,planLineup};
 });

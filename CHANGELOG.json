@@ -24,11 +24,12 @@
       "version": "2.0.0",
       "date": "2026-11-18",
       "novidades": [
-        "Conteúdo 10.6.36: seleção do campeonato com cartas grandes e retratos corretos, atualizada a cada jogo e com escolha entre todas as rodadas, inclusive em andamento.",
+        "Conteúdo 10.6.37: técnico inteligente agora conta derrotas dos clubes adicionais da Liga, incluindo o History Team, e avalia o desempenho recente de cada titular.",
         "Liga Neo Egoísta com 2 a 10 clubes escolhidos, calendário, tabela e partidas com 22 atletas, incluindo History Team e times históricos."
       ],
       "correcoes": [
         "Mestres entram uma única vez por partida e aparecem nos rankings de desempenho, MVP, premiações, seleção da rodada e aba própria; histórico antigo reconcilia jogos duplicados. Sae mantém posição MEI e 98 OVR.",
+        "Escalação corrigida: jogadores com notas ruins repetidas podem ir ao banco mesmo quando o clube vence, substituídos por reservas da posição compatível; a mudança vale no jogo real e não apaga o elenco original.",
         "Salvamento corrigido para temporadas longas: súmulas compactas mantêm gols, assistências, ofertas e notas; backups anteriores ficam protegidos no armazenamento de arquivos do dispositivo.",
         "Pênaltis não geram assistências invisíveis, e quem faz o cruzamento não cabeceia a própria bola no instante do lançamento."
       ],

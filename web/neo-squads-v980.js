@@ -8,7 +8,11 @@ const labels={GOL:'Goleiro',GK:'Goleiro',LD:'Lateral direito',LE:'Lateral esquer
 let selected=localStorage.getItem('neo980-team')||'bm';
 const teams=()=>E.allTeams?E.allTeams():E.TEAMS;
 const state=()=>{try{const s=JSON.parse(localStorage.getItem('neo-season-v2')||'null');return s?.schema===2?s:null}catch(_){return null}};
-const context=t=>{if(E.TEAMS.some(q=>q.id===t.id))return state();try{const cups=window.NeoCups970?.safeLoad?.(localStorage)||[];return cups.find(c=>c.teams?.includes(t.id))||null}catch(_){return null}};
+const context=t=>{
+ const league=state();
+ try{return C.contextFor(t,league,window.NeoCups970?.safeLoad?.(localStorage)||[])}
+ catch(_){return C.contextFor(t,league)}
+};
 const profileKey=(name,club)=>encodeURIComponent(name+'|'+club);
 function portrait(name,t){
  if(window.NeoPortraitUI?.html)return window.NeoPortraitUI.html(name,t,'neo980-headshot');
@@ -67,9 +71,9 @@ function render(){
  const masterCaption=t.id==='ht'&&masterConfig?
   ' · Mestre: '+esc(t.master)+' ('+esc(masterConfig.masterRole)+' · '+Number(masterConfig.masterOvr)+' OVR)':
   t.master?' · Master Striker: '+esc(t.master):'';
- const summary=form.played===0?'Sem jogos registrados: técnico mantém a formação inicial.'
+ const summary=form.played===0?'Sem jogos registrados nesta competição: técnico mantém a formação inicial.'
  :form.underPressure?`Últimos 3 jogos: ${form.lossesLast3} derrota(s). ${plan.reason}.`
- :`Últimos jogos: ${form.streak} derrota(s) consecutiva(s). ${plan.reason}.`;
+ :`Últimos jogos: ${form.streak} derrota(s) consecutiva(s) · ${form.played} jogo(s) analisado(s). ${plan.reason}.`;
  // The original simulator still writes into #squadCards on every tab visit.
  // Keep that real node alive across innerHTML rerenders instead of destroying
  // it with the old accordion; otherwise renderSquads() throws on navigation.
@@ -84,7 +88,7 @@ function render(){
  <div class="neo980-pitch neo980-card-pitch" role="group" aria-label="Escalação em cartas: ${esc(t.name)}, ${formationLabel}"><div class="neo980-pitch-markings"><span class="neo980-center-circle"></span><span class="neo980-penalty neo980-penalty-top"></span><span class="neo980-penalty neo980-penalty-bottom"></span></div><span class="neo980-goal goal-top"></span><span class="neo980-goal goal-bottom"></span>
  <div class="neo980-formation-rows">${formationRows(t,f,spots).map(line=>`<section class="neo980-tactical-line" aria-label="${line.title} · ${line.size} jogador(es)"><span class="neo980-line-title">${line.title}</span><div class="neo980-line-cards" style="--line-count:${line.size}">${line.indices.map(i=>player(t,plan.players[i],f[i]?.role||E.DEFAULT_FORMATION[i]?.role||'MC',i,s,spots?.[i]||f[i]||E.DEFAULT_FORMATION[i],i===plan.players.reduce((best,name,j)=>rating(name,t,f[j]?.role||E.DEFAULT_FORMATION[j]?.role||'MC',j,s)>rating(plan.players[best],t,f[best]?.role||E.DEFAULT_FORMATION[best]?.role||'MC',best,s)?j:best,0))).join('')}</div></section>`).join('')}</div>
  </div><div class="neo980-pitch-caption">⬆ Ataque · cartas na posição tática correta · 🧤 goleiro na base · toque em um jogador para abrir a ficha</div>
- <div class="neo980-coach-card"><div class="neo980-coach-title"><span>🧠 Técnico inteligente</span><b>${form.underPressure?'REVENDO TIME':'ANALISANDO'}</b></div><p>${esc(summary)}</p>${plan.changes.length?`<div class="neo980-coach-changes">${plan.changes.map(x=>`<span>🔄 ${esc(x.out)} <b>→</b> ${esc(x.in)} <small>${esc(x.role)}</small></span>`).join('')}</div>`:''}<small>Se houver sequência de derrotas, o técnico avalia reservas da mesma posição. Durante o jogo, ajusta pressão e substituições conforme o placar. Mudanças não alteram seus dados salvos.</small></div>
+ <div class="neo980-coach-card"><div class="neo980-coach-title"><span>🧠 Técnico inteligente</span><b>${form.underPressure||plan.changes.length?'REVENDO TIME':'ANALISANDO'}</b></div><p>${esc(summary)}</p>${plan.changes.length?`<div class="neo980-coach-changes">${plan.changes.map(x=>`<span>🔄 ${esc(x.out)} <b>→</b> ${esc(x.in)} <small>${esc(x.role)}</small></span>`).join('')}</div>`:''}<small>O técnico considera derrotas e notas ruins recentes, comparando cada titular com reservas da posição certa. A escalação pode mudar no próximo jogo sem alterar seus dados salvos.</small></div>
  <details class="neo980-reserves"><summary>🪑 Banco de reservas <span>${plan.reserves.length} jogadores</span></summary><div class="neo980-bench">${plan.reserves.map((name,i)=>{const role=C.reserveRole(t,name),o=rating(name,t,role,11+i,s);return `<button class="neo980-bench-row" type="button" data-neo960-profile="${profileKey(name,t.id)}" aria-label="Ver ficha de ${esc(name)}">${portrait(name,t)}<span><b>${esc(name)}</b><small>${esc(labels[role]||role)}</small></span><strong>${o} OVR</strong></button>`}).join('')||'<p>Nenhum reserva cadastrado.</p>'}</div></details>
  <details class="neo980-old-list"><summary>📚 Listagem completa e habilidades</summary><div id="neo980-legacy-anchor"></div></details>`;
  $('neo980-select')?.addEventListener('change',e=>chooseTeam(e.target.value));
