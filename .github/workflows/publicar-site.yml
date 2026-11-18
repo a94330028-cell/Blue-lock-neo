@@ -55,6 +55,7 @@ jobs:
           node tests/overall-impact-v10642.test.cjs
           node tests/wing-order-v10643.test.cjs
           node tests/ego-arena-v300.test.cjs
+          node tests/club-rankings-apk-v10644.test.cjs
           node tests/native-photo-v994.test.cjs
           node tests/samsung-gallery-v201.test.cjs
           node tests/v1000.test.cjs

@@ -38,7 +38,7 @@
    '<div class="neo-ux-tools"><button type="button" data-neo-ux-open="ranking">📊 Rankings</button><button type="button" data-neo-ux-open="market">💴 Mercado</button><button type="button" data-neo-ux-open="championship">🏆 Liga</button></div>';
  }
  let active=null,limit=30,filter='all',rankMode='goals',lastToken='',root=null,returnBar=null;
- let chosenXiRound='latest',masterOnly=false,knownSeason='';
+ let chosenXiRound='latest',masterOnly=false,rankClub='all',knownSeason='';
  let simulating=false,simMessage='',simMode='';
  function liveMatches(){
   const upcoming=games().filter(g=>!Array.isArray(g.result)).slice(0,3);
@@ -125,8 +125,25 @@
  const RANK_TYPES=[
   ['goals','⚽ Artilheiros'],['assists','👟 Assistências'],
   ['performance','⭐ Desempenho'],['defense','🛡 Defensores'],
-  ['passing','🎯 Passadores'],['mvp','👑 MVP'],['masters','⭐ Mestres']
+  ['passing','🎯 Passadores'],['mvp','👑 MVP'],['masters','⭐ Mestres'],['clubs','🏆 Times']
  ];
+ function clubPicker(){
+  const s=season(),original=engine()?.TEAMS||[],included=new Set(
+   Array.isArray(s?.teamIds)&&s.teamIds.length?s.teamIds:original.map(t=>t.id));
+  const teams=(engine()?.allTeams?.()||original).filter(t=>t?.id&&t.id!=='neo-bestxi');
+  if(rankClub!=='all'&&!teams.some(t=>t.id===rankClub))rankClub='all';
+  return '<div class="neo-ux-club-controls"><label>🏟 Escolher time <select data-neo-ux-rank-club="1">'+
+   '<option value="all"'+(rankClub==='all'?' selected':'')+'>Todos os times da Liga</option>'+
+   teams.map(t=>'<option value="'+esc(t.id)+'"'+(rankClub===t.id?' selected':'')+'>'+esc(t.name)+(included.has(t.id)?'':' · fora da Liga')+'</option>').join('')+
+   '</select></label><button type="button" data-neo-ux-original="league">⚙ Colocar times na Liga</button></div>';
+ }
+ function teamRanking(){
+  const table=standings().map((row,i)=>({...row,rank:i+1})).filter(row=>rankClub==='all'||row.team?.id===rankClub);
+  const items=table.map(row=>'<article class="neo-ux-club-rank-row"><b class="neo-ux-index">'+row.rank+'º</b>'+pic(row.team,'neo-ux-mini-logo')+
+   '<div><strong>'+esc(row.team?.name||'Clube')+'</strong><small>J '+n(row.J)+' · V '+n(row.V)+' · E '+n(row.E)+' · D '+n(row.D)+' · SG '+esc(row.SG)+'</small></div><strong>'+n(row.PTS)+' pts</strong></article>').join('');
+  return '<div class="neo-ux-rank-meta">'+table.length+' time(s) da temporada · pontuação real, sem clubes inventados</div>'+
+   (items||'<p class="neo-ux-empty">Esse time ainda não participa desta temporada. Use “Colocar times na Liga” e inicie os jogos para entrar no ranking.</p>');
+ }
  const n=v=>Math.max(0,Number(v)||0);
  const playerScore=(p,mode)=>{
   if(mode==='goals')return n(p.goals);
@@ -181,22 +198,28 @@
     .sort((a,b)=>playerScore(b,rankMode)-playerScore(a,rankMode)||n(b.value)-n(a.value)||a.name.localeCompare(b.name,'pt-BR'));
   }
   if(masterOnly)ranked=ranked.filter(p=>p.isMaster);
+  if(rankClub!=='all')ranked=ranked.filter(p=>p.club===rankClub);
   let out=template('🏆 Ranking NEO');
-  out+='<div class="neo-ux-panel neo-ux-rank-intro"><h3>Classificação da temporada</h3><p>Todos os rankings usam os mesmos cards e pódio. Cada aba mantém suas estatísticas reais e sua própria ordem.</p></div>';
+  out+='<div class="neo-ux-panel neo-ux-rank-intro"><h3>Classificação da temporada</h3><p>Veja jogadores ou times da Liga. Você pode escolher qualquer clube cadastrado; somente partidas oficiais geram pontos e estatísticas.</p></div>';
   out+='<div class="neo-ux-filter neo-ux-rank-tabs">'+RANK_TYPES.map(([id,label])=>'<button type="button" data-neo-ux-rank="'+id+'" '+(rankMode===id?'class="active"':'')+'>'+label+'</button>').join('')+'</div>';
+  out+=clubPicker();
+  if(rankMode==='clubs')return out+teamRanking();
   out+='<button type="button" class="neo-ux-master-toggle'+(masterOnly?' active':'')+'" data-neo-ux-master-only="1" aria-pressed="'+masterOnly+'">⭐ '+(masterOnly?'Mostrando só mestres · ver todos':'Filtrar só mestres neste ranking')+'</button>';
   out+='<div class="neo-ux-rank-meta">'+ranked.length+' atletas classificados · '+rows.filter(p=>p.isMaster).length+' mestres com jogos · Temporada '+esc(s?.number||1)+'</div>';
+  if(rankClub!=='all'&&!ranked.length)out+='<p class="neo-ux-empty">Este time ainda não tem estatísticas nesse ranking. Para participar, escolha-o no campeonato e simule jogos oficiais.</p>';
   return out+leaderboard(ranked,rankMode);
  }
 
  function marketHtml(){
   const rows=market(),categories=[['all','Todos'],['GK','Goleiros'],['CB','Zagueiros'],['FB','Laterais'],['DM','Volantes'],['CM','Meias'],['AM','Armadores'],['W','Pontas'],['ST','Atacantes'],['MASTER','⭐ Mestres']];
-  const filtered=rows.filter(p=>filter==='all'||(filter==='MASTER'?p.isMaster:position(p)===filter));
+  const filtered=rows.filter(p=>(rankClub==='all'||p.club===rankClub)&&
+   (filter==='all'||(filter==='MASTER'?p.isMaster:position(p)===filter)));
   const leader=rows.find(p=>n(p.value)>0);
   let out=template('💴 Mercado Neo');
   out+='<div class="neo-ux-hero"><small>OFERTAS DE MERCADO EM IENES (¥)</small><h3>'+rows.length+' atletas na avaliação</h3><p>Lances fictícios por partidas e ações registradas. Os mestres só recebem ofertas quando entram oficialmente; não é salário nem dinheiro bancário.</p>'+
    '<div class="neo-ux-leading"><span>Maior avaliação</span><strong>'+(leader?esc(cash(leader.value)):'¥ 0')+'</strong></div></div>';
   out+='<div class="neo-ux-filter">'+categories.map(([id,label])=>'<button data-neo-ux-filter="'+id+'" '+(filter===id?'class="active"':'')+'>'+label+'</button>').join('')+'</div>';
+  out+=clubPicker();
   out+='<div class="neo-ux-rank-meta">'+filtered.length+' atletas · Pódio e cards padronizados em todos os rankings</div>';
   out+=leaderboard(filtered,'market');
   out+='<div class="neo-ux-panel"><h3>🔄 Negociações e contratos</h3><p>Os históricos de transferências permanecem nos controles originais do simulador.</p><button class="neo-ux-primary" data-neo-ux-original="more">Abrir negociações e contratos →</button><button class="neo-ux-secondary" data-neo-ux-open="ranking">Ver rankings de desempenho →</button></div>';
@@ -324,6 +347,9 @@
    }
   },true);
   document.addEventListener('change',event=>{
+   if(event.target.matches?.('[data-neo-ux-rank-club]')){
+    event.stopImmediatePropagation();rankClub=event.target.value;limit=30;show(active,{preserveScroll:true});return;
+   }
    if(!event.target.matches?.('[data-neo-ux-xi-round]'))return;
    event.stopImmediatePropagation();chosenXiRound=event.target.value;show('championship',{preserveScroll:true});
   },true);

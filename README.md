@@ -13,6 +13,8 @@ Atualização das **ideias 11–18**, integrada aos dados reais do Blue Lock NEO
 
 Abra **Mais → Mercado Neo** para ajustar transferências e treinos e **Recordes → Universo Vivo** para acompanhar títulos, rivalidades e notícias.
 
+**Download Android:** [⬇️ Baixar APK diretamente — versão mais recente](https://github.com/a94330028-cell/Blue-lock-neo/releases/latest/download/Blue-Lock-NEO-Android.apk). O GitHub Release é publicado como versão normal, sem aviso de pré-lançamento. Se o arquivo estiver marcado TESTE, ele usa assinatura de desenvolvimento: para substituir um APK assinado com outra chave é necessário fazer backup antes de qualquer reinstalação. O conteúdo do jogo também é atualizável pelo botão **Atualizar** do próprio aplicativo.
+
 **Compatibilidade:** os retratos, jogadores criados, saves e campeonatos antigos são preservados. Transferências da liga não alteram elencos-base nem copas independentes. O APK com versão interna 10.6.9 precisa da mesma assinatura do aplicativo instalado.
 
 [Roadmap oficial das 55 ideias](docs/ROADMAP-55.md).

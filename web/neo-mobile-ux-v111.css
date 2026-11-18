@@ -147,6 +147,16 @@
  body.neo-ref-mobile .neo-ux-shared-leaderboard .neo-ux-rank-row .neo-ux-info small{font-size:10px}
  body.neo-ref-mobile .neo-ux-rank-tabs{scroll-snap-type:x proximity}
  body.neo-ref-mobile .neo-ux-rank-tabs button{scroll-snap-align:start}
+ body.neo-ref-mobile .neo-ux-club-controls{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:end;margin:5px 0 12px}
+ body.neo-ref-mobile .neo-ux-club-controls label{display:grid;gap:5px;min-width:0;color:#bfddf1;font-size:11px;font-weight:800}
+ body.neo-ref-mobile .neo-ux-club-controls select{width:100%;min-width:0;min-height:41px;padding:8px;border:1px solid #4098d1;border-radius:10px;background:#082c4f;color:#fff;font-size:12px}
+ body.neo-ref-mobile .neo-ux-club-controls button{min-height:41px;max-width:126px;padding:6px 8px;border:1px solid #5c92bb;border-radius:10px;background:#123657;color:#e6f5ff;font-size:10px;font-weight:800}
+ body.neo-ref-mobile .neo-ux-club-rank-row{display:grid;grid-template-columns:25px 38px minmax(0,1fr) auto;gap:8px;align-items:center;min-height:72px;margin-bottom:8px;padding:10px;border:1px solid #286898;border-radius:13px;background:linear-gradient(120deg,#12375e,#071d3d)}
+ body.neo-ref-mobile .neo-ux-club-rank-row>div{min-width:0;display:grid;gap:4px}
+ body.neo-ref-mobile .neo-ux-club-rank-row strong{color:#f6faff;font-size:12px;overflow-wrap:anywhere}
+ body.neo-ref-mobile .neo-ux-club-rank-row>strong{color:#ffe29b;white-space:nowrap}
+ body.neo-ref-mobile .neo-ux-club-rank-row small{font-size:10px;color:#a5cae4}
+ body.neo-ref-mobile .neo-ux-club-rank-row .neo-ux-mini-logo{width:35px;height:35px;object-fit:contain}
  body.neo-ref-mobile .neo-ux-master-toggle{display:block;width:100%;min-height:38px;margin:0 0 6px;padding:8px;border:1px solid #7a78d7;border-radius:9px;background:#172755;color:#dbeaff;font-size:12px;font-weight:850;text-align:center}
  body.neo-ref-mobile .neo-ux-master-toggle.active{background:linear-gradient(130deg,#6851ac,#263d80);border-color:#ecdbff;color:#fff;box-shadow:0 0 12px #a797ff60}
  @media(max-width:375px){

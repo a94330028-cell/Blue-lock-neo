@@ -9,7 +9,7 @@
   ['all','Todos'],['GK','🧤 Goleiros'],['CB','🛡️ Zagueiros'],['FB','🏃 Laterais / alas'],
   ['DM','⚓ Volantes'],['CM','⚙️ Meias centrais'],['AM','🎯 Meias ofensivos'],
   ['W','💨 Pontas'],['ST','⚽ Atacantes'],['MASTER','⭐ Mestres'],['G','🥇 Artilheiros'],['A','🎯 Assistentes'],
-  ['VALUE','💰 Mais valiosos'],['DEF','🛡️ Melhor defesa'],['PASS','🎯 Passadores']
+  ['VALUE','💰 Mais valiosos'],['DEF','🛡️ Melhor defesa'],['PASS','🎯 Passadores'],['CLUBS','🏆 Classificação dos times']
  ];
  const position=r=>{r=(r||'').toUpperCase();
   if(['GOL','GK'].includes(r))return 'GK';
@@ -21,7 +21,7 @@
   if(['PD','PE','RW','LW'].includes(r))return 'W';
   if(['CA','ST','CF','SA'].includes(r))return 'ST';return 'CM';
  };
- let selected='all',expanded=false,allPlayers=false,searchTerm='';
+ let selected='all',expanded=false,allPlayers=false,searchTerm='',selectedClub='all';
  function state(){try{const s=JSON.parse(localStorage.getItem('neo-season-v2')||'null');if(s?.schema!==2)return null;E.Progression.reconcileGoalkeepers(s);E.Progression.reconcileBids(s);
   if(s.career?.masterBidVersion!==2&&E.Progression.reconcileMasterBids){
    E.Progression.reconcileMasterBids(s);
@@ -57,8 +57,28 @@
  }
  function showRanking(){const holder=$('neo940-ranking');if(!holder)return;
   const season=state();updateMvp(season);const all=market(season);
+  const originals=E.TEAMS||[],registered=(E.allTeams?.()||originals).filter(t=>t?.id&&t.id!=='neo-bestxi');
+  const participants=new Set(Array.isArray(season?.teamIds)&&season.teamIds.length?season.teamIds:originals.map(t=>t.id));
+  if(selectedClub!=='all'&&!registered.some(t=>t.id===selectedClub))selectedClub='all';
+  const clubSelect=$('neo960-club-filter');if(clubSelect){
+   const options=[{id:'all',name:'Todos os times da Liga'},...registered.map(t=>({id:t.id,name:t.name+(participants.has(t.id)?'':' · fora da Liga')}))];
+   const signature=options.map(t=>t.id+'|'+t.name).join(';');
+   if(clubSelect.dataset.signature!==signature){clubSelect.innerHTML=options.map(t=>`<option value="${esc(t.id)}">${esc(t.name)}</option>`).join('');clubSelect.dataset.signature=signature;}
+   clubSelect.value=selectedClub;
+  }
+  const title=$('neo940-subtitle'),count=$('neo960-roster-total'),expand=$('neo940-expand');
+  if(selected==='CLUBS'){
+   let rows=[];try{rows=season?E.standings(season):[]}catch(_){rows=[]}
+   const ordered=rows.map((r,i)=>({...r,place:i+1})).filter(r=>selectedClub==='all'||r.team.id===selectedClub);
+   holder.innerHTML=ordered.map(r=>`<article class="neo940-row neo960-club-row"><b class="neo940-order">${r.place}º</b><span class="neo960-team-emblem">${esc(r.team.short||r.team.name.slice(0,2))}</span><span class="neo940-person"><strong>${esc(r.team.name)}</strong><small>J ${r.J} · V ${r.V} · E ${r.E} · D ${r.D} · SG ${r.SG}</small></span><strong class="neo940-price">${r.PTS} pts</strong></article>`).join('')||'<p class="neo940-empty">Esse clube não participa da temporada. Inclua-o ao configurar a próxima Liga para começar a pontuar.</p>';
+   if(title)title.textContent=`${ordered.length} times`;
+   if(count)count.textContent='Classificação dos clubes baseada somente em resultados oficiais.';
+   if(expand)expand.hidden=true;
+   return;
+  }
   const term=searchTerm.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
   const data=all.filter(p=>{
+    if(selectedClub!=='all'&&p.club!==selectedClub)return false;
     if(term){return [p.name,clubOf(p).name,clubOf(p).short,p.role].some(v=>String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().includes(term));}
     return selected==='all'||selected==='VALUE'||['G','A','DEF','PASS'].includes(selected)||(selected==='MASTER'?p.isMaster:position(p.role)===selected);
   });
@@ -72,9 +92,9 @@
    const t=clubOf(p);
    return `<button type="button" class="neo940-row neo960-row" data-neo960-profile="${playerKey(p)}" aria-label="Abrir ficha completa de ${esc(p.name)}"><b class="neo940-order">${i+1}º</b>${photo(p)}<span class="neo940-person"><strong>${esc(p.name)}</strong><small>${esc(t.short)} · ${esc(p.role)} · ${p.ovr} OVR${p.isMaster?' · ⭐ Mestre':''}</small></span><strong class="neo940-price">${metric(p)}</strong><span class="neo960-open" aria-hidden="true">›</span></button>`;
   }).join('')||'<p class="neo940-empty">Nenhum jogador encontrado. Limpe a busca ou escolha outra posição.</p>';
-  const title=$('neo940-subtitle');if(title)title.textContent=`${ranked.length} jogadores`;
-  const count=$('neo960-roster-total');if(count)count.textContent=`${all.length} nomes no elenco (incluindo ${all.filter(p=>p.isMaster).length} mestres) · ${ranked.length} nesta lista`;
-  const expand=$('neo940-expand');if(expand){
+  if(title)title.textContent=`${ranked.length} jogadores`;
+  if(count)count.textContent=`${all.length} nomes na Liga (incluindo ${all.filter(p=>p.isMaster).length} mestres) · ${ranked.length} nesta lista`;
+  if(expand){
    expand.hidden=!!term||ranked.length<=6;
    expand.textContent=allPlayers?'Mostrar top 6':expanded?`Ver todos os ${ranked.length}`:'Ver top 15';
   }
@@ -98,9 +118,10 @@
   }
   if(ranking&&!$('neo940-ranking')){
    const section=document.createElement('section');section.id='neo940-market';section.className='card neo940-market';
-   section.innerHTML=`<div class="neo940-top"><div><small>MERCADO NEO EGOÍSTA</small><h2>💴 Mais valiosos por posição</h2><p>Ofertas equilibradas por OVR e desempenho na liga.</p></div><span id="neo940-subtitle">Todos</span></div><section id="neo950-mvp" class="neo950-mvp" aria-label="Top cinco e MVP atual"></section><small id="neo960-roster-total" class="neo960-total"></small><label class="neo960-search">🔎 Buscar qualquer jogador<input type="search" id="neo960-search" placeholder="Nome, equipe ou posição" autocomplete="off" aria-label="Buscar jogador no ranking"></label><label class="neo940-filter-label">Escolha o ranking<select id="neo940-filter">${roles.map(([key,name])=>`<option value="${key}">${esc(name)}</option>`).join('')}</select></label><div id="neo940-ranking" class="neo940-list" aria-live="polite"></div><button type="button" id="neo940-expand" class="neo940-more-records">Ver top 15</button>`;
+   section.innerHTML=`<div class="neo940-top"><div><small>RANKINGS NEO EGOÍSTA</small><h2>🏆 Jogadores e times da Liga</h2><p>Ofertas e pontos calculados com os jogos da temporada.</p></div><span id="neo940-subtitle">Todos</span></div><section id="neo950-mvp" class="neo950-mvp" aria-label="Top cinco e MVP atual"></section><small id="neo960-roster-total" class="neo960-total"></small><label class="neo960-search">🔎 Buscar qualquer jogador<input type="search" id="neo960-search" placeholder="Nome, equipe ou posição" autocomplete="off" aria-label="Buscar jogador no ranking"></label><div class="neo960-rank-filters"><label class="neo940-filter-label">Escolha o ranking<select id="neo940-filter">${roles.map(([key,name])=>`<option value="${key}">${esc(name)}</option>`).join('')}</select></label><label class="neo940-filter-label">Escolha o time<select id="neo960-club-filter" aria-label="Filtrar ranking por time"><option value="all">Todos os times da Liga</option></select></label></div><p class="neo960-club-hint">Times fora da Liga precisam ser adicionados ao campeonato para registrar pontos e jogadores.</p><div id="neo940-ranking" class="neo940-list" aria-live="polite"></div><button type="button" id="neo940-expand" class="neo940-more-records">Ver top 15</button>`;
    ranking.querySelector('.hero-card')?.insertAdjacentElement('afterend',section);
    $('neo940-filter')?.addEventListener('change',e=>{selected=e.target.value;expanded=false;allPlayers=false;showRanking()});
+   $('neo960-club-filter')?.addEventListener('change',e=>{selectedClub=e.target.value;expanded=false;allPlayers=false;showRanking()});
    $('neo960-search')?.addEventListener('input',e=>{searchTerm=e.target.value;showRanking()});
    $('neo940-expand')?.addEventListener('click',()=>{if(allPlayers){allPlayers=false;expanded=false}else if(expanded){allPlayers=true}else{expanded=true}showRanking()});
    // Deixe apenas UM ranking de mercado. Ocultar o pódio e o leilão legados.

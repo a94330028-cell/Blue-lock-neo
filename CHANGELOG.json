@@ -24,6 +24,7 @@
       "version": "2.0.0",
       "date": "2026-11-18",
       "novidades": [
+        "Conteúdo 10.6.44: rankings no celular e PC permitem escolher clubes cadastrados e consultar a classificação real dos times da Liga. History FC e clubes históricos aparecem no seletor; quem não participa da temporada é identificado sem estatísticas fictícias. Botão direto para baixar o APK Android.",
         "Conteúdo 10.6.43: corrigida a orientação tática em formações com pontas: PE aparece à esquerda, PD à direita e atacantes centrais entre eles; LE/LD também respeitam os lados. Correção aplicada ao técnico IA, escalações e seleção do campeonato, preservando elencos, saves e fotos.",
         "Conteúdo 10.6.42: equilíbrio de desempenho revisado. Overalls muito altos agora fazem diferença real em dribles, desarmes, cabeceios, finalizações e defesas, com vantagem limitada para manter zebras e o peso de tática, cansaço e atributos; jogadores e fotos personalizados preservados.",
         "Conteúdo 10.6.41: novas imagens oficiais do History FC: Rodinha usa a aparência de Nagi enviada pelo criador e Kash usa a aparência de Akashi. As imagens originais de Seishiro Nagi permanecem intactas.",
@@ -33,6 +34,7 @@
         "Liga Neo Egoísta com 2 a 10 clubes escolhidos, calendário, tabela e partidas com 22 atletas, incluindo History Team e times históricos."
       ],
       "correcoes": [
+        "Publicação do Android corrigida: GitHub Release oficial não fica mais preso em pré-lançamento; o download direto tem nome fixo, com indicação da assinatura de teste quando a chave estável não estiver configurada.",
         "Treinadores agora aplicam a formação selecionada ao jogo real e registram a escolha na súmula; depois de derrotas podem testar novo esquema, manter um vencedor ou abandonar o que falhou, sem modificar saves anteriores.",
         "Atributos gerados ficaram mais variados por posição e especialidade, com efeito real em passes, dribles e finalizações. Overalls personalizados já definidos para History FC e histórico salvo continuam preservados.",
         "Mestres entram uma única vez por partida e aparecem nos rankings de desempenho, MVP, premiações, seleção da rodada e aba própria; histórico antigo reconcilia jogos duplicados. Sae mantém posição MEI e 98 OVR.",

@@ -14,7 +14,10 @@
 .neo940-top p{font-size:11px;color:#a6bfd4;margin:0 0 12px}
 #neo940-subtitle{background:#173952;color:#b2def9;padding:7px 9px;border-radius:10px;font-size:10px;white-space:nowrap}
 .neo940-filter-label{display:grid;gap:6px;color:#b5cada;font-size:11px;font-weight:700;margin-bottom:12px}
-#neo940-filter{width:100%;background:#112b44;border:1px solid #43769b;border-radius:11px;padding:11px;color:#f0faff;font-size:13px;min-height:44px}
+#neo940-filter,#neo960-club-filter{width:100%;background:#112b44;border:1px solid #43769b;border-radius:11px;padding:11px;color:#f0faff;font-size:13px;min-height:44px}
+.neo960-rank-filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:12px}
+.neo960-club-hint{font-size:11px;color:#a1c5dc;margin:0 0 12px}
+.neo960-club-row .neo960-team-emblem{display:grid;place-items:center;width:46px;height:46px;flex:none;border:1px solid #47addb;border-radius:12px;background:#0a4760;color:#f3faff;font-size:12px;font-weight:900}
 .neo940-list{display:grid;gap:7px}
 .neo940-row{display:flex;align-items:center;gap:11px;padding:12px 10px;border:1px solid #284b68;border-radius:12px;background:#112840}
 .neo940-order{min-width:24px;font-size:13px;color:#68bce8}

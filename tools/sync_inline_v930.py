@@ -107,7 +107,7 @@ updated=updated.replace('neo-studio-v970.js?v=9.7.0','neo-studio-v970.js?v=2.0.0
 updated=updated.replace('neo-studio-v970.js?v=9.9.4','neo-studio-v970.js?v=2.0.0-history-photos')
 updated=updated.replace('neo-v990.css?v=9.9.0','neo-v990.css?v=9.9.4')
 # v10.0: Bust stale Mobile Edition assets when building the Android web bundle.
-updated=re.sub(r'src="mobile-upgrade\.js(?:\?v=[^"]*)?"','src="mobile-upgrade.js?v=10.6.43"',updated)
+updated=re.sub(r'src="mobile-upgrade\.js(?:\?v=[^"]*)?"','src="mobile-upgrade.js?v=10.6.44"',updated)
 updated=re.sub(r'href="mobile-upgrade\.css(?:\?v=[^"]*)?"','href="mobile-upgrade.css?v=10.5.0"',updated)
 # v10.4: load the positional layout BEFORE Squad and Best XI scripts.
 # The generated page is shared by GitHub Pages and the Android WebView.
@@ -140,7 +140,7 @@ for file in ('neo-pitch-v1040.css','neo-squads-v980.css'):
 # 10.5.1: reload the real league data and refreshed dynamic Best XI.
 for file in ('neo-round-v990.js',):
     updated=re.sub(r'src="'+re.escape(file)+r'(?:\?v=[^"]*)?"','src="'+file+'?v=10.5.1"',updated)
-updated=re.sub(r'src="neo-player-data-v960\.js(?:\?v=[^"]*)?"','src="neo-player-data-v960.js?v=10.6.43"',updated)
+updated=re.sub(r'src="neo-player-data-v960\.js(?:\?v=[^"]*)?"','src="neo-player-data-v960.js?v=10.6.44"',updated)
 # NEO 10.6: add the full history without duplicating it as a second data source.
 source_history=root.parent/'CHANGELOG.json'
 if not source_history.is_file():raise RuntimeError('Official changelog missing')
@@ -303,16 +303,16 @@ for asset in ('neo-player-data-v960.js','mobile-upgrade.js','neo-historic-teams-
               'neo-round-v990.js','neo-v960.js','neo-ego-v91.js','neo-coach-v980.js',
               'neo-pc-compact.js'):
     updated=re.sub(r'src="'+re.escape(asset)+r'(?:\?v=[^"]*)?"',
-                   'src="'+asset+'?v=10.6.43"',updated)
+                   'src="'+asset+'?v=10.6.44"',updated)
 updated=re.sub(r'href="neo-squads-v980\.css(?:\?v=[^"]*)?"',
-               'href="neo-squads-v980.css?v=10.6.43"',updated)
+               'href="neo-squads-v980.css?v=10.6.44"',updated)
 updated=re.sub(r'href="neo-pitch-v1040\.css(?:\?v=[^"]*)?"',
-               'href="neo-pitch-v1040.css?v=10.6.43"',updated)
+               'href="neo-pitch-v1040.css?v=10.6.44"',updated)
 updated=re.sub(r'href="neo-desktop\.css(?:\?v=[^"]*)?"',
-               'href="neo-desktop.css?v=10.6.43"',updated)
+               'href="neo-desktop.css?v=10.6.44"',updated)
 # EGO ARENA is a distinct stylesheet: keep it LAST so legacy PC density rules
 # cannot undo the new stage, side channel or compact interactive modes.
 updated=re.sub(r'\s*<link\b[^>]*href="neo-ego-arena-v300\.css(?:\?v=[^"]*)?"[^>]*>', '',updated,flags=re.I)
-updated=updated.replace('</head>','<link rel="stylesheet" href="neo-ego-arena-v300.css?v=10.6.43">\n</head>',1)
+updated=updated.replace('</head>','<link rel="stylesheet" href="neo-ego-arena-v300.css?v=10.6.44">\n</head>',1)
 html.write_text(updated,encoding='utf-8')
 print('Inline game modules synchronized:',counts)

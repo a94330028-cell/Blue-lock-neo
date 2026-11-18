@@ -53,6 +53,7 @@ jobs:
           node tests/league-fixes-v10636.test.cjs
           node tests/coach-fixes-v10637.test.cjs
           node tests/ego-arena-v300.test.cjs
+          node tests/club-rankings-apk-v10644.test.cjs
           node tests/kaiser-icon-v991.test.cjs
           node tests/gallery-v992.test.cjs
           node tests/gallery-v993.test.cjs
@@ -147,32 +148,6 @@ jobs:
           name: Blue-Lock-NEO-APK-TESTE
           path: app/build/outputs/apk/debug/app-debug.apk
           retention-days: 30
-      - name: Preparar download direto do APK
-        id: release_info
-        run: |
-          VERSION="$(cat web/VERSION)"
-          test -n "$VERSION"
-          mkdir -p release
-          cp app/build/outputs/apk/debug/app-debug.apk "release/Blue-Lock-NEO-v${VERSION}-Android-TESTE.apk"
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-      - name: Publicar APK diretamente no GitHub Releases
-        if: github.ref == 'refs/heads/main'
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: v${{ steps.release_info.outputs.version }}
-          name: Blue Lock NEO v${{ steps.release_info.outputs.version }} — Mobile Edition
-          prerelease: true
-          make_latest: false
-          body: |
-            APK instalável do simulador Blue Lock NEO.
-
-            Abra o arquivo .apk diretamente no Android para instalar.
-            Esta é uma compilação de TESTE (assinatura debug).
-            Para atualizar uma instalação de teste anterior talvez seja necessário desinstalá-la.
-            Exporte os backups do jogo antes de reinstalar.
-            O código-fonte e o histórico completo permanecem no repositório.
-          files: release/*.apk
-          fail_on_unmatched_files: true
       - name: Preparar assinatura estável (opcional, recomendado)
         env:
           KEYSTORE_B64: ${{ secrets.BL_KEYSTORE_BASE64 }}
@@ -210,3 +185,45 @@ jobs:
           name: Blue-Lock-NEO-APK-ASSINADO-ATUALIZAVEL
           path: app/build/outputs/apk/release/app-release.apk
           retention-days: 30
+      - name: Preparar APK para download direto
+        id: release_info
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="$(cat web/VERSION)"
+          test -n "$VERSION"
+          mkdir -p release
+          if [ "${BUILD_SIGNED:-0}" = 1 ]; then
+            test -s app/build/outputs/apk/release/app-release.apk
+            cp app/build/outputs/apk/release/app-release.apk "release/Blue-Lock-NEO-v${VERSION}-Android.apk"
+            cp app/build/outputs/apk/release/app-release.apk release/Blue-Lock-NEO-Android.apk
+            echo 'signature=assinatura de atualização configurada' >> "$GITHUB_OUTPUT"
+          else
+            test -s app/build/outputs/apk/debug/app-debug.apk
+            cp app/build/outputs/apk/debug/app-debug.apk "release/Blue-Lock-NEO-v${VERSION}-Android-TESTE.apk"
+            cp app/build/outputs/apk/debug/app-debug.apk release/Blue-Lock-NEO-Android.apk
+            echo 'signature=assinatura de TESTE (pode exigir reinstalação)' >> "$GITHUB_OUTPUT"
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+      - name: Publicar APK para todos no GitHub Releases
+        if: github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.release_info.outputs.version }}
+          name: Blue Lock NEO v${{ steps.release_info.outputs.version }} — Android
+          prerelease: false
+          make_latest: true
+          body: |
+            ⚽ BLUE LOCK NEO — DOWNLOAD ANDROID
+
+            Clique no arquivo **Blue-Lock-NEO-Android.apk** em Assets para baixar.
+            Não é necessário baixar o código-fonte (.zip ou .tar.gz).
+            Tipo de APK: ${{ steps.release_info.outputs.signature }}.
+
+            Se o Android informar conflito de assinatura, faça backup dos dados do
+            jogo antes de desinstalar a instalação antiga. Não desinstale sem backup.
+
+            Atualizações de conteúdo também estão disponíveis pelo botão Atualizar
+            dentro do aplicativo; elas não exigem novo APK.
+          files: release/*.apk
+          fail_on_unmatched_files: true

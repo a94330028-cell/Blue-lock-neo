@@ -1,0 +1,43 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const E=require('../web/engine.js');
+require('../web/neo2-history-team-v201.js').install(E);
+require('../web/neo-historic-teams-v970.js').install(E);
+
+const season=E.createSchedule(2,['ht','bm','px']);
+assert.ok(E.allTeams().some(t=>t.id==='ht'),'History FC must be registered');
+assert.equal(E.standings(season).length,3,'only the three participating clubs have a table position');
+const fixture=season.rounds[0].games[0];
+fixture.result=[3,1];
+const table=E.standings(season);
+assert.equal(table[0].PTS,3,'club ranking uses real match results');
+assert.equal(table[0].J,1);
+assert.equal(table.reduce((sum,r)=>sum+r.J,0),2);
+
+const read=file=>fs.readFileSync(path.join(__dirname,'..',file),'utf8');
+const mobile=read('web/neo-mobile-ux-v111.js');
+const desktop=read('web/neo-v960.js');
+const mobileCss=read('web/neo-mobile-ux-v111.css');
+const desktopCss=read('web/neo-v960.css');
+assert.match(mobile,/\['clubs','🏆 Times'\]/,'mobile must offer club standings');
+assert.match(mobile,/data-neo-ux-rank-club/,'mobile must let players select a club');
+assert.match(mobile,/engine\(\)\?\.allTeams\?\.\(\)/,'mobile must include registered historic clubs');
+assert.match(mobile,/data-neo-ux-original="league"/,'there is a way to add clubs to the league');
+assert.match(mobile,/standings\(\)/,'mobile rankings use actual standings');
+assert.match(mobileCss,/neo-ux-club-rank-row/);
+assert.match(desktop,/\['CLUBS','🏆 Classificação dos times'\]/);
+assert.match(desktop,/neo960-club-filter/);
+assert.match(desktop,/E\.standings\(season\)/,'desktop club table uses real season results');
+assert.match(desktopCss,/neo960-club-row/);
+
+const workflow=read('.github/workflows/gerar-apk.yml');
+assert.match(workflow,/prerelease: false/,'GitHub release must be stable, not pre-release');
+assert.match(workflow,/make_latest: true/,'GitHub latest route must work');
+assert.match(workflow,/release\/Blue-Lock-NEO-Android\.apk/,'a permanent direct download filename is required');
+assert.ok(workflow.indexOf('Preparar assinatura estável')<workflow.indexOf('Preparar APK para download direto'),'signed APK must be selected only after signing');
+assert.ok(workflow.indexOf('Compilar APK assinado')<workflow.indexOf('Publicar APK para todos'),'release publishes after signed build');
+assert.match(workflow,/BL_KEYSTORE_BASE64/,'signed builds use configured secrets when present');
+assert.match(read('web/neo-broadcast-v920.js'),/releases\/latest\/download\/Blue-Lock-NEO-Android\.apk/);
+console.log('PASS 10.6.44: registered club rankings and stable, direct Android release');
