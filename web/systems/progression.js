@@ -119,7 +119,7 @@ function reconcileBids(season,skipFixture=null){
 }
 
 // Master Strikers play short, recorded substitute appearances. Their market offers
-// have an independent ledger; never add them to regular player MVP/evolution.
+// have an independent ledger: do not mix their data into regular player evolution.
 function masterEvidence(fixture){
  const details=fixture?.details;
  if(!Array.isArray(fixture?.result)||!Array.isArray(details?.players))return [];
@@ -236,7 +236,19 @@ function mvpRanking(season,limit=5){
   const mvpPoints=Math.round((performance+consistency+sample)*100)/100;
   return {...p,mvpPoints,avgRating:Math.round(rating*10)/10};
  });
- return scored.sort((a,b)=>b.mvpPoints-a.mvpPoints||num(b.games)-num(a.games)||num(b.goals)-num(a.goals)||String(a.name).localeCompare(String(b.name))).slice(0,Math.max(1,Math.min(20,limit)));
+ // Master Strikers are eligible when they really played. Their short
+ // appearances do not become 90-minute matches and their value is excluded.
+ const masters=Object.values(season?.career?.masterBids||{})
+  .filter(p=>p?.isMaster&&num(p.games)>0&&allowed.has(p.club))
+  .map(p=>{
+   const games=Math.max(1,num(p.games)),rating=between(num(p.ratingSum,6*games)/games,0,10);
+   const contributions=num(p.goals)*3.1+num(p.assists)*2.35+num(p.shots)*.08+
+    num(p.tackles)*.14+num(p.interceptions)*.15+num(p.passes)*.014;
+   const mvpPoints=Math.round((contributions/games+Math.max(0,rating-6)*1.12+
+    Math.min(1,games/6)*1.35)*100)/100;
+   return {...p,isMaster:true,mvpPoints,avgRating:Math.round(rating*10)/10};
+  });
+ return scored.concat(masters).sort((a,b)=>b.mvpPoints-a.mvpPoints||num(b.games)-num(a.games)||num(b.goals)-num(a.goals)||String(a.name).localeCompare(String(b.name))).slice(0,Math.max(1,Math.min(1000,limit)));
 }
 function ensure(season){if(!season.career||typeof season.career!=='object')season.career={players:{},history:[],version:1};const c=season.career;c.links=c.links||{};c.rivals=c.rivals||{};c.stories=c.stories||[];return c;}
 function row(career,name,club){const id=key(name,club);return career.players[id]||(career.players[id]={name,club,games:0,goals:0,assists:0,shots:0,runs:0,overlaps:0,distance:0,draws:0,losses:0,dribbles:0,tackles:0,interceptions:0,shotBlocks:0,aerialWins:0,duelsWon:0,keyPasses:0,saves:0,cleanSheets:0,wins:0,passes:0,impact:0,ratingSum:0,score:0,value:0,change:0,boosts:{},unlocked:[],abilityUses:{},history:[],flowCount:0,masterApps:0});}

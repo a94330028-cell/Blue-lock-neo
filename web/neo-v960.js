@@ -23,7 +23,7 @@
  };
  let selected='all',expanded=false,allPlayers=false,searchTerm='';
  function state(){try{const s=JSON.parse(localStorage.getItem('neo-season-v2')||'null');if(s?.schema!==2)return null;E.Progression.reconcileGoalkeepers(s);E.Progression.reconcileBids(s);
-  if(s.career?.masterBidVersion!==1&&E.Progression.reconcileMasterBids){
+  if(s.career?.masterBidVersion!==2&&E.Progression.reconcileMasterBids){
    E.Progression.reconcileMasterBids(s);
    try{localStorage.setItem('neo-season-v2',JSON.stringify(s));}catch(_){}
   }

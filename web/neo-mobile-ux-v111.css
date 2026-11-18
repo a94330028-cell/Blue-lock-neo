@@ -39,6 +39,11 @@
  body.neo-ref-mobile .neo-ux-xi-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
  body.neo-ref-mobile .neo-ux-xi-head h3{margin:0;font-size:18px;color:#ffe6a7}
  body.neo-ref-mobile .neo-ux-xi-head span{color:#ffdd8b;font-size:10px;white-space:nowrap}
+ body.neo-ref-mobile .neo-ux-xi-switch{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:6px;margin:11px 0 7px}
+ body.neo-ref-mobile .neo-ux-xi-switch label{display:grid;gap:5px;color:#c7ebff;font-size:11px;font-weight:800;min-width:0}
+ body.neo-ref-mobile .neo-ux-xi-switch select{width:100%;min-width:0;height:40px;padding:7px 9px;border:1px solid #6db9e7;border-radius:8px;background:#0b3155;color:#fff;font:700 11px system-ui,sans-serif}
+ body.neo-ref-mobile .neo-ux-xi-switch button{height:40px;padding:7px 11px;border:1px solid #73dff4;border-radius:8px;background:#075b8b;color:#fff;font-weight:850}
+ body.neo-ref-mobile .neo-ux-xi-progress{margin:4px 0 9px!important;padding:7px 8px;border-left:3px solid #69e9c0;background:#064c3a80;color:#d5fff1!important;font-size:11px!important}
  body.neo-ref-mobile .neo-ux-xi-highlights{display:grid;gap:7px;margin:12px 0}
  body.neo-ref-mobile .neo-ux-xi-highlights>div{display:grid;grid-template-columns:43px minmax(0,1fr) auto;align-items:center;gap:9px;padding:7px;background:#102949;border:1px solid #47618b;border-radius:10px}
  body.neo-ref-mobile .neo-ux-xi-highlights img{width:43px;height:48px;border-radius:7px;object-fit:cover}
@@ -95,6 +100,7 @@
  body.neo-ref-mobile .neo-ux-money-row{display:grid;grid-template-columns:24px 42px minmax(0,1fr) auto;gap:8px;align-items:center;width:100%;min-height:63px;padding:5px 9px;border:1px solid #2867a4;border-radius:10px;background:linear-gradient(110deg,#0c2a4e,#09152d);color:#fff;text-align:left}
  body.neo-ref-mobile .neo-ux-index{font-weight:900;font-size:12px;color:#80c8ff}
  body.neo-ref-mobile .neo-ux-player-img{width:42px;height:50px;object-fit:cover;object-position:center 18%;border-radius:7px;border:1px solid #4a92c1}
+ body.neo-ref-mobile .neo-ux-photo-fallback{display:grid;place-items:center;background:linear-gradient(140deg,#184e72,#091d3a);color:#dbf5ff;font-size:20px;font-weight:900}
  body.neo-ref-mobile .neo-ux-info{min-width:0}
  body.neo-ref-mobile .neo-ux-info b{display:block;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
  body.neo-ref-mobile .neo-ux-info small{display:block;color:#a0c3df;font-size:9px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -141,6 +147,8 @@
  body.neo-ref-mobile .neo-ux-shared-leaderboard .neo-ux-rank-row .neo-ux-info small{font-size:10px}
  body.neo-ref-mobile .neo-ux-rank-tabs{scroll-snap-type:x proximity}
  body.neo-ref-mobile .neo-ux-rank-tabs button{scroll-snap-align:start}
+ body.neo-ref-mobile .neo-ux-master-toggle{display:block;width:100%;min-height:38px;margin:0 0 6px;padding:8px;border:1px solid #7a78d7;border-radius:9px;background:#172755;color:#dbeaff;font-size:12px;font-weight:850;text-align:center}
+ body.neo-ref-mobile .neo-ux-master-toggle.active{background:linear-gradient(130deg,#6851ac,#263d80);border-color:#ecdbff;color:#fff;box-shadow:0 0 12px #a797ff60}
  @media(max-width:375px){
   body.neo-ref-mobile .neo-ux-podium{gap:4px}
   body.neo-ref-mobile .neo-ux-podium-card b{font-size:10px}

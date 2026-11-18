@@ -366,6 +366,7 @@ body{background:radial-gradient(circle at 65% 0%,#17548066,transparent 50%),line
  }
  #neo990-round-team .neo990-view-button:focus-visible{outline:2px solid #b4edff;outline-offset:2px}
  #neo990-round-team[data-xi-view="list"] .neo990-xi-pitch,
+ #neo990-round-team[data-xi-view="list"] .neo-xi-field,
  #neo990-round-team[data-xi-view="list"] .neo990-xi-caption{display:none!important}
  #neo990-round-team[data-xi-view="list"] .neo990-xi-list{margin-top:5px!important}
  #neo990-round-team[data-xi-view="list"] .neo990-xi-list .neo990-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}

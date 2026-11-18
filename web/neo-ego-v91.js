@@ -10,7 +10,15 @@ const isGK=p=>/^(GK|GOL)$/i.test(p?.role||'');
 const isDef=p=>/^(ZAG|CB|LD|LE|RB|LB|VOL|CDM|ALA|LWB|RWB)$/i.test(p?.role||'');
 const isAttack=p=>/^(ST|CA|CF|ATA|RW|LW|PD|PE|SA|AT)$/i.test(p?.role||'');
 function fixtures(s){return (s?.rounds||[]).flatMap(round=>(round.games||[]).filter(f=>Array.isArray(f.result)&&f.result.length===2).map(f=>({...f,round:n(round.round)}))).sort((a,b)=>a.round-b.round);}
-function performances(s){return Object.values(s?.career?.players||{}).filter(p=>p&&n(p.games)>0&&!p.isMaster).map(p=>({...p,impact:n(p.score),average:n(p.ratingSum)/Math.max(1,n(p.games))}));}
+function performances(s){
+ const participants=new Set((s?.rounds||[]).flatMap(r=>r.games||[]).flatMap(g=>[g.home,g.away]));
+ const regular=Object.values(s?.career?.players||{}).filter(p=>p&&n(p.games)>0&&!p.isMaster);
+ // Masters have an independent, fixture-verified ledger: include their real
+ // appearances in awards without giving them imaginary full-match minutes.
+ const masters=Object.values(s?.career?.masterBids||{}).filter(p=>p?.isMaster&&n(p.games)>0&&participants.has(p.club));
+ return regular.concat(masters).map(p=>({...p,impact:n(p.score)||n(p.goals)*3.1+n(p.assists)*2.4+n(p.tackles)*.3+n(p.passes)*.02,
+  average:n(p.ratingSum)/Math.max(1,n(p.games))}));
+}
 function totals(s){const games=fixtures(s), all=s?.rounds?.flatMap(r=>r.games||[])||[];
  const data={games,scheduled:all.length,played:games.length,goals:0,shots:0,shotsOn:0,saves:0,xg:0,shutouts:0,abilityUses:0,leader:null};
  for(const f of games){data.goals+=n(f.result[0])+n(f.result[1]);const st=f.details?.stats||{};
@@ -29,7 +37,7 @@ const awardsConfig=[
  {key:'keeper',icon:'🧤',title:'Melhor goleiro',eligible:isGK,score:p=>n(p.saves)*1.2+n(p.cleanSheets)*3+n(p.average)*n(p.games)*.12},
  {key:'goals',icon:'🥇',title:'Artilheiro',eligible:p=>!isGK(p),score:p=>n(p.goals)},
  {key:'assists',icon:'🪄',title:'Líder de assistências',eligible:p=>true,score:p=>n(p.assists)},
- {key:'reveal',icon:'🌠',title:'Maior crescimento competitivo',eligible:p=>n(p.games)>=2,score:p=>n(p.history?.slice(-3).reduce((a,h)=>a+n(h.impact),0))},
+ {key:'reveal',icon:'🌠',title:'Maior crescimento competitivo',eligible:p=>!p.isMaster&&n(p.games)>=2,score:p=>n(p.history?.slice(-3).reduce((a,h)=>a+n(h.impact),0))},
 ];
 function awards(s){const people=performances(s), completed=fixtures(s).length>0&&fixtures(s).length===(s?.rounds||[]).reduce((a,r)=>a+(r.games?.length||0),0);
  return awardsConfig.map(category=>{

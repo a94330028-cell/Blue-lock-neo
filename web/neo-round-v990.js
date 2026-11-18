@@ -21,7 +21,7 @@
  const roleGroup=r=>['GOL','GK'].includes(r)?'G':['ZAG','CB','LD','LE','RB','LB','ALA','LWB','RWB'].includes(r)?'D':['VOL','CDM','MC','CM','MEI','CAM','MAT'].includes(r)?'M':'F';
  const compat=(a,b)=>a===b?3:(roleGroup(a)===roleGroup(b)?1:0);
  function scoredPlayer(p,team){
-  if(!p?.name||p?.isMaster)return null;
+  if(!p?.name)return null;
   const role=String(p.role||'MC').toUpperCase(),rating=Number.isFinite(Number(p.rating))?Math.min(10,Math.max(0,Number(p.rating))):6;
   const attacking=N(p.goals)*3.1+N(p.assists)*2.2+N(p.shots)*.06+N(p.keyPasses)*.29+N(p.dribblesWon)*.14;
   const defensive=N(p.tackles)*.41+N(p.interceptions)*.48+N(p.shotBlocks)*.63+N(p.aerialWins)*.23+N(p.duelsWon)*.11;
@@ -29,14 +29,17 @@
   const passing=N(p.passes??p.pases)*.012;
   const group=roleGroup(role),score=rating*1.9+passing+(
     group==='G'?keeper+defensive*.14:group==='D'?defensive+attacking*.65:group==='M'?attacking+defensive*.72:attacking+defensive*.27);
-  return {name:p.name,club:team,role,rating,ovr:N(p.ovr||p.attributes?.ovr),score:+score.toFixed(2),stats:{goals:N(p.goals),assists:N(p.assists),saves:N(p.saves),tackles:N(p.tackles),interceptions:N(p.interceptions),blocks:N(p.shotBlocks),passes:N(p.passes??p.pases)}};
+  return {name:p.name,club:team,role,rating,ovr:N(p.ovr||p.attributes?.ovr),isMaster:!!p.isMaster,score:+score.toFixed(2),stats:{goals:N(p.goals),assists:N(p.assists),saves:N(p.saves),tackles:N(p.tackles),interceptions:N(p.interceptions),blocks:N(p.shotBlocks),passes:N(p.passes??p.pases)}};
  }
- function completeRound(round){return Array.isArray(round?.games)&&round.games.length>0&&round.games.every(g=>Array.isArray(g.result)&&g.result.length===2&&Array.isArray(g.details?.players));}
+ const reportedGame=g=>Array.isArray(g?.result)&&g.result.length===2&&Array.isArray(g.details?.players);
+ function completeRound(round){return Array.isArray(round?.games)&&round.games.length>0&&round.games.every(reportedGame);}
  function latestCompletedRound(competition){return [...(competition?.rounds||[])].reverse().find(completeRound)||null;}
+ function availableRounds(competition){return (competition?.rounds||[]).filter(r=>r.games?.some(reportedGame));}
  function candidates(round){
   const records=new Map();
   for(const g of round.games){for(const p of g.details.players){
    if(p.side!==0&&p.side!==1)continue;
+   if(p.isMaster&&!g.details.masterEntries?.some(e=>e.master===p.name&&e.side===p.side))continue;
    const team=p.side===0?g.home:g.away,k=String(p.name)+'|'+team;
    const v=scoredPlayer(p,team);if(!v)continue;
    // Multiple mentions of one player in a round cannot create duplicates.
@@ -44,9 +47,11 @@
   }}
   return [...records.values()];
  }
- function selectXI(round){
-  if(!completeRound(round))return {round:round?.round||0,players:[],reserves:[],candidateCount:0};
-  const pool=candidates(round),used=new Set(),players=[];
+ function selectXI(round,options={}){
+  const total=round?.games?.length||0,reported=(round?.games||[]).filter(reportedGame);
+  const status={round:round?.round||0,gamesPlayed:reported.length,gamesTotal:total,provisional:reported.length<total};
+  if(!reported.length||!options.allowPartial&&!completeRound(round))return {...status,players:[],reserves:[],candidateCount:0};
+  const pool=candidates({games:reported}),used=new Set(),players=[];
   for(const slot of SLOTS){
    const free=pool.filter(x=>!used.has(x.name.toLocaleLowerCase('pt-BR')));
    const matching=free.filter(x=>slot.accept.includes(x.role));
@@ -58,14 +63,18 @@
    used.add(best.name.toLocaleLowerCase('pt-BR'));players.push({...best,slot:slot.role,adapted:!slot.accept.includes(best.role)});
   }
   const reserveNames=new Set(used);const reserves=pool.filter(x=>{const k=x.name.toLocaleLowerCase('pt-BR');if(reserveNames.has(k))return false;reserveNames.add(k);return true;}).sort((a,b)=>b.score-a.score).slice(0,8);
-  return {round:round.round,players,reserves,candidateCount:pool.length};
+  return {...status,players,reserves,candidateCount:pool.length};
  }
- function currentXI(competition){const round=latestCompletedRound(competition);return round?selectXI(round):{round:0,players:[],reserves:[],candidateCount:0};}
+ function currentXI(competition,chosenRound='latest'){
+  const available=availableRounds(competition);
+  const round=chosenRound==='latest'?available.at(-1):available.find(r=>String(r.round)===String(chosenRound));
+  return round?selectXI(round,{allowPartial:true}):{round:0,players:[],reserves:[],candidateCount:0,gamesPlayed:0,gamesTotal:0,provisional:false};
+ }
  function xiCardsHTML(xi,imageHTML,mode='desktop'){
   const groups=[['ATAQUE',['PD','CA','PE']],['MEIO-CAMPO',['MC','VOL','MEI']],['DEFESA',['LD','ZAG','ZAG','LE']],['GOLEIRO',['GOL']]];
   const players=(xi?.players||[]).slice();
   const card=p=>{
-   const profile=encodeURIComponent(p.name+'|'+p.club),attr=mode==='mobile'?'data-neo-ux-profile="'+profile+'"':'data-profile="'+profile+'"';
+   const profile=encodeURIComponent(p.name+'|'+p.club+(p.isMaster?'|master':'')),attr=mode==='mobile'?'data-neo-ux-profile="'+profile+'"':'data-profile="'+profile+'"';
    const overall=p.ovr||75,photo=imageHTML(p.name,p.club);
    return '<button type="button" class="neo-xi-card'+(overall>=92?' neo-xi-elite':'')+'" '+attr+' aria-label="'+esc(p.name)+' · '+esc(p.slot)+' · OVR '+overall+'">'+
     '<span class="neo-xi-photo">'+photo+'<span class="neo-xi-top-role">'+esc(p.slot)+'</span></span>'+
@@ -141,7 +150,7 @@
   const $=id=>doc.getElementById(id);
   const photo=(name,club)=>win.NeoPortraitUI?.html?.(name,E.teamById(club),'neo990-pic')||'<span class="neo990-pic">⚽</span>';
   adaptAI(E);
-  let previous='',selected='league';
+  let previous='',selected='league',chosenRound='latest';
   function competitions(){const collection=[{id:'league',title:'Liga Neo Egoísta',data:(()=>{try{return win.NeoCareerBridge?.getSeason?.()||JSON.parse(win.localStorage.getItem('neo-season-v2')||'null')}catch{return null}})()}];
    for(const cup of C?.safeLoad?.(win.localStorage)||[])collection.push({id:cup.id,title:cup.name||'Copa personalizada',data:cup});
    return collection;
@@ -165,7 +174,7 @@
   function ensurePanel(){const root=$('league');if(!root)return null;
    let panel=$('neo990-round-team');if(panel)return panel;
    panel=doc.createElement('section');panel.id='neo990-round-team';panel.className='card neo990-panel';
-   panel.innerHTML='<div class="neo990-head"><div><small>⭐ SELEÇÃO DINÂMICA</small><h3>Time do Campeonato</h3><p>Muda automaticamente a cada rodada concluída, com base nas ações e notas registradas.</p></div><span id="neo990-round-label">—</span></div><label class="neo990-select">Competição<select id="neo990-comp"></select></label><div id="neo990-xi"></div><div class="neo990-foot">Apenas partidas realmente concluídas são utilizadas. Esta equipe é gerada pelo campeonato; não existe criação de times pelos usuários.</div>';
+   panel.innerHTML='<div class="neo990-head"><div><small>⭐ SELEÇÃO DINÂMICA</small><h3>Time do Campeonato</h3><p>Atualiza a cada jogo salvo e fecha a escalação quando a rodada termina.</p></div><span id="neo990-round-label">—</span></div><label class="neo990-select">Competição<select id="neo990-comp"></select></label><label class="neo990-select neo990-round-choice">Ver rodada<select id="neo990-xi-round"><option value="latest">Mais recente (automático)</option></select></label><div id="neo990-xi"></div><div class="neo990-foot">Seleção baseada somente nas súmulas de partidas disputadas. Você pode rever qualquer rodada; a opção automática acompanha os novos jogos.</div>';
    root.insertBefore(panel,root.firstChild);
    // Desktop presentation only: no edits to the original squads, seasons, or XI scoring.
    panel.dataset.xiView='pitch';
@@ -189,7 +198,8 @@
     const list=panel.querySelector('.neo990-xi-list');
     if(list)list.open=mode==='list';
    });
-   $('neo990-comp').addEventListener('change',e=>{selected=e.target.value;render(true)});
+   $('neo990-comp').addEventListener('change',e=>{selected=e.target.value;chosenRound='latest';render(true)});
+   $('neo990-xi-round').addEventListener('change',e=>{chosenRound=e.target.value;render(true)});
    return panel;
   }
   function updateFriendly(team){
@@ -205,21 +215,19 @@
    const select=$('neo990-comp'),choices=all.map(x=>x.id+'|'+x.title).join('~');
    if(select.dataset.choices!==choices){select.innerHTML=all.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.title)+'</option>').join('');select.dataset.choices=choices;}
    select.value=selected;
-   const comp=all.find(x=>x.id===selected),xi=currentXI(comp?.data),signature=selected+'|'+xi.round+'|'+xi.players.map(x=>x.name+'|'+x.club+'|'+x.score).join(';');
+   const comp=all.find(x=>x.id===selected),rounds=availableRounds(comp?.data),roundPicker=$('neo990-xi-round');
+   if(chosenRound!=='latest'&&!rounds.some(r=>String(r.round)===chosenRound))chosenRound='latest';
+   const roundOptions='latest|'+rounds.map(r=>r.round+':'+r.games.filter(reportedGame).length+'/'+r.games.length).join('|');
+   if(roundPicker.dataset.options!==roundOptions){roundPicker.innerHTML='<option value="latest">Mais recente (automático)</option>'+rounds.map(r=>'<option value="'+r.round+'">Rodada '+r.round+(completeRound(r)?' · final':' · parcial')+'</option>').join('');roundPicker.dataset.options=roundOptions;}
+   roundPicker.value=chosenRound;
+   const xi=currentXI(comp?.data,chosenRound),signature=selected+'|'+chosenRound+'|'+xi.round+'|'+xi.gamesPlayed+'|'+xi.players.map(x=>x.name+'|'+x.club+'|'+x.score).join(';');
    if(!force&&signature===previous)return;previous=signature;
-   $('neo990-round-label').textContent=xi.round?'Rodada '+xi.round:'Sem rodada concluída';
+   $('neo990-round-label').textContent=xi.round?'Rodada '+xi.round+(xi.provisional?' · prévia':' · final'):'Sem jogos com súmula';
    const target=$('neo990-xi');
-   if(!xi.players.length){target.innerHTML='<p class="neo990-empty">A seleção será formada quando uma rodada inteira terminar com súmulas de jogadores disponíveis.</p>';return;}
+   if(!xi.players.length){target.innerHTML='<p class="neo990-empty">A seleção aparece assim que o primeiro jogo com súmula é salvo. Resultados antigos sem estatísticas individuais não podem formar cartas.</p>';return;}
    const starters=xi.players.map((p,i)=>'<button type="button" class="neo990-player" data-profile="'+encodeURIComponent(p.name+'|'+p.club)+'">'+photo(p.name,p.club)+'<span><b>'+esc(p.name)+'</b><small>'+esc(E.teamById(p.club)?.short||p.club)+' · '+esc(p.slot)+(p.adapted?' (adaptado)':'')+'</small></span><strong>'+p.rating.toFixed(1)+'</strong></button>').join('');
-   const spots=win.NeoPitch1040?.layout({formationName:'4-3-3',formation:E.DEFAULT_FORMATION},E.DEFAULT_FORMATION)||
-     E.DEFAULT_FORMATION.map(f=>({lane:Math.max(10,Math.min(90,f.y*100)),depth:Math.max(18,Math.min(91,(1-f.x)*100))}));
-   const pitchPlayers=xi.players.map((p,i)=>{
-     const spot=spots[i]||{lane:50,depth:50};
-     return '<button type="button" class="neo990-pitch-player" data-profile="'+encodeURIComponent(p.name+'|'+p.club)+'" style="--lane:'+spot.lane+'%;--depth:'+spot.depth+'%" title="'+esc(p.name)+' · '+esc(p.slot)+' · '+p.score.toFixed(1)+'" aria-label="Abrir ficha de '+esc(p.name)+', posição '+esc(p.slot)+'">'+
-       photo(p.name,p.club)+'<span class="neo990-position">'+esc(p.slot)+'</span><span class="neo990-name">'+esc(p.name)+'</span><strong class="neo990-score" aria-label="Nota '+p.rating.toFixed(1)+'">'+p.rating.toFixed(1)+'</strong></button>';
-   }).join('');
    const pitch=xiCardsHTML(xi,(name,club)=>photo(name,club),'desktop');
-   target.innerHTML='<div class="neo990-team-summary"><b>4-3-3 · Melhor XI</b><small>'+xi.candidateCount+' atletas avaliados · notas 0 a 10 e posições corretas</small></div>'+
+   target.innerHTML='<div class="neo990-team-summary"><b>4-3-3 · Melhor XI'+(xi.provisional?' (prévia)':'')+'</b><small>'+xi.gamesPlayed+'/'+xi.gamesTotal+' jogos da rodada · '+xi.candidateCount+' atletas avaliados · notas 0 a 10</small></div>'+
       pitch+'<p class="neo990-xi-caption">⬆ Ataque · 🧤 Goleiro na base · Toque na carta para abrir a ficha</p>'+
       '<details class="neo990-xi-list"><summary>☷ Ver escalação em lista</summary><div class="neo990-grid">'+starters+'</div></details>'+
       '<details class="neo990-bench"><summary>Banco e destaques ('+xi.reserves.length+')</summary>'+xi.reserves.map(p=>'<div>'+photo(p.name,p.club)+'<span>'+esc(p.name)+' · '+esc(p.role)+'</span><b>'+p.score.toFixed(1)+'</b></div>').join('')+'</details>';
@@ -232,7 +240,7 @@
   win.addEventListener('neo:portraits-changed',()=>render(true));
   const navClicks=()=>{injectGallery();render();};
   doc.addEventListener('click',e=>{
-   const profile=e.target.closest('[data-profile]');if(profile){const text=decodeURIComponent(profile.dataset.profile||''),at=text.lastIndexOf('|');if(at>=0)win.NeoMarket96?.openProfile?.(text.slice(0,at),text.slice(at+1));}
+   const profile=e.target.closest('[data-profile]');if(profile){const key=decodeURIComponent(profile.dataset.profile||''),isMaster=key.endsWith('|master'),text=isMaster?key.slice(0,-7):key,at=text.lastIndexOf('|');if(at>=0)win.NeoMarket96?.openProfile?.(text.slice(0,at),text.slice(at+1),isMaster);}
    if(e.target.closest('[data-tab="league"],[data-tab="gallery"],[data-neo-tab="league"],[data-neo-tab="more"]'))win.setTimeout(navClicks,70);
   });
   // Scans only small stored fixtures and updates when the final match of a round is saved.
@@ -240,5 +248,5 @@
   // Keep the gallery options available when returning after an image upload.
   win.setInterval(()=>{if($('galleryTeam'))injectGallery();},6000);
  }
- return {SLOTS,scoredPlayer,completeRound,latestCompletedRound,candidates,selectXI,currentXI,xiCardsHTML,registerDynamicTeam,adaptAI,mount};
+ return {SLOTS,scoredPlayer,completeRound,latestCompletedRound,availableRounds,candidates,selectXI,currentXI,xiCardsHTML,registerDynamicTeam,adaptAI,mount};
 });

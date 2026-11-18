@@ -22,13 +22,13 @@
   "releases": [
     {
       "version": "2.0.0",
-      "date": "2026-11-17",
+      "date": "2026-11-18",
       "novidades": [
-        "Conteúdo 10.6.35: seleção do campeonato em cartas grandes no campo, três partidas reais simultâneas com bolinhas animadas e acesso rápido na Liga.",
+        "Conteúdo 10.6.36: seleção do campeonato com cartas grandes e retratos corretos, atualizada a cada jogo e com escolha entre todas as rodadas, inclusive em andamento.",
         "Liga Neo Egoísta com 2 a 10 clubes escolhidos, calendário, tabela e partidas com 22 atletas, incluindo History Team e times históricos."
       ],
       "correcoes": [
-        "Mestres entram uma única vez por partida; jogos dos mestres são contados uma vez por confronto nos rankings e históricos existentes. Sae mantém posição MEI e 98 OVR.",
+        "Mestres entram uma única vez por partida e aparecem nos rankings de desempenho, MVP, premiações, seleção da rodada e aba própria; histórico antigo reconcilia jogos duplicados. Sae mantém posição MEI e 98 OVR.",
         "Salvamento corrigido para temporadas longas: súmulas compactas mantêm gols, assistências, ofertas e notas; backups anteriores ficam protegidos no armazenamento de arquivos do dispositivo.",
         "Pênaltis não geram assistências invisíveis, e quem faz o cruzamento não cabeceia a própria bola no instante do lançamento."
       ],
@@ -36,7 +36,7 @@
         "Dois, quatro ou seis encontros por dupla; finalizações mais frequentes, chances reais de gols aumentadas e força coletiva baseada no OVR dos 11 jogadores para favorecer equipes superiores, como History Team, sem resultados garantidos."
       ],
       "visual": [
-        "Seleção 4-3-3 com cartas por setor, retratos, posição e OVR, conforme referência; fotos editáveis e 129 retratos por jogador, sem atribuir fotos a quem ainda não foi cadastrado."
+        "Seleção 4-3-3 com cartas por setor, posição e OVR, agora com rodadas selecionáveis e estado parcial/final; fotos personalizadas respeitadas no mercado e rankings, sem imagens falsas para quem não possui retrato."
       ],
       "otimizacoes": [
         "Simulação para ao detectar falha de gravação, com progresso por partida; histórico tático antigo reduzido apenas quando necessário para liberar espaço."

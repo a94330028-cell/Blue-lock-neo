@@ -56,7 +56,7 @@ assert.ok(app.includes('.slice(0,3)')&&app.includes('players:game.players.map'))
 assert.ok(app.includes('E.recordFixture(season,f,game)'));
 assert.ok(hub.includes('data-neo-ux-simulate="triple"'));
 assert.ok(hub.includes('bridge.simulateTripleLive(paintLive)'));
-assert.ok(hub.includes("rows=market().filter(p=>n(p.games)>0)"),'masters included in ranking');
+assert.ok(hub.includes("rows=allRows.filter(p=>n(p.games)>0)"),'played masters included in ranking');
 assert.ok(css.includes('.neo-xi-field')&&css.includes('.neo-xi-count-4'));
 
 // Same seeded league sample before this release: History won only 4/12 and

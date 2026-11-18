@@ -50,6 +50,7 @@ jobs:
           node tests/v980.test.cjs
           node tests/v981.test.cjs
           node tests/v990.test.cjs
+          node tests/league-fixes-v10636.test.cjs
           node tests/kaiser-icon-v991.test.cjs
           node tests/gallery-v992.test.cjs
           node tests/gallery-v993.test.cjs

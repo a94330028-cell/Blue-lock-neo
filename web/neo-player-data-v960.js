@@ -38,7 +38,7 @@
     const master=i===(t.players||[]).length+(t.reserves||[]).length;
     const uniqueId=id+(master?'|master':'');if(seen.has(uniqueId))return;seen.add(uniqueId);
     const saved=(master?masterBids[id]:career[id])||{};
-    const role=roleFor(t,i,saved,master);
+    const role=master?(E.Masters?.CONFIG?.[t.id]?.masterRole||saved.role||'CA'):roleFor(t,i,saved,master);
     const ovr=E.Attr?.generate?E.Attr.generate(name,role,master?9:i<11?i:1,saved).ovr:N(saved.ovr)||75;
     const value=E.Progression?.estimateValue?E.Progression.estimateValue(saved,ovr,role):N(saved.value);
     res.push({...saved,name,club:t.id,role,ovr,value,isMaster:master});
