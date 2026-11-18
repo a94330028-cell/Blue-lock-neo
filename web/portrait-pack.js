@@ -1,4 +1,4 @@
-/* Blue Lock NEO 10.6.33: 129 retratos offline. Preserva escolhas e fotos do jogador. */
+/* Blue Lock NEO 10.6.41: 131 retratos offline. Preserva escolhas e fotos do jogador. */
 (() => {
   'use strict';
   const DB_NAME = 'neo-portrait-library-v1';
