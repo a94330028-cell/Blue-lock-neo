@@ -126,7 +126,7 @@
   const photo=(name,club)=>win.NeoPortraitUI?.html?.(name,E.teamById(club),'neo990-pic')||'<span class="neo990-pic">⚽</span>';
   adaptAI(E);
   let previous='',selected='league';
-  function competitions(){const collection=[{id:'league',title:'Liga Neo Egoísta',data:(()=>{try{return JSON.parse(win.localStorage.getItem('neo-season-v2')||'null')}catch{return null}})()}];
+  function competitions(){const collection=[{id:'league',title:'Liga Neo Egoísta',data:(()=>{try{return win.NeoCareerBridge?.getSeason?.()||JSON.parse(win.localStorage.getItem('neo-season-v2')||'null')}catch{return null}})()}];
    for(const cup of C?.safeLoad?.(win.localStorage)||[])collection.push({id:cup.id,title:cup.name||'Copa personalizada',data:cup});
    return collection;
   }

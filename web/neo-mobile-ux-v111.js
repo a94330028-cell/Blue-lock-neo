@@ -33,6 +33,7 @@
    '<div class="neo-ux-tools"><button type="button" data-neo-ux-open="ranking">📊 Rankings</button><button type="button" data-neo-ux-open="market">💴 Mercado</button><button type="button" data-neo-ux-open="championship">🏆 Liga</button></div>';
  }
  let active=null,limit=30,filter='all',rankMode='goals',lastToken='',root=null,returnBar=null;
+ let simulating=false,simMessage='';
  const position=p=>{
   const raw=String(p.role||'').toUpperCase();
   const pos=window.NeoMarket96?.position?.(raw);
@@ -49,8 +50,21 @@
  };
  function championship(){
   const s=season(),r=pending(),played=games().filter(g=>Array.isArray(g.result)),all=games(),table=standings();
+  const xi=window.NeoRound990?.currentXI?.(s);
+  const priced=market().filter(p=>n(p.games)>0&&n(p.value)>0);
   let out=template('🏆 Campeonatos');
-  out+='<div class="neo-ux-hero"><small>LIGA NEO EGOÍSTA · TEMPORADA '+esc(s?.number||1)+'</small><h3>'+(r?'Rodada '+esc(r.round):'Temporada concluída')+'</h3><p>'+played.length+' de '+all.length+' jogos registrados</p><button class="neo-ux-primary" data-neo-ux-original="league">⚙ Abrir controles completos da liga</button></div>';
+  out+='<div class="neo-ux-hero"><small>LIGA NEO EGOÍSTA · TEMPORADA '+esc(s?.number||1)+'</small><h3>'+(r?'Rodada '+esc(r.round):'Temporada concluída')+'</h3><p>'+played.length+' de '+all.length+' jogos registrados · '+priced.length+' jogadores com ofertas</p>'+
+   (r?'<div class="neo-ux-round-actions"><button type="button" class="neo-ux-primary" data-neo-ux-simulate="next" '+(simulating?'disabled':'')+'>⚡ Próximo jogo</button><button type="button" class="neo-ux-primary" data-neo-ux-simulate="round" '+(simulating?'disabled':'')+'>🏁 Rodada inteira</button></div>':'')+
+   '<p class="neo-ux-sim-status" id="neo-ux-sim-progress" role="status">'+esc(simulating?'⏳ Simulando jogos e salvando resultados...':simMessage||'Simule aqui e acompanhe a classificação sem sair desta página.')+'</p>'+
+   '<button class="neo-ux-secondary" data-neo-ux-original="league">⚙ Ajustar clubes e calendário</button></div>';
+  out+='<section class="neo-ux-panel neo-ux-xi-feature" id="neo-ux-round-xi"><div class="neo-ux-xi-head"><h3>⭐ Time da Rodada</h3><span>'+(xi?.round?'Rodada '+esc(xi.round):'Aguardando resultados')+'</span></div>';
+  if(xi?.players?.length){
+   const highlights=xi.players.slice().sort((a,b)=>b.score-a.score).slice(0,3);
+   out+='<div class="neo-ux-xi-highlights">'+highlights.map((p,i)=>'<div>'+img(p.name)+'<span><small>'+['🥇','🥈','🥉'][i]+' '+esc(club(p.club)?.short||p.club)+'</small><b>'+esc(p.name)+'</b></span><strong>'+p.rating.toFixed(1)+'</strong></div>').join('')+'</div>';
+   out+='<details class="neo-ux-xi-details"><summary>Ver os '+xi.players.length+' titulares e o banco</summary><div class="neo-ux-xi-players">'+xi.players.map(p=>'<div><b>'+esc(p.slot)+'</b><span>'+esc(p.name)+' · '+esc(club(p.club)?.short||p.club)+'</span><strong>'+p.rating.toFixed(1)+'</strong></div>').join('')+'</div>'+
+    (xi.reserves?.length?'<small>Banco: '+xi.reserves.map(p=>esc(p.name)).join(', ')+'</small>':'')+'</details>';
+  }else out+='<p>Conclua uma rodada com súmulas dos jogadores para formar o melhor XI.</p>';
+  out+='</section>';
   out+='<h3 class="neo-ux-title">⚽ Jogos da rodada</h3><div class="neo-ux-fixtures">';
   if(r?.games?.length){
    out+=r.games.map((g,index)=>{
@@ -171,6 +185,20 @@
   target.click();
   original('match');
  }
+ async function simulateFromHub(mode){
+  const bridge=window.NeoCareerBridge;
+  if(simulating||bridge?.isSimulating?.())return;
+  if(!bridge?.simulateRound||!bridge?.simulateNextFixture){simMessage='⚠️ Os controles da liga ainda não estão prontos.';show('championship');return;}
+  const expected=mode==='round'?pending()?.games.filter(g=>!Array.isArray(g.result)).length||0:1;
+  simulating=true;simMessage='';show('championship');
+  try{
+   const completed=await (mode==='round'?bridge.simulateRound():bridge.simulateNextFixture());
+   simMessage=completed<expected?'⚠️ '+completed+' de '+expected+' partida(s) registradas. Se o armazenamento estiver cheio, exporte seu backup antes de sair.':
+    mode==='round'?'✅ Rodada salva! Ofertas e Time da Rodada atualizados.':
+    '✅ Partida salva! Ofertas atualizadas. O Time da Rodada fecha após o último jogo.';
+  }catch(error){console.error('Erro na simulação da liga',error);simMessage='⚠️ Simulação interrompida: '+String(error?.message||error);}
+  finally{simulating=false;show('championship');}
+ }
  function token(){
   const s=season();
   return String(s?.number||'')+'|'+String(games().filter(x=>Array.isArray(x.result)).length)+'|'+Object.values(s?.scorers||{}).reduce((a,b)=>a+(Number(b)||0),0)+'|'+String(s?.career?.neoWorld?.market?.moves?.length||0)+'|'+String(!!window.NeoMarket96);
@@ -211,6 +239,9 @@
    if(b.dataset.neoUxWatch!==undefined){
     event.preventDefault();event.stopImmediatePropagation();watch(Number(b.dataset.neoUxWatch));return;
    }
+   if(b.dataset.neoUxSimulate){
+    event.preventDefault();event.stopImmediatePropagation();simulateFromHub(b.dataset.neoUxSimulate);return;
+   }
    if(b.dataset.neoUxRank){
     event.preventDefault();event.stopImmediatePropagation();rankMode=b.dataset.neoUxRank;limit=30;show('ranking');return;
    }
@@ -242,8 +273,13 @@
    if(!mobile())return;
    augment();
    const current=token();
-   if(active&&current!==lastToken)show(active);
+   if(active&&!simulating&&current!==lastToken)show(active);
   };
+  window.addEventListener('neo:league-progress',event=>{
+   if(!simulating||active!=='championship')return;
+   const notice=$('neo-ux-sim-progress');
+   if(notice)notice.textContent='⏳ Rodada '+(event.detail?.round||'?')+' · '+(event.detail?.played||0)+' jogos salvos na temporada...';
+  });
   setInterval(refresh,3800);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden&&active)show(active)});
   window.NeoMobileHub={show,close,market,championship,rankingHtml};

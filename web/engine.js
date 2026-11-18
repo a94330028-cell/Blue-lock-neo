@@ -2051,20 +2051,93 @@ class Match {
   runToEnd(){let i=0;while(!this.finished&&i++<14000)this.step(TICK);if(!this.finished)this.finish();return this.result();}
   result(){return {home:this.teams[0].id,away:this.teams[1].id,score:[...this.score],startingLineups:this.startingLineups.map(rows=>rows.map(p=>({...p}))),coachPlans:this.coachPlans.map(x=>x?{reason:x.reason,form:x.form,changes:x.changes}:null),coachDecisions:this.coachDecisions.map(x=>({...x})),gameplayPreset:this.gameplayPreset,weather:this.weather,autoGameplan:!!this.autoGameplan,planNames:[...(this.planNames||[])],modernPatterns:[this.modernPattern(0),this.modernPattern(1)],specialMoments:this.specialMoments.map(m=>({...m})),shapeHistory:(this.shapeHistory||[[],[]]).map(h=>h.map(x=>({...x}))),tacticalSettings:{pressing:[...this.pressing],attackWidth:[...this.attackWidth],buildUp:[...this.buildUp],stance:[...this.tactics],crosses:[...this.crossPreference],corners:[...this.setPieceStyle]},stats:JSON.parse(JSON.stringify(this.stats)),players:[...this.retiredPlayers,...this.masterHidden,...this.players].map(p=>({name:p.name,side:p.side,role:p.role,attributes:p.attributes,ovr:p.attributes?.ovr||75,isMaster:!!p.isMaster,goals:p.goals,assists:p.assists,shots:p.shots,dribblesWon:p.dribblesWon||0,saves:Math.max(p.saves||0,p.i===0?this.shotMap.filter(s=>s.outcome==='saved'&&s.savedBy===p.name&&s.side!==p.side).length:0),passes:p.pases||0,flowCount:p.flowCount||0,abilityUses:{...(p.abilityUses||{})},tackles:p.tackles||0,interceptions:p.interceptions||0,shotBlocks:p.shotBlocks||0,aerialWins:p.aerialWins||0,duelsWon:p.duelsWon||0,keyPasses:p.keyPasses||0,runs:p.runCount,overlaps:p.overlapCount,distance:Math.round(p.distanceCovered),rating:+p.rating.toFixed(1)})),masterEntries:this.masterEntries.map(r=>({...r})),substitutions:this.subRecords.map(s=>({...s})),cards:this.cardRecords.map(c=>({...c})),shots:this.shotMap.map(s=>({...s})),events:this.keyEvents.map(e=>({...e})),goalRecords:this.goalRecords.map(r=>({...r,score:[...r.score]})),abilityHistory:this.abilityHistory.map(a=>({...a})),duelHistory:this.duelHistory.map(d=>({...d})),seed:this.seed};}
 }
+// A complete season with 10 clubs can exceed localStorage's quota if every
+// tactical duel and full attribute grid is repeated in every match report.
+// Preserve the evidence needed for goals, bids, rankings, ratings and Best XI;
+// retain a bounded tactical sample instead of duplicating transient telemetry.
+function compactFixtureDetails(details){
+ if(!details||!Array.isArray(details.players))return details;
+ const tail=(records,limit)=>Array.isArray(records)&&records.length>limit?records.slice(-limit):records;
+ const playerFields=['name','side','role','ovr','isMaster','goals','assists','shots','dribblesWon',
+  'saves','passes','flowCount','tackles','interceptions','shotBlocks','aerialWins','duelsWon',
+  'keyPasses','runs','overlaps','distance','rating'];
+ return {...details,
+  players:details.players.map(p=>{
+   if(!p||typeof p!=='object')return p;
+   const compact={};
+   for(const key of playerFields){
+    const value=p[key];
+    if(value===undefined||value===null)continue;
+    // Zero-valued counters are interpreted as zero by every statistics reader.
+    if(!['name','side','role','ovr','rating'].includes(key)&&(value===0||value===false))continue;
+    compact[key]=value;
+   }
+   if(p.abilityUses)compact.abilityUses=Object.fromEntries(Object.entries(p.abilityUses)
+    .sort((a,b)=>b[1]-a[1]).slice(0,4));
+   return compact;
+  }),
+  abilityHistory:tail(details.abilityHistory,5),
+  duelHistory:tail(details.duelHistory,5),
+  shapeHistory:Array.isArray(details.shapeHistory)?details.shapeHistory.map(h=>tail(h,4)):details.shapeHistory,
+  events:tail(details.events,90),shots:tail(details.shots,110),
+  specialMoments:tail(details.specialMoments,12),
+  neo240:details.neo240?{...details.neo240,events:tail(details.neo240.events,5),
+   narration:tail(details.neo240.narration,5),highlights:tail(details.neo240.highlights,5)}:details.neo240,
+  neoAdvanced:details.neoAdvanced?{...details.neoAdvanced,events:tail(details.neoAdvanced.events,5)}:details.neoAdvanced,
+  ego230:details.ego230?{...details.ego230,events:tail(details.ego230.events,5)}:details.ego230
+ };
+}
+function compactSeasonReports(season,aggressive=false){
+ let reduced=0;
+ const latest=(season?.rounds||[]).filter(r=>r.games?.some(f=>f.details?.players))
+  .reduce((max,r)=>Math.max(max,r.round||0),0);
+ for(const round of season?.rounds||[])for(const fixture of round.games||[]){
+  if(!fixture.details?.players)continue;
+  const original=fixture.details,compact=compactFixtureDetails(original);
+  if(aggressive&&(round.round||0)<latest-2){
+   const tail=(list,n)=>Array.isArray(list)?list.slice(-n):list;
+   // The career ledger already holds cumulative weapon usage. Avoid storing
+   // the same per-player ability counters inside hundreds of old match sheets.
+   compact.players=compact.players.map(p=>{
+    if(!p?.abilityUses)return p;
+    const {abilityUses,...withoutDuplicateCounters}=p;
+    return withoutDuplicateCounters;
+   });
+   compact.abilityHistory=tail(compact.abilityHistory,1);
+   compact.duelHistory=tail(compact.duelHistory,1);
+   compact.shapeHistory=Array.isArray(compact.shapeHistory)?compact.shapeHistory.map(h=>tail(h,1)):compact.shapeHistory;
+   compact.specialMoments=tail(compact.specialMoments,2);
+   compact.coachDecisions=tail(compact.coachDecisions,1);
+   // The full score/goal sheet and individual performance survive. Only old
+   // transient shot/event telemetry is sampled to stay within mobile quota.
+   if(Array.isArray(compact.shots))compact.shots=compact.shots.filter(s=>
+    s?.goal||s?.outcome==='saved');
+   if(Array.isArray(compact.events))compact.events=compact.events.filter(e=>
+    e?.type==='goal'||e?.type==='save');
+   // Extended Ego systems also duplicate tactical narration in each report.
+   // Their summary counters remain intact; recent rounds keep richer samples.
+   if(compact.neo240)compact.neo240={...compact.neo240,events:[],narration:tail(compact.neo240.narration,1),highlights:tail(compact.neo240.highlights,2),coach:tail(compact.neo240.coach,1)};
+   if(compact.neoAdvanced)compact.neoAdvanced={...compact.neoAdvanced,events:[]};
+   if(compact.ego230)compact.ego230={...compact.ego230,events:[]};
+  }
+  if(JSON.stringify(compact).length<JSON.stringify(original).length){fixture.details=compact;reduced++;}
+ }
+ return reduced;
+}
 function recordFixture(season,fixture,match){
   if(fixture.result)return false;
   const r=match.result();fixture.result=r.score;
   // Histórico compacto no armazenamento: conserva placares, gols, estatísticas,
   // jogadores e progressão; evita crescimento descontrolado do save no celular.
-  fixture.details={...r,
+  fixture.details=compactFixtureDetails({...r,
     abilityHistory:(r.abilityHistory||[]).slice(-65),
     events:(r.events||[]).slice(-90),
     duelHistory:(r.duelHistory||[]).slice(-90),
     shots:(r.shots||[]).slice(-110),
     specialMoments:(r.specialMoments||[]).slice(-40),
     shapeHistory:(r.shapeHistory||[]).map(h=>h.slice(-40)),
-    players:(r.players||[]).map(p=>({...p,abilityUses:Object.fromEntries(Object.entries(p.abilityUses||{}).sort((a,b)=>b[1]-a[1]).slice(0,18))}))
-  };
+    players:r.players||[]
+  });
   for(const p of r.players){const id=(p.side===0?fixture.home:fixture.away),key=p.name+'|'+id;
     if(p.goals)season.scorers[key]=(season.scorers[key]||0)+p.goals;
     if(p.assists)season.assists[key]=(season.assists[key]||0)+p.assists;
@@ -2087,6 +2160,6 @@ function migrateLegacySeason(legacy){
   season.scorers={...legacy.scorers};season.assists={...legacy.assists};season.goalLog=[];return season;
 }
 function lerp(a,b,t){return a+(b-a)*t;}
-return {PITCH,TICK,GAME_RATE,MAX_SECONDS,TEAMS,EXTRA_TEAMS,allTeams,registerTeam,registerCreatedPlayer,unregisterCreatedPlayer,listCreatedPlayers,COUNTRY_KITS,SKILLS,PLAYER_STYLES,GAMEPLAN_TEMPLATES,Attr,Abilities,Masters,Progression,avatarTheme,avatarHTML,avatarSVG,REAL_PORTRAITS,Match,createSchedule,standings,teamById,recordFixture,migrateLegacySeason,FORMATIONS,DEFAULT_FORMATION};
+return {PITCH,TICK,GAME_RATE,MAX_SECONDS,TEAMS,EXTRA_TEAMS,allTeams,registerTeam,registerCreatedPlayer,unregisterCreatedPlayer,listCreatedPlayers,COUNTRY_KITS,SKILLS,PLAYER_STYLES,GAMEPLAN_TEMPLATES,Attr,Abilities,Masters,Progression,avatarTheme,avatarHTML,avatarSVG,REAL_PORTRAITS,Match,createSchedule,standings,teamById,recordFixture,compactFixtureDetails,compactSeasonReports,migrateLegacySeason,FORMATIONS,DEFAULT_FORMATION};
 });
 

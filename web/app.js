@@ -611,12 +611,73 @@ function loadSeason(){
   try{const old=JSON.parse(localStorage.getItem('neo-season-v1'));const migrated=E.migrateLegacySeason(old);if(migrated){localStorage.setItem('neo-season-v2',JSON.stringify(migrated));return migrated;}}catch(e){}
   return E.createSchedule();
 }
+// Large previous seasons belong in IndexedDB, not beside the active season in
+// the small localStorage quota. Remove a legacy copy only after a verified read.
+function openSeasonArchiveDb(){
+ return new Promise((resolve,reject)=>{
+  if(!window.indexedDB)return reject(Error('IndexedDB indisponível'));
+  const req=indexedDB.open('neo-season-archive-v1',1);
+  req.onupgradeneeded=()=>{if(!req.result.objectStoreNames.contains('seasons'))req.result.createObjectStore('seasons',{keyPath:'key'});};
+  req.onsuccess=()=>resolve(req.result);
+  req.onerror=()=>reject(req.error||Error('Arquivo de temporadas indisponível'));
+  req.onblocked=()=>reject(Error('Banco de temporadas ocupado'));
+ });
+}
+async function archiveSeasonSnapshot(serialized,kind='edition'){
+ const db=await openSeasonArchiveDb();
+ try{
+  const key=kind+'-'+Date.now()+'-'+Math.random().toString(36).slice(2,8);
+  await new Promise((resolve,reject)=>{
+   const tx=db.transaction('seasons','readwrite');
+   tx.objectStore('seasons').put({key,createdAt:Date.now(),data:serialized});
+   tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||Error('Backup interrompido'));
+  });
+  const copy=await new Promise((resolve,reject)=>{
+   const tx=db.transaction('seasons','readonly');const req=tx.objectStore('seasons').get(key);
+   tx.oncomplete=()=>resolve(req.result?.data);tx.onerror=()=>reject(tx.error);
+  });
+  if(copy!==serialized)throw Error('Verificação do backup falhou');
+  return key;
+ }finally{db.close();}
+}
+async function migrateLegacySeasonArchive(){
+ const old=localStorage.getItem('neo-season-previous-v2');
+ if(!old)return true;
+ try{
+  await archiveSeasonSnapshot(old,'legacy');
+  // Storage space is reclaimed only when IndexedDB has an identical copy.
+  if(localStorage.getItem('neo-season-previous-v2')===old)localStorage.removeItem('neo-season-previous-v2');
+  return true;
+ }catch(error){console.warn('Backup anterior mantido no armazenamento original:',error);return false;}
+}
+async function latestSeasonArchive(){
+ const legacy=localStorage.getItem('neo-season-previous-v2');
+ let db;try{db=await openSeasonArchiveDb();}catch(_){return legacy;}
+ try{
+  const all=await new Promise((resolve,reject)=>{
+   const tx=db.transaction('seasons','readonly'),req=tx.objectStore('seasons').getAll();
+   tx.oncomplete=()=>resolve(req.result||[]);tx.onerror=()=>reject(tx.error);
+  });
+  all.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+  return all[0]?.data||legacy||null;
+ }finally{db.close();}
+}
 function saveSeason(){
-  try{localStorage.setItem('neo-season-v2',JSON.stringify(season));return true;}
-  catch(e){console.warn('Não foi possível salvar a liga',e);
+  let data=JSON.stringify(season);
+  try{
+    if(data.length>3300000){E.compactSeasonReports(season,true);data=JSON.stringify(season);}
+    localStorage.setItem('neo-season-v2',data);return true;
+  }catch(e){
+   try{
+    // Existing large saves receive the same safe compaction as new reports.
+    E.compactSeasonReports(season,true);data=JSON.stringify(season);
+    localStorage.setItem('neo-season-v2',data);return true;
+   }catch(lastError){console.warn('Não foi possível salvar a liga',lastError);
+    migrateLegacySeasonArchive().catch(()=>{});
     const warning=$('saveWarning')||$('matchBanner');
-    if(warning)warning.textContent='⚠️ Armazenamento do navegador cheio: a última partida ainda não foi gravada. Exporte ou libere espaço antes de fechar.';
+    if(warning)warning.textContent='⚠️ Espaço para salvar a liga esgotado. A simulação foi interrompida para proteger seus resultados. Exporte o backup antes de sair.';
     return false;
+   }
   }
 }
 function team(id){return E.teamById(id);}
@@ -1839,7 +1900,13 @@ async function runFixture(f){
     await new Promise(resolve=>setTimeout(resolve,0));
   }
   if(!sim.finished)sim.finish();
-  E.recordFixture(season,f,sim);saveSeason();return true;
+  E.recordFixture(season,f,sim);
+  if(!saveSeason()){cancelSim=true;return false;}
+  window.dispatchEvent(new CustomEvent('neo:league-progress',{detail:{
+    played:season.rounds.flatMap(r=>r.games).filter(g=>Array.isArray(g.result)).length,
+    round:season.rounds.find(r=>r.games.includes(f))?.round||0
+  }}));
+  return true;
 }
 function setSimButtons(){
   $('simulateRound').textContent=simBusy?'⏳ Simulando...':'⚡ Simular rodada';
@@ -1849,10 +1916,20 @@ function setSimButtons(){
   $('simulateSeason').disabled=!simBusy&&!currentRound();
 }
 async function simulateRound(){
-  if(simBusy||!currentRound())return;
+  if(simBusy||!currentRound()||(playing&&!match?.finished))return 0;
+  let completed=0;
   simBusy=true;cancelSim=false;playing=false;replaying=false;setSimButtons();
-  try{const r=currentRound();for(const f of r.games)if(!f.result){if(!await runFixture(f))break;}}
+  try{const r=currentRound();for(const f of r.games)if(!f.result){if(!await runFixture(f))break;completed++;}}
   finally{simBusy=false;cancelSim=false;setSimButtons();renderLeague();renderStats();}
+  return completed;
+}
+async function simulateNextFixture(){
+ if(simBusy||!currentRound()||(playing&&!match?.finished))return 0;
+ simBusy=true;cancelSim=false;playing=false;replaying=false;setSimButtons();
+ let completed=0;
+ try{const next=currentRound()?.games.find(f=>!f.result);if(next&&await runFixture(next))completed=1;}
+ finally{simBusy=false;cancelSim=false;setSimButtons();renderLeague();renderStats();}
+ return completed;
 }
 async function simulateSeason(){
   if(simBusy){cancelSim=true;$('simulateSeason').textContent='⏳ Parando...';return;}
@@ -2262,6 +2339,24 @@ function init(){
     }catch(error){alert('Não foi possível exportar: '+error.message);}
   };
   $('restoreSeason').onclick=()=>{if(!simBusy){$('restoreSeasonFile').value='';$('restoreSeasonFile').click();}};
+  if($('exportSeason')){
+    const previousButton=document.createElement('button');previousButton.type='button';
+    previousButton.className='button ghost';previousButton.id='exportPreviousSeason';
+    previousButton.textContent='📁 Baixar edição anterior';
+    $('exportSeason').insertAdjacentElement('afterend',previousButton);
+    previousButton.onclick=async()=>{
+      try{
+        const data=await latestSeasonArchive()||localStorage.getItem('neo-season-previous-v2');
+        if(!data){alert('Ainda não existe uma edição anterior arquivada.');return;}
+        if(window.BlueLockAndroid?.saveJson)window.BlueLockAndroid.saveJson('blue-lock-neo-edicao-anterior.json',data);
+        else{
+          const url=URL.createObjectURL(new Blob([data],{type:'application/json'}));
+          const link=document.createElement('a');link.href=url;link.download='blue-lock-neo-edicao-anterior.json';
+          document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),3000);
+        }
+      }catch(error){alert('Não foi possível baixar a edição anterior: '+error.message);}
+    };
+  }
   $('restoreSeasonFile').onchange=async e=>{
     const file=e.target.files?.[0];if(!file||simBusy)return;
     try{
@@ -2276,7 +2371,7 @@ function init(){
       alert('Liga restaurada com sucesso. Retratos personalizados não foram alterados.');
     }catch(error){alert('Não foi possível restaurar: '+error.message);}
   };
-  $('newSeason').onclick=()=>{if(simBusy)return;const clubs=selectedLeagueTeamIds();if(clubs.length<2){alert('Selecione pelo menos dois clubes.');return;}
+  $('newSeason').onclick=async()=>{if(simBusy)return;const clubs=selectedLeagueTeamIds();if(clubs.length<2){alert('Selecione pelo menos dois clubes.');return;}
     const names=clubs.map(id=>team(id)?.name||id);
     if(!confirm(`Iniciar a próxima Liga Neo Egoísta com ${clubs.length} clubes?\n\n${names.join(', ')}\n\nA temporada atual será arquivada e terá um backup automático neste aparelho. Os jogos e rankings da nova edição começam do zero.`))return;
     const played=season.rounds.flatMap(r=>r.games).filter(f=>f.result).length;
@@ -2285,7 +2380,12 @@ function init(){
     // Uma temporada NOVA sempre recomeça o leilão e os atributos da liga do zero.
     next.career={players:{},history:[],version:2,links:{},rivals:{},stories:[]};
     try{
-      localStorage.setItem('neo-season-previous-v2',JSON.stringify(season));
+      if(!await migrateLegacySeasonArchive())throw Error('Não foi possível proteger o backup da edição anterior.');
+      const previous=JSON.stringify(season);
+      let archived=false;
+      try{await archiveSeasonSnapshot(previous);archived=true;}
+      catch(error){console.warn('Arquivo externo indisponível; mantendo backup local:',error);}
+      if(!archived)localStorage.setItem('neo-season-previous-v2',previous);
       localStorage.setItem('neo-season-v2',JSON.stringify(next));
     }catch(error){alert('Não foi possível guardar o backup e iniciar a nova liga. Libere espaço ou exporte a temporada antes de tentar novamente.');return;}
     season=next;playing=false;replaying=false;roundView=1;
@@ -2333,6 +2433,7 @@ function init(){
   prepare('bm','px');renderLeague();renderSquads();renderStats();requestAnimationFrame(frame);
 }
 init();
+migrateLegacySeasonArchive().catch(error=>console.warn('Arquivo da temporada anterior ainda no aparelho:',error));
 // v7.7 cinematic stage interactions
 if($('actionTheaterToggle'))$('actionTheaterToggle').addEventListener('click',()=>{
  const node=$('actionTheater'),collapsed=node.classList.toggle('collapsed');
@@ -2343,6 +2444,9 @@ if($('actionTheaterToggle'))$('actionTheaterToggle').addEventListener('click',()
 window.NeoCareerBridge={
  getSeason:()=>season,
  save:()=>saveSeason(),
+ simulateRound:()=>simulateRound(),
+ simulateNextFixture:()=>simulateNextFixture(),
+ isSimulating:()=>simBusy,
  busy:()=>!!(simBusy||(match&&!match.finished)),
  refresh:()=>{renderLeague();renderRecords();renderSquads();}
 };
