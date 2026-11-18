@@ -1,9 +1,9 @@
-/* Blue Lock NEO v8.9: pacote de 87 retratos offline. Preserva escolhas e fotos do jogador. */
+/* Blue Lock NEO 10.6.33: 129 retratos offline. Preserva escolhas e fotos do jogador. */
 (() => {
   'use strict';
   const DB_NAME = 'neo-portrait-library-v1';
   const BASE = 'assets/imported-portraits/';
-  const STATUS_KEY = 'neo-builtin-portraits-89';
+  const STATUS_KEY = 'neo-builtin-portraits-10633';
 
   function show(text) {
     const el = document.getElementById('portraitNotice');
@@ -50,6 +50,17 @@
     });
   }
 
+  async function matchesPreviousBundledPhoto(record, previousSha256) {
+    if (!/^[0-9a-f]{64}$/.test(previousSha256 || '') || record?.type !== 'custom'
+        || !(record.blob instanceof Blob) || !globalThis.crypto?.subtle) return false;
+    try {
+      const buffer = await record.blob.arrayBuffer();
+      const digest = await crypto.subtle.digest('SHA-256', buffer);
+      const actual = Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('');
+      return actual === previousSha256;
+    } catch (_) { return false; } // No crypto on old WebViews: keep the user's existing photo.
+  }
+
   async function installOfflinePhotos() {
     if (!window.indexedDB) return;
     let db;
@@ -61,9 +72,16 @@
       if (manifest?.app !== 'blue-lock-neo-portraits-offline' || !Array.isArray(manifest.images)) return;
       db = await openDb();
       const existing = await readSaved(db);
-      const names = new Set(existing.images.map(x => x.name).filter(Boolean));
+      const photosByName = new Map(existing.images.filter(x => x?.name).map(x => [x.name, x]));
       const chosen = new Set(existing.choices.map(x => x.name).filter(Boolean));
-      const missing = manifest.images.filter(x => x?.name && x?.file && !names.has(x.name));
+      const missing = [];
+      for (const item of manifest.images) {
+        if (!item?.name || !item?.file) continue;
+        const current = photosByName.get(item.name);
+        // A new edition may replace only pixels identical to its previous
+        // shipped pack. Never replace a player's independently edited image.
+        if (!current || await matchesPreviousBundledPhoto(current, item.previousSha256)) missing.push(item);
+      }
       if (!missing.length) {
         try {localStorage.setItem(STATUS_KEY, 'ok');} catch (_) {}
         return;

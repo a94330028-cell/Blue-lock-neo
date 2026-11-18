@@ -8,7 +8,7 @@ const recover=require('../web/neo-photo-recovery-v1050.js');
 const manifest=JSON.parse(read('assets/imported-portraits/index.json'));
 const app=read('app.js'),squad=read('neo-squads-v980.js'),round=read('neo-round-v990.js');
 const worker=read('service-worker.js'),html=read('index.html');
-assert.equal(manifest.images.length,87);
+assert.equal(manifest.images.length,129);
 for(const x of manifest.images){
  assert.ok(x.name&&x.file&&fs.existsSync('web/assets/imported-portraits/'+x.file),'real bundled portrait file exists: '+x.name);
  assert.ok(app.includes('"'+x.name+'":"assets/imported-portraits/'+x.file+'"'),'main photo map includes '+x.name);
@@ -53,4 +53,4 @@ const mockRound={round:1,games:[{home:'bm',away:'px',result:[0,0],details:{playe
 const sparse=Round.selectXI(mockRound);
 assert.ok(!sparse.players.some(p=>p.slot==='VOL'&&p.role==='CA'),'striker cannot play defensive midfield');
 assert.ok(!sparse.players.some(p=>p.slot==='CA'&&p.role==='ZAG'),'defender cannot play center forward');
-console.log('PASS v10.5: 87 primary portraits, true XI ratings/roles, club crests, robust Android photo recovery and offline cache');
+console.log('PASS v10.5+: 129 primary portraits, true XI ratings/roles, club crests, robust Android photo recovery and offline cache');

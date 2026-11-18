@@ -13,7 +13,7 @@ assert.ok(profiles.includes("const target=e.target.closest('[data-neo960-profile
 assert.ok(app.includes("data-portrait-edit=")&&app.includes("data-portrait-style=")&&app.includes("data-portrait-restore="),'gallery portrait controls remain present');
 assert.ok(app.includes("const picture=e.target.closest('.portrait-card-photo')"),'tapping gallery image still opens photo picker');
 assert.ok(app.includes('neo992-search-result')&&app.includes('data-gallery-jump-team'),'compact gallery search still works');
-assert.ok(mobile.includes('neo-v960.js?v=10.6.32'),'new profile handler must bypass previous cache');
+assert.ok(mobile.includes('neo-v960.js?v='+fs.readFileSync('web/UPDATE_BUILD','utf8').trim()),'new profile handler must bypass previous cache');
 assert.match(worker,/const CACHE_NAME=['"]blue-lock-neo-v2\.0\.0-[^'"]+['"];/,'offline cache updated');
 assert.equal(fs.readFileSync('web/VERSION','utf8').trim(),'2.0.0');
 console.log('PASS v9.9.4: real-club image search, gallery controls without statistics modal, versioned offline update');

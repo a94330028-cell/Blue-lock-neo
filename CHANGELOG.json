@@ -24,7 +24,7 @@
       "version": "2.0.0",
       "date": "2026-11-17",
       "novidades": [
-        "Conteúdo 10.6.32: Sae Itoshi assume como mestre exclusivo do History Team (MEI, 98 OVR), sem ocupar vaga entre os 11 titulares nem nos reservas.",
+        "Conteúdo 10.6.33: pacote de 129 retratos da galeria, incluindo 42 imagens adicionais; fotos antigas e escolhas pessoais preservadas.",
         "Liga Neo Egoísta com 2 a 10 clubes escolhidos, calendário, tabela e partidas com 22 atletas, incluindo History Team e times históricos."
       ],
       "correcoes": [
@@ -36,7 +36,7 @@
         "Dois, quatro ou seis encontros por dupla, com mandos equilibrados; no ataque, jogadores procuram mais companheiros livres para passes decisivos e assistências reais."
       ],
       "visual": [
-        "Carta separada do mestre e foto editável na galeria, sem imagem automática; seletor da liga com escudos, participantes e prévia de rodadas."
+        "Sae Itoshi segue mestre exclusivo do History Team (MEI, 98 OVR), com carta separada e foto editável; 129 retratos por jogador, sem atribuir fotos a quem ainda não foi cadastrado."
       ],
       "otimizacoes": [
         "Calendário dinâmico validado de dois a dez clubes, sem duplicar partidas na mesma rodada."

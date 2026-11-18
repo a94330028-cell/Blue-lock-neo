@@ -61,7 +61,7 @@ public final class MainActivity extends Activity {
     private static final int MAX_PORTRAIT_BYTES = 32 * 1024 * 1024;
     private static final String HOST = "appassets.androidplatform.net";
     private static final String HOME = "https://" + HOST + "/index.html";
-    private static final String BUNDLED_WEB_VERSION = "10.6.32";
+    private static final String BUNDLED_WEB_VERSION = "10.6.33";
     private static final String UPDATE_HOST = "a94330028-cell.github.io";
     private static final String MANIFEST_URL = "https://" + UPDATE_HOST + "/Blue-lock-neo/updates/latest.json";
     private static final String PREFS = "blue_lock_neo_android";

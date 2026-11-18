@@ -107,7 +107,7 @@ updated=updated.replace('neo-studio-v970.js?v=9.7.0','neo-studio-v970.js?v=2.0.0
 updated=updated.replace('neo-studio-v970.js?v=9.9.4','neo-studio-v970.js?v=2.0.0-history-photos')
 updated=updated.replace('neo-v990.css?v=9.9.0','neo-v990.css?v=9.9.4')
 # v10.0: Bust stale Mobile Edition assets when building the Android web bundle.
-updated=re.sub(r'src="mobile-upgrade\.js(?:\?v=[^"]*)?"','src="mobile-upgrade.js?v=10.6.32"',updated)
+updated=re.sub(r'src="mobile-upgrade\.js(?:\?v=[^"]*)?"','src="mobile-upgrade.js?v=10.6.33"',updated)
 updated=re.sub(r'href="mobile-upgrade\.css(?:\?v=[^"]*)?"','href="mobile-upgrade.css?v=10.5.0"',updated)
 # v10.4: load the positional layout BEFORE Squad and Best XI scripts.
 # The generated page is shared by GitHub Pages and the Android WebView.
@@ -140,7 +140,7 @@ for file in ('neo-pitch-v1040.css','neo-squads-v980.css'):
 # 10.5.1: reload the real league data and refreshed dynamic Best XI.
 for file in ('neo-round-v990.js',):
     updated=re.sub(r'src="'+re.escape(file)+r'(?:\?v=[^"]*)?"','src="'+file+'?v=10.5.1"',updated)
-updated=re.sub(r'src="neo-player-data-v960\.js(?:\?v=[^"]*)?"','src="neo-player-data-v960.js?v=10.6.32"',updated)
+updated=re.sub(r'src="neo-player-data-v960\.js(?:\?v=[^"]*)?"','src="neo-player-data-v960.js?v=10.6.33"',updated)
 # NEO 10.6: add the full history without duplicating it as a second data source.
 source_history=root.parent/'CHANGELOG.json'
 if not source_history.is_file():raise RuntimeError('Official changelog missing')
@@ -301,8 +301,8 @@ for stylesheet in ('neo2-abilities-v200.css','neo2-hub-v212.css'):
 for asset in ('neo-player-data-v960.js','mobile-upgrade.js','neo-historic-teams-v970.js',
               'neo2-history-team-v201.js','neo-studio-v970.js','neo-squads-v980.js'):
     updated=re.sub(r'src="'+re.escape(asset)+r'(?:\?v=[^"]*)?"',
-                   'src="'+asset+'?v=10.6.32"',updated)
+                   'src="'+asset+'?v=10.6.33"',updated)
 updated=re.sub(r'href="neo-squads-v980\.css(?:\?v=[^"]*)?"',
-               'href="neo-squads-v980.css?v=10.6.32"',updated)
+               'href="neo-squads-v980.css?v=10.6.33"',updated)
 html.write_text(updated,encoding='utf-8')
 print('Inline game modules synchronized:',counts)
