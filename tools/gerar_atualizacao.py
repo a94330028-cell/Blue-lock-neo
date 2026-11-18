@@ -38,7 +38,7 @@ manifest = {
     "url": f"{HOST}/updates/{ARCHIVE.name}",
     "sha256": sha,
     "minAndroidVersion": 85,
-    "changes": f"Blue Lock NEO {PUBLIC_VERSION} · conteúdo {UPDATE_BUILD}: novas fotos do History FC — Rodinha com a aparência enviada de Nagi e Kash com a aparência enviada de Akashi, sem alterar a foto de Seishiro Nagi. Treinadores, overalls, interface e saves preservados."
+    "changes": f"Blue Lock NEO {PUBLIC_VERSION} · conteúdo {UPDATE_BUILD}: vantagem de OVR calibrada em chutes, dribles, passes, cabeceios, desarmes e defesas. Craques se destacam contra jogadores fracos, mas a sorte, a estratégia e o cansaço ainda importam. History FC, retratos e saves preservados."
 }
 (DEST / "latest.json").write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 print(f"Pacote: {ARCHIVE} ({ARCHIVE.stat().st_size} bytes)")

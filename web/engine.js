@@ -379,7 +379,9 @@ class Match {
   _attributes(p,key){
     const ovr=p.attributes?.ovr||75;
     // OVR now matters in every actual on-ball contest, not just in menus.
-    const ovrFactor=clamp(1+(ovr-80)*.0075,.87,1.155);
+    // An elite player gains an edge without making ordinary skills irrelevant.
+    // Relative duels below compare both players, so this personal bonus stays modest.
+    const ovrFactor=clamp(1+(ovr-80)*.0085,.84,1.17);
     const multiplier=Abilities.bonus(p,key,this.time)*ovrFactor;
     let value=Attr.effective({...p,matchTime:this.time},key,multiplier);
     // Reo's Camaleão mirrors a fraction of his best teammate's technical skill
@@ -396,6 +398,14 @@ class Match {
     const avg=s=>{const squad=this.players.filter(p=>p.side===s);
       return squad.reduce((sum,p)=>sum+(Number(p.attributes?.ovr)||75),0)/Math.max(1,squad.length);};
     return clamp((avg(side)-avg(1-side))/12,-1,1);
+  }
+  _overallDuelEdge(attacker,defender,weight=.0045){
+    // This is a *relative* OVR advantage, not a win guarantee. A 95-rated
+    // player fares better against a 65-rated rival, but positioning, fatigue,
+    // individual skills, tactics and the seeded roll still decide the event.
+    const a=Number(attacker?.attributes?.ovr),b=Number(defender?.attributes?.ovr);
+    if(!Number.isFinite(a)||!Number.isFinite(b))return 0;
+    return clamp((a-b)*weight,-.14,.14);
   }
   _activateAbility(p,context){
     // Cada atleta possui um arsenal extenso. IA seleciona a arma certa para o lance,
@@ -967,7 +977,8 @@ class Match {
       !(b.crossType&&q===b.by));
     if(!inRange.length)return false;
     const ranked=inRange.map(q=>({q,score:(q.role==='ZAG'?18:0)+(q.i>=8?11:0)+(has(q,'poacher')?15:0)+(has(q,'trap')?7:0)+
-      (q===b.to&&q.side===b.by?.side?18:0)+this.random()*30-distance(q,b)*.6})).sort((a,c)=>c.score-a.score);
+      (q===b.to&&q.side===b.by?.side?18:0)+((q.attributes?.ovr||75)-75)*.50+
+      (this._attributes(q,'strength')-75)*.075+this.random()*30-distance(q,b)*.6})).sort((a,c)=>c.score-a.score);
     const winner=ranked[0].q;
     if(b.by?.side!==winner.side&&this.random()<.012){
       const ownGoal=winner.side===0?PITCH.left:PITCH.right;
@@ -1014,7 +1025,9 @@ class Match {
        (kind==='tap-in'?.09:kind==='first-time'?.035:kind==='chip'?-.035:kind==='far-post'?-.01:kind==='low-drive'?.03:0)+(this._attributes(p,'finishing')-77)*.0032+(this._attributes(p,'accuracy')-77)*.0021+(this._attributes(p,'positioning')-77)*.0014+Abilities.tacticalBonus(p,'shot',this.time)*.065,.19,.87);
     // Better finishers get a genuine accuracy advantage, while all sides
     // produce a livelier number of shots on target.
-    const onTarget=this.random()<clamp((accuracy+this._qualityEdge(p.side)*.14)*.98,.19,.93);
+    const oppositeKeeper=this.players.find(q=>q.side!==p.side&&q.i===0);
+    const scorerEdge=this._overallDuelEdge(p,oppositeKeeper,.0035);
+    const onTarget=this.random()<clamp((accuracy+this._qualityEdge(p.side)*.10+scorerEdge*.48)*.98,.19,.93);
     let aimY;
     if(onTarget){
       if(kind==='far-post')aimY=PITCH.cy+(angle<0?1:-1)*this.range(PITCH.goalHalf*.42,PITCH.goalHalf-7);
@@ -1141,7 +1154,8 @@ class Match {
       const rivalId=[p.name,foe.p.name].sort().join(' × ');const rivalry=(this.careerRivals[rivalId]?.duels||0);
       const stopper=(has(foe.p,'mark')||has(foe.p,'read')?.16:0)+(this._attributes(foe.p,'tackling')-75)*.0024;
       const duelBoost=Math.min(.045,rivalry*.012);
-      const success=this.random()<clamp(skill-stopper+duelBoost-anticipation+(foe.d-25)*.003,.19,.87);
+      const success=this.random()<clamp(skill-stopper+duelBoost-anticipation+
+        this._overallDuelEdge(p,foe.p)+(foe.d-25)*.003,.16,.87);
       p.dribbleCooldown=this.time+52;
       if(success){
         fx.success=true;this._recordDuel(p,foe.p,p,'dribble');this.stats.dribblesWon[p.side]++;this.stats.specialMovesWon[p.side]++;p.dribblesWon++;this._ego(p,5,'drible bem-sucedido');
@@ -1793,6 +1807,7 @@ class Match {
       clamp((has(keeper,'wild')?.72:.62)+(d<23?.08:0)-(b.shotXg>.30?.08:0)+(this.gameplayPreset==='fast'?.025:0)-this._qualityEdge(b.by.side)*.12,.41,.90);
     this._activateAbility(keeper,'save');
     const adjusted=clamp(chance+profile.reflex-(tricky?.035:0)+(this._attributes(keeper,'reflexes')-78)*.0023+
+      this._overallDuelEdge(keeper,b.by,.0035)+
       Abilities.tacticalBonus(keeper,'save',this.time)*.072,b.isPenalty?.12:.23,b.isPenalty?.36:.94);
     if(this.random()>=adjusted)return false;
     const savedShot=this.shotMap.slice().reverse().find(x=>x.side===b.by?.side&&x.outcome==='pending');
@@ -1904,7 +1919,8 @@ class Match {
           }
         }
         const passTeam=this.teams[best.side],pressure=this.opponentPressure(best,38),talent=(has(best,'trap')||has(best,'link')||has(best,'playmaker'))?.035:0;
-        const miscontrol=clamp(.015+pressure*.025+(this.weather==='rain'?.033:0)+(this.gameplayPreset==='fast'?-.010:0)-(passTeam.pas-80)*.001-talent,.002,.145);
+        const miscontrol=clamp(.026+pressure*.025+(this.weather==='rain'?.033:0)+(this.gameplayPreset==='fast'?-.010:0)-(passTeam.pas-80)*.001-talent-
+          (this._attributes(best,'control')-75)*.0011,.002,.145);
         if(best.i!==0&&this.random()<miscontrol){
           this.stats.heavyTouches[best.side]++;b.mode='loose';b.to=null;b.by=best;b.lock=.11;b.lastTouch=best;
           b.vx=this.range(-105,105);b.vy=this.range(-115,115);best.decision=.24;
@@ -1948,7 +1964,8 @@ class Match {
       if(d>reach)continue;
       if(this.random()<dt*.40)this._activateAbility(q,'tackle');
       const defense=rankQuality(this.teams[q.side],'def'),dribble=(has(owner,'dribble')?.23:has(owner,'trap')?.10:0)+(this._attributes(owner,'dribbling')-78)*.002,bonus=(has(q,'mark')?.18:has(q,'read')?.16:has(q,'press')?.08:0)+(this._attributes(q,'tackling')-78)*.0017+(this._attributes(q,'defense')-78)*.00065+(this._attributes(q,'tactics')-78)*.0005+Abilities.tacticalBonus(q,'tackle',this.time)*.073;
-      const tackleRate=clamp((.61+defense*.14+bonus-dribble)*(isBack?1.18:q.role==='VOL'?1.1:0.88),.19,.94);
+      const tackleRate=clamp((.61+defense*.14+bonus-dribble+
+        this._overallDuelEdge(q,owner))*(isBack?1.18:q.role==='VOL'?1.1:0.88),.17,.91);
       if(this.random()<tackleRate*dt){
         if(this.random()<.20){
           this.stats.fouls[q.side]++;
