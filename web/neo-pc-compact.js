@@ -71,8 +71,14 @@
   // inject big panels BEFORE the stadium after our initial DOMContentLoaded;
   // route those real panels away from the first screen as soon as they arrive.
   function relocateLatePanels(){
-   const direct=[...match.children];
-   move(direct.find(node=>node.id==='neo920-broadcast'),more);
+   const layout=match.querySelector(':scope > .match-layout');
+   // Besides broadcast and X-ray, older editions prepend a duplicate
+   // scoreboard, shortcuts, AI notices and extra toggles. No card is allowed
+   // to sit between the cockpit toolbar and the actual match layout on PC.
+   for(const node of [...match.children]){
+    if(node===toolbar||node===layout||node.id==='neoMatchAlert')continue;
+    move(node,node.id==='neo1000-pulse'?info:node.id==='neo1010-control'?settingGrid:more);
+   }
    const pulse=match.querySelector('#neo1000-pulse');
    if(pulse&&!info.contains(pulse)){
     // The module may have inserted itself after the relocated broadcast panel
@@ -84,7 +90,7 @@
   relocateLatePanels();
   const observer=new MutationObserver(records=>{
    if(records.some(record=>[...record.addedNodes].some(node=>
-    node.nodeType===1&&(node.id==='neo920-broadcast'||node.id==='neo1000-pulse'))))relocateLatePanels();
+    node.nodeType===1&&(record.target===match||node.id==='neo1000-pulse'))))relocateLatePanels();
   });
   observer.observe(match,{childList:true});
   observer.observe(more,{childList:true});

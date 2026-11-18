@@ -74,6 +74,8 @@ const server=http.createServer((req,res)=>{
       aside:box('#match .neo-arena-insights'),nav:box('.shell>.nav'),
       score:box('#match .broadcast-scoreboard'),settings:!!document.querySelector('.neo-arena-settings'),
       mobileActive:document.body.classList.contains('neo-arena-active'),
+      blockers:[...document.querySelector('#match').children].filter(el=>
+       el.id!=='neoMatchAlert'&&!el.matches('.neo-arena-toolbar,.match-layout')).map(el=>el.id||el.className),
       preservedIds:['play','reset','replay','events','matchStats','shotMap'].every(id=>document.querySelectorAll('#'+id).length===1)};
     });
     assert.ok(arena.mobileActive&&arena.toolbar&&arena.aside&&arena.settings);
@@ -82,6 +84,7 @@ const server=http.createServer((req,res)=>{
     assert.ok(arena.pitch.width>arena.aside.width*1.6,'stadium is the visual protagonist');
     assert.ok(arena.pitch.y>arena.score.y&&arena.pitch.height>250,'broadcast score sits over full stadium');
     assert.ok(arena.preservedIds,'moving panels cannot clone or delete engine targets');
+    assert.deepEqual(arena.blockers,[],'legacy editions must not insert extra panels above the PC stadium');
     if(width===1366||width===1280)
      assert.ok(arena.pitch.bottom<=height+35,'notebook shows the complete pitch without a long scroll: '+JSON.stringify(arena));
     if(width===1366){
