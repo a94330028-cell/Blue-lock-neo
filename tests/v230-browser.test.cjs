@@ -61,6 +61,46 @@ const server=http.createServer((req,res)=>{
    assert.ok(details.closed,'the new Records section must start collapsed');
    assert.ok(details.nav,'desktop and mobile menus remain in DOM');
    assert.ok(details.list,'XI tactical/list toggle is mounted');
+   // EGO ARENA 3.0 must rearrange real gameplay only on PC. On mobile the
+   // original DOM, controls and styles remain in their established places.
+   if(width>=1024){
+    await page.waitForFunction(()=>window.NeoArena300?.mode==='broadcast',null,{timeout:15000});
+    const arena=await page.evaluate(()=>{
+     const box=selector=>{const el=document.querySelector(selector);if(!el)return null;
+      const r=el.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height,bottom:r.bottom};};
+     return {toolbar:box('#match .neo-arena-toolbar'),pitch:box('#stadium #pitch'),
+      aside:box('#match .neo-arena-insights'),nav:box('.shell>.nav'),
+      score:box('#match .broadcast-scoreboard'),settings:!!document.querySelector('.neo-arena-settings'),
+      mobileActive:document.body.classList.contains('neo-arena-active'),
+      preservedIds:['play','reset','replay','events','matchStats','shotMap'].every(id=>document.querySelectorAll('#'+id).length===1)};
+    });
+    assert.ok(arena.mobileActive&&arena.toolbar&&arena.aside&&arena.settings);
+    assert.ok(arena.nav.x<arena.pitch.x&&arena.pitch.x<arena.aside.x,
+     'PC layout is navigation / stadium / live-side panel');
+    assert.ok(arena.pitch.width>arena.aside.width*1.6,'stadium is the visual protagonist');
+    assert.ok(arena.pitch.y>arena.score.y&&arena.pitch.height>250,'broadcast score sits over full stadium');
+    assert.ok(arena.preservedIds,'moving panels cannot clone or delete engine targets');
+    if(width===1366||width===1280)
+     assert.ok(arena.pitch.bottom<=height+35,'notebook shows the complete pitch without a long scroll: '+JSON.stringify(arena));
+    if(width===1366){
+     await page.click('#match [data-arena-view="coach"]');
+     assert.equal(await page.$eval('#match',el=>el.dataset.arenaMode),'coach');
+     assert.ok(await page.$eval('#match .neo-arena-insights .coach-card',el=>getComputedStyle(el).display!=='none'));
+     await page.click('#match [data-arena-view="analysis"]');
+     assert.equal(await page.$eval('#match',el=>el.dataset.arenaMode),'analysis');
+     assert.ok(await page.$eval('#match .neo-arena-insights #matchStats',el=>getComputedStyle(el.closest('.card')).display!=='none'));
+     assert.ok(await page.$eval('#match .neo-arena-insights #shotMap',el=>getComputedStyle(el.closest('.shot-map-card')).display!=='none'));
+     await page.click('#match [data-arena-view="broadcast"]');
+     assert.ok(await page.$eval('#events',el=>getComputedStyle(el.closest('.card')).display!=='none'));
+     await page.click('#neoArenaOptions');
+     assert.ok(await page.$eval('.neo-arena-settings',el=>el.open),'secondary field settings open in one place');
+     await page.click('#neoArenaOptions');
+    }
+   }else{
+    assert.equal(await page.evaluate(()=>document.body.classList.contains('neo-arena-active')),false,
+     'EGO ARENA cannot alter mobile or tablet layout');
+    assert.equal(await page.$('.neo-arena-toolbar'),null,'no arena toolbar on mobile');
+   }
    // Eleven rank-style player cards in the real tactical formation on mobile and PC.
    if([1366,390,360].includes(width)){
     if(width<=700)await page.evaluate(()=>window.NeoReferenceMobile?.go?.('squads'));

@@ -1,0 +1,135 @@
+/* EGO ARENA 3.0 — PC only. All existing mobile styles remain untouched. */
+@media (min-width:1024px){
+ body.neo-arena-active{background:radial-gradient(ellipse at 70% -24%,#08757b24,transparent 47%),#060d18!important;color:#e9f4ff}
+ body.neo-arena-active .site-header{position:sticky;top:0;z-index:80;min-height:58px!important;padding:7px clamp(15px,2vw,30px)!important;background:#080f1eee!important;border-bottom:1px solid #24485b!important;box-shadow:0 10px 35px #0008!important;backdrop-filter:blur(14px)}
+ body.neo-arena-active .branding .brand-icon{width:40px!important;height:40px!important;border-radius:11px!important;background:linear-gradient(150deg,#06528b,#11b8d1)!important}
+ body.neo-arena-active .site-header h1{font-size:clamp(16px,1.4vw,22px)!important}
+ body.neo-arena-active .site-header .header-meta{color:#8baabc!important;background:transparent!important;border:0!important;font-size:10px!important}
+ body.neo-arena-active .app-install-bar .button{min-height:30px!important;padding:5px 8px!important}
+ body.neo-arena-active .shell{max-width:none!important;display:grid!important;grid-template-columns:clamp(153px,12vw,192px) minmax(0,1fr)!important;gap:0 clamp(10px,1vw,18px)!important;padding:11px clamp(10px,1.2vw,22px) 28px!important}
+ body.neo-arena-active .shell>.nav{grid-column:1!important;grid-row:1 / span 20!important;align-self:start;display:flex!important;flex-direction:column!important;position:sticky!important;top:72px!important;max-height:calc(100dvh - 84px)!important;min-height:0!important;overflow-y:auto!important;gap:4px!important;margin:0!important;padding:12px 7px!important;border:1px solid #29425b!important;border-radius:13px!important;background:linear-gradient(165deg,#101e33,#080f1f)!important;box-shadow:0 16px 36px #0005!important}
+ body.neo-arena-active .shell>.nav::before{content:"NEO  /  EGO ARENA"!important;display:block;color:#7be3eb!important;letter-spacing:1.3px!important;font-size:9px!important;font-weight:950;padding:5px 8px 13px!important;margin-bottom:6px!important;border-bottom:1px solid #2a485a!important}
+ body.neo-arena-active .shell>.nav button{width:100%!important;min-width:0!important;min-height:39px!important;flex:0 0 auto!important;display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:8px!important;padding:8px 10px!important;border:1px solid transparent!important;border-radius:9px!important;background:transparent!important;color:#a8bed1!important;box-shadow:none!important;font-size:12px!important;font-weight:750!important;text-align:left!important}
+ body.neo-arena-active .shell>.nav button:hover{background:#172e43!important;color:#f5ffff!important}
+ body.neo-arena-active .shell>.nav button.active{background:linear-gradient(105deg,#0e667e,#0d3147)!important;border-color:#31a8c5!important;color:#eaffff!important;box-shadow:inset 3px 0 #70f3ef,0 0 16px #00bde52c!important}
+ body.neo-arena-active .shell>.tab-content{grid-column:2!important;grid-row:1!important;min-width:0!important}
+
+ /* Primary desktop work area: stage + independently scrollable side channel. */
+ body.neo-arena-active #match::before{display:none!important}
+ body.neo-arena-active #match .match-layout{display:grid!important;grid-template-columns:minmax(0,1fr) clamp(270px,22vw,330px)!important;gap:11px!important;align-items:start!important}
+ body.neo-arena-active #match .match-main,body.neo-arena-active #match .match-side{min-width:0!important;max-width:none!important}
+ body.neo-arena-active #match .match-side{display:flex!important;flex-direction:column!important;gap:10px!important;position:sticky!important;top:72px!important;max-height:calc(100dvh - 84px)!important;overflow-y:auto!important;overflow-x:hidden!important;padding-right:2px}
+ body.neo-arena-active #match.focus-match .match-layout{grid-template-columns:minmax(0,1fr)!important}
+ body.neo-arena-active #match.focus-match .match-side{display:none!important}
+ body.neo-arena-active #match .match-card{overflow:visible!important;padding:9px!important;margin:0!important;border:1px solid #294d60!important;border-radius:14px!important;background:#0b1424!important;box-shadow:0 14px 45px #0008!important}
+ body.neo-arena-active #match .match-card::before{display:none!important}
+ body.neo-arena-active #match .match-setup{display:flex!important;align-items:end!important;gap:8px!important;margin:0 0 7px!important;padding:5px 8px!important;border:1px solid #193849!important;border-radius:8px!important;background:#071422!important}
+ body.neo-arena-active #match .match-setup label{flex:1;min-width:0;color:#92aec2!important;font-size:10px!important}
+ body.neo-arena-active #match .match-setup select{width:100%;padding:6px 8px!important;border:1px solid #31546b!important;border-radius:6px!important;background:#122236!important;color:#eff9ff;font-size:11px!important}
+ body.neo-arena-active #match .match-setup .button{min-height:31px!important;padding:6px 12px!important;font-size:11px!important}
+ body.neo-arena-active #match .match-setup .versus{color:#45cbd3;font-size:14px}
+
+ /* Brand and modes are always visible. No stacked cards before the pitch. */
+ body.neo-arena-active #match .neo-arena-toolbar{display:flex;align-items:center;justify-content:space-between;gap:13px;min-height:55px;margin:0 0 9px;padding:8px 12px;border:1px solid #28627a;border-radius:12px;background:linear-gradient(105deg,#112b3e,#071525 75%);box-shadow:inset 0 1px #9afaff1b,0 10px 24px #0005}
+ body.neo-arena-active .neo-arena-identity{display:flex;align-items:center;gap:10px;min-width:0}
+ body.neo-arena-active .neo-arena-live-dot{width:9px;height:9px;flex:none;border-radius:50%;background:#29e2ba;box-shadow:0 0 15px #19dca9}
+ body.neo-arena-active .neo-arena-identity b{display:block;white-space:nowrap;font-size:17px;letter-spacing:1.3px;font-weight:1000;color:#f1fbff}
+ body.neo-arena-active .neo-arena-identity em{font-style:normal;color:#50dce9}
+ body.neo-arena-active .neo-arena-identity b span{font-size:10px;color:#ffe0a3;vertical-align:top}
+ body.neo-arena-active .neo-arena-identity small{display:block;max-width:240px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:9px;letter-spacing:.7px;color:#90b8c7}
+ body.neo-arena-active .neo-arena-view-tabs{display:flex;align-items:center;gap:4px;padding:4px;border-radius:10px;border:1px solid #244258;background:#061321}
+ body.neo-arena-active .neo-arena-view-tabs button,body.neo-arena-active .neo-arena-gear{min-height:33px!important;padding:7px 10px!important;border:1px solid transparent!important;border-radius:7px!important;background:transparent!important;color:#a8c9d6;font-size:11px!important;font-weight:850;white-space:nowrap}
+ body.neo-arena-active .neo-arena-view-tabs button:hover,body.neo-arena-active .neo-arena-gear:hover{background:#173b4f!important;color:#fff!important}
+ body.neo-arena-active .neo-arena-view-tabs button.active{background:linear-gradient(115deg,#087b9d,#135673)!important;border-color:#35c8e9!important;color:#fff!important;box-shadow:0 3px 12px #19cfff38!important}
+ body.neo-arena-active .neo-arena-gear{border:1px solid #30576b!important;background:#10263a!important}
+ body.neo-arena-active .neo-arena-preflight{margin:0 0 5px;border-radius:7px;color:#91bcd3;font-size:10px}
+ body.neo-arena-active .neo-arena-preflight>summary{cursor:pointer;list-style:none;width:max-content;max-width:100%;padding:5px 9px;font-weight:850;border:1px solid #214055;border-radius:7px;background:#0d2639}
+ body.neo-arena-active .neo-arena-preflight>summary:hover{color:#fff;background:#164059}
+ body.neo-arena-active .neo-arena-preflight .pregame-panel{margin:5px 0!important}
+
+ /* Broadcast scoreboard and stadium share one visual language. */
+ body.neo-arena-active #match .match-card>.scoreboard{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;max-width:none!important;min-height:75px!important;margin:0 0 6px!important;padding:8px 15px!important;border:1px solid #225368!important;border-radius:10px!important;background:linear-gradient(115deg,#102d43,#071623 51%,#102b40)!important;box-shadow:inset 0 1px #aeedff15!important}
+ body.neo-arena-active #match .score-team{font-size:clamp(12px,1.2vw,17px)!important;font-weight:900;min-width:0;flex:1}
+ body.neo-arena-active #match .score-team .team-dot.crest{width:35px!important;height:35px!important;object-fit:contain}
+ body.neo-arena-active #match .score-center{min-width:100px!important;padding:0 5px!important}
+ body.neo-arena-active #match .score-digit{font-size:clamp(36px,3.2vw,54px)!important;line-height:1!important;letter-spacing:2px!important;color:#fff!important;text-shadow:0 0 16px #51daff4d}
+ body.neo-arena-active #match .match-time{font-size:11px!important;color:#68d5df!important;margin-top:1px!important}
+ body.neo-arena-active #match .score-scorers{max-height:26px;overflow:auto;color:#c6dfef;font-size:10px!important}
+ body.neo-arena-active #match #stadium:not(:fullscreen):not(.fullscreen-active){width:100%!important;max-width:none!important;margin:0!important;padding:0!important;border:1px solid #289b83!important;border-radius:10px!important;overflow:hidden!important;background:#0c4232!important;box-shadow:0 0 0 2px #0c3540,0 14px 24px #0008!important}
+ body.neo-arena-active #match #stadium:not(:fullscreen):not(.fullscreen-active) #pitch{display:block!important;width:100%!important;height:auto!important;max-width:none!important;max-height:none!important;aspect-ratio:5/3!important;object-fit:contain!important;image-rendering:auto!important}
+ body.neo-arena-active #match #stadium:not(:fullscreen):not(.fullscreen-active) .pitch-top{padding:6px 8px!important;font-size:10px!important}
+ body.neo-arena-active #match #stadium:not(:fullscreen):not(.fullscreen-active) .field-bottom{gap:5px!important;padding:5px 9px!important;font-size:10px!important;background:linear-gradient(transparent,#031c27ed)!important}
+ body.neo-arena-active #match #stadium:not(:fullscreen):not(.fullscreen-active) .field-bottom button{min-width:25px;min-height:24px;font-size:12px}
+ body.neo-arena-active #match #stadium:not(:fullscreen):not(.fullscreen-active) #countryClubs{display:none!important}
+ body.neo-arena-active #match .live-commentary{margin:6px 0!important;min-height:31px!important;padding:7px 10px!important;background:#092337!important;border:1px solid #174d64!important;border-left:3px solid #49cde0!important;border-radius:7px!important;color:#d5f2fd!important;font-size:11px!important}
+ body.neo-arena-active #match .skill-toast.hidden{display:none!important}
+
+ /* Main action bar: start/pause, speed and replay stay above the fold. */
+ body.neo-arena-active #match .match-controls{position:relative;z-index:12;display:flex!important;align-items:center!important;flex-wrap:wrap!important;justify-content:flex-start!important;gap:7px!important;margin:6px 0!important;padding:7px!important;border:1px solid #244758!important;border-radius:9px!important;background:#071524!important}
+ body.neo-arena-active #match .match-controls>.button{min-height:35px!important;padding:7px 12px!important;font-size:12px!important;font-weight:900}
+ body.neo-arena-active #match .match-controls>#play{background:linear-gradient(100deg,#03a6bf,#116b9a)!important;min-width:108px;box-shadow:0 0 16px #11d7dc30}
+ body.neo-arena-active #match .speed-group{display:flex;align-items:center;gap:5px;font-size:10px!important;margin:0!important}
+ body.neo-arena-active #match .speed-group select{padding:6px!important;font-size:11px!important}
+ body.neo-arena-active #match .focus-toggle{margin-left:auto}
+ body.neo-arena-active .neo-arena-settings{position:relative;min-width:0}
+ body.neo-arena-active .neo-arena-settings>summary{list-style:none;cursor:pointer;padding:9px 11px;border:1px solid #36829b;border-radius:7px;background:#103144;color:#caf4ff;font-size:11px;font-weight:850;white-space:nowrap}
+ body.neo-arena-active .neo-arena-settings>summary::-webkit-details-marker{display:none}
+ body.neo-arena-active .neo-arena-setting-grid{position:absolute;top:calc(100% + 8px);right:0;z-index:40;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;width:min(415px,calc(100vw - 65px));max-height:min(66vh,520px);overflow:auto;padding:13px;border:1px solid #32708b;border-radius:12px;background:#0b2034;box-shadow:0 20px 55px #000b}
+ body.neo-arena-active .neo-arena-setting-grid label{min-width:0;font-size:10px;display:flex;flex-wrap:wrap;gap:5px;align-items:center;color:#b8d7e5}
+ body.neo-arena-active .neo-arena-setting-grid select{max-width:100%;padding:6px!important;font-size:11px!important}
+ body.neo-arena-active .neo-arena-setting-grid #perfStatus{grid-column:1/-1}
+ body.neo-arena-active .neo-arena-deep-dive{margin:10px 0;border:1px solid #20475b;border-radius:11px;background:#08192a;overflow:hidden}
+ body.neo-arena-active .neo-arena-deep-dive>summary{display:flex;justify-content:space-between;gap:9px;cursor:pointer;list-style:none;padding:12px 15px;color:#b8dce9;font-size:12px;font-weight:900}
+ body.neo-arena-active .neo-arena-deep-dive>summary>span{font-size:9px;color:#5ec6d3;letter-spacing:1px}
+ body.neo-arena-active .neo-arena-deep-dive>summary::-webkit-details-marker{display:none}
+ body.neo-arena-active .neo-arena-deep-dive>summary:hover{background:#123248}
+ body.neo-arena-active .neo-arena-deep-dive>*:not(summary){margin:9px!important}
+ body.neo-arena-active #match .result-card:not(.hidden){display:block!important}
+
+ /* Right live channel: only one information panel at a time. */
+ body.neo-arena-active #match .neo-arena-insights{display:block;min-height:330px;padding:12px;border:1px solid #2a5062;border-radius:13px;background:linear-gradient(155deg,#102539,#081524 60%);box-shadow:0 15px 30px #0006}
+ body.neo-arena-active .neo-arena-insights-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-bottom:11px;margin-bottom:8px;border-bottom:1px solid #23475b}
+ body.neo-arena-active .neo-arena-insights-head small{display:block;color:#6fbbcc;font-size:9px;font-weight:900;letter-spacing:1.2px;margin-bottom:3px}
+ body.neo-arena-active .neo-arena-insights-head strong{font-size:14px;font-weight:950;color:#edfaff}
+ body.neo-arena-active .neo-arena-onair{white-space:nowrap;font-size:9px;font-weight:1000;color:#7affc8;background:#073e38;border:1px solid #189f84;border-radius:5px;padding:4px 6px}
+ body.neo-arena-active #match .neo-arena-insights .under-pitch{display:block!important;min-width:0!important;margin:0!important}
+ body.neo-arena-active #match .neo-arena-insights .under-pitch>.card,body.neo-arena-active #match .neo-arena-insights>.coach-card,body.neo-arena-active #match .neo-arena-insights>.shot-map-card,body.neo-arena-active #match .neo-arena-insights>.pulse-card{display:none!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
+ body.neo-arena-active #match[data-arena-mode="broadcast"] .neo-arena-insights .under-pitch>.card:first-child{display:block!important}
+ body.neo-arena-active #match[data-arena-mode="coach"] .neo-arena-insights>.coach-card{display:block!important}
+ body.neo-arena-active #match[data-arena-mode="analysis"] .neo-arena-insights .under-pitch>.card:nth-child(2),body.neo-arena-active #match[data-arena-mode="analysis"] .neo-arena-insights>.shot-map-card,body.neo-arena-active #match[data-arena-mode="analysis"] .neo-arena-insights>.pulse-card{display:block!important;margin-top:12px!important}
+ body.neo-arena-active #match .neo-arena-insights .card-head{margin:0 0 8px!important;padding:0 0 7px!important;border-bottom:1px solid #1d4358!important}
+ body.neo-arena-active #match .neo-arena-insights .card-head h2{font-size:12px!important;color:#c9edfc!important}
+ body.neo-arena-active #match .neo-arena-insights .events{height:auto!important;min-height:215px!important;max-height:calc(100dvh - 290px)!important;overflow-y:auto!important;padding:3px 7px!important;border:0!important;background:transparent!important}
+ body.neo-arena-active #match .neo-arena-insights .event{padding:8px 4px!important;font-size:11px!important}
+ body.neo-arena-active #match .neo-arena-insights #matchStats{font-size:11px}
+ body.neo-arena-active #match .neo-arena-insights #shotMap{display:block;width:100%!important;height:auto!important;max-height:170px;object-fit:contain}
+ body.neo-arena-active #match .neo-arena-side-extras{flex:none;border:1px solid #274c60;border-radius:10px;background:#0d2031;overflow:hidden}
+ body.neo-arena-active #match .neo-arena-side-extras>summary{cursor:pointer;list-style:none;padding:11px 12px;color:#bde7ef;font-size:11px;font-weight:900;line-height:1.4}
+ body.neo-arena-active #match .neo-arena-side-extras>summary::-webkit-details-marker{display:none}
+ body.neo-arena-active #match .neo-arena-side-extras>summary::after{content:" ▾";color:#5ed7e7}
+ body.neo-arena-active #match .neo-arena-side-extras[open]>summary::after{content:" ▴"}
+ body.neo-arena-active #match .neo-arena-side-extras>.card{margin:8px!important;padding:10px!important}
+
+ /* Clicking a ball opens the existing detailed player UI as a compact card. */
+ body.neo-arena-active #playerModal:not(.hidden){position:fixed!important;inset:auto 21px 20px auto!important;width:min(344px,calc(100vw - 32px))!important;height:auto!important;max-height:min(76dvh,670px)!important;z-index:180!important;padding:0!important;background:transparent!important;box-shadow:none!important;backdrop-filter:none!important}
+ body.neo-arena-active #playerModal:not(.hidden) .modal-inner{position:relative!important;width:100%!important;max-width:none!important;max-height:min(76dvh,670px)!important;overflow-y:auto!important;margin:0!important;padding:13px!important;border-radius:13px!important;border:1px solid #48bcdb!important;background:#0b1b2e!important;box-shadow:0 18px 55px #000d,0 0 18px #0ad6e52b!important}
+ body.neo-arena-active #playerModal .player-head img{width:64px!important;height:75px!important;object-fit:cover}
+ body.neo-arena-active #playerModal .player-name{font-size:19px!important}
+ body.neo-arena-active #playerModal .modal-attr-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+ body.neo-arena-active #playerModal .player-stats{font-size:11px!important}
+
+ @media(max-width:1260px){
+  body.neo-arena-active .shell{grid-template-columns:155px minmax(0,1fr)!important;gap:9px!important;padding:9px!important}
+  body.neo-arena-active #match .match-layout{grid-template-columns:minmax(0,1fr) 258px!important;gap:8px!important}
+  body.neo-arena-active .neo-arena-identity b{font-size:14px}
+  body.neo-arena-active .neo-arena-view-tabs button{font-size:10px!important;padding:7px!important}
+  body.neo-arena-active #match .score-digit{font-size:34px!important}
+ }
+ @media(max-height:820px){
+  body.neo-arena-active #match #stadium:not(:fullscreen):not(.fullscreen-active) #pitch{max-height:calc(100dvh - 296px)!important}
+  body.neo-arena-active #match .neo-arena-toolbar{min-height:48px;padding:6px 10px}
+  body.neo-arena-active #match .match-card>.scoreboard{min-height:64px!important;padding:6px 10px!important}
+  body.neo-arena-active #match .match-setup{padding:4px 7px!important}
+ }
+ @media(prefers-reduced-motion:reduce){body.neo-arena-active #match *,body.neo-arena-active #match *::before,body.neo-arena-active #match *::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+}

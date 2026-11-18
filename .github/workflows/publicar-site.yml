@@ -49,6 +49,7 @@ jobs:
           node tests/league-v10635.test.cjs
           node tests/league-fixes-v10636.test.cjs
           node tests/coach-fixes-v10637.test.cjs
+          node tests/ego-arena-v300.test.cjs
           node tests/native-photo-v994.test.cjs
           node tests/samsung-gallery-v201.test.cjs
           node tests/v1000.test.cjs

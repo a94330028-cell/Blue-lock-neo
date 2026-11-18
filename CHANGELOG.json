@@ -24,7 +24,7 @@
       "version": "2.0.0",
       "date": "2026-11-18",
       "novidades": [
-        "Conteúdo 10.6.37: técnico inteligente agora conta derrotas dos clubes adicionais da Liga, incluindo o History Team, e avalia o desempenho recente de cada titular.",
+        "Conteúdo 10.6.38: EGO ARENA 3.0 no PC — campo grande acima da dobra, placar integrado, narração e estatísticas em painel lateral e três modos de visualização; nenhuma alteração na interface do celular.",
         "Liga Neo Egoísta com 2 a 10 clubes escolhidos, calendário, tabela e partidas com 22 atletas, incluindo History Team e times históricos."
       ],
       "correcoes": [
@@ -37,7 +37,7 @@
         "Dois, quatro ou seis encontros por dupla; finalizações mais frequentes, chances reais de gols aumentadas e força coletiva baseada no OVR dos 11 jogadores para favorecer equipes superiores, como History Team, sem resultados garantidos."
       ],
       "visual": [
-        "Seleção 4-3-3 com cartas por setor, posição e OVR, agora com rodadas selecionáveis e estado parcial/final; fotos personalizadas respeitadas no mercado e rankings, sem imagens falsas para quem não possui retrato."
+        "Seleção 4-3-3 com cartas por setor, posição e OVR; EGO ARENA no desktop com barra lateral, transmissão de campo, replays recolhidos, opções concentradas e ficha compacta ao clicar numa bolinha. Fotos personalizadas preservadas."
       ],
       "otimizacoes": [
         "Simulação para ao detectar falha de gravação, com progresso por partida; histórico tático antigo reduzido apenas quando necessário para liberar espaço."
