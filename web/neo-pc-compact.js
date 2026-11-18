@@ -67,6 +67,28 @@
    '.live-duel','.moments-card','.setpiece-card'
   ])move(main.querySelector(selector),more);
 
+  // The legacy broadcast/analysis modules are loaded asynchronously. They
+  // inject big panels BEFORE the stadium after our initial DOMContentLoaded;
+  // route those real panels away from the first screen as soon as they arrive.
+  function relocateLatePanels(){
+   const direct=[...match.children];
+   move(direct.find(node=>node.id==='neo920-broadcast'),more);
+   const pulse=match.querySelector('#neo1000-pulse');
+   if(pulse&&!info.contains(pulse)){
+    // The module may have inserted itself after the relocated broadcast panel
+    // inside our temporary details. Give it a stable original home for undo.
+    if(more.contains(pulse))match.insertBefore(pulse,match.querySelector('.match-layout'));
+    move(pulse,info);
+   }
+  }
+  relocateLatePanels();
+  const observer=new MutationObserver(records=>{
+   if(records.some(record=>[...record.addedNodes].some(node=>
+    node.nodeType===1&&(node.id==='neo920-broadcast'||node.id==='neo1000-pulse'))))relocateLatePanels();
+  });
+  observer.observe(match,{childList:true});
+  observer.observe(more,{childList:true});
+
   function setMode(mode){
    if(!['broadcast','coach','analysis'].includes(mode))return;
    match.dataset.arenaMode=mode;
@@ -93,12 +115,13 @@
    seasonLabel.textContent=round?'LIGA NEO EGOÍSTA · '+round:'CENTRAL DE PARTIDAS · AO VIVO';
   };
   refreshSeason();const timer=window.setInterval(refreshSeason,3000);
-  mounted={match,moves,created,timer};
+  mounted={match,moves,created,timer,observer};
  }
  function unmount(){
   if(!mounted)return;
-  const {match,moves,created,timer}=mounted;
+  const {match,moves,created,timer,observer}=mounted;
   window.clearInterval(timer);
+  observer.disconnect();
   for(const {node,marker} of moves.reverse())marker.replaceWith(node);
   for(const node of created.reverse())node.remove();
   document.body.classList.remove('neo-arena-active');
