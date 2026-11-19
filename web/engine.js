@@ -296,6 +296,22 @@ function createSchedule(meetings=4,selectedTeamIds=null) {
   }
   return {schema:2,rounds,teamIds:teams,format:{meetings:cycles},scorers:{},assists:{},goalLog:[],created:Date.now()};
 }
+// A three-match request is a single user action, but adjacent rounds must not
+// put the same club on two pitches simultaneously. Finish and persist a wave
+// before preparing the next one, so coaches can read the previous result.
+function planFixtureWaves(entries){
+  const waves=[];
+  for(const item of entries||[]){
+    const f=item?.f;if(!f||!f.home||!f.away)continue;
+    let wave=waves[waves.length-1];
+    if(!wave||wave[0].round!==item.round||wave.some(({f:other})=>
+      other.home===f.home||other.home===f.away||other.away===f.home||other.away===f.away)){
+      wave=[];waves.push(wave);
+    }
+    wave.push(item);
+  }
+  return waves;
+}
 function standings(season) {
   // Older saves predate teamIds. Derive membership from actual fixtures in those saves.
   const ids=Array.isArray(season.teamIds)&&season.teamIds.length?season.teamIds:
@@ -2267,6 +2283,6 @@ function migrateLegacySeason(legacy){
   season.scorers={...legacy.scorers};season.assists={...legacy.assists};season.goalLog=[];return season;
 }
 function lerp(a,b,t){return a+(b-a)*t;}
-return {PITCH,TICK,GAME_RATE,MAX_SECONDS,TEAMS,EXTRA_TEAMS,allTeams,registerTeam,registerCreatedPlayer,unregisterCreatedPlayer,listCreatedPlayers,COUNTRY_KITS,SKILLS,PLAYER_STYLES,GAMEPLAN_TEMPLATES,Attr,Abilities,Masters,Progression,avatarTheme,avatarHTML,avatarSVG,REAL_PORTRAITS,Match,createSchedule,standings,teamById,recordFixture,recordFixtureTransactional,reconcileSeasonRecords,compactFixtureDetails,compactSeasonReports,migrateLegacySeason,FORMATIONS,DEFAULT_FORMATION};
+return {PITCH,TICK,GAME_RATE,MAX_SECONDS,TEAMS,EXTRA_TEAMS,allTeams,registerTeam,registerCreatedPlayer,unregisterCreatedPlayer,listCreatedPlayers,COUNTRY_KITS,SKILLS,PLAYER_STYLES,GAMEPLAN_TEMPLATES,Attr,Abilities,Masters,Progression,avatarTheme,avatarHTML,avatarSVG,REAL_PORTRAITS,Match,createSchedule,planFixtureWaves,standings,teamById,recordFixture,recordFixtureTransactional,reconcileSeasonRecords,compactFixtureDetails,compactSeasonReports,migrateLegacySeason,FORMATIONS,DEFAULT_FORMATION};
 });
 

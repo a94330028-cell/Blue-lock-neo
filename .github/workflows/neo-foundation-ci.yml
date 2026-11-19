@@ -36,11 +36,16 @@ jobs:
           node --check web/engine.js
           node --check web/app.js
           node --check web/systems/progression.js
+          node --check web/neo-coach-v980.js
+          node --check web/neo-mobile-ux-v111.js
           python3 tools/sync_inline_v930.py web
       - name: Validar transacoes, 20 partidas e recuperacao de estatisticas
         run: node tests/neo-foundation.test.cjs
+      - name: Estressar 20 rodadas, 60 partidas e sequenciamento de tres campos
+        run: node tests/neo-foundation-scale.test.cjs
       - name: Garantir compatibilidade do tecnico, Masters e ligas antigas
         run: |
+          node tests/coach-fixes-v10637.test.cjs
           node tests/league-hub-v10634.test.cjs
           node tests/league-v10635.test.cjs
           node tests/league-fixes-v10636.test.cjs

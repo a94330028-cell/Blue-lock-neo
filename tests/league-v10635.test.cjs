@@ -52,7 +52,10 @@ const app=fs.readFileSync('web/app.js','utf8');
 const hub=fs.readFileSync('web/neo-mobile-ux-v111.js','utf8');
 const css=fs.readFileSync('web/neo-pitch-v1040.css','utf8');
 assert.ok(app.includes('async function simulateTripleLive(onFrame)'));
-assert.ok(app.includes('.slice(0,3)')&&app.includes('players:game.players.map'));
+assert.ok(app.includes('.slice(0,3)')&&app.includes('players:game?game.players.map'),
+ 'each active pitch broadcasts true player coordinates; queued matches stay empty');
+assert.ok(app.includes('E.planFixtureWaves(slots)'),
+ 'a club must finish its earlier-round fixture before appearing on another pitch');
 assert.ok(app.includes('commitOfficialFixture(official,game)'),
  'três jogos precisam salvar resultados com o mesmo commit atômico da liga');
 assert.ok(hub.includes('data-neo-ux-simulate="triple"'));

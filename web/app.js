@@ -1985,8 +1985,9 @@ async function simulateNextFixture(){
  finally{simBusy=false;cancelSim=false;setSimButtons();renderLeague();renderStats();}
  return completed;
 }
-// Three authentic Match engines run side by side. The callback receives actual
-// ball/player coordinates, never a decorative or pre-generated animation.
+// Three authentic fixtures from one button press. Same-round games can run in
+// parallel; an overlapping club or a new round waits until the previous wave
+// has been committed, so no team plays twice at once and coaches see the result.
 async function simulateTripleLive(onFrame){
  if(simBusy||!currentRound()||(playing&&!match?.finished))return 0;
  const fixtures=season.rounds.flatMap(r=>r.games.map(f=>({f,round:r.round})))
@@ -1994,35 +1995,43 @@ async function simulateTripleLive(onFrame){
  if(!fixtures.length)return 0;
  simBusy=true;cancelSim=false;playing=false;replaying=false;setSimButtons();
  let completed=0;
- const sims=fixtures.map(({f,round})=>{
-  const game=new Match(f.home,f.away,Math.floor(Math.random()*0xffffffff),E.Progression.ensure(season),season);
-  game.rollGameplan();return {f,round,game};
- });
+ const slots=fixtures.map(entry=>({...entry,game:null}));
+ const waves=E.planFixtureWaves(slots);
  const frame=()=>{
   if(typeof onFrame!=='function')return;
-  try{onFrame(sims.map(({f,round,game})=>({home:f.home,away:f.away,round,
-   minute:Math.min(90,Math.floor(game.time/60)),score:game.score.slice(),finished:game.finished,
-   players:game.players.map(p=>({x:p.x,y:p.y,side:p.side})),ball:{x:game.ball.x,y:game.ball.y}})));}
+  try{onFrame(slots.map(({f,round,game})=>({home:f.home,away:f.away,round,
+   queued:!game,minute:game?Math.min(90,Math.floor(game.time/60)):0,
+   score:game?game.score.slice():[0,0],finished:!!game?.finished,
+   players:game?game.players.map(p=>({x:p.x,y:p.y,side:p.side})):[],
+   ball:game?{x:game.ball.x,y:game.ball.y}:{x:PITCH.cx,y:PITCH.cy}})));}
   catch(error){console.warn('Visualização dos três jogos:',error);}
  };
  try{
   frame();
-  // The engines progress in parallel within each animation batch, even when
-  // fixtures span a round boundary (e.g. two fixtures per five-club round).
-  for(let batch=0;batch<205&&!sims.every(s=>s.game.finished)&&!cancelSim;batch++){
-   for(const {game} of sims)for(let tick=0;tick<75&&!game.finished;tick++)game.step(TICK);
-   frame();await new Promise(resolve=>setTimeout(resolve,38));
+  for(const wave of waves){
+   if(cancelSim)break;
+   // Only now create these matches, against the season including all earlier
+   // waves. A losing coach can react before the club's next appearance.
+   for(const slot of wave){
+    slot.game=new Match(slot.f.home,slot.f.away,Math.floor(Math.random()*0xffffffff),E.Progression.ensure(season),season);
+    slot.game.rollGameplan();
+   }
+   frame();
+   for(let batch=0;batch<205&&!wave.every(s=>s.game.finished)&&!cancelSim;batch++){
+    for(const {game} of wave)for(let tick=0;tick<75&&!game.finished;tick++)game.step(TICK);
+    frame();await new Promise(resolve=>setTimeout(resolve,38));
+   }
+   if(cancelSim)break;
+   for(const {f,round,game} of wave){
+    if(!game.finished)game.finish();
+    // Commits replace snapshots, so find each still-pending official fixture.
+    const official=season.rounds.find(r=>r.round===round)?.games.find(x=>x.home===f.home&&x.away===f.away&&!x.result);
+    if(!official||!commitOfficialFixture(official,game)){cancelSim=true;break;}
+    completed++;
+   }
+   frame();
+   if(cancelSim)break;
   }
-  if(cancelSim)return 0;
-  for(const {f,round,game} of sims){
-   if(!game.finished)game.finish();
-   // Each successful commit replaces the season snapshot. Resolve the next
-   // fixture by its stable round/slot, not the stale pre-batch object identity.
-   const official=season.rounds.find(r=>r.round===round)?.games.find(x=>x.home===f.home&&x.away===f.away&&!x.result);
-   if(!official||!commitOfficialFixture(official,game)){cancelSim=true;break;}
-   completed++;
-  }
-  frame();
  }finally{simBusy=false;cancelSim=false;setSimButtons();renderLeague();renderStats();}
  return completed;
 }

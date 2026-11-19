@@ -25,6 +25,9 @@ Preservar saves, retratos importados e atletas criados ao migrar versões.
 | NF-11 | Clubes | History e equipes adicionadas pelo jogador participam das mesmas regras e filtros. |
 | NF-12 | Saves | Migração segura e evidência obrigatória antes de reparar estatísticas históricas. |
 | NF-13 | Compatibilidade | O HTML offline do Android usa exatamente o motor e a interface do código-fonte atual. |
+| NF-14 | Formatos completos | Para 2 a 6 clubes e 2/4/6 confrontos, cada dupla se enfrenta o número exato de vezes, com mando equilibrado; ninguém joga duas vezes na mesma rodada. |
+| NF-15 | Três jogos com integridade temporal | O botão continua simulando até três jogos, mas nunca coloca o mesmo clube em dois campos simultâneos. A rodada seguinte só começa após registrar a anterior; técnicos recebem o novo histórico. |
+| NF-16 | Liga longa | Em 20 rodadas / 60 partidas reais, classificação, gols, partidas, Masters e relatórios seguem consistentes até a última rodada. |
 
 ## Regras de recuperação
 
@@ -53,6 +56,11 @@ Preservar saves, retratos importados e atletas criados ao migrar versões.
    e somente então verificar o avanço do formato e dos rankings.
 10. Na pull request, montar o APK Debug com as mesmas fontes de `web/` e
     armazená-lo como artefato de homologação, **sem publicá-lo como Release**.
+11. Checar todos os formatos de 2–6 times, 2/4/6 confrontos, mando e folgas.
+12. Simular 60 partidas reais de seis times em 20 rodadas, reconstruir os totais
+    e verificar aparições de Masters sem rodada congelada.
+13. Garantir que três campos de uma só solicitação se dividam em ondas
+    cronológicas quando um clube precisar jogar novamente em outra rodada.
 
 ## Gates de publicação
 
