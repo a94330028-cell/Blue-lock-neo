@@ -43,7 +43,8 @@ const server=http.createServer((req,res)=>{
   await page.reload({waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>{
    const s=JSON.parse(localStorage.getItem('neo-season-v2')||'null');
-   return s?.career?.masterBidVersion===2&&s.scorers?.['Teste Histórico|bm']===1;
+   const home=s?.rounds?.[0]?.games?.[0]?.home;
+   return s?.career?.masterBidVersion===2&&s.scorers?.['Teste Histórico|'+home]===1;
   },null,{timeout:35000});
   const result=await page.evaluate(async()=>{
    const saved=JSON.parse(localStorage.getItem('neo-season-v2'));
@@ -59,7 +60,7 @@ const server=http.createServer((req,res)=>{
   });
   assert.equal(result.backup,original,'the exact original season was archived before repair');
   assert.deepEqual(result.saved.rounds[0].games[0].result,[1,0]);
-  assert.equal(result.saved.scorers['Teste Histórico|bm'],1);
+  assert.equal(result.saved.scorers['Teste Histórico|'+result.saved.rounds[0].games[0].home],1);
   assert.equal(result.saved.assists['Incorreto|bm'],undefined);
   assert.equal(result.saved.goalLog.length,1);
   console.log('PASS NEO FOUNDATION browser: verified IndexedDB backup precedes factual migration');
