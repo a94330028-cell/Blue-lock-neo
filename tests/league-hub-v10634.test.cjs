@@ -56,7 +56,9 @@ const app=fs.readFileSync('web/app.js','utf8');
 const mobile=fs.readFileSync('web/neo-mobile-ux-v111.js','utf8');
 assert.ok(app.includes('archiveSeasonSnapshot')&&app.includes('copy!==serialized'),'backup antigo verificado em IndexedDB');
 assert.ok(app.includes('latestSeasonArchive')&&app.includes('exportPreviousSeason'),'edições anteriores podem ser exportadas');
-assert.ok(app.includes('if(!saveSeason()){cancelSim=true;return false;}'),'falha de gravação interrompe simulação');
+assert.ok(app.includes('if(!commitOfficialFixture(f,sim)){cancelSim=true;return false;}')&&
+ app.includes('snapshot=>saveSeason(snapshot)'),
+ 'falha de gravação interrompe simulação sem alterar a temporada em memória');
 assert.ok(app.includes('simulateRound:()=>simulateRound()')&&app.includes('simulateNextFixture:()=>simulateNextFixture()'),'simulação acessível do hub');
 assert.ok(mobile.includes('data-neo-ux-simulate="round"')&&mobile.includes('data-neo-ux-simulate="next"'),'duas ações diretas no celular');
 assert.ok(mobile.includes('neo-ux-round-xi')&&mobile.includes('Time da Rodada'),'Time da Rodada no hub da liga');

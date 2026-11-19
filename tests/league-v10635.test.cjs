@@ -53,7 +53,8 @@ const hub=fs.readFileSync('web/neo-mobile-ux-v111.js','utf8');
 const css=fs.readFileSync('web/neo-pitch-v1040.css','utf8');
 assert.ok(app.includes('async function simulateTripleLive(onFrame)'));
 assert.ok(app.includes('.slice(0,3)')&&app.includes('players:game.players.map'));
-assert.ok(app.includes('E.recordFixture(season,f,game)'));
+assert.ok(app.includes('commitOfficialFixture(official,game)'),
+ 'três jogos precisam salvar resultados com o mesmo commit atômico da liga');
 assert.ok(hub.includes('data-neo-ux-simulate="triple"'));
 assert.ok(hub.includes('bridge.simulateTripleLive(paintLive)'));
 assert.ok(hub.includes("rows=allRows.filter(p=>n(p.games)>0)"),'played masters included in ranking');

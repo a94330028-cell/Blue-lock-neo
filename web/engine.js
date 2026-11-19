@@ -2180,6 +2180,83 @@ function recordFixture(season,fixture,match){
   const ranks=Progression.rank(season);ranks.forEach((p,i)=>{const prev=before.indexOf(p.name+'|'+p.club);p.rankChange=prev<0?0:prev-i;});
   return true;
 }
+// Commit an official result only after the complete season snapshot is safely
+// persisted. The live season, including market values and secondary ledgers,
+// remains untouched when storage is full or a recording hook fails.
+function recordFixtureTransactional(season,fixture,match,persist,recorder=recordFixture){
+ if(!season||!fixture||typeof persist!=='function'||typeof recorder!=='function'||fixture.result)return null;
+ const roundIndex=(season.rounds||[]).findIndex(r=>r.games?.includes(fixture));
+ if(roundIndex<0)return null;
+ const fixtureIndex=season.rounds[roundIndex].games.indexOf(fixture);
+ if(fixtureIndex<0)return null;
+ try{
+  const next=JSON.parse(JSON.stringify(season));
+  Object.defineProperty(next,'__neoFoundationDraft',{value:true,configurable:true});
+  const pending=next.rounds[roundIndex].games[fixtureIndex];
+  if(!recorder(next,pending,match))return null;
+  if(persist(next)!==true)return null;
+  delete next.__neoFoundationDraft;
+  return {season:next,fixture:pending,round:next.rounds[roundIndex].round};
+ }catch(error){
+  if(typeof console!=='undefined')console.warn('Registro oficial preservado para nova tentativa:',error);
+  return null;
+ }
+}
+// Recover scorers and assists exclusively from complete, genuine match sheets.
+// Never overwrite historical counters if even one completed match lacks proof.
+function reconcileSeasonRecords(season){
+ const totals={scorers:{},assists:{}},goalLog=[];
+ let completed=0,allGoalsDocumented=true;
+ for(const round of season?.rounds||[])for(const fixture of round.games||[]){
+  if(!Array.isArray(fixture.result))continue;
+  completed++;
+  const sheet=fixture.details;
+  if(!Array.isArray(sheet?.players))return {complete:false,changed:false,reason:'Relatório individual ausente'};
+  const sides=[0,0],validEntries=Array.isArray(sheet.masterEntries)?sheet.masterEntries:[];
+  for(const p of sheet.players){
+   if(!p?.name||![0,1].includes(p.side))continue;
+   if(p.isMaster&&!validEntries.some(e=>e.side===p.side&&e.master===p.name))continue;
+   const goals=Number(p.goals||0),assists=Number(p.assists||0);
+   if(!Number.isSafeInteger(goals)||goals<0||!Number.isSafeInteger(assists)||assists<0)
+    return {complete:false,changed:false,reason:'Estatística inválida'};
+   sides[p.side]+=goals;
+   const key=p.name+'|'+(p.side===0?fixture.home:fixture.away);
+   if(goals)totals.scorers[key]=(totals.scorers[key]||0)+goals;
+   if(assists)totals.assists[key]=(totals.assists[key]||0)+assists;
+  }
+  // An old sheet may be incomplete (e.g. saved before all goal events were
+  // retained). Such seasons must keep their historical cumulative totals.
+  if(sides.some((n,i)=>n>fixture.result[i]))
+   return {complete:false,changed:false,reason:'Autores excedem o placar salvo'};
+  if(sides.some((n,i)=>n!==fixture.result[i]))
+   return {complete:false,changed:false,reason:'Autores não cobrem todos os gols'};
+  if(!Array.isArray(sheet.goalRecords))allGoalsDocumented=false;
+  else for(const rec of sheet.goalRecords){
+   if(![0,1].includes(rec.side)||!rec.scorer||!Array.isArray(rec.score)){
+    allGoalsDocumented=false;break;
+   }
+   goalLog.push({round:round.round,home:fixture.home,away:fixture.away,
+    team:rec.side===0?fixture.home:fixture.away,scorer:rec.scorer,
+    assister:rec.assister,setPiece:rec.setPiece||null,minute:rec.minute,
+    score:[...rec.score]});
+  }
+ }
+ if(!completed)return {complete:false,changed:false,reason:'Sem partidas para conferir'};
+ const same=(a,b)=>{
+  const first=Object.entries(a||{}).filter(([,v])=>Number(v)!==0).sort(([x],[y])=>x.localeCompare(y));
+  const second=Object.entries(b||{}).filter(([,v])=>Number(v)!==0).sort(([x],[y])=>x.localeCompare(y));
+  return JSON.stringify(first)===JSON.stringify(second);
+ };
+ let changed=false;
+ for(const metric of ['scorers','assists'])if(!same(season[metric],totals[metric])){
+  season[metric]=totals[metric];changed=true;
+ }
+ if(allGoalsDocumented&&(!Array.isArray(season.goalLog)||
+  JSON.stringify(season.goalLog)!==JSON.stringify(goalLog))){
+  season.goalLog=goalLog;changed=true;
+ }
+ return {complete:true,changed,completed,goalLogVerified:allGoalsDocumented};
+}
 function migrateLegacySeason(legacy){
   if(!legacy||!Array.isArray(legacy.fixtures)||legacy.fixtures.length!==20)return null;
   const season=createSchedule();
@@ -2190,6 +2267,6 @@ function migrateLegacySeason(legacy){
   season.scorers={...legacy.scorers};season.assists={...legacy.assists};season.goalLog=[];return season;
 }
 function lerp(a,b,t){return a+(b-a)*t;}
-return {PITCH,TICK,GAME_RATE,MAX_SECONDS,TEAMS,EXTRA_TEAMS,allTeams,registerTeam,registerCreatedPlayer,unregisterCreatedPlayer,listCreatedPlayers,COUNTRY_KITS,SKILLS,PLAYER_STYLES,GAMEPLAN_TEMPLATES,Attr,Abilities,Masters,Progression,avatarTheme,avatarHTML,avatarSVG,REAL_PORTRAITS,Match,createSchedule,standings,teamById,recordFixture,compactFixtureDetails,compactSeasonReports,migrateLegacySeason,FORMATIONS,DEFAULT_FORMATION};
+return {PITCH,TICK,GAME_RATE,MAX_SECONDS,TEAMS,EXTRA_TEAMS,allTeams,registerTeam,registerCreatedPlayer,unregisterCreatedPlayer,listCreatedPlayers,COUNTRY_KITS,SKILLS,PLAYER_STYLES,GAMEPLAN_TEMPLATES,Attr,Abilities,Masters,Progression,avatarTheme,avatarHTML,avatarSVG,REAL_PORTRAITS,Match,createSchedule,standings,teamById,recordFixture,recordFixtureTransactional,reconcileSeasonRecords,compactFixtureDetails,compactSeasonReports,migrateLegacySeason,FORMATIONS,DEFAULT_FORMATION};
 });
 

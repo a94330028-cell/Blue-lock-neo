@@ -1,0 +1,59 @@
+name: NEO FOUNDATION - integridade da liga
+
+on:
+  pull_request:
+    paths:
+      - 'web/**'
+      - 'tests/**'
+      - 'tools/sync_inline_v930.py'
+      - '.github/workflows/neo-foundation-ci.yml'
+  push:
+    branches: [main, 'codex/neo-foundation']
+    paths:
+      - 'web/**'
+      - 'tests/**'
+      - 'tools/sync_inline_v930.py'
+      - '.github/workflows/neo-foundation-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  foundation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Conferir JavaScript e reconstruir a pagina offline
+        run: |
+          node --check web/engine.js
+          node --check web/app.js
+          node --check web/systems/progression.js
+          python3 tools/sync_inline_v930.py web
+      - name: Validar transacoes, 20 partidas e recuperacao de estatisticas
+        run: node tests/neo-foundation.test.cjs
+      - name: Garantir compatibilidade do tecnico, Masters e ligas antigas
+        run: |
+          node tests/league-hub-v10634.test.cjs
+          node tests/league-v10635.test.cjs
+          node tests/league-fixes-v10636.test.cjs
+          node tests/neo-master-market-v1.test.cjs
+          node tests/v980.test.cjs
+          node tests/neo-league-market-v202.test.cjs
+      - name: Preparar Chromium para teste visual real
+        run: |
+          command -v google-chrome || command -v chromium || command -v chromium-browser
+          npm install --prefix /tmp/neo-ui-validate --no-save --no-package-lock --no-audit playwright-core@1.56.1
+      - name: Conferir a tela no PC e no celular
+        run: node tests/v230-browser.test.cjs
+      - name: Resumo da validacao
+        run: |
+          echo '### NEO FOUNDATION' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Sem publicacao: integridade transacional, rankings, Masters e save testados.' >> "$GITHUB_STEP_SUMMARY"
