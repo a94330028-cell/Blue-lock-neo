@@ -85,4 +85,10 @@ assert.match(source,/masterBidVersion!==2/,'master migration must recognize ledg
 assert.match(source,/function commitOfficialFixture\(/,'all UI simulation modes use a safe commit');
 assert.match(source,/Tentar salvar resultado novamente/,'failed live match can retry saving');
 assert.match(source,/E\.Progression\.masterRank\(season,club\)/,'desktop ranking includes real masters');
+const mobile=fs.readFileSync('web/neo-mobile-ux-v111.js','utf8');
+const legacyMarket=fs.readFileSync('web/neo-v960.js','utf8');
+assert.doesNotMatch(mobile,/NeoCareerBridge\?\.save\?\.\(\)/,
+ 'mobile market must not persist a migration without first backing up the save');
+assert.doesNotMatch(legacyMarket,/localStorage\.setItem\('neo-season-v2'/,
+ 'legacy market must remain a read-only view');
 console.log('PASS NEO FOUNDATION: atomic saves, round 7+, official stats, masters and UI pipeline');

@@ -21,9 +21,12 @@
  };
  function market(){
   try{
-   const s=season();
+   const live=season();
+   // Market is a view: never upgrade the live season or overwrite the only
+   // copy of an old save while the verified IndexedDB archive is pending.
+   const s=live?.career?.masterBidVersion!==2?JSON.parse(JSON.stringify(live)):live;
    if(s&&s.career?.masterBidVersion!==2&&engine()?.Progression?.reconcileMasterBids){
-    engine().Progression.reconcileMasterBids(s);window.NeoCareerBridge?.save?.();
+    engine().Progression.reconcileMasterBids(s);
    }
    const rows=window.NeoMarket96?.market?.(s)||
     window.NeoPlayerData96?.roster?.(engine(),s,{scope:'league'})||[];

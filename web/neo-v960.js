@@ -25,8 +25,9 @@
  function state(){try{const s=JSON.parse(localStorage.getItem('neo-season-v2')||'null');if(s?.schema!==2)return null;E.Progression.reconcileGoalkeepers(s);E.Progression.reconcileBids(s);
   if(s.career?.masterBidVersion!==2&&E.Progression.reconcileMasterBids){
    E.Progression.reconcileMasterBids(s);
-   try{localStorage.setItem('neo-season-v2',JSON.stringify(s));}catch(_){}
   }
+  // Read-only market preview. Only app.js may persist a repaired season,
+  // after a complete, verified IndexedDB backup of the original save.
   return s;}catch(e){return null}}
  // O ranking da Liga acompanha os clubes escalados para a temporada atual.
  // Copas e a Seleção do Campeonato não rendem ofertas da Liga Neo Egoísta.
