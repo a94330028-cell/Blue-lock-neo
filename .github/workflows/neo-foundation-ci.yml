@@ -45,6 +45,7 @@ jobs:
         run: node tests/neo-foundation-scale.test.cjs
       - name: Garantir compatibilidade do tecnico, Masters e ligas antigas
         run: |
+          node tests/neo-foundation-coach.test.cjs
           node tests/coach-fixes-v10637.test.cjs
           node tests/league-hub-v10634.test.cjs
           node tests/league-v10635.test.cjs

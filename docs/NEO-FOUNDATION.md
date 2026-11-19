@@ -28,6 +28,7 @@ Preservar saves, retratos importados e atletas criados ao migrar versões.
 | NF-14 | Formatos completos | Para 2 a 6 clubes e 2/4/6 confrontos, cada dupla se enfrenta o número exato de vezes, com mando equilibrado; ninguém joga duas vezes na mesma rodada. |
 | NF-15 | Três jogos com integridade temporal | O botão continua simulando até três jogos, mas nunca coloca o mesmo clube em dois campos simultâneos. A rodada seguinte só começa após registrar a anterior; técnicos recebem o novo histórico. |
 | NF-16 | Liga longa | Em 20 rodadas / 60 partidas reais, classificação, gols, partidas, Masters e relatórios seguem consistentes até a última rodada. |
+| NF-17 | Técnico adaptativo | O treinador troca formações após derrotas, testa esquemas válidos com no máximo três novos titulares, mantém os que vencem e revê os que falham. Reservas são avaliados **relativamente** aos titulares, sem um bloqueio arbitrário de OVR 80. |
 
 ## Regras de recuperação
 
@@ -61,6 +62,10 @@ Preservar saves, retratos importados e atletas criados ao migrar versões.
     e verificar aparições de Masters sem rodada congelada.
 13. Garantir que três campos de uma só solicitação se dividam em ondas
     cronológicas quando um clube precisar jogar novamente em outra rodada.
+14. Simular sequências de três derrotas, vitória e fracasso da nova formação:
+    o próximo `Match` deve usar a escalação real do técnico, manter 11 únicos,
+    respeitar posições, girar atletas mal avaliados e nunca degradar OVR de
+    forma extrema; verificar também clubes cujo melhor reserva tem OVR abaixo de 80.
 
 ## Gates de publicação
 
