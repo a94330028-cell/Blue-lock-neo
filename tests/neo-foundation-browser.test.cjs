@@ -25,6 +25,8 @@ const server=http.createServer((req,res)=>{
   assert.ok(chrome,'Chromium obrigatório para validar migração real');
   browser=await chromium.launch({headless:true,executablePath:chrome,args:['--no-sandbox','--disable-dev-shm-usage']});
   const page=await browser.newPage({viewport:{width:1366,height:768}});
+  const warnings=[];
+  page.on('console',message=>{if(['warning','error'].includes(message.type()))warnings.push(message.text().slice(0,250));});
   await page.goto('http://127.0.0.1:'+server.address().port+'/',{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>!!window.NeoCareerBridge,{timeout:30000});
   const original=await page.evaluate(()=>{
@@ -41,11 +43,31 @@ const server=http.createServer((req,res)=>{
    return serialized;
   });
   await page.reload({waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>{
-   const s=JSON.parse(localStorage.getItem('neo-season-v2')||'null');
-   const home=s?.rounds?.[0]?.games?.[0]?.home;
-   return s?.career?.masterBidVersion===2&&s.scorers?.['Teste Histórico|'+home]===1;
-  },null,{timeout:35000});
+  try{
+   await page.waitForFunction(()=>{
+    const s=JSON.parse(localStorage.getItem('neo-season-v2')||'null');
+    const home=s?.rounds?.[0]?.games?.[0]?.home;
+    return s?.career?.masterBidVersion===2&&s.scorers?.['Teste Histórico|'+home]===1;
+   },null,{timeout:15000});
+  }catch(error){
+   const debug=await page.evaluate(async()=>{
+    const s=JSON.parse(localStorage.getItem('neo-season-v2')||'null');
+    const runtime=window.NeoCareerBridge?.getSeason?.();
+    const backups=await new Promise(resolve=>{
+     const req=indexedDB.open('neo-season-archive-v1',1);
+     req.onerror=()=>resolve(['db error']);
+     req.onsuccess=()=>{
+      const db=req.result,tx=db.transaction('seasons','readonly'),all=tx.objectStore('seasons').getAllKeys();
+      all.onsuccess=()=>{db.close();resolve(all.result);};all.onerror=()=>resolve(['keys error']);
+     };
+    });
+    return {storedVersion:s?.career?.masterBidVersion,storedScorers:s?.scorers,
+     runtimeVersion:runtime?.career?.masterBidVersion,loadedGame:s?.rounds?.[0]?.games?.[0],
+     backups,playing:document.getElementById('play')?.textContent};
+   });
+   console.error('FOUNDATION MIGRATION DEBUG:',JSON.stringify({debug,warnings}));
+   throw error;
+  }
   const result=await page.evaluate(async()=>{
    const saved=JSON.parse(localStorage.getItem('neo-season-v2'));
    const db=await new Promise((resolve,reject)=>{
