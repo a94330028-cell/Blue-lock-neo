@@ -35,6 +35,9 @@ Preservar saves, retratos importados e atletas criados ao migrar versões.
 - Masters precisam ter uma substituição correspondente para contar jogos ou lances.
 - Não inferir preços a partir de OVR; propostas em ienes são dados fictícios de atuação.
 - O processo não modifica retratos, elenco, habilidades, partidas ou placares antigos.
+- Antes de qualquer migração automática, arquivar os bytes originais do save em
+  IndexedDB e verificar que o backup pode ser lido integralmente; sem backup,
+  a migração é adiada e o save anterior continua intacto.
 
 ## Estratégia de testes
 
@@ -46,6 +49,8 @@ Preservar saves, retratos importados e atletas criados ao migrar versões.
 6. Verificar Masters reais nos rankings e valores sem jogos fictícios.
 7. Testar treinador, escalações e History pelos testes existentes.
 8. Reconstruir `web/index.html` com `tools/sync_inline_v930.py` e validar Android.
+9. No navegador, abrir um save antigo, comprovar a cópia íntegra no IndexedDB
+   e somente então verificar o avanço do formato e dos rankings.
 
 ## Gates de publicação
 

@@ -52,7 +52,9 @@ jobs:
           command -v google-chrome || command -v chromium || command -v chromium-browser
           npm install --prefix /tmp/neo-ui-validate --no-save --no-package-lock --no-audit playwright-core@1.56.1
       - name: Conferir a tela no PC e no celular
-        run: node tests/v230-browser.test.cjs
+        run: |
+          node tests/v230-browser.test.cjs
+          node tests/neo-foundation-browser.test.cjs
       - name: Resumo da validacao
         run: |
           echo '### NEO FOUNDATION' >> "$GITHUB_STEP_SUMMARY"

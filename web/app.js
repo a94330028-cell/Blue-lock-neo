@@ -595,26 +595,7 @@ function validLeagueSeason(saved){
 function loadSeason(){
   try{
     const saved=JSON.parse(localStorage.getItem('neo-season-v2'));
-    if(validLeagueSeason(saved)){
-      try{
-        const candidate=JSON.parse(JSON.stringify(saved));let changed=false;
-        // Only verifiable original match reports may repair auction bids or
-        // season leaderboards. A failed migration keeps the original save.
-        if(candidate.career?.bidVersion!==E.Progression.BID_VERSION){
-          E.Progression.reconcileBids(candidate);changed=true;
-        }
-        if(candidate.career?.masterBidVersion!==2){
-          E.Progression.reconcileMasterBids(candidate);changed=true;
-        }
-        const audited=E.reconcileSeasonRecords(candidate);
-        if(audited.changed)changed=true;
-        if(changed){
-          localStorage.setItem('neo-season-v2',JSON.stringify(candidate));
-          return candidate;
-        }
-      }catch(error){console.warn('Correção da temporada adiada; save original preservado:',error);}
-      return saved;
-    }
+    if(validLeagueSeason(saved))return saved;
   }catch(error){console.warn('Falha ao recuperar temporada anterior:',error);}
   try{const old=JSON.parse(localStorage.getItem('neo-season-v1'));const migrated=E.migrateLegacySeason(old);if(migrated){localStorage.setItem('neo-season-v2',JSON.stringify(migrated));return migrated;}}catch(e){}
   return E.createSchedule();
@@ -687,6 +668,37 @@ function saveSeason(snapshot=season){
     return false;
    }
   }
+}
+// A historic season is never silently rewritten on startup. First place its
+// complete serialized state in IndexedDB and verify it can be read back.
+async function repairLoadedSeason(){
+ const original=localStorage.getItem('neo-season-v2');
+ if(!original)return false;
+ let saved;try{saved=JSON.parse(original);}catch(_){return false;}
+ if(!validLeagueSeason(saved))return false;
+ try{
+  const candidate=JSON.parse(JSON.stringify(season));let changed=false;
+  if(candidate.career?.bidVersion!==E.Progression.BID_VERSION){
+   E.Progression.reconcileBids(candidate);changed=true;
+  }
+  if(candidate.career?.masterBidVersion!==2){
+   E.Progression.reconcileMasterBids(candidate);changed=true;
+  }
+  const checked=E.reconcileSeasonRecords(candidate);
+  if(checked.changed)changed=true;
+  if(!changed)return false;
+  await archiveSeasonSnapshot(original,'foundation-before-repair');
+  // The user may have started another season while the archive was writing.
+  // Never replace newer progress with an older migration snapshot.
+  if(localStorage.getItem('neo-season-v2')!==original||playing||simBusy||match?.time>0)return false;
+  if(!saveSeason(candidate))return false;
+  season=candidate;
+  renderLeague();renderStats();renderRecords();renderCareerRanking();
+  return true;
+ }catch(error){
+  console.warn('Reparo da temporada adiado: backup original preservado.',error);
+  return false;
+ }
 }
 function commitOfficialFixture(fixture,game){
  const committed=E.recordFixtureTransactional(season,fixture,game,
@@ -2521,6 +2533,7 @@ function init(){
 }
 init();
 migrateLegacySeasonArchive().catch(error=>console.warn('Arquivo da temporada anterior ainda no aparelho:',error));
+repairLoadedSeason().catch(error=>console.warn('Aguardando backup para reparar a liga:',error));
 // v7.7 cinematic stage interactions
 if($('actionTheaterToggle'))$('actionTheaterToggle').addEventListener('click',()=>{
  const node=$('actionTheater'),collapsed=node.classList.toggle('collapsed');
