@@ -51,6 +51,8 @@ Preservar saves, retratos importados e atletas criados ao migrar versões.
 8. Reconstruir `web/index.html` com `tools/sync_inline_v930.py` e validar Android.
 9. No navegador, abrir um save antigo, comprovar a cópia íntegra no IndexedDB
    e somente então verificar o avanço do formato e dos rankings.
+10. Na pull request, montar o APK Debug com as mesmas fontes de `web/` e
+    armazená-lo como artefato de homologação, **sem publicá-lo como Release**.
 
 ## Gates de publicação
 
