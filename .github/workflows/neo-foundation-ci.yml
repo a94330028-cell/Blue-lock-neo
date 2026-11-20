@@ -3,6 +3,7 @@ name: NEO FOUNDATION - integridade da liga
 on:
   pull_request:
     paths:
+      - 'app/**'
       - 'web/**'
       - 'tests/**'
       - 'tools/sync_inline_v930.py'
@@ -10,6 +11,7 @@ on:
   push:
     branches: [main, 'codex/neo-foundation']
     paths:
+      - 'app/**'
       - 'web/**'
       - 'tests/**'
       - 'tools/sync_inline_v930.py'
@@ -56,6 +58,8 @@ jobs:
           node tests/neo-master-market-v1.test.cjs
           node tests/v980.test.cjs
           node tests/neo-league-market-v202.test.cjs
+      - name: Proteger origem e dados durante a atualização Android
+        run: node tests/neo-foundation-android-update.test.cjs
       - name: Preparar Chromium para teste visual real
         run: |
           command -v google-chrome || command -v chromium || command -v chromium-browser

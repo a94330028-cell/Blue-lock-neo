@@ -32,6 +32,8 @@ Preservar saves, retratos importados e atletas criados ao migrar versões.
 | NF-18 | Calibração esportiva | Uma amostra fixa de 40 partidas reais deve conservar volume crível de gols e chutes, assistências atribuídas a passes autênticos, vantagem significativa (não garantida) para History e pênaltis com conversão possível sem gols automáticos. |
 | NF-19 | Técnico durante a partida | Notas que partem de 6,0 podem provocar substituição por baixo rendimento após tempo suficiente. Placar, cansaço e OVR relativo orientam decisões; no máximo cinco trocas e três janelas, intervalo não consome janela. Troca impedida pelo portador da bola é adiada, não perdida. Táticas manuais permanecem bloqueadas. |
 | NF-20 | Mestre e reserva na mesma parada | Uma entrada de Master nunca permite que um reserva herde `isMaster`. Trocas comuns são aplicadas antes da entrada Master; pedidos que atinjam Master ativo são adiados. Estatísticas e rankings devem continuar reconciliáveis com a súmula original. |
+| NF-21 | Persistência na atualização WebView | Depois de navegar para `?web=versão` na **mesma origem**, o save oficial do `localStorage`, a imagem e a preferência do jogador no IndexedDB permanecem idênticos, inclusive os bytes reais do retrato. |
+| NF-22 | Pacote Android não destrutivo | Identidade do aplicativo e origem local são estáveis; WebView mantém DOM Storage/IndexedDB; ZIP de atualização é validado com SHA-256 antes da ativação; restauração troca apenas os arquivos do jogo, jamais bancos ou dados pessoais. Mudanças em `app/**` executam CI. |
 
 ## Regras de recuperação
 
@@ -84,6 +86,42 @@ Preservar saves, retratos importados e atletas criados ao migrar versões.
     da janela o reserva deve retornar sem flag de Master. Não permitir troca
     comum diretamente sobre Master ativo. Reconciliar gols/assistências de
     temporada completa, inclusive atletas que substituíram um Master.
+18. No Chromium real, criar um retrato próprio no IndexedDB, verificar seu hash
+    e salvar a temporada oficial; navegar ao mesmo endereço com `?web=10.6.45`,
+    aguardando o boot completo. O texto integral da temporada, a seleção da foto,
+    os bytes da imagem e o registro físico do Blob devem permanecer idênticos.
+19. Verificar de forma estática que o Android conserva package ID, origem WebView,
+    armazenamento local e rollback não destrutivo. Qualquer alteração em `app/**`
+    aciona automaticamente testes web e compilação de APK Debug na PR.
+
+## Instalação real e atualização: homologação pendente
+
+O Chromium testa persistência **no navegador**, não substitui a WebView de um
+telefone. A compilação do APK não prova atualização de aplicativo já instalado.
+Antes do lançamento público, executar com um aparelho Android real:
+
+1. Fazer backup externo da temporada (Menu → exportar backup) **e das imagens
+   personalizadas** (Galeria → exportar retratos). Confirmar os dois JSONs fora
+   do armazenamento interno do jogo antes de qualquer experimento.
+2. Instalar uma versão anterior e registrar jogos, dinheiro, rankings, mestre,
+   XI da rodada e uma foto personalizada. Fechar e abrir para confirmar que
+   ambos os bancos persistiram. Guardar o placar e a foto de referência.
+3. Aplicar uma atualização **com o mesmo ID de pacote e a mesma assinatura**.
+   Não limpar dados nem desinstalar. Abrir e comparar a temporada, todos os
+   contadores, os retratos, a edição anterior e a volta ao conteúdo embarcado.
+4. Tentar um ZIP corrompido/fora da lista confiável: deve falhar mantendo a
+   versão antiga e sem apagar nenhum save. Verificar que a atualização só é
+   instalada depois do consentimento no diálogo.
+5. Confirmar no aparelho a mesma versão funcional após fechar/reabrir e
+   reiniciar o Android. Validar desempenho e espaço de armazenamento.
+
+**Atenção à assinatura:** um APK *Debug* pode ter certificado diferente do APK
+*Release* já instalado. O Android normalmente bloqueia a instalação por cima
+nessa situação. **Não desinstalar a versão pública para forçar um teste:** isso
+pode apagar os dados locais. Para o ensaio de atualização, usar duas versões de
+teste assinadas com a mesma chave, ou um aparelho/perfil de teste separado.
+Um novo Release também exige versão Android crescente e assinatura de produção
+compatível; o build Debug da PR **não é um pacote público**.
 
 ## Gates de publicação
 

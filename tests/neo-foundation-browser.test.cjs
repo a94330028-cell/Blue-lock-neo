@@ -85,6 +85,58 @@ const server=http.createServer((req,res)=>{
   assert.equal(result.saved.scorers['Teste Histórico|'+result.saved.rounds[0].games[0].home],1);
   assert.equal(result.saved.assists['Incorreto|bm'],undefined);
   assert.equal(result.saved.goalLog.length,1);
-  console.log('PASS NEO FOUNDATION browser: verified IndexedDB backup precedes factual migration');
+  // Android web updates use HOME + '?web=version', retaining the exact same
+  // HTTPS WebView origin. Reproduce that navigation on an isolated browser
+  // origin and verify that BOTH stores (league and user-uploaded portraits)
+  // survive without the migration running again or resetting player choices.
+  const beforeUpdate=await page.evaluate(async()=>{
+   await window.NeoPortraitsReady;
+   const canvas=document.createElement('canvas');canvas.width=canvas.height=96;
+   const context=canvas.getContext('2d');
+   context.fillStyle='#00aacc';context.fillRect(0,0,96,96);
+   context.fillStyle='#fcba03';context.fillRect(12,12,72,72);
+   const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));
+   assertSourceImage(blob);
+   await window.NeoPortraitManager.saveFile('Retrato de Teste NEO',
+    new File([blob],'retrato-qa.png',{type:'image/png'}));
+   const url=window.NeoPortraitManager.current('Retrato de Teste NEO');
+   if(!url.startsWith('blob:'))throw Error('Retrato não foi salvo no IndexedDB');
+   const image=await (await fetch(url)).arrayBuffer();
+   const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',image)))
+    .map(n=>n.toString(16).padStart(2,'0')).join('');
+   localStorage.setItem('neo-foundation-update-canary','preservado');
+   return {season:localStorage.getItem('neo-season-v2'),digest,bytes:image.byteLength};
+   function assertSourceImage(input){if(!input||!input.size)throw Error('Canvas de teste inválido');}
+  });
+  await page.goto('http://127.0.0.1:'+server.address().port+'/?web=10.6.45',
+   {waitUntil:'domcontentloaded'});
+  await page.waitForFunction(()=>!!window.NeoPortraitManager&&!!window.NeoCareerBridge,{timeout:30000});
+  const afterUpdate=await page.evaluate(async()=>{
+   await window.NeoPortraitsReady;
+   const url=window.NeoPortraitManager.current('Retrato de Teste NEO');
+   if(!url.startsWith('blob:'))throw Error('Retrato perdeu a seleção após atualização');
+   const image=await (await fetch(url)).arrayBuffer();
+   const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',image)))
+    .map(n=>n.toString(16).padStart(2,'0')).join('');
+   const record=await new Promise((resolve,reject)=>{
+    const req=indexedDB.open('neo-portrait-library-v1',1);
+    req.onerror=()=>reject(req.error);
+    req.onsuccess=()=>{
+     const db=req.result,tx=db.transaction('images','readonly');
+     const get=tx.objectStore('images').get('custom|Retrato de Teste NEO');
+     tx.oncomplete=()=>{resolve({bytes:get.result?.blob?.size||0});db.close();};
+     tx.onerror=()=>{reject(tx.error);db.close();};
+    };
+   });
+   return {season:localStorage.getItem('neo-season-v2'),
+    canary:localStorage.getItem('neo-foundation-update-canary'),
+    digest,bytes:image.byteLength,idbBytes:record.bytes};
+  });
+  assert.equal(afterUpdate.season,beforeUpdate.season,'official save survives a versioned URL reload');
+  assert.equal(afterUpdate.canary,'preservado','WebView localStorage origin stays the same');
+  assert.equal(afterUpdate.digest,beforeUpdate.digest,'custom portrait pixels survive web update');
+  assert.equal(afterUpdate.bytes,beforeUpdate.bytes);
+  assert.equal(afterUpdate.idbBytes,beforeUpdate.bytes,'photo remains in IndexedDB, not just memory');
+  console.log('PASS NEO FOUNDATION browser: archived migration, same-origin web update, full save and portrait persistence');
  }finally{if(browser)await browser.close();await new Promise(resolve=>server.close(resolve));}
 })().catch(err=>{console.error(err);process.exitCode=1;});
