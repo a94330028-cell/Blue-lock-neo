@@ -33,7 +33,7 @@ Preservar saves, retratos importados e atletas criados ao migrar versões.
 | NF-19 | Técnico durante a partida | Notas que partem de 6,0 podem provocar substituição por baixo rendimento após tempo suficiente. Placar, cansaço e OVR relativo orientam decisões; no máximo cinco trocas e três janelas, intervalo não consome janela. Troca impedida pelo portador da bola é adiada, não perdida. Táticas manuais permanecem bloqueadas. |
 | NF-20 | Mestre e reserva na mesma parada | Uma entrada de Master nunca permite que um reserva herde `isMaster`. Trocas comuns são aplicadas antes da entrada Master; pedidos que atinjam Master ativo são adiados. Estatísticas e rankings devem continuar reconciliáveis com a súmula original. |
 | NF-21 | Persistência na atualização WebView | Depois de navegar para `?web=versão` na **mesma origem**, o save oficial do `localStorage`, a imagem e a preferência do jogador no IndexedDB permanecem idênticos, inclusive os bytes reais do retrato. |
-| NF-22 | Pacote Android não destrutivo | Identidade do aplicativo e origem local são estáveis; WebView mantém DOM Storage/IndexedDB; ZIP de atualização é validado com SHA-256 antes da ativação; restauração troca apenas os arquivos do jogo, jamais bancos ou dados pessoais. Mudanças em `app/**` executam CI. |
+| NF-22 | Pacote Android não destrutivo | Identidade do aplicativo e origem local são estáveis; WebView mantém DOM Storage/IndexedDB; ZIP validado com SHA-256; pasta de versão incompleta é rejeitada na inicialização e substituída por pacote íntegro numa nova tentativa, sem apagar bancos do usuário. Marcador da versão é confirmado no disco antes da ativação. Mudanças em `app/**` executam CI. |
 
 ## Regras de recuperação
 
@@ -91,8 +91,11 @@ Preservar saves, retratos importados e atletas criados ao migrar versões.
     aguardando o boot completo. O texto integral da temporada, a seleção da foto,
     os bytes da imagem e o registro físico do Blob devem permanecer idênticos.
 19. Verificar de forma estática que o Android conserva package ID, origem WebView,
-    armazenamento local e rollback não destrutivo. Qualquer alteração em `app/**`
-    aciona automaticamente testes web e compilação de APK Debug na PR.
+    armazenamento local e rollback não destrutivo; recusar conteúdo incompleto
+    na inicialização, substituir pastas antigas incompletas somente em
+    `web-updates` e confirmar a preferência da versão antes do reload. Qualquer
+    alteração em `app/**` aciona automaticamente testes web e compilação de APK
+    Debug na PR.
 
 ## Instalação real e atualização: homologação pendente
 

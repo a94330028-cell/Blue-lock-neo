@@ -19,6 +19,8 @@ assert.match(java,/webView\.loadUrl\(HOME \+ "\?web=" \+ info\.version\)/,
 assert.match(java,/webView\.loadUrl\(HOME \+ "\?original=1"\)/,
  'rollback must use the same origin');
 assert.match(manifest,/android:allowBackup="true"/);
+assert.match(java,/if \(hasCompleteBundle\(installed\)\) return version/,
+ 'a half-installed web update cannot be selected on Android startup');
 
 // Asset packages may be replaced; the WebView's private storage must not be.
 assert.match(java,/new File\(getFilesDir\(\), "web-updates"\)/);
@@ -27,6 +29,10 @@ assert.match(java,/hex\(digest\.digest\(\)\)\.equals\(info\.sha256\)/,
 assert.match(java,/compareVersion\(info\.version, getCurrentWebVersion\(\)\) <= 0/,
  'older updates must not replace newer content');
 assert.match(java,/\.setPositiveButton\("Atualizar",/, 'updates require user confirmation');
+assert.match(java,/if \(destination\.exists\(\)\) \{\s*deleteRecursive\(destination\);/,
+ 'a stale target is replaced by the freshly verified ZIP rather than silently reused');
+assert.match(java,/putString\(PREF_WEB_VERSION, info\.version\)\.commit\(\)/,
+ 'the installed version marker must be confirmed before activating new assets');
 assert.match(java,/if \(staging != null && staging\.exists\(\)\) deleteRecursive\(staging\)/,
  'cleanup must target only the temporary update directory');
 for(const forbidden of [

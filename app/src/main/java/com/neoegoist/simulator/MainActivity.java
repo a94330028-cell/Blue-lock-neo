@@ -151,9 +151,14 @@ public final class MainActivity extends Activity {
         String version = preferences().getString(PREF_WEB_VERSION, BUNDLED_WEB_VERSION);
         if (isVersion(version) && compareVersion(version, BUNDLED_WEB_VERSION) > 0) {
             File installed = new File(new File(getFilesDir(), "web-updates"), version);
-            if (installed.isDirectory() && new File(installed, "index.html").isFile()) return version;
+            if (hasCompleteBundle(installed)) return version;
         }
         return BUNDLED_WEB_VERSION;
+    }
+    private static boolean hasCompleteBundle(File directory) {
+        return directory.isDirectory() && new File(directory, "index.html").isFile()
+            && new File(directory, "app.js").isFile()
+            && new File(directory, "engine.js").isFile();
     }
     private static boolean isVersion(String s) {
         return s != null && s.matches("[0-9]{1,4}\\.[0-9]{1,4}\\.[0-9]{1,4}");
@@ -310,22 +315,30 @@ public final class MainActivity extends Activity {
                 staging = new File(base, ".staging-" + UUID.randomUUID());
                 if (!staging.mkdir()) throw new IOException("Falha ao preparar conteúdo");
                 unpack(temporaryZip, staging);
-                if (!new File(staging, "index.html").isFile() || !new File(staging, "app.js").isFile() || !new File(staging, "engine.js").isFile())
+                if (!hasCompleteBundle(staging))
                     throw new IOException("Conteúdo incompleto");
                 File destination = new File(base, info.version);
-                if (!destination.exists() && !staging.renameTo(destination)) throw new IOException("Não foi possível ativar atualização");
-                if (destination.isDirectory()) {
-                    preferences().edit().putString(PREF_WEB_VERSION, info.version).apply();
-                    activeContentDirectory = destination;
-                    File finalZip = temporaryZip;
-                    runOnUiThread(() -> {
-                        if (webView != null) {
-                            webView.clearCache(true);
-                            webView.loadUrl(HOME + "?web=" + info.version);
-                        }
-                        toast("Jogo atualizado para v" + info.version + "!");
-                    });
+                // This version is strictly newer than the currently active
+                // one. A folder with its name can only be a stale prior
+                // attempt; do not silently reuse its possibly damaged files.
+                // WebView user storage lives outside web-updates and is never
+                // touched by this cleanup or by a content-only rollback.
+                if (destination.exists()) {
+                    deleteRecursive(destination);
+                    if (destination.exists()) throw new IOException("Não foi possível substituir um pacote anterior incompleto");
                 }
+                if (!staging.renameTo(destination)) throw new IOException("Não foi possível ativar atualização");
+                if (!hasCompleteBundle(destination)) throw new IOException("Pacote incompleto após a instalação");
+                if (!preferences().edit().putString(PREF_WEB_VERSION, info.version).commit())
+                    throw new IOException("Não foi possível confirmar a versão instalada");
+                activeContentDirectory = destination;
+                runOnUiThread(() -> {
+                    if (webView != null) {
+                        webView.clearCache(true);
+                        webView.loadUrl(HOME + "?web=" + info.version);
+                    }
+                    toast("Jogo atualizado para v" + info.version + "!");
+                });
             } catch (Exception e) {
                 toast("Atualização cancelada: " + e.getMessage() + ". Sua versão antiga continua disponível.");
             } finally {
