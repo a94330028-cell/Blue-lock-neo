@@ -51,6 +51,10 @@ assert.ok(reduced>0&&after<before,'antigos relatórios táticos podem ser reduzi
 assert.ok(after<4200000,'270 partidas precisam caber no limite usual do navegador');
 assert.ok(huge.rounds[0].games[0].details.goalRecords.length===firstReport.goalRecords.length,'gols históricos preservados');
 assert.deepEqual(huge.rounds[0].games[0].details.players.map(p=>p.rating),firstReport.players.map(p=>p.rating),'notas históricas preservadas');
+assert.equal(huge.rounds[0].games[0].details.shots.filter(s=>s.goal).length,
+ firstReport.shots.filter(s=>s.goal).length,'todas as finalizações convertidas sobrevivem à compactação');
+assert.deepEqual(huge.rounds[0].games[0].details.stats.saves,firstReport.stats.saves,
+ 'defesas oficiais permanecem intactas nos relatórios arquivados');
 
 const app=fs.readFileSync('web/app.js','utf8');
 const mobile=fs.readFileSync('web/neo-mobile-ux-v111.js','utf8');

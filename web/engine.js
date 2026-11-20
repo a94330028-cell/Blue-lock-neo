@@ -2191,10 +2191,17 @@ function compactSeasonReports(season,aggressive=false){
    compact.shapeHistory=Array.isArray(compact.shapeHistory)?compact.shapeHistory.map(h=>tail(h,1)):compact.shapeHistory;
    compact.specialMoments=tail(compact.specialMoments,2);
    compact.coachDecisions=tail(compact.coachDecisions,1);
-   // The full score/goal sheet and individual performance survive. Only old
-   // transient shot/event telemetry is sampled to stay within mobile quota.
-   if(Array.isArray(compact.shots))compact.shots=compact.shots.filter(s=>
-    s?.goal||s?.outcome==='saved');
+   // The full score/goal sheet and individual performance survive. Keep every
+   // scored shot and one real keeper-save example, but archive just the shot's
+   // identity and outcome: the live pitch coordinates/pressure are transient.
+   // Exact save totals remain in stats and each goalkeeper's career sheet.
+   if(Array.isArray(compact.shots)){
+    const scored=compact.shots.filter(s=>s?.goal);
+    const saved=compact.shots.filter(s=>s?.outcome==='saved').slice(-1);
+    const shotFields=['side','shooter','role','onTarget','xg','outcome','header','style','goal','minute','savedBy'];
+    compact.shots=[...scored,...saved].sort((a,b)=>(a.minute||0)-(b.minute||0))
+     .map(shot=>Object.fromEntries(shotFields.filter(key=>shot[key]!==undefined).map(key=>[key,shot[key]])));
+   }
    if(Array.isArray(compact.events))compact.events=compact.events.filter(e=>
     e?.type==='goal'||e?.type==='save');
    // Extended Ego systems also duplicate tactical narration in each report.
