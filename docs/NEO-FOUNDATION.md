@@ -29,6 +29,7 @@ Preservar saves, retratos importados e atletas criados ao migrar versões.
 | NF-15 | Três jogos com integridade temporal | O botão continua simulando até três jogos, mas nunca coloca o mesmo clube em dois campos simultâneos. A rodada seguinte só começa após registrar a anterior; técnicos recebem o novo histórico. |
 | NF-16 | Liga longa | Em 20 rodadas / 60 partidas reais, classificação, gols, partidas, Masters e relatórios seguem consistentes até a última rodada. |
 | NF-17 | Técnico adaptativo | O treinador troca formações após derrotas, testa esquemas válidos com no máximo três novos titulares, mantém os que vencem e revê os que falham. Reservas são avaliados **relativamente** aos titulares, sem um bloqueio arbitrário de OVR 80. |
+| NF-18 | Calibração esportiva | Uma amostra fixa de 40 partidas reais deve conservar volume crível de gols e chutes, assistências atribuídas a passes autênticos, vantagem significativa (não garantida) para History e pênaltis com conversão possível sem gols automáticos. |
 
 ## Regras de recuperação
 
@@ -66,6 +67,11 @@ Preservar saves, retratos importados e atletas criados ao migrar versões.
     o próximo `Match` deve usar a escalação real do técnico, manter 11 únicos,
     respeitar posições, girar atletas mal avaliados e nunca degradar OVR de
     forma extrema; verificar também clubes cujo melhor reserva tem OVR abaixo de 80.
+15. Medir 40 jogos do motor com sementes fixas: gols por partida entre 2,4 e 7,
+    assistências comprovadas em pelo menos 50% dos gols, 9–25 chutes por jogo;
+    History deve vencer a maioria, mas não todos os confrontos da amostra.
+    Verificar 60 pênaltis reais resolvidos (33–57 conversões), nenhuma assistência
+    fictícia em pênalti, autoria íntegra dos gols e repetibilidade das sementes.
 
 ## Gates de publicação
 

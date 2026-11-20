@@ -43,6 +43,8 @@ jobs:
         run: node tests/neo-foundation.test.cjs
       - name: Estressar 20 rodadas, 60 partidas e sequenciamento de tres campos
         run: node tests/neo-foundation-scale.test.cjs
+      - name: Medir gols, assistencias, efeito de OVR e penaltis reais
+        run: node tests/neo-foundation-balance.test.cjs
       - name: Garantir compatibilidade do tecnico, Masters e ligas antigas
         run: |
           node tests/neo-foundation-coach.test.cjs
