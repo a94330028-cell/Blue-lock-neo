@@ -30,6 +30,8 @@ Preservar saves, retratos importados e atletas criados ao migrar versões.
 | NF-16 | Liga longa | Em 20 rodadas / 60 partidas reais, classificação, gols, partidas, Masters e relatórios seguem consistentes até a última rodada. |
 | NF-17 | Técnico adaptativo | O treinador troca formações após derrotas, testa esquemas válidos com no máximo três novos titulares, mantém os que vencem e revê os que falham. Reservas são avaliados **relativamente** aos titulares, sem um bloqueio arbitrário de OVR 80. |
 | NF-18 | Calibração esportiva | Uma amostra fixa de 40 partidas reais deve conservar volume crível de gols e chutes, assistências atribuídas a passes autênticos, vantagem significativa (não garantida) para History e pênaltis com conversão possível sem gols automáticos. |
+| NF-19 | Técnico durante a partida | Notas que partem de 6,0 podem provocar substituição por baixo rendimento após tempo suficiente. Placar, cansaço e OVR relativo orientam decisões; no máximo cinco trocas e três janelas, intervalo não consome janela. Troca impedida pelo portador da bola é adiada, não perdida. Táticas manuais permanecem bloqueadas. |
+| NF-20 | Mestre e reserva na mesma parada | Uma entrada de Master nunca permite que um reserva herde `isMaster`. Trocas comuns são aplicadas antes da entrada Master; pedidos que atinjam Master ativo são adiados. Estatísticas e rankings devem continuar reconciliáveis com a súmula original. |
 
 ## Regras de recuperação
 
@@ -72,6 +74,16 @@ Preservar saves, retratos importados e atletas criados ao migrar versões.
     History deve vencer a maioria, mas não todos os confrontos da amostra.
     Verificar 60 pênaltis reais resolvidos (33–57 conversões), nenhuma assistência
     fictícia em pênalti, autoria íntegra dos gols e repetibilidade das sementes.
+16. Conferir trocas durante a partida: atacante sem ações úteis até o intervalo,
+    reservas compatíveis e com OVR aceitável, jogador cansado mesmo com vitória,
+    titular produtivo preservado, substituição adiada se estiver com a bola,
+    limite de três janelas, intervalo com trocas gratuitas e mudança de postura
+    ao perder, vencer ou empatar no fim. Rodar também uma partida autêntica
+    inteira e conferir todas as substituições no relatório oficial.
+17. Fazer Master e substituição normal coincidirem na mesma parada; ao final
+    da janela o reserva deve retornar sem flag de Master. Não permitir troca
+    comum diretamente sobre Master ativo. Reconciliar gols/assistências de
+    temporada completa, inclusive atletas que substituíram um Master.
 
 ## Gates de publicação
 

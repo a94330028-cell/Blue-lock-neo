@@ -1523,25 +1523,40 @@ class Match {
   _applyPendingSubs(){
     this._updateMasters(true);
     for(let side=0;side<2;side++){
-      if(this.pendingMasters[side]){this.pendingMasters[side]=false;this._masterEntry(side);}
       const pending=this.pendingSubs[side];if(!pending)continue;
       this.pendingSubs[side]=null;
       if(!this.autoSubs)continue;
-      let applied=0;
+      if(this.phase!=='halftime'&&(this.subWindowsUsed[side]||0)>=3)continue;
+      let applied=0;const deferred=[];
       for(const sub of (Array.isArray(pending)?pending:[pending])){
         const p=this.players.find(p=>p.id===sub.id);
+        // At a kickoff/restart the intended player may temporarily have the
+        // ball. Retain that pending request for the next safe stoppage instead
+        // of silently losing the coach's decision.
+        // A Master uses the original player's slot ID. Never replace that
+        // Master with an ordinary reserve and accidentally label the reserve
+        // as a Master in ranking, assists or the factual career ledger.
+        if(p&&(p===this.ball.owner||p.isMaster)){deferred.push(sub);continue;}
+        if(p&&sub.out&&p.name!==sub.out)continue;
         if(p&&this._makeSubstitution(side,p,sub.reserve))applied++;
       }
-      if(applied)this.subWindowsUsed[side]=(this.subWindowsUsed[side]||0)+1;
+      if(deferred.length)this.pendingSubs[side]=deferred;
+      // Halftime substitutions are allowed outside the three in-play windows.
+      if(applied&&this.phase!=='halftime')this.subWindowsUsed[side]=(this.subWindowsUsed[side]||0)+1;
+    }
+    // Apply the genuine coach's substitutions before admitting a Master.
+    // Otherwise a Master might occupy a pending slot and be overwritten.
+    for(let side=0;side<2;side++)if(this.pendingMasters[side]){
+      this.pendingMasters[side]=false;this._masterEntry(side);
     }
   }
   _makeSubstitution(side,p,reserve){
-    if(!p||!reserve||p.side!==side||p.i===0||p===this.ball.owner)return false;
+    if(!p||!reserve||p.side!==side||p.i===0||p.isMaster||p===this.ball.owner)return false;
     if(this.subsUsed[side]>=5||this.benchUsed[side].includes(reserve))return false;
     const oldName=p.name;
     this.retiredPlayers.push({...p,run:null});
     this.benchUsed[side].push(reserve);this.subsUsed[side]++;this.stats.substitutions[side]++;
-    p.name=reserve;p.attributes=Attr.generate(reserve,p.role,p.i,this.careerPlayers[reserve+'|'+this.teams[side].id]);p.ego=20;p.flowUntil=0;p.flowCooldown=0;p.flowCount=0;p.abilityCooldowns={};p.activeAbility=null;p.dribblesWon=0;p.saves=0;p.speed=(83+(p.i>=8?7:0)+this.range(-3,3))*(.8+p.attributes.speed/380)*(PLAYER_STYLES[reserve]?.sprint||1);
+    p.name=reserve;p.isMaster=false;p.attributes=Attr.generate(reserve,p.role,p.i,this.careerPlayers[reserve+'|'+this.teams[side].id]);p.ego=20;p.flowUntil=0;p.flowCooldown=0;p.flowCount=0;p.abilityCooldowns={};p.activeAbility=null;p.dribblesWon=0;p.saves=0;p.speed=(83+(p.i>=8?7:0)+this.range(-3,3))*(.8+p.attributes.speed/380)*(PLAYER_STYLES[reserve]?.sprint||1);
     p.stamina=100;p.decision=.3;p.challenge=0;p.run=null;p.runCooldown=this.time+50;
     p.dribbleCooldown=0;p.dribbleShift=0;p.dribbleUntil=0;p.skillFxCooldown=0;
     p.goals=0;p.assists=0;p.shots=0;p.pases=0;p.pasesOK=0;p.tackles=0;p.interceptions=0;p.shotBlocks=0;p.aerialWins=0;p.duelsWon=0;p.keyPasses=0;p.rating=6.0;
@@ -1550,6 +1565,16 @@ class Match {
     this.subRecords.push(rec);
     this.log(`🔄 ${this.teams[side].short}: ${reserve} entra no lugar de ${oldName}!`,'sub',reserve);
     return true;
+  }
+  _substitutionNeed(p,lead,minute){
+    // Match ratings start at 6.0 and climb with successful actions. Waiting
+    // for a grade BELOW 6.0 can never identify the outfield player who has
+    // spent an entire half making no useful contribution.
+    const role=roleGroup(p.role),grade=Number(p.rating)||6;
+    const poor=minute>=40&&grade<(role==='F'||role==='M'?6.25:6.08)&&
+      (role!=='D'||lead<0);
+    const exhausted=p.stamina<73;
+    return {poor,exhausted};
   }
   _coachDecisions(){
     if(this.finished||this.phase!=='play'||this.time<29*60)return;
@@ -1590,34 +1615,46 @@ class Match {
       if(!this.autoSubs||this.subsUsed[s]>=5||used>=3||this.pendingSubs[s])continue;
       const lead=this.score[s]-this.score[1-s];
       const thresholds=lead<=-2?[39,57,73]:lead<0?[48,64,78]:[61,74,85];
-      if(min<thresholds[used])continue;
       const options=this.players.filter(p=>p.side===s&&p.i!==0&&p!==this.ball.owner&&!p.isMaster);
-      // A poor-performing forward/midfielder is considered earlier while losing.
+      const urgent=lead<0;
+      const earlyPoor=used===0&&min>=42&&options.some(p=>this._substitutionNeed(p,lead,min).poor);
+      if(min<thresholds[used]&&!earlyPoor)continue;
+      // On-field contribution matters more than arbitrary forward rotation.
+      // Good scorers should not be benched just because their club trails.
       const urgency=lead<0;
       options.sort((a,b)=>{
-        const grade=p=>p.rating*4+p.stamina*.10+(PLAYER_STYLES[p.name]?4:0)-(urgency&&roleGroup(p.role)==='F'?7:0);
+        const grade=p=>p.rating*8+p.stamina*.12+(PLAYER_STYLES[p.name]?2:0)-
+          (this._substitutionNeed(p,lead,min).poor?12:0)-(urgency&&roleGroup(p.role)==='F'?2:0);
         return grade(a)-grade(b);
       });
       const planned=[],reserved=new Set(this.benchUsed[s]),maxBatch=Math.min(5-this.subsUsed[s],used===2?1:2);
+      const Coach=(typeof globalThis!=='undefined'?globalThis.NeoCoach980:null);
       for(const p of options){
         if(planned.length>=maxBatch)break;
-        if(!urgency&&p.stamina>93&&used>=1)continue;
+        const need=this._substitutionNeed(p,lead,min);
+        if(!urgent&&!need.poor&&!need.exhausted)continue;
         const group=roleGroup(p.role);
-        const Coach=(typeof globalThis!=='undefined'?globalThis.NeoCoach980:null);
-        const candidates=this.teams[s].reserves.filter(name=>!reserved.has(name)&&(Coach?.compatible?.(p.role,Coach?.reserveRole?.(this.teams[s],name)||BENCH_ROLE_HINTS[name]||'MC')??roleGroup(Coach?.reserveRole?.(this.teams[s],name)||BENCH_ROLE_HINTS[name]||'MC')===group));
-        const reserve=candidates.sort((a,b)=>{
-          const role=Coach?.reserveRole?.(this.teams[s],a)||p.role;
-          const ra=Attr.generate(a,role,p.i,this.careerPlayers[a+'|'+this.teams[s].id])?.ovr||70;
-          const role2=Coach?.reserveRole?.(this.teams[s],b)||p.role;
-          const rb=Attr.generate(b,role2,p.i,this.careerPlayers[b+'|'+this.teams[s].id])?.ovr||70;
-          return rb-ra;
-        })[0];
-        if(reserve){planned.push({id:p.id,reserve});reserved.add(reserve);}
+        const starterOvr=Number(p.attributes?.ovr)||75;
+        const maxDrop=need.poor?10:need.exhausted?8:urgent?6:4;
+        const candidates=this.teams[s].reserves.map(name=>{
+          const role=Coach?.reserveRole?.(this.teams[s],name)||BENCH_ROLE_HINTS[name]||'MC';
+          const ovr=Attr.generate(name,role,p.i,this.careerPlayers[name+'|'+this.teams[s].id])?.ovr||70;
+          return {name,role,ovr};
+        }).filter(r=>!reserved.has(r.name)&&r.ovr>=starterOvr-maxDrop&&
+          (Coach?.compatible?.(p.role,r.role)??roleGroup(r.role)===group))
+         .sort((a,b)=>b.ovr-a.ovr);
+        if(candidates.length){
+          const reserve=candidates[0].name;
+          planned.push({id:p.id,out:p.name,reserve,reason:need.poor?'nota baixa':need.exhausted?'cansaço':'ajuste tático'});
+          reserved.add(reserve);
+        }
       }
       if(planned.length){
         this.pendingSubs[s]=planned;
-        const reason=lead<0?'time está perdendo':lead>0?'manter o resultado':'buscar vantagem';
-        this.coachDecisions.push({side:s,minute:Math.floor(min),type:'substitution-plan',count:planned.length,reason});
+        const reason=planned.some(p=>p.reason==='nota baixa')?'jogadores abaixo do rendimento esperado':
+          planned.some(p=>p.reason==='cansaço')?'desgaste físico':lead<0?'time está perdendo':'buscar vantagem';
+        this.coachDecisions.push({side:s,minute:Math.floor(min),type:'substitution-plan',count:planned.length,
+          reason,changes:planned.map(p=>({out:this.players.find(x=>x.id===p.id)?.name,in:p.reserve,cause:p.reason}))});
         this.log(`🔄 Técnico de ${this.teams[s].short} prepara ${planned.length} troca(s): ${reason}.`, 'coach');
       }
     }
