@@ -133,6 +133,9 @@ teste assinadas com a mesma chave, ou um aparelho/perfil de teste separado.
 Um novo Release também exige versão Android crescente e assinatura de produção
 compatível; o build Debug da PR **não é um pacote público**.
 
+O novo certificado permanente, sua impressão digital pública e o procedimento
+de configuração e migração estão em `docs/ANDROID-ASSINATURA-PERMANENTE.md`.
+
 ## Gates de publicação
 
 - Todos os P0 e testes de compatibilidade aprovados.

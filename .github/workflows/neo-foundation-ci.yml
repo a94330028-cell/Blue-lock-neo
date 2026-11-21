@@ -62,6 +62,7 @@ jobs:
         run: |
           node tests/neo-foundation-android-update.test.cjs
           node tests/neo-foundation-public-release.test.cjs
+          node tests/android-stable-signing-v10645.test.cjs
       - name: Preparar Chromium para teste visual real
         run: |
           command -v google-chrome || command -v chromium || command -v chromium-browser

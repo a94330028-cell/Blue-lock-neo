@@ -89,6 +89,7 @@ jobs:
           node tests/neo-bids-v3.test.cjs
           node tests/neo-master-market-v1.test.cjs
           node tests/neo-foundation-public-release.test.cjs
+          node tests/android-stable-signing-v10645.test.cjs
           node --check web/neo-advanced-v200.js
           node --check web/neo-universe-v220.js
           node --check web/neo-twelve-v230.js
@@ -171,6 +172,26 @@ jobs:
           BL_SIGNING_KEY_ALIAS: ${{ secrets.BL_SIGNING_KEY_ALIAS }}
           BL_SIGNING_KEY_PASSWORD: ${{ secrets.BL_SIGNING_KEY_PASSWORD }}
         run: gradle :app:assembleRelease --no-daemon
+      - name: Verificar identidade permanente do certificado Android
+        id: verified_certificate
+        if: env.BUILD_SIGNED == '1'
+        shell: bash
+        run: |
+          set -euo pipefail
+          EXPECTED="$(tr -d '[:space:]:' < app/RELEASE_CERT_SHA256 | tr 'A-F' 'a-f')"
+          test "${#EXPECTED}" -eq 64
+          [[ "$EXPECTED" =~ ^[0-9a-f]{64}$ ]]
+          SDK="${ANDROID_HOME:-/usr/local/lib/android/sdk}"
+          APKSIGNER="$(find "$SDK/build-tools" -name apksigner -type f | sort -V | tail -n 1)"
+          test -x "$APKSIGNER"
+          DETAILS="$("$APKSIGNER" verify --print-certs app/build/outputs/apk/release/app-release.apk)"
+          ACTUAL="$(printf '%s\n' "$DETAILS" | sed -n 's/.*certificate SHA-256 digest: \([0-9a-fA-F]\{64\}\).*/\1/p' | head -n 1 | tr 'A-F' 'a-f')"
+          if [ "$ACTUAL" != "$EXPECTED" ]; then
+            echo 'ERRO: certificado de assinatura diferente da identidade permanente Blue Lock NEO.' >&2
+            exit 1
+          fi
+          echo "fingerprint=$EXPECTED" >> "$GITHUB_OUTPUT"
+          echo '### APK de produção: assinatura válida e certificado SHA-256 conferido.' >> "$GITHUB_STEP_SUMMARY"
       - name: Compilar release sem assinatura para assinatura local segura
         if: env.BUILD_SIGNED != '1'
         run: gradle :app:assembleRelease --no-daemon
@@ -193,22 +214,28 @@ jobs:
         run: |
           set -euo pipefail
           VERSION="$(cat web/VERSION)"
+          CONTENT_BUILD="$(cat web/UPDATE_BUILD)"
           test -n "$VERSION"
+          test -n "$CONTENT_BUILD"
+          TAG="v${VERSION}-android-${CONTENT_BUILD}"
           mkdir -p release
           test -s app/build/outputs/apk/release/app-release.apk
           cp app/build/outputs/apk/release/app-release.apk "release/Blue-Lock-NEO-v${VERSION}-Android.apk"
           cp app/build/outputs/apk/release/app-release.apk release/Blue-Lock-NEO-Android.apk
           echo 'signature=assinatura de atualização configurada' >> "$GITHUB_OUTPUT"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
       - name: Bloquear substituição silenciosa de uma Release anterior
         id: unique_release
         if: env.BUILD_SIGNED == '1'
         shell: bash
         run: |
           VERSION="$(cat web/VERSION)"
-          if git ls-remote --exit-code --tags origin "refs/tags/v${VERSION}" >/dev/null 2>&1; then
+          CONTENT_BUILD="$(cat web/UPDATE_BUILD)"
+          TAG="v${VERSION}-android-${CONTENT_BUILD}"
+          if git ls-remote --exit-code --tags origin "refs/tags/${TAG}" >/dev/null 2>&1; then
             echo "exists=1" >> "$GITHUB_OUTPUT"
-            echo "### APK público não substituído: v${VERSION} já possui Release. Aumente web/VERSION para um lançamento novo." >> "$GITHUB_STEP_SUMMARY"
+            echo "### APK público não substituído: ${TAG} já existe. Crie um novo build para outra Release." >> "$GITHUB_STEP_SUMMARY"
           else
             echo "exists=0" >> "$GITHUB_OUTPUT"
           fi
@@ -221,8 +248,8 @@ jobs:
         if: github.ref == 'refs/heads/main' && env.BUILD_SIGNED == '1' && steps.unique_release.outputs.exists == '0'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ steps.release_info.outputs.version }}
-          name: Blue Lock NEO v${{ steps.release_info.outputs.version }} — Android
+          tag_name: ${{ steps.release_info.outputs.tag }}
+          name: Blue Lock NEO ${{ steps.release_info.outputs.tag }} — Android
           prerelease: false
           make_latest: true
           body: |
@@ -231,6 +258,15 @@ jobs:
             Clique no arquivo **Blue-Lock-NEO-Android.apk** em Assets para baixar.
             Não é necessário baixar o código-fonte (.zip ou .tar.gz).
             Tipo de APK: ${{ steps.release_info.outputs.signature }}.
+
+            ATENÇÃO: este é o PRIMEIRO APK com a nova assinatura permanente.
+            Os APKs de versões anteriores podem usar outro certificado e não
+            podem ser atualizados por cima. Exporte tanto o backup da temporada
+            quanto o backup dos retratos antes de qualquer reinstalação.
+            Não desinstale nem limpe os dados sem confirmar que possui ambos
+            os arquivos fora do armazenamento do aplicativo.
+
+            Identidade de assinatura SHA-256: ${{ steps.verified_certificate.outputs.fingerprint }}.
 
             Se o Android informar conflito de assinatura, faça backup dos dados do
             jogo antes de desinstalar a instalação antiga. Não desinstale sem backup.
