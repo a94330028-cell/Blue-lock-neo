@@ -28,5 +28,5 @@ assert.ok(app.includes("savePortraitImage('custom',name,data)"), 'native image s
 assert.ok(studio.includes('window.BlueLockAndroid?.pickPortrait'), 'historical clubs use native picker too');
 assert.match(worker,/const CACHE_NAME=['"]blue-lock-neo-v2\.0\.0-[^'"]+['"]/);
 assert.equal(read('web/VERSION').trim(),'2.0.0');
-assert.ok(gradle.includes('versionCode 119')&&gradle.includes("versionName '2.0.0'"));
+assert.ok(gradle.includes('versionCode 120')&&gradle.includes("versionName '2.0.0'"));
 console.log('PASS v9.9.4: native Android photo picker, downsample/encode, both galleries, preserves IndexedDB and versions');
