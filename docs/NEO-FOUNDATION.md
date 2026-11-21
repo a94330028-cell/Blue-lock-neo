@@ -1,6 +1,8 @@
 # NEO FOUNDATION — requisitos, integridade e homologação
 
-**Situação:** desenvolvimento; nenhuma atualização pública foi liberada por este documento.
+**Situação:** validação de lançamento do conteúdo web 10.6.45. A publicação
+do site e do ZIP de atualização Android não substitui o APK instalado.
+O novo APK público depende de assinatura estável e homologação em aparelho real.
 
 ## Objetivo
 
@@ -34,6 +36,7 @@ Preservar saves, retratos importados e atletas criados ao migrar versões.
 | NF-20 | Mestre e reserva na mesma parada | Uma entrada de Master nunca permite que um reserva herde `isMaster`. Trocas comuns são aplicadas antes da entrada Master; pedidos que atinjam Master ativo são adiados. Estatísticas e rankings devem continuar reconciliáveis com a súmula original. |
 | NF-21 | Persistência na atualização WebView | Depois de navegar para `?web=versão` na **mesma origem**, o save oficial do `localStorage`, a imagem e a preferência do jogador no IndexedDB permanecem idênticos, inclusive os bytes reais do retrato. |
 | NF-22 | Pacote Android não destrutivo | Identidade do aplicativo e origem local são estáveis; WebView mantém DOM Storage/IndexedDB; ZIP validado com SHA-256; pasta de versão incompleta é rejeitada na inicialização e substituída por pacote íntegro numa nova tentativa, sem apagar bancos do usuário. Marcador da versão é confirmado no disco antes da ativação. Mudanças em `app/**` executam CI. |
+| NF-23 | Publicação segura | O site e o ZIP SHA-256 podem avançar sem reinstalar o APK. GitHub Releases não promove builds Debug sob o nome de produção; só gera um novo APK público com chave de assinatura configurada e versão/tag ainda não utilizada. |
 
 ## Regras de recuperação
 
@@ -96,6 +99,10 @@ Preservar saves, retratos importados e atletas criados ao migrar versões.
     `web-updates` e confirmar a preferência da versão antes do reload. Qualquer
     alteração em `app/**` aciona automaticamente testes web e compilação de APK
     Debug na PR.
+20. Verificar o canal público antes de merge: build de conteúdo nunca é inferior
+    ao do APK embarcado; APK Debug jamais vira download de produção; se a chave
+    estiver ausente, somente site/ZIP são disponibilizados e o binário Android
+    permanece como artefato de testes.
 
 ## Instalação real e atualização: homologação pendente
 

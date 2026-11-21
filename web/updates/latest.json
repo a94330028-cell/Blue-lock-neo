@@ -1,8 +1,8 @@
 {
-  "version": "10.6.32",
+  "version": "10.6.45",
   "displayVersion": "2.0.0",
-  "url": "https://a94330028-cell.github.io/Blue-lock-neo/updates/blue-lock-web-10.6.32.zip",
-  "sha256": "c60217d92d61759a1e2c8b145d12707ff156e5506a52f6b31df959c81364e4c7",
+  "url": "https://a94330028-cell.github.io/Blue-lock-neo/updates/blue-lock-web-10.6.45.zip",
+  "sha256": "cc15a45c8a9dc1a1b97f6512aae459250efeee924f94e952bd3295c79ad37f08",
   "minAndroidVersion": 85,
-  "changes": "Blue Lock NEO 2.0.0 · conteúdo 10.6.32: mestre exclusivo Sae Itoshi no History Team, fotos editáveis, calendário e assistências reais preservados."
+  "changes": "Blue Lock NEO 2.0.0 · conteúdo 10.6.45 — NEO FOUNDATION: salvamento oficial seguro, técnicos e substituições durante as partidas, Masters e rankings reais, simulação de três jogos e histórico compacto. Atualização do site e do conteúdo Android com verificação SHA-256, preservando saves e retratos. APK novo depende da assinatura estável."
 }

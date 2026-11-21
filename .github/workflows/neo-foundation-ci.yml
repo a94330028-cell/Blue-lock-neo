@@ -59,7 +59,9 @@ jobs:
           node tests/v980.test.cjs
           node tests/neo-league-market-v202.test.cjs
       - name: Proteger origem e dados durante a atualização Android
-        run: node tests/neo-foundation-android-update.test.cjs
+        run: |
+          node tests/neo-foundation-android-update.test.cjs
+          node tests/neo-foundation-public-release.test.cjs
       - name: Preparar Chromium para teste visual real
         run: |
           command -v google-chrome || command -v chromium || command -v chromium-browser

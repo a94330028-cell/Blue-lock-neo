@@ -20,9 +20,16 @@ class V2ReleaseTests(unittest.TestCase):
     def test_latest_patch_small_and_history_preserved(self):
         report=guard.audit_release(self.change,self.version)
         self.assertEqual(report["version"],"2.0.0")
-        self.assertLessEqual(report["items"],guard.MAX_PATCH_ITEMS)
-        self.assertLessEqual(report["characters"],guard.MAX_PATCH_CHARS)
+        self.assertLessEqual(report["items"],guard.MAX_MAJOR_ITEMS)
+        self.assertLessEqual(report["characters"],guard.MAX_MAJOR_CHARS)
         self.assertIn("1.8.0", [x["version"] for x in self.change["releases"]])
+
+    def test_future_patch_stays_compact(self):
+        fake=copy.deepcopy(self.change)
+        fake["current_version"]="2.0.1"
+        fake["releases"].insert(0,{"version":"2.0.1","novidades":["Correção pequena"] * 9})
+        with self.assertRaisesRegex(ValueError,"Patch gigante"):
+            guard.audit_release(fake,"2.0.1")
 
     def test_overgrown_current_patch_rejected(self):
         fake=copy.deepcopy(self.change)
@@ -54,7 +61,11 @@ class V2ReleaseTests(unittest.TestCase):
         self.assertIn('HOST = "appassets.androidplatform.net"',native)
         self.assertIn('PREF_WEB_VERSION = "installed_web_version"',native)
         expected_build=(ROOT/"web/UPDATE_BUILD").read_text().strip()
-        self.assertIn(f'BUNDLED_WEB_VERSION = "{expected_build}"',native)
+        # Content-only releases can be newer than the APK's bundled game:
+        # that's how existing Android installations update without reinstalling.
+        installed_build=native.split('BUNDLED_WEB_VERSION = "',1)[1].split('"',1)[0]
+        numeric=lambda text: tuple(map(int,text.split('.')))
+        self.assertLessEqual(numeric(installed_build),numeric(expected_build))
         self.assertIn("MAX_PACKAGE_BYTES = 32L * 1024 * 1024",native)
         self.assertIn("MAX_UNPACKED_BYTES = 96L * 1024 * 1024",native)
 
