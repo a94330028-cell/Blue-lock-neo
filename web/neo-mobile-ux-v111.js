@@ -300,6 +300,14 @@
   document.addEventListener('click',event=>{
    const b=event.target.closest('button');
    if(!b)return;
+   // The Ranking shortcut is also a bottom-navigation tab. Keep the actual
+   // selected tab in sync with the enhanced ranking hub, otherwise the old
+   // "Início" tab stays highlighted even though Ranking is open.
+   if(b.dataset.refPage==='ranking'){
+    event.preventDefault();event.stopImmediatePropagation();
+    window.NeoReferenceMobile?.go?.('ranking');
+    show('ranking');return;
+   }
    const open=b.dataset.neoUxOpen||((b.dataset.refPage==='ranking'||b.dataset.refGo==='ranking')?'ranking':null);
    if(open||b.dataset.refGo==='league'){
     event.preventDefault();event.stopImmediatePropagation();show(open||'championship');return;

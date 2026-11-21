@@ -2536,7 +2536,34 @@ function init(){
       canvas.style.setProperty('object-position','50% 50%','important');
     }
   }
-  $('stadiumMode').onclick=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else if($('stadium').requestFullscreen)await $('stadium').requestFullscreen();else $('matchBanner').textContent='Tela cheia não disponível neste navegador. Vire o celular para jogar na horizontal.';}catch(e){$('matchBanner').textContent='Tela cheia indisponível neste dispositivo.';}};document.addEventListener('fullscreenchange',()=>{$('stadium').classList.toggle('fullscreen-active',document.fullscreenElement===$('stadium'));fitFullscreenPitch();syncFullscreenUI();});window.addEventListener('resize',fitFullscreenPitch);
+  const fullscreenButton=$('stadiumMode'),fullscreenStage=$('stadium');
+  function syncFullscreenState(){
+    const active=document.fullscreenElement===fullscreenStage||document.body.classList.contains('neo-pseudo-fullscreen');
+    fullscreenStage.classList.toggle('fullscreen-active',active);
+    fullscreenButton.setAttribute('aria-pressed',String(active));
+    fullscreenButton.setAttribute('aria-label',active?'Sair do campo em tela cheia':'Ver campo em tela cheia');
+    fullscreenButton.title=active?'Sair da tela cheia':'Campo em tela cheia';
+    fitFullscreenPitch();syncFullscreenUI();
+  }
+  function togglePseudoFullscreen(){
+    // Android WebView and restricted browsers may reject requestFullscreen.
+    // The same field becomes a full-viewport panel without navigating away.
+    document.body.classList.toggle('neo-pseudo-fullscreen');
+    syncFullscreenState();
+  }
+  fullscreenButton.onclick=async()=>{
+    if(document.body.classList.contains('neo-pseudo-fullscreen')){togglePseudoFullscreen();return;}
+    try{
+      if(document.fullscreenElement){await document.exitFullscreen();return;}
+      if(fullscreenStage.requestFullscreen){await fullscreenStage.requestFullscreen();return;}
+    }catch(error){console.info('Tela cheia nativa indisponível; usando campo expandido.');}
+    togglePseudoFullscreen();
+  };
+  document.addEventListener('fullscreenchange',syncFullscreenState);
+  document.addEventListener('keydown',event=>{
+    if(event.key==='Escape'&&document.body.classList.contains('neo-pseudo-fullscreen'))togglePseudoFullscreen();
+  });
+  window.addEventListener('resize',fitFullscreenPitch);
   document.addEventListener('visibilitychange',()=>{lastFrame=0;if(document.hidden&&playing){playing=false;$('play').textContent='▶ Continuar';}});
   prepare('bm','px');renderLeague();renderSquads();renderStats();requestAnimationFrame(frame);
 }

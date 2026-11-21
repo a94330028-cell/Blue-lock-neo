@@ -151,3 +151,18 @@
  .neo-ref-mobile .neo-ref-table-logo{width:16px;height:18px;object-fit:contain;flex:none}
  .neo-ref-mobile .neo-ref-table .neo-ref-logo-fallback{font-size:7px}
 }
+
+/* 10.6.46: touch and accessibility feedback for championship and rankings. */
+@media(max-width:700px){
+ .neo-ref-mobile .neo-ux-hub button:not(:disabled),
+ .neo-ref-mobile #neoMobileNav button:not(:disabled),
+ .neo-ref-mobile .neo-ref-match-pills button:not(:disabled){cursor:pointer;transition:background .15s,border-color .15s,box-shadow .15s,transform .12s}
+ .neo-ref-mobile .neo-ux-hub button:not(:disabled):active,
+ .neo-ref-mobile #neoMobileNav button:not(:disabled):active,
+ .neo-ref-mobile .neo-ref-match-pills button:not(:disabled):active{transform:scale(.97);filter:brightness(1.14)}
+ .neo-ref-mobile .neo-ux-hub button:focus-visible,
+ .neo-ref-mobile #neoMobileNav button:focus-visible,
+ .neo-ref-mobile .neo-ref-match-pills button:focus-visible{outline:3px solid #96f7ff!important;outline-offset:2px}
+ .neo-ref-mobile .neo-ux-hub button:disabled{opacity:.43;cursor:not-allowed;box-shadow:none}
+ .neo-ref-mobile .neo-ref-match-pills button[aria-pressed="true"]{color:#fff;background:linear-gradient(135deg,#0f8aff,#074da2);border-color:#77d4ff;box-shadow:0 0 14px #0b83ff66}
+}

@@ -41,6 +41,7 @@ jobs:
           node --check web/neo-coach-v980.js
           node --check web/neo-mobile-ux-v111.js
           python3 tools/sync_inline_v930.py web
+          node tests/ui-controls-static-v10646.test.cjs
       - name: Validar transacoes, 20 partidas e recuperacao de estatisticas
         run: node tests/neo-foundation.test.cjs
       - name: Estressar 20 rodadas, 60 partidas e sequenciamento de tres campos
@@ -71,6 +72,7 @@ jobs:
         run: |
           node tests/v230-browser.test.cjs
           node tests/neo-foundation-browser.test.cjs
+          node tests/ui-controls-v10646.test.cjs
       - name: Resumo da validacao
         run: |
           echo '### NEO FOUNDATION' >> "$GITHUB_STEP_SUMMARY"

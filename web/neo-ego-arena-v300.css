@@ -204,3 +204,20 @@
  body.neo-arena-active #match #stadium:not(:fullscreen):not(.fullscreen-active) #pitch{max-height:calc(100dvh - 440px)!important}
  @media(prefers-reduced-motion:reduce){body.neo-arena-active #ranking #neo940-ranking .neo960-row:hover{transform:none!important}}
 }
+
+/* 10.6.46: controls are visible and keyboard-accessible in every desktop mode. */
+@media(min-width:1024px){
+ body.neo-arena-active .neo-arena-view-tabs button,
+ body.neo-arena-active .neo-arena-gear,
+ body.neo-arena-active .neo-arena-league-bar-actions button,
+ body.neo-arena-active #match .match-controls button{cursor:pointer;transition:background .16s,border-color .16s,box-shadow .16s,transform .12s}
+ body.neo-arena-active .neo-arena-view-tabs button:not(:disabled):active,
+ body.neo-arena-active .neo-arena-gear:not(:disabled):active,
+ body.neo-arena-active .neo-arena-league-bar-actions button:not(:disabled):active,
+ body.neo-arena-active #match .match-controls button:not(:disabled):active{transform:translateY(1px) scale(.98)}
+ body.neo-arena-active .neo-arena-view-tabs button:focus-visible,
+ body.neo-arena-active .neo-arena-gear:focus-visible,
+ body.neo-arena-active .neo-arena-league-bar-actions button:focus-visible,
+ body.neo-arena-active #match .match-controls button:focus-visible{outline:2px solid #a6faff!important;outline-offset:3px}
+ body.neo-arena-active #neoArenaOptions[aria-expanded="true"]{color:#fff!important;background:#135a72!important;border-color:#4fd4e9!important;box-shadow:0 0 14px #16c8dd55!important}
+}
