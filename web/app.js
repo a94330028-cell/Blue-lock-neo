@@ -595,18 +595,7 @@ function validLeagueSeason(saved){
 function loadSeason(){
   try{
     const saved=JSON.parse(localStorage.getItem('neo-season-v2'));
-    if(validLeagueSeason(saved)){
-      if(saved.career?.bidVersion!==E.Progression.BID_VERSION||saved.career?.masterBidVersion!==1){
-        try{
-          // Restore earned regular and Master Striker offers ONLY from recorded matches.
-          // Never edit scores, player portraits, abilities or match reports.
-          if(saved.career?.bidVersion!==E.Progression.BID_VERSION)E.Progression.reconcileBids(saved);
-          if(saved.career?.masterBidVersion!==1)E.Progression.reconcileMasterBids(saved);
-          localStorage.setItem('neo-season-v2',JSON.stringify(saved));
-        }catch(error){console.warn('Lances recalculados em memória; save original preservado:',error);}
-      }
-      return saved;
-    }
+    if(validLeagueSeason(saved))return saved;
   }catch(error){console.warn('Falha ao recuperar temporada anterior:',error);}
   try{const old=JSON.parse(localStorage.getItem('neo-season-v1'));const migrated=E.migrateLegacySeason(old);if(migrated){localStorage.setItem('neo-season-v2',JSON.stringify(migrated));return migrated;}}catch(e){}
   return E.createSchedule();
@@ -662,15 +651,15 @@ async function latestSeasonArchive(){
   return all[0]?.data||legacy||null;
  }finally{db.close();}
 }
-function saveSeason(){
-  let data=JSON.stringify(season);
+function saveSeason(snapshot=season){
+  let data=JSON.stringify(snapshot);
   try{
-    if(data.length>3300000){E.compactSeasonReports(season,true);data=JSON.stringify(season);}
+    if(data.length>3300000){E.compactSeasonReports(snapshot,true);data=JSON.stringify(snapshot);}
     localStorage.setItem('neo-season-v2',data);return true;
   }catch(e){
    try{
     // Existing large saves receive the same safe compaction as new reports.
-    E.compactSeasonReports(season,true);data=JSON.stringify(season);
+    E.compactSeasonReports(snapshot,true);data=JSON.stringify(snapshot);
     localStorage.setItem('neo-season-v2',data);return true;
    }catch(lastError){console.warn('Não foi possível salvar a liga',lastError);
     migrateLegacySeasonArchive().catch(()=>{});
@@ -679,6 +668,50 @@ function saveSeason(){
     return false;
    }
   }
+}
+// A historic season is never silently rewritten on startup. First place its
+// complete serialized state in IndexedDB and verify it can be read back.
+async function repairLoadedSeason(){
+ const original=localStorage.getItem('neo-season-v2');
+ if(!original)return false;
+ let saved;try{saved=JSON.parse(original);}catch(_){return false;}
+ if(!validLeagueSeason(saved))return false;
+ try{
+  const candidate=JSON.parse(JSON.stringify(season));let changed=false;
+  if(candidate.career?.bidVersion!==E.Progression.BID_VERSION){
+   E.Progression.reconcileBids(candidate);changed=true;
+  }
+  if(candidate.career?.masterBidVersion!==2){
+   E.Progression.reconcileMasterBids(candidate);changed=true;
+  }
+  const checked=E.reconcileSeasonRecords(candidate);
+  if(checked.changed)changed=true;
+  if(!changed)return false;
+  await archiveSeasonSnapshot(original,'foundation-before-repair');
+  // The user may have started another season while the archive was writing.
+  // Never replace newer progress with an older migration snapshot.
+  if(localStorage.getItem('neo-season-v2')!==original||playing||simBusy||match?.time>0)return false;
+  if(!saveSeason(candidate))return false;
+  season=candidate;
+  renderLeague();renderStats();renderRecords();renderCareerRanking();
+  return true;
+ }catch(error){
+  console.warn('Reparo da temporada adiado: backup original preservado.',error);
+  return false;
+ }
+}
+function commitOfficialFixture(fixture,game){
+ const committed=E.recordFixtureTransactional(season,fixture,game,
+   snapshot=>saveSeason(snapshot),E.recordFixture);
+ if(!committed)return false;
+ season=committed.season;
+ if(matchFixture===fixture)matchFixture=committed.fixture;
+ window.dispatchEvent(new CustomEvent('neo:league-progress',{detail:{
+  played:season.rounds.flatMap(r=>r.games).filter(g=>Array.isArray(g.result)).length,
+  round:committed.round||0
+ }}));
+ window.dispatchEvent(new CustomEvent('neo2-recorded'));
+ return true;
 }
 function team(id){return E.teamById(id);}
 function currentRound(){return season.rounds.find(r=>r.games.some(f=>!f.result))||null;}
@@ -813,7 +846,20 @@ function updateAll(){if(!match)return;
     const subSummary=match.subRecords.length?`<div class="result-subs">🔄 ${match.subRecords.length} substituições · ↔️ ${match.stats.switches[0]+match.stats.switches[1]} inversões de lado</div>`:'';
     $('matchResultCard').innerHTML=`<div class="result-title">🏁 FIM DE JOGO · MELHORES MOMENTOS</div><div class="result-score">${teamArt(a,'club-art-result')}<span>${match.score[0]} <em>×</em> ${match.score[1]}</span>${teamArt(b,'club-art-result')}</div><div class="result-teams"><span>${esc(a.short)}</span><span>${esc(b.short)}</span></div><div class="result-mvp">⭐ Melhor em campo: ${portrait(best.name,match.teams[best.side])} <strong>${esc(best.name)}</strong> · ${px(best.rating,1)}</div><div class="result-goals">${goalrows.length?goalrows.map(g=>`<div><strong>${g.minute}'</strong> ${g.legendary?'🌟':'⚽'} ${esc(g.scorer)} <span>(${esc(match.teams[g.side].short)})</span>${g.assister?`<small>🎯 ${esc(g.assister)}</small>`:''}</div>`).join(''):'Nenhum gol nesta partida.'}</div>${subSummary}`;
     $('mvp').innerHTML=`<strong style="font-size:16px">⭐ ${esc(best.name)}</strong><div class="hint">${esc(match.teams[best.side].short)} · Nota ${px(best.rating,1)} · ${best.goals} gol(s) · ${best.assists} assistência(s)</div>`;
-    if(matchFixture&&!finishedRecorded&&!matchFixture.result){E.recordFixture(season,matchFixture,match);saveSeason();finishedRecorded=true;}
+    if(matchFixture&&!finishedRecorded&&!matchFixture.result){
+      finishedRecorded=commitOfficialFixture(matchFixture,match);
+      if(!finishedRecorded){
+        const retry=document.createElement('button');retry.type='button';retry.className='button';
+        retry.textContent='💾 Tentar salvar resultado novamente';
+        retry.addEventListener('click',()=>{
+          if(finishedRecorded)return;
+          if(commitOfficialFixture(matchFixture,match)){
+            finishedRecorded=true;retry.remove();renderLeague();renderStats();renderRecords();
+          }
+        });
+        $('matchResultCard').append(retry);
+      }
+    }
   }else{$('play').disabled=false;}
   $('replay').disabled=!match.lastGoal;
   syncFullscreenUI();
@@ -1671,7 +1717,7 @@ function formatBid(value){const amount=Math.max(0,Number(value)||0)/1000000;if(a
 function rankingHead(p,index,mode){const club=team(p.club);const value=mode==='ovr'?p.ovr:mode==='market'?E.Progression.estimateValue(p,p.ovr,p.role):mode==='evolution'?Object.values(p.boosts||{}).reduce((a,b)=>a+b,0):p.score;
   const delta=p.rankChange>0?`<span class="rank-change-up">▲${p.rankChange}</span>`:p.rankChange<0?`<span class="rank-change-down">▼${Math.abs(p.rankChange)}</span>`:'<span class="rank-change-flat">—</span>';
   const marketChange=Number(p.change||0);const marketBadge=mode==='market'&&p.games>0&&marketChange?`<small class="bid-trend ${marketChange>0?'up':'down'}">${marketChange>0?'▲':'▼'} ${formatBid(Math.abs(marketChange))} no último jogo</small>`:'';
-  return `<div class="career-row"><span class="rank-position">${index+1}º</span>${careerPlayerPortrait(p.name,p.club)}<div class="career-data"><strong>${esc(p.name)}</strong><small>${esc(club?.short||p.club)} · ${p.ovr||'—'} OVR · ${p.games||0} jogos · ${p.goals||0} G · ${p.assists||0} A</small></div><div class="career-numbers"><b>${mode==='market'?formatBid(value):mode==='ovr'?value+' OVR':mode==='evolution'?'+'+value+' nível':Number(value||0).toFixed(1)+' pts'}</b>${marketBadge}${mode==='performance'?delta:''}</div></div>`;
+  return `<div class="career-row"><span class="rank-position">${index+1}º</span>${careerPlayerPortrait(p.name,p.club)}<div class="career-data"><strong>${esc(p.name)}${p.isMaster?' ★ Mestre':''}</strong><small>${esc(club?.short||p.club)} · ${p.ovr||'—'} OVR · ${p.games||0} jogos · ${p.goals||0} G · ${p.assists||0} A</small></div><div class="career-numbers"><b>${mode==='market'?formatBid(value):mode==='ovr'?value+' OVR':mode==='evolution'?'+'+value+' nível':Number(value||0).toFixed(1)+' pts'}</b>${marketBadge}${mode==='performance'?delta:''}</div></div>`;
 }
 function rosterMarket(career,clubFilter){
   const list=[],seen=new Set();
@@ -1681,6 +1727,13 @@ function rosterMarket(career,clubFilter){
       const stored=career.players[id]||{};const role=i<t.players.length?t.formation[i]?.role||'MC':t.reserveRoles?.[name]||stored.role||'MC';
       const ovr=E.Attr.generate(name,role,i<t.players.length?i:1,stored).ovr;
       list.push({...stored,name,club:t.id,role,ovr,games:stored.games||0,goals:stored.goals||0,assists:stored.assists||0,score:stored.score||0});
+    }
+    if(t.master){
+      const id=t.master+'|'+t.id,stored=career.masterBids?.[id]||{};
+      const role=stored.role||E.Masters.CONFIG[t.id]?.masterRole||'CA';
+      const ovr=E.Attr.generate(t.master,role,9,stored).ovr;
+      list.push({...stored,name:t.master,club:t.id,role,ovr,isMaster:true,
+       games:stored.games||0,goals:stored.goals||0,assists:stored.assists||0,score:stored.score||0});
     }
   }
   return list;
@@ -1702,13 +1755,13 @@ function syncLeagueStatsFilters(){
     select.dataset.leagueClubs=values;
   }
 }
-function renderCareerRanking(){if(!$('careerRankings'))return;const mode=$('rankMode')?.value||'performance',club=$('rankClub')?.value||'all';const career=E.Progression.ensure(season),ranked=E.Progression.rank(season,club);
+function renderCareerRanking(){if(!$('careerRankings'))return;const mode=$('rankMode')?.value||'performance',club=$('rankClub')?.value||'all';const career=E.Progression.ensure(season),ranked=E.Progression.rank(season,club).concat(E.Progression.masterRank(season,club)).sort((a,b)=>b.score-a.score||b.goals-a.goals||a.name.localeCompare(b.name));
   let data=ranked;
   if(mode==='ovr')data=rosterMarket(career,club).sort((a,b)=>b.ovr-a.ovr);
   else if(mode==='market')data=rosterMarket(career,club).sort((a,b)=>E.Progression.estimateValue(b,b.ovr,b.role)-E.Progression.estimateValue(a,a.ovr,a.role));
   else if(mode==='evolution')data=[...ranked].sort((a,b)=>Object.values(b.boosts||{}).reduce((x,y)=>x+y,0)-Object.values(a.boosts||{}).reduce((x,y)=>x+y,0)||b.score-a.score);
   const labels={performance:'Ranking por atuações registradas: gols, assistências, defesa, consistência e resultados.',ovr:'Capacidade posicional do elenco. O OVR não é o valor de mercado.',market:'Leilão fictício da Liga Neo Egoísta: atletas sem estreia começam com ¥0. Quem participa recebe ofertas ligadas a passes, defesa, gols e nota; atuações ruins podem diminuir o lance, mas não apagar a estreia. São ienes fictícios, não salário nem dinheiro real.',evolution:'Evolução real de atributos conquistada em partidas registradas.'};
-  $('rankExplanation').textContent=labels[mode];$('rankCount').textContent=['ovr','market'].includes(mode)?`${data.length} atletas`:`${Object.keys(career.players).length} com jogos registrados`;
+  $('rankExplanation').textContent=labels[mode];$('rankCount').textContent=['ovr','market'].includes(mode)?`${data.length} atletas`:`${data.length} com jogos registrados`;
   $('careerRankings').innerHTML=data.length?data.slice(0,90).map((p,i)=>rankingHead(p,i,mode)).join(''):'<div class="empty-ranking">Nenhuma partida registrada ainda. Assista ou simule uma rodada para criar o ranking competitivo.</div>';
   renderCareerNarrative();
 }
@@ -1900,12 +1953,7 @@ async function runFixture(f){
     await new Promise(resolve=>setTimeout(resolve,0));
   }
   if(!sim.finished)sim.finish();
-  E.recordFixture(season,f,sim);
-  if(!saveSeason()){cancelSim=true;return false;}
-  window.dispatchEvent(new CustomEvent('neo:league-progress',{detail:{
-    played:season.rounds.flatMap(r=>r.games).filter(g=>Array.isArray(g.result)).length,
-    round:season.rounds.find(r=>r.games.includes(f))?.round||0
-  }}));
+  if(!commitOfficialFixture(f,sim)){cancelSim=true;return false;}
   return true;
 }
 function setSimButtons(){
@@ -1919,7 +1967,13 @@ async function simulateRound(){
   if(simBusy||!currentRound()||(playing&&!match?.finished))return 0;
   let completed=0;
   simBusy=true;cancelSim=false;playing=false;replaying=false;setSimButtons();
-  try{const r=currentRound();for(const f of r.games)if(!f.result){if(!await runFixture(f))break;completed++;}}
+ try{
+  const round=currentRound().round,total=currentRound().games.length;
+  for(let index=0;index<total;index++){
+   const f=season.rounds.find(r=>r.round===round)?.games[index];
+   if(f&&!f.result){if(!await runFixture(f))break;completed++;}
+  }
+ }
   finally{simBusy=false;cancelSim=false;setSimButtons();renderLeague();renderStats();}
   return completed;
 }
@@ -1931,8 +1985,9 @@ async function simulateNextFixture(){
  finally{simBusy=false;cancelSim=false;setSimButtons();renderLeague();renderStats();}
  return completed;
 }
-// Three authentic Match engines run side by side. The callback receives actual
-// ball/player coordinates, never a decorative or pre-generated animation.
+// Three authentic fixtures from one button press. Same-round games can run in
+// parallel; an overlapping club or a new round waits until the previous wave
+// has been committed, so no team plays twice at once and coaches see the result.
 async function simulateTripleLive(onFrame){
  if(simBusy||!currentRound()||(playing&&!match?.finished))return 0;
  const fixtures=season.rounds.flatMap(r=>r.games.map(f=>({f,round:r.round})))
@@ -1940,36 +1995,43 @@ async function simulateTripleLive(onFrame){
  if(!fixtures.length)return 0;
  simBusy=true;cancelSim=false;playing=false;replaying=false;setSimButtons();
  let completed=0;
- const sims=fixtures.map(({f,round})=>{
-  const game=new Match(f.home,f.away,Math.floor(Math.random()*0xffffffff),E.Progression.ensure(season),season);
-  game.rollGameplan();return {f,round,game};
- });
+ const slots=fixtures.map(entry=>({...entry,game:null}));
+ const waves=E.planFixtureWaves(slots);
  const frame=()=>{
   if(typeof onFrame!=='function')return;
-  try{onFrame(sims.map(({f,round,game})=>({home:f.home,away:f.away,round,
-   minute:Math.min(90,Math.floor(game.time/60)),score:game.score.slice(),finished:game.finished,
-   players:game.players.map(p=>({x:p.x,y:p.y,side:p.side})),ball:{x:game.ball.x,y:game.ball.y}})));}
+  try{onFrame(slots.map(({f,round,game})=>({home:f.home,away:f.away,round,
+   queued:!game,minute:game?Math.min(90,Math.floor(game.time/60)):0,
+   score:game?game.score.slice():[0,0],finished:!!game?.finished,
+   players:game?game.players.map(p=>({x:p.x,y:p.y,side:p.side})):[],
+   ball:game?{x:game.ball.x,y:game.ball.y}:{x:PITCH.cx,y:PITCH.cy}})));}
   catch(error){console.warn('Visualização dos três jogos:',error);}
  };
  try{
   frame();
-  // The engines progress in parallel within each animation batch, even when
-  // fixtures span a round boundary (e.g. two fixtures per five-club round).
-  for(let batch=0;batch<205&&!sims.every(s=>s.game.finished)&&!cancelSim;batch++){
-   for(const {game} of sims)for(let tick=0;tick<75&&!game.finished;tick++)game.step(TICK);
-   frame();await new Promise(resolve=>setTimeout(resolve,38));
+  for(const wave of waves){
+   if(cancelSim)break;
+   // Only now create these matches, against the season including all earlier
+   // waves. A losing coach can react before the club's next appearance.
+   for(const slot of wave){
+    slot.game=new Match(slot.f.home,slot.f.away,Math.floor(Math.random()*0xffffffff),E.Progression.ensure(season),season);
+    slot.game.rollGameplan();
+   }
+   frame();
+   for(let batch=0;batch<205&&!wave.every(s=>s.game.finished)&&!cancelSim;batch++){
+    for(const {game} of wave)for(let tick=0;tick<75&&!game.finished;tick++)game.step(TICK);
+    frame();await new Promise(resolve=>setTimeout(resolve,38));
+   }
+   if(cancelSim)break;
+   for(const {f,round,game} of wave){
+    if(!game.finished)game.finish();
+    // Commits replace snapshots, so find each still-pending official fixture.
+    const official=season.rounds.find(r=>r.round===round)?.games.find(x=>x.home===f.home&&x.away===f.away&&!x.result);
+    if(!official||!commitOfficialFixture(official,game)){cancelSim=true;break;}
+    completed++;
+   }
+   frame();
+   if(cancelSim)break;
   }
-  if(cancelSim)return 0;
-  for(const {f,round,game} of sims){
-   if(!game.finished)game.finish();
-   E.recordFixture(season,f,game);
-   if(!saveSeason()){cancelSim=true;break;}
-   completed++;
-   window.dispatchEvent(new CustomEvent('neo:league-progress',{detail:{
-    played:season.rounds.flatMap(r=>r.games).filter(g=>Array.isArray(g.result)).length,round
-   }}));
-  }
-  frame();
  }finally{simBusy=false;cancelSim=false;setSimButtons();renderLeague();renderStats();}
  return completed;
 }
@@ -1980,8 +2042,12 @@ async function simulateSeason(){
   try{
     let r=currentRound();
     while(r&&!cancelSim){
-      for(const f of r.games){if(!f.result){if(!await runFixture(f))break;}}
-      roundView=r.round;renderLeague();renderStats();setSimButtons();
+      const round=r.round,total=r.games.length;
+      for(let i=0;i<total;i++){
+       const f=season.rounds.find(x=>x.round===round)?.games[i];
+       if(f&&!f.result){if(!await runFixture(f))break;}
+      }
+      roundView=round;renderLeague();renderStats();setSimButtons();
       if(cancelSim)break;
       r=currentRound();await new Promise(resolve=>setTimeout(resolve,12));
     }
@@ -2476,6 +2542,7 @@ function init(){
 }
 init();
 migrateLegacySeasonArchive().catch(error=>console.warn('Arquivo da temporada anterior ainda no aparelho:',error));
+repairLoadedSeason().catch(error=>console.warn('Aguardando backup para reparar a liga:',error));
 // v7.7 cinematic stage interactions
 if($('actionTheaterToggle'))$('actionTheaterToggle').addEventListener('click',()=>{
  const node=$('actionTheater'),collapsed=node.classList.toggle('collapsed');

@@ -296,6 +296,22 @@ function createSchedule(meetings=4,selectedTeamIds=null) {
   }
   return {schema:2,rounds,teamIds:teams,format:{meetings:cycles},scorers:{},assists:{},goalLog:[],created:Date.now()};
 }
+// A three-match request is a single user action, but adjacent rounds must not
+// put the same club on two pitches simultaneously. Finish and persist a wave
+// before preparing the next one, so coaches can read the previous result.
+function planFixtureWaves(entries){
+  const waves=[];
+  for(const item of entries||[]){
+    const f=item?.f;if(!f||!f.home||!f.away)continue;
+    let wave=waves[waves.length-1];
+    if(!wave||wave[0].round!==item.round||wave.some(({f:other})=>
+      other.home===f.home||other.home===f.away||other.away===f.home||other.away===f.away)){
+      wave=[];waves.push(wave);
+    }
+    wave.push(item);
+  }
+  return waves;
+}
 function standings(season) {
   // Older saves predate teamIds. Derive membership from actual fixtures in those saves.
   const ids=Array.isArray(season.teamIds)&&season.teamIds.length?season.teamIds:
@@ -1507,25 +1523,40 @@ class Match {
   _applyPendingSubs(){
     this._updateMasters(true);
     for(let side=0;side<2;side++){
-      if(this.pendingMasters[side]){this.pendingMasters[side]=false;this._masterEntry(side);}
       const pending=this.pendingSubs[side];if(!pending)continue;
       this.pendingSubs[side]=null;
       if(!this.autoSubs)continue;
-      let applied=0;
+      if(this.phase!=='halftime'&&(this.subWindowsUsed[side]||0)>=3)continue;
+      let applied=0;const deferred=[];
       for(const sub of (Array.isArray(pending)?pending:[pending])){
         const p=this.players.find(p=>p.id===sub.id);
+        // At a kickoff/restart the intended player may temporarily have the
+        // ball. Retain that pending request for the next safe stoppage instead
+        // of silently losing the coach's decision.
+        // A Master uses the original player's slot ID. Never replace that
+        // Master with an ordinary reserve and accidentally label the reserve
+        // as a Master in ranking, assists or the factual career ledger.
+        if(p&&(p===this.ball.owner||p.isMaster)){deferred.push(sub);continue;}
+        if(p&&sub.out&&p.name!==sub.out)continue;
         if(p&&this._makeSubstitution(side,p,sub.reserve))applied++;
       }
-      if(applied)this.subWindowsUsed[side]=(this.subWindowsUsed[side]||0)+1;
+      if(deferred.length)this.pendingSubs[side]=deferred;
+      // Halftime substitutions are allowed outside the three in-play windows.
+      if(applied&&this.phase!=='halftime')this.subWindowsUsed[side]=(this.subWindowsUsed[side]||0)+1;
+    }
+    // Apply the genuine coach's substitutions before admitting a Master.
+    // Otherwise a Master might occupy a pending slot and be overwritten.
+    for(let side=0;side<2;side++)if(this.pendingMasters[side]){
+      this.pendingMasters[side]=false;this._masterEntry(side);
     }
   }
   _makeSubstitution(side,p,reserve){
-    if(!p||!reserve||p.side!==side||p.i===0||p===this.ball.owner)return false;
+    if(!p||!reserve||p.side!==side||p.i===0||p.isMaster||p===this.ball.owner)return false;
     if(this.subsUsed[side]>=5||this.benchUsed[side].includes(reserve))return false;
     const oldName=p.name;
     this.retiredPlayers.push({...p,run:null});
     this.benchUsed[side].push(reserve);this.subsUsed[side]++;this.stats.substitutions[side]++;
-    p.name=reserve;p.attributes=Attr.generate(reserve,p.role,p.i,this.careerPlayers[reserve+'|'+this.teams[side].id]);p.ego=20;p.flowUntil=0;p.flowCooldown=0;p.flowCount=0;p.abilityCooldowns={};p.activeAbility=null;p.dribblesWon=0;p.saves=0;p.speed=(83+(p.i>=8?7:0)+this.range(-3,3))*(.8+p.attributes.speed/380)*(PLAYER_STYLES[reserve]?.sprint||1);
+    p.name=reserve;p.isMaster=false;p.attributes=Attr.generate(reserve,p.role,p.i,this.careerPlayers[reserve+'|'+this.teams[side].id]);p.ego=20;p.flowUntil=0;p.flowCooldown=0;p.flowCount=0;p.abilityCooldowns={};p.activeAbility=null;p.dribblesWon=0;p.saves=0;p.speed=(83+(p.i>=8?7:0)+this.range(-3,3))*(.8+p.attributes.speed/380)*(PLAYER_STYLES[reserve]?.sprint||1);
     p.stamina=100;p.decision=.3;p.challenge=0;p.run=null;p.runCooldown=this.time+50;
     p.dribbleCooldown=0;p.dribbleShift=0;p.dribbleUntil=0;p.skillFxCooldown=0;
     p.goals=0;p.assists=0;p.shots=0;p.pases=0;p.pasesOK=0;p.tackles=0;p.interceptions=0;p.shotBlocks=0;p.aerialWins=0;p.duelsWon=0;p.keyPasses=0;p.rating=6.0;
@@ -1534,6 +1565,16 @@ class Match {
     this.subRecords.push(rec);
     this.log(`🔄 ${this.teams[side].short}: ${reserve} entra no lugar de ${oldName}!`,'sub',reserve);
     return true;
+  }
+  _substitutionNeed(p,lead,minute){
+    // Match ratings start at 6.0 and climb with successful actions. Waiting
+    // for a grade BELOW 6.0 can never identify the outfield player who has
+    // spent an entire half making no useful contribution.
+    const role=roleGroup(p.role),grade=Number(p.rating)||6;
+    const poor=minute>=40&&grade<(role==='F'||role==='M'?6.25:6.08)&&
+      (role!=='D'||lead<0);
+    const exhausted=p.stamina<73;
+    return {poor,exhausted};
   }
   _coachDecisions(){
     if(this.finished||this.phase!=='play'||this.time<29*60)return;
@@ -1574,34 +1615,46 @@ class Match {
       if(!this.autoSubs||this.subsUsed[s]>=5||used>=3||this.pendingSubs[s])continue;
       const lead=this.score[s]-this.score[1-s];
       const thresholds=lead<=-2?[39,57,73]:lead<0?[48,64,78]:[61,74,85];
-      if(min<thresholds[used])continue;
       const options=this.players.filter(p=>p.side===s&&p.i!==0&&p!==this.ball.owner&&!p.isMaster);
-      // A poor-performing forward/midfielder is considered earlier while losing.
+      const urgent=lead<0;
+      const earlyPoor=used===0&&min>=42&&options.some(p=>this._substitutionNeed(p,lead,min).poor);
+      if(min<thresholds[used]&&!earlyPoor)continue;
+      // On-field contribution matters more than arbitrary forward rotation.
+      // Good scorers should not be benched just because their club trails.
       const urgency=lead<0;
       options.sort((a,b)=>{
-        const grade=p=>p.rating*4+p.stamina*.10+(PLAYER_STYLES[p.name]?4:0)-(urgency&&roleGroup(p.role)==='F'?7:0);
+        const grade=p=>p.rating*8+p.stamina*.12+(PLAYER_STYLES[p.name]?2:0)-
+          (this._substitutionNeed(p,lead,min).poor?12:0)-(urgency&&roleGroup(p.role)==='F'?2:0);
         return grade(a)-grade(b);
       });
       const planned=[],reserved=new Set(this.benchUsed[s]),maxBatch=Math.min(5-this.subsUsed[s],used===2?1:2);
+      const Coach=(typeof globalThis!=='undefined'?globalThis.NeoCoach980:null);
       for(const p of options){
         if(planned.length>=maxBatch)break;
-        if(!urgency&&p.stamina>93&&used>=1)continue;
+        const need=this._substitutionNeed(p,lead,min);
+        if(!urgent&&!need.poor&&!need.exhausted)continue;
         const group=roleGroup(p.role);
-        const Coach=(typeof globalThis!=='undefined'?globalThis.NeoCoach980:null);
-        const candidates=this.teams[s].reserves.filter(name=>!reserved.has(name)&&(Coach?.compatible?.(p.role,Coach?.reserveRole?.(this.teams[s],name)||BENCH_ROLE_HINTS[name]||'MC')??roleGroup(Coach?.reserveRole?.(this.teams[s],name)||BENCH_ROLE_HINTS[name]||'MC')===group));
-        const reserve=candidates.sort((a,b)=>{
-          const role=Coach?.reserveRole?.(this.teams[s],a)||p.role;
-          const ra=Attr.generate(a,role,p.i,this.careerPlayers[a+'|'+this.teams[s].id])?.ovr||70;
-          const role2=Coach?.reserveRole?.(this.teams[s],b)||p.role;
-          const rb=Attr.generate(b,role2,p.i,this.careerPlayers[b+'|'+this.teams[s].id])?.ovr||70;
-          return rb-ra;
-        })[0];
-        if(reserve){planned.push({id:p.id,reserve});reserved.add(reserve);}
+        const starterOvr=Number(p.attributes?.ovr)||75;
+        const maxDrop=need.poor?10:need.exhausted?8:urgent?6:4;
+        const candidates=this.teams[s].reserves.map(name=>{
+          const role=Coach?.reserveRole?.(this.teams[s],name)||BENCH_ROLE_HINTS[name]||'MC';
+          const ovr=Attr.generate(name,role,p.i,this.careerPlayers[name+'|'+this.teams[s].id])?.ovr||70;
+          return {name,role,ovr};
+        }).filter(r=>!reserved.has(r.name)&&r.ovr>=starterOvr-maxDrop&&
+          (Coach?.compatible?.(p.role,r.role)??roleGroup(r.role)===group))
+         .sort((a,b)=>b.ovr-a.ovr);
+        if(candidates.length){
+          const reserve=candidates[0].name;
+          planned.push({id:p.id,out:p.name,reserve,reason:need.poor?'nota baixa':need.exhausted?'cansaço':'ajuste tático'});
+          reserved.add(reserve);
+        }
       }
       if(planned.length){
         this.pendingSubs[s]=planned;
-        const reason=lead<0?'time está perdendo':lead>0?'manter o resultado':'buscar vantagem';
-        this.coachDecisions.push({side:s,minute:Math.floor(min),type:'substitution-plan',count:planned.length,reason});
+        const reason=planned.some(p=>p.reason==='nota baixa')?'jogadores abaixo do rendimento esperado':
+          planned.some(p=>p.reason==='cansaço')?'desgaste físico':lead<0?'time está perdendo':'buscar vantagem';
+        this.coachDecisions.push({side:s,minute:Math.floor(min),type:'substitution-plan',count:planned.length,
+          reason,changes:planned.map(p=>({out:this.players.find(x=>x.id===p.id)?.name,in:p.reserve,cause:p.reason}))});
         this.log(`🔄 Técnico de ${this.teams[s].short} prepara ${planned.length} troca(s): ${reason}.`, 'coach');
       }
     }
@@ -2138,10 +2191,17 @@ function compactSeasonReports(season,aggressive=false){
    compact.shapeHistory=Array.isArray(compact.shapeHistory)?compact.shapeHistory.map(h=>tail(h,1)):compact.shapeHistory;
    compact.specialMoments=tail(compact.specialMoments,2);
    compact.coachDecisions=tail(compact.coachDecisions,1);
-   // The full score/goal sheet and individual performance survive. Only old
-   // transient shot/event telemetry is sampled to stay within mobile quota.
-   if(Array.isArray(compact.shots))compact.shots=compact.shots.filter(s=>
-    s?.goal||s?.outcome==='saved');
+   // The full score/goal sheet and individual performance survive. Keep every
+   // scored shot and one real keeper-save example, but archive just the shot's
+   // identity and outcome: the live pitch coordinates/pressure are transient.
+   // Exact save totals remain in stats and each goalkeeper's career sheet.
+   if(Array.isArray(compact.shots)){
+    const scored=compact.shots.filter(s=>s?.goal);
+    const saved=compact.shots.filter(s=>s?.outcome==='saved').slice(-1);
+    const shotFields=['side','shooter','role','onTarget','xg','outcome','header','style','goal','minute','savedBy'];
+    compact.shots=[...scored,...saved].sort((a,b)=>(a.minute||0)-(b.minute||0))
+     .map(shot=>Object.fromEntries(shotFields.filter(key=>shot[key]!==undefined).map(key=>[key,shot[key]])));
+   }
    if(Array.isArray(compact.events))compact.events=compact.events.filter(e=>
     e?.type==='goal'||e?.type==='save');
    // Extended Ego systems also duplicate tactical narration in each report.
@@ -2180,6 +2240,83 @@ function recordFixture(season,fixture,match){
   const ranks=Progression.rank(season);ranks.forEach((p,i)=>{const prev=before.indexOf(p.name+'|'+p.club);p.rankChange=prev<0?0:prev-i;});
   return true;
 }
+// Commit an official result only after the complete season snapshot is safely
+// persisted. The live season, including market values and secondary ledgers,
+// remains untouched when storage is full or a recording hook fails.
+function recordFixtureTransactional(season,fixture,match,persist,recorder=recordFixture){
+ if(!season||!fixture||typeof persist!=='function'||typeof recorder!=='function'||fixture.result)return null;
+ const roundIndex=(season.rounds||[]).findIndex(r=>r.games?.includes(fixture));
+ if(roundIndex<0)return null;
+ const fixtureIndex=season.rounds[roundIndex].games.indexOf(fixture);
+ if(fixtureIndex<0)return null;
+ try{
+  const next=JSON.parse(JSON.stringify(season));
+  Object.defineProperty(next,'__neoFoundationDraft',{value:true,configurable:true});
+  const pending=next.rounds[roundIndex].games[fixtureIndex];
+  if(!recorder(next,pending,match))return null;
+  if(persist(next)!==true)return null;
+  delete next.__neoFoundationDraft;
+  return {season:next,fixture:pending,round:next.rounds[roundIndex].round};
+ }catch(error){
+  if(typeof console!=='undefined')console.warn('Registro oficial preservado para nova tentativa:',error);
+  return null;
+ }
+}
+// Recover scorers and assists exclusively from complete, genuine match sheets.
+// Never overwrite historical counters if even one completed match lacks proof.
+function reconcileSeasonRecords(season){
+ const totals={scorers:{},assists:{}},goalLog=[];
+ let completed=0,allGoalsDocumented=true;
+ for(const round of season?.rounds||[])for(const fixture of round.games||[]){
+  if(!Array.isArray(fixture.result))continue;
+  completed++;
+  const sheet=fixture.details;
+  if(!Array.isArray(sheet?.players))return {complete:false,changed:false,reason:'Relatório individual ausente'};
+  const sides=[0,0],validEntries=Array.isArray(sheet.masterEntries)?sheet.masterEntries:[];
+  for(const p of sheet.players){
+   if(!p?.name||![0,1].includes(p.side))continue;
+   if(p.isMaster&&!validEntries.some(e=>e.side===p.side&&e.master===p.name))continue;
+   const goals=Number(p.goals||0),assists=Number(p.assists||0);
+   if(!Number.isSafeInteger(goals)||goals<0||!Number.isSafeInteger(assists)||assists<0)
+    return {complete:false,changed:false,reason:'Estatística inválida'};
+   sides[p.side]+=goals;
+   const key=p.name+'|'+(p.side===0?fixture.home:fixture.away);
+   if(goals)totals.scorers[key]=(totals.scorers[key]||0)+goals;
+   if(assists)totals.assists[key]=(totals.assists[key]||0)+assists;
+  }
+  // An old sheet may be incomplete (e.g. saved before all goal events were
+  // retained). Such seasons must keep their historical cumulative totals.
+  if(sides.some((n,i)=>n>fixture.result[i]))
+   return {complete:false,changed:false,reason:'Autores excedem o placar salvo'};
+  if(sides.some((n,i)=>n!==fixture.result[i]))
+   return {complete:false,changed:false,reason:'Autores não cobrem todos os gols'};
+  if(!Array.isArray(sheet.goalRecords))allGoalsDocumented=false;
+  else for(const rec of sheet.goalRecords){
+   if(![0,1].includes(rec.side)||!rec.scorer||!Array.isArray(rec.score)){
+    allGoalsDocumented=false;break;
+   }
+   goalLog.push({round:round.round,home:fixture.home,away:fixture.away,
+    team:rec.side===0?fixture.home:fixture.away,scorer:rec.scorer,
+    assister:rec.assister,setPiece:rec.setPiece||null,minute:rec.minute,
+    score:[...rec.score]});
+  }
+ }
+ if(!completed)return {complete:false,changed:false,reason:'Sem partidas para conferir'};
+ const same=(a,b)=>{
+  const first=Object.entries(a||{}).filter(([,v])=>Number(v)!==0).sort(([x],[y])=>x.localeCompare(y));
+  const second=Object.entries(b||{}).filter(([,v])=>Number(v)!==0).sort(([x],[y])=>x.localeCompare(y));
+  return JSON.stringify(first)===JSON.stringify(second);
+ };
+ let changed=false;
+ for(const metric of ['scorers','assists'])if(!same(season[metric],totals[metric])){
+  season[metric]=totals[metric];changed=true;
+ }
+ if(allGoalsDocumented&&(!Array.isArray(season.goalLog)||
+  JSON.stringify(season.goalLog)!==JSON.stringify(goalLog))){
+  season.goalLog=goalLog;changed=true;
+ }
+ return {complete:true,changed,completed,goalLogVerified:allGoalsDocumented};
+}
 function migrateLegacySeason(legacy){
   if(!legacy||!Array.isArray(legacy.fixtures)||legacy.fixtures.length!==20)return null;
   const season=createSchedule();
@@ -2190,6 +2327,6 @@ function migrateLegacySeason(legacy){
   season.scorers={...legacy.scorers};season.assists={...legacy.assists};season.goalLog=[];return season;
 }
 function lerp(a,b,t){return a+(b-a)*t;}
-return {PITCH,TICK,GAME_RATE,MAX_SECONDS,TEAMS,EXTRA_TEAMS,allTeams,registerTeam,registerCreatedPlayer,unregisterCreatedPlayer,listCreatedPlayers,COUNTRY_KITS,SKILLS,PLAYER_STYLES,GAMEPLAN_TEMPLATES,Attr,Abilities,Masters,Progression,avatarTheme,avatarHTML,avatarSVG,REAL_PORTRAITS,Match,createSchedule,standings,teamById,recordFixture,compactFixtureDetails,compactSeasonReports,migrateLegacySeason,FORMATIONS,DEFAULT_FORMATION};
+return {PITCH,TICK,GAME_RATE,MAX_SECONDS,TEAMS,EXTRA_TEAMS,allTeams,registerTeam,registerCreatedPlayer,unregisterCreatedPlayer,listCreatedPlayers,COUNTRY_KITS,SKILLS,PLAYER_STYLES,GAMEPLAN_TEMPLATES,Attr,Abilities,Masters,Progression,avatarTheme,avatarHTML,avatarSVG,REAL_PORTRAITS,Match,createSchedule,planFixtureWaves,standings,teamById,recordFixture,recordFixtureTransactional,reconcileSeasonRecords,compactFixtureDetails,compactSeasonReports,migrateLegacySeason,FORMATIONS,DEFAULT_FORMATION};
 });
 

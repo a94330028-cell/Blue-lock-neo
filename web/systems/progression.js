@@ -144,13 +144,14 @@ function masterAppearance(career,fixture,round,p,entry){
  if(!leagueParticipants({rounds:[{games:[fixture]}]}).has(club))return false;
  if(!career.masterBids||typeof career.masterBids!=='object')career.masterBids={};
  const saved=career.masterBids[id]||(career.masterBids[id]={
-  name:p.name,club,role:'CA',games:0,masterApps:0,value:0,change:0,
+ name:p.name,club,role:p.role||'CA',games:0,masterApps:0,value:0,change:0,
   goals:0,assists:0,passes:0,shots:0,tackles:0,saves:0,interceptions:0,
   ratingSum:0,bidHistory:[],history:[],isMaster:true
  });
  // A master earns an offer only when actually on the match sheet with a
  // corresponding Master Striker substitution entry. OVR alone pays nothing.
  if(p.rating===null||p.rating===undefined||!Number.isFinite(Number(p.rating)))return false;
+ if(p.role)saved.role=p.role;
  const previous=Math.max(0,num(saved.value));
  const goalDifference=(p.side===0?1:-1)*(fixture.result[0]-fixture.result[1]);
  const proposed=bidDelta(p,goalDifference);
@@ -346,5 +347,17 @@ function record(season,fixture,match,round){const career=ensure(season);reconcil
  if(career.stories.length>90)career.stories=career.stories.slice(-90);
  career.history.push({round,fixture:fixture.home+'-'+fixture.away,score:[...r.score]});if(career.history.length>200)career.history.shift();return career;}
 function rank(season,filter='all'){const career=ensure(season),allowed=leagueParticipants(season),data=Object.values(career.players).filter(p=>allowed.has(p.club));for(const p of data)if(p.role)p.ovr=Attr.generate(p.name,p.role,p.role==='GOL'?0:1,p).ovr;return data.filter(p=>filter==='all'||p.club===filter).sort((a,b)=>b.score-a.score||b.goals-a.goals||a.name.localeCompare(b.name));}
-return {ensure,record,rank,key,baseValue,estimateValue,bidDelta,reconcileBids,reconcileMasterBids,mvpRanking,verifiedKeeperSaves,reconcileGoalkeepers,BID_VERSION};
+// The ordinary career ledger intentionally excludes Masters. Provide a second
+// real-appearances-only leaderboard instead of adding fake games to players.
+function masterRank(season,filter='all'){
+ const allowed=leagueParticipants(season),bids=ensure(season).masterBids||{};
+ return Object.values(bids).filter(p=>p?.isMaster&&num(p.games)>0&&allowed.has(p.club)&&
+  (filter==='all'||p.club===filter)).map(p=>{
+  const avg=num(p.ratingSum,6*num(p.games))/Math.max(1,num(p.games));
+  const performance=num(p.goals)*3.3+num(p.assists)*2.6+num(p.saves)*.36+
+   num(p.tackles)*.25+num(p.interceptions)*.26+Math.max(0,avg-6)*num(p.games)*.8;
+  return {...p,score:Math.round(performance*10)/10,ovr:Attr.generate(p.name,p.role||'CA',9,p).ovr};
+ }).sort((a,b)=>b.score-a.score||b.goals-a.goals||String(a.name).localeCompare(String(b.name)));
+}
+return {ensure,record,rank,masterRank,key,baseValue,estimateValue,bidDelta,reconcileBids,reconcileMasterBids,mvpRanking,verifiedKeeperSaves,reconcileGoalkeepers,BID_VERSION};
 });

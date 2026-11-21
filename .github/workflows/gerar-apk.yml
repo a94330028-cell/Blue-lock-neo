@@ -88,6 +88,7 @@ jobs:
           node tests/neo-team-logos.test.cjs
           node tests/neo-bids-v3.test.cjs
           node tests/neo-master-market-v1.test.cjs
+          node tests/neo-foundation-public-release.test.cjs
           node --check web/neo-advanced-v200.js
           node --check web/neo-universe-v220.js
           node --check web/neo-twelve-v230.js
@@ -185,28 +186,39 @@ jobs:
           name: Blue-Lock-NEO-APK-ASSINADO-ATUALIZAVEL
           path: app/build/outputs/apk/release/app-release.apk
           retention-days: 30
-      - name: Preparar APK para download direto
+      - name: Preparar APK público apenas com assinatura estável
         id: release_info
+        if: env.BUILD_SIGNED == '1'
         shell: bash
         run: |
           set -euo pipefail
           VERSION="$(cat web/VERSION)"
           test -n "$VERSION"
           mkdir -p release
-          if [ "${BUILD_SIGNED:-0}" = 1 ]; then
-            test -s app/build/outputs/apk/release/app-release.apk
-            cp app/build/outputs/apk/release/app-release.apk "release/Blue-Lock-NEO-v${VERSION}-Android.apk"
-            cp app/build/outputs/apk/release/app-release.apk release/Blue-Lock-NEO-Android.apk
-            echo 'signature=assinatura de atualização configurada' >> "$GITHUB_OUTPUT"
-          else
-            test -s app/build/outputs/apk/debug/app-debug.apk
-            cp app/build/outputs/apk/debug/app-debug.apk "release/Blue-Lock-NEO-v${VERSION}-Android-TESTE.apk"
-            cp app/build/outputs/apk/debug/app-debug.apk release/Blue-Lock-NEO-Android.apk
-            echo 'signature=assinatura de TESTE (pode exigir reinstalação)' >> "$GITHUB_OUTPUT"
-          fi
+          test -s app/build/outputs/apk/release/app-release.apk
+          cp app/build/outputs/apk/release/app-release.apk "release/Blue-Lock-NEO-v${VERSION}-Android.apk"
+          cp app/build/outputs/apk/release/app-release.apk release/Blue-Lock-NEO-Android.apk
+          echo 'signature=assinatura de atualização configurada' >> "$GITHUB_OUTPUT"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+      - name: Bloquear substituição silenciosa de uma Release anterior
+        id: unique_release
+        if: env.BUILD_SIGNED == '1'
+        shell: bash
+        run: |
+          VERSION="$(cat web/VERSION)"
+          if git ls-remote --exit-code --tags origin "refs/tags/v${VERSION}" >/dev/null 2>&1; then
+            echo "exists=1" >> "$GITHUB_OUTPUT"
+            echo "### APK público não substituído: v${VERSION} já possui Release. Aumente web/VERSION para um lançamento novo." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "exists=0" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Relatar ausência de assinatura de produção
+        if: env.BUILD_SIGNED != '1'
+        run: |
+          echo '### APK Debug gerado apenas como artefato de testes.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Sem a chave estável BL_*, a publicação do APK no GitHub Releases fica bloqueada. O site e a atualização interna do aplicativo seguem no workflow de Pages.' >> "$GITHUB_STEP_SUMMARY"
       - name: Publicar APK para todos no GitHub Releases
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' && env.BUILD_SIGNED == '1' && steps.unique_release.outputs.exists == '0'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.release_info.outputs.version }}

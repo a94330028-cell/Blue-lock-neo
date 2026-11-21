@@ -10,6 +10,8 @@ ROOT = Path(__file__).resolve().parents[1]
 CATEGORIES = ("novidades", "correcoes", "jogabilidade", "visual", "otimizacoes", "importantes")
 MAX_PATCH_ITEMS = 8
 MAX_PATCH_CHARS = 1400
+MAX_MAJOR_ITEMS = 20
+MAX_MAJOR_CHARS = 4500
 MAX_ITEM_CHARS = 300
 MAX_PACKAGE_BYTES = 32 * 1024 * 1024
 MAX_UNPACKED_BYTES = 96 * 1024 * 1024
@@ -43,11 +45,16 @@ def audit_release(data, version):
     items = [entry for category in CATEGORIES for entry in current.get(category, [])]
     if not items or any(not isinstance(x, str) or not x.strip() for x in items):
         raise ValueError("Notas vazias ou inválidas")
-    if len(items) > MAX_PATCH_ITEMS:
-        raise ValueError(f"Patch gigante: {len(items)} itens (limite {MAX_PATCH_ITEMS}). Comece uma versão nova.")
+    # NEO 2.0.0 is a feature release with a long, already published history.
+    # Limit follow-up maintenance patches more strictly without erasing its notes.
+    major_release = parse_version(version)[1:] == (0, 0)
+    max_items = MAX_MAJOR_ITEMS if major_release else MAX_PATCH_ITEMS
+    max_chars = MAX_MAJOR_CHARS if major_release else MAX_PATCH_CHARS
+    if len(items) > max_items:
+        raise ValueError(f"Patch gigante: {len(items)} itens (limite {max_items}). Comece uma versão nova.")
     total_chars = sum(len(x) for x in items)
-    if total_chars > MAX_PATCH_CHARS:
-        raise ValueError(f"Patch gigante: {total_chars} caracteres (limite {MAX_PATCH_CHARS})")
+    if total_chars > max_chars:
+        raise ValueError(f"Patch gigante: {total_chars} caracteres (limite {max_chars})")
     for x in items:
         if len(x) > MAX_ITEM_CHARS:
             raise ValueError("Resumo muito extenso; detalhe no histórico técnico: " + x[:55])

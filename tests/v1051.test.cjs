@@ -78,7 +78,8 @@ assert.equal(E.recordFixture(realSeason,fixture,match),true);
 assert.equal(realSeason.career.bidVersion,3,'new seasons activate the v3 participation auction');
 assert.ok(Object.values(realSeason.career.players).every(p=>p.value>=0));
 const app=read('web/app.js'),market=read('web/neo-v960.js');
-assert.ok(app.includes('E.Progression.reconcileBids(saved)'),'old saves migrated on load');
+assert.ok(app.includes('E.Progression.reconcileBids(candidate)')&&app.includes("await archiveSeasonSnapshot(original,'foundation-before-repair')")&&app.includes('repairLoadedSeason().catch'),
+ 'old saves migrated only after a verified, recoverable archive');
 assert.ok(market.includes("D.roster(E,s,{scope:'league'})"),'ranking is scoped to league');
 assert.match(read('web/service-worker.js'),/const CACHE_NAME=['"]blue-lock-neo-v2\.0\.0-[^'"]+['"]/);
 assert.equal(read('web/VERSION').trim(),'2.0.0');

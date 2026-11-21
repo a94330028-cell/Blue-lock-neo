@@ -38,7 +38,7 @@ manifest = {
     "url": f"{HOST}/updates/{ARCHIVE.name}",
     "sha256": sha,
     "minAndroidVersion": 85,
-    "changes": f"Blue Lock NEO {PUBLIC_VERSION} · conteúdo {UPDATE_BUILD}: ranking de clubes e filtro por time no celular e PC, incluindo History FC e clubes cadastrados. Botão direto para baixar o APK; publicação do GitHub Releases sem aviso de pré-lançamento. Saves e fotos preservados."
+    "changes": f"Blue Lock NEO {PUBLIC_VERSION} · conteúdo {UPDATE_BUILD} — NEO FOUNDATION: salvamento oficial seguro, técnicos e substituições durante as partidas, Masters e rankings reais, simulação de três jogos e histórico compacto. Atualização do site e do conteúdo Android com verificação SHA-256, preservando saves e retratos. APK novo depende da assinatura estável."
 }
 (DEST / "latest.json").write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 print(f"Pacote: {ARCHIVE} ({ARCHIVE.stat().st_size} bytes)")

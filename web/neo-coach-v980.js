@@ -156,34 +156,63 @@ function chooseFormation(team,season,Attr,result){
  const scored=history.recent.slice(-3).reduce((a,x)=>a+x.own,0);
  const conceded=history.recent.slice(-3).reduce((a,x)=>a+x.opp,0);
  const attackerNeeded=scored<=2,defenderNeeded=conceded>=4;
+ const qualityMemo=new Map();
  const quality=(name,role)=>{
+  const key=name+'|'+role;
+  if(qualityMemo.has(key))return qualityMemo.get(key);
   const natural=preferredRole(team,name),f=perf(name,team,season);
-  return overall(Attr,team,name,natural,1,season)-rolePenalty(role,natural)
+  // Hungarian assignment needs to know that wrong-position pairings are
+  // forbidden. A small penalty can consume the only winger/MEI as a striker,
+  // making a perfectly playable alternative formation appear impossible.
+  if(!compatible(role,natural)){qualityMemo.set(key,-100000);return -100000;}
+  const score=overall(Attr,team,name,natural,1,season)-rolePenalty(role,natural)
    -(f?.poor?8:0)+(initial.includes(name)?1.2:0);
+  qualityMemo.set(key,score);return score;
  };
  const originalShape=team.formationName||'4-3-3';
  const options=[...new Set([originalShape,...Object.keys(SHAPES)])].filter(x=>SHAPES[x]);
+ // The unconstrained optimum can replace six underperformers at once and is
+ // then discarded by the three-change limit. Try increasing bench costs to
+ // find the best *legal* XI before rejecting a playable formation entirely.
+ const poorStarters=new Set(result.changes.map(x=>x.out));
+ const assignments=roles=>[null,...poorStarters].flatMap(excluded=>{
+  // When two starters have comparably bad ratings, simple penalties may swap
+  // either both or neither. Force one documented weak starter to the bench and
+  // solve the *entire* XI again without breaking positional compatibility.
+  const available=excluded?pool.filter(name=>name!==excluded):pool;
+  return [0,6,12,20,30,48].map(benchCost=>assign(roles,available,(i,j)=>
+   quality(available[j],roles[i])-(initial.includes(available[j])?0:benchCost)
+    -(poorStarters.has(available[j])?16:0)));
+ });
  let best=null;
  for(const name of options){
   const formation=shapeSlots(name),roles=SHAPES[name];
-  const picked=assign(roles,pool,(i,j)=>quality(pool[j],roles[i]));
-  if(!picked||keep.some(x=>!picked.includes(x)))continue;
-  if(roles.some((role,i)=>!compatible(role,preferredRole(team,picked[i]))))continue;
-  const players=[gk,...picked],promoted=players.filter(x=>!initial.includes(x)),benched=initial.filter(x=>!players.includes(x));
-  if(promoted.length>3||promoted.length!==benched.length)continue;
-  const rolesByName=Object.fromEntries(players.map((x,i)=>[x,formation[i].role]));
-  if(promoted.some(x=>overall(Attr,team,x,preferredRole(team,x),1,season)<80))continue;
-  const defs=roles.filter(r=>group(r)==='D').length,mids=roles.filter(r=>group(r)==='M').length,front=10-defs-mids;
-  let score=roles.reduce((a,r,i)=>a+quality(picked[i],r),0)/10;
-  score+=1.5*Math.min(mids,3)+.65*Math.min(defs,4)-Math.max(0,front-4)*2.2;
-  if(defenderNeeded)score+=defs*1.8;
-  if(attackerNeeded)score+=front*.75;
-  if(history.streak>=2&&name===(lastShape||originalShape))score-=8;
-  // A losing experiment cannot be repeated indefinitely. A winning switch
-  // stays in place until results offer a reason to change it again.
-  if(lastShape===name)score+=last?.lost?-6:5;
-  if(name===originalShape&&!lastShape)score+=1;
-  if(!best||score>best.score)best={name,formation,players,promoted,benched,rolesByName,score};
+  for(const picked of assignments(roles)){
+   if(!picked||keep.some(x=>!picked.includes(x)))continue;
+   if(roles.some((role,i)=>!compatible(role,preferredRole(team,picked[i]))))continue;
+   const players=[gk,...picked],promoted=players.filter(x=>!initial.includes(x)),benched=initial.filter(x=>!players.includes(x));
+   if(promoted.length>3||promoted.length!==benched.length)continue;
+   // A shape-only shuffle must not silently undo the rotation already
+   // justified by two genuinely poor match ratings or consecutive defeats.
+   if(result.changes.length&&!result.changes.some(change=>benched.includes(change.out)))continue;
+   // There is no universal "OVR 80" reserve cutoff: a 79-rated centre-back
+   // replacing a 71-rated starter improves a weaker club. Compare against the
+   // actual outgoing players so tactical changes work across all NEL squads.
+   const totalOvr=names=>names.reduce((sum,x)=>sum+overall(Attr,team,x,preferredRole(team,x),1,season),0);
+   if(totalOvr(promoted)<totalOvr(benched)-6*promoted.length)continue;
+   const rolesByName=Object.fromEntries(players.map((x,i)=>[x,formation[i].role]));
+   const defs=roles.filter(r=>group(r)==='D').length,mids=roles.filter(r=>group(r)==='M').length,front=10-defs-mids;
+   let score=roles.reduce((a,r,i)=>a+quality(picked[i],r),0)/10;
+   score+=1.5*Math.min(mids,3)+.65*Math.min(defs,4)-Math.max(0,front-4)*2.2;
+   if(defenderNeeded)score+=defs*1.8;
+   if(attackerNeeded)score+=front*.75;
+   if(history.streak>=2&&name===(lastShape||originalShape))score-=8;
+   // A losing experiment cannot be repeated indefinitely. A winning switch
+   // stays in place until results offer a reason to change it again.
+   if(lastShape===name)score+=last?.lost?-6:5;
+   if(name===originalShape&&!lastShape)score+=1;
+   if(!best||score>best.score)best={name,formation,players,promoted,benched,rolesByName,score};
+  }
  }
  if(!best)return result;
  if(best.name===originalShape&&best.promoted.length===0&&!lastShape)return result;
@@ -191,8 +220,11 @@ function chooseFormation(team,season,Attr,result){
  // fresh losing streak; continue that approach until it stops working.
  if(lastShape&&last&&!last.lost&&best.name!==lastShape){
   const saved=shapeSlots(lastShape);if(saved){const selected=options.includes(lastShape)?lastShape:null;
-   if(selected){const stable=assign(SHAPES[selected],pool,(i,j)=>quality(pool[j],SHAPES[selected][i]));
-    if(stable&&keep.every(x=>stable.includes(x))&&SHAPES[selected].every((role,i)=>compatible(role,preferredRole(team,stable[i]))))
+   if(selected){const stable=assignments(SHAPES[selected]).find(picked=>picked&&
+      keep.every(x=>picked.includes(x))&&picked.filter(x=>!initial.includes(x)).length<=3&&
+      (!result.changes.length||result.changes.some(change=>!picked.includes(change.out)))&&
+      SHAPES[selected].every((role,i)=>compatible(role,preferredRole(team,picked[i]))));
+    if(stable)
      best={...best,name:selected,formation:saved,players:[gk,...stable],promoted:stable.filter(x=>!initial.includes(x)),benched:initial.filter(x=>![gk,...stable].includes(x))};
    }
   }

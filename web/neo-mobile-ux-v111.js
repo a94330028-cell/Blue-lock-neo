@@ -21,9 +21,12 @@
  };
  function market(){
   try{
-   const s=season();
+   const live=season();
+   // Market is a view: never upgrade the live season or overwrite the only
+   // copy of an old save while the verified IndexedDB archive is pending.
+   const s=live?.career?.masterBidVersion!==2?JSON.parse(JSON.stringify(live)):live;
    if(s&&s.career?.masterBidVersion!==2&&engine()?.Progression?.reconcileMasterBids){
-    engine().Progression.reconcileMasterBids(s);window.NeoCareerBridge?.save?.();
+    engine().Progression.reconcileMasterBids(s);
    }
    const rows=window.NeoMarket96?.market?.(s)||
     window.NeoPlayerData96?.roster?.(engine(),s,{scope:'league'})||[];
@@ -42,7 +45,7 @@
  let simulating=false,simMessage='',simMode='';
  function liveMatches(){
   const upcoming=games().filter(g=>!Array.isArray(g.result)).slice(0,3);
-  return '<section class="neo-ux-live-triple" aria-label="Três jogos simultâneos"><h3>🔴 3 CAMPOS AO VIVO</h3><p>22 bolinhas e a bola de verdade em cada jogo · acompanhe os gols!</p><div class="neo-ux-live-list">'+
+  return '<section class="neo-ux-live-triple" aria-label="Até três jogos em uma simulação"><h3>🔴 3 CAMPOS AO VIVO</h3><p>22 bolinhas por partida. Quando um time joga em duas rodadas, o próximo campo aguarda para não duplicar o clube.</p><div class="neo-ux-live-list">'+
    upcoming.map((f,i)=>'<article class="neo-ux-live-game"><div class="neo-ux-live-head"><span>'+esc(club(f.home)?.short||f.home)+'</span><strong id="neo-ux-live-score-'+i+'">0 × 0</strong><span>'+esc(club(f.away)?.short||f.away)+'</span><small id="neo-ux-live-clock-'+i+'">0′</small></div><canvas width="320" height="192" id="neo-ux-live-pitch-'+i+'" aria-label="Jogadores de '+esc(f.home)+' contra '+esc(f.away)+' em movimento"></canvas></article>').join('')+'</div></section>';
  }
  function paintLive(matches){
@@ -51,7 +54,7 @@
   matches.forEach((m,i)=>{
    const score=$('neo-ux-live-score-'+i),clock=$('neo-ux-live-clock-'+i),canvas=$('neo-ux-live-pitch-'+i);
    if(score)score.textContent=m.score[0]+' × '+m.score[1];
-   if(clock)clock.textContent=m.finished?'FIM':m.minute+'′';
+   if(clock)clock.textContent=m.queued?'NA FILA':m.finished?'FIM':m.minute+'′';
    if(!canvas)return;const ctx=canvas.getContext('2d');if(!ctx)return;
    const w=canvas.width,h=canvas.height,px=x=>8+(x-field.left)/(field.right-field.left)*(w-16),py=y=>8+(y-field.top)/(field.bottom-field.top)*(h-16);
    ctx.fillStyle='#125d42';ctx.fillRect(0,0,w,h);ctx.fillStyle='#ffffff0d';for(let row=0;row<8;row+=2)ctx.fillRect(0,row*h/8,w,h/8);

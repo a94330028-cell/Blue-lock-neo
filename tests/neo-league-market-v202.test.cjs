@@ -9,9 +9,19 @@ require('../web/neo-historic-teams-v970.js').install(E);
 const selected=['ht','bm'];
 const season=E.createSchedule(2,selected);
 const fixture=season.rounds[0].games[0];
-const match=new E.Match(fixture.home,fixture.away,20261117,E.Progression.ensure(season),season);
-match.runToEnd();
-const sheet=match.result();
+let match,sheet;
+// A real fixture can legitimately end without assists (e.g. a lone solo
+// goal). Exercise both outcomes and select one with a factual assist to test
+// the market's nonzero-assist path without assuming a particular scoreline.
+for(const seed of [20261117,20261118,20261120,20261121]){
+ const candidate=new E.Match(fixture.home,fixture.away,seed,E.Progression.ensure(season),season);
+ candidate.runToEnd();
+ const report=candidate.result();
+ assert.equal(report.players.reduce((sum,p)=>sum+(p.assists||0),0),
+  report.goalRecords.filter(g=>g.assister).length,'assistencias individuais batem com passes decisivos reais');
+ if(report.goalRecords.some(g=>g.assister)){match=candidate;sheet=report;break;}
+}
+assert.ok(match,'fixture with a real assister found among deterministic seeds');
 assert.equal(E.recordFixture(season,fixture,match),true);
 assert.deepEqual(fixture.result,sheet.score);
 
@@ -46,6 +56,8 @@ for(const p of sheet.players){
 }
 assert.ok(Object.values(season.scorers).some(n=>n>0),'fixture creates a real scorer');
 assert.ok(Object.values(season.assists).some(n=>n>0),'fixture creates a real assister');
+assert.equal(Object.values(season.assists).reduce((sum,n)=>sum+n,0),
+ sheet.goalRecords.filter(g=>g.assister).length,'mercado só conta assistências registradas na súmula');
 assert.equal(D.roster(E,season,{scope:'all'}).some(p=>p.club==='mir25'),true,'gallery still has all clubs');
 const full=D.roster(E,season,{scope:'all'});
 assert.equal(full.find(p=>p.name==='Toko'&&p.club==='ht').role,'GOL','reserve keeper retains position');

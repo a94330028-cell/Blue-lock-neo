@@ -132,7 +132,7 @@ function adapt(engine){
   const recorded=original.call(this,season,fixture,match);
   if(recorded===true){
    try{observe(season,fixture,match)}catch(error){if(typeof console!=='undefined')console.warn('Neo2World:',error)}
-   if(typeof window!=='undefined'&&typeof window.dispatchEvent==='function'&&typeof CustomEvent!=='undefined')
+   if(!season?.__neoFoundationDraft&&typeof window!=='undefined'&&typeof window.dispatchEvent==='function'&&typeof CustomEvent!=='undefined')
     window.dispatchEvent(new CustomEvent('neo2-recorded'));
   }
   return recorded;
