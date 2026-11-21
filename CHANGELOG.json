@@ -24,6 +24,7 @@
       "version": "2.0.0",
       "date": "2026-11-18",
       "novidades": [
+        "Conteúdo 10.6.46: revisão dos controles do jogo no PC e celular, com botões mais claros, seleção correta do Ranking no menu inferior e atalhos de partida revisados.",
         "Conteúdo 10.6.45 — NEO FOUNDATION: simulação de três partidas em ordem segura, técnico adaptativo, substituições por desempenho, rankings e Masters com registros oficiais. Rankings de clubes e filtros do patch 10.6.44 mantidos, inclusive History FC.",
         "Conteúdo 10.6.43: corrigida a orientação tática em formações com pontas: PE aparece à esquerda, PD à direita e atacantes centrais entre eles; LE/LD também respeitam os lados. Correção aplicada ao técnico IA, escalações e seleção do campeonato, preservando elencos, saves e fotos.",
         "Conteúdo 10.6.42: equilíbrio de desempenho revisado. Overalls muito altos agora fazem diferença real em dribles, desarmes, cabeceios, finalizações e defesas, com vantagem limitada para manter zebras e o peso de tática, cansaço e atributos; jogadores e fotos personalizados preservados.",
@@ -34,6 +35,8 @@
         "Liga Neo Egoísta com 2 a 10 clubes escolhidos, calendário, tabela e partidas com 22 atletas, incluindo History Team e times históricos."
       ],
       "correcoes": [
+        "Botão de tela cheia voltou a receber toque e clique mesmo sobre o painel passivo do campo; botões de escalações móveis abrem uma lista real quando o painel opcional está indisponível.",
+        "A navegação Ranking no celular agora marca a aba correta, mantém os filtros do ranking e não deixa Início selecionado por engano.",
         "Atualização Android protegida: salva temporadas e retratos, verifica o ZIP, rejeita instalações incompletas e confirma a versão antes de ativar. Novo APK público exige assinatura estável; a build de teste não será mais publicada como versão definitiva.",
         "Treinadores agora aplicam a formação selecionada ao jogo real e registram a escolha na súmula; depois de derrotas podem testar novo esquema, manter um vencedor ou abandonar o que falhou, sem modificar saves anteriores.",
         "Atributos gerados ficaram mais variados por posição e especialidade, com efeito real em passes, dribles e finalizações. Overalls personalizados já definidos para History FC e histórico salvo continuam preservados.",
@@ -46,6 +49,7 @@
         "Dois, quatro ou seis encontros por dupla; finalizações mais frequentes, chances reais de gols aumentadas e força coletiva baseada no OVR dos 11 jogadores para favorecer equipes superiores, como History Team, sem resultados garantidos."
       ],
       "visual": [
+        "Botões e atalhos da EGO ARENA com foco visível, feedback ao pressionar, cor de ajustes ativados e indicação clara para ações desabilitadas, com estilo preservado no desktop e no celular.",
         "Seleção 4-3-3 com cartas por setor, posição e OVR; EGO ARENA 3.1 no desktop com campo protagonista, controles imediatos, painel de técnico mais útil, Liga compacta e ranking em cards com imagens existentes. Fotos personalizadas preservadas."
       ],
       "otimizacoes": [

@@ -734,3 +734,15 @@
 .club-art[src*="assets/team-logos/"],.neo-club-crest-img{object-fit:contain!important;object-position:center!important;background:transparent!important}
 .crest.neo-club-crest{background:transparent!important;border:0!important;box-shadow:none!important;overflow:visible!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;padding:0!important;clip-path:none!important}
 .neo-club-crest-img{display:block;width:100%;height:100%;max-width:100%;max-height:100%;filter:drop-shadow(0 0 4px #259aff55)}
+
+/* The field HUD intentionally ignores clicks, but its fullscreen control
+ * must opt back in, just like the camera and zoom controls. */
+#stadium .field-bottom #stadiumMode{pointer-events:auto!important;position:relative;z-index:3;display:inline-grid;place-items:center;min-width:32px;min-height:32px;padding:4px 7px;border:1px solid #75c9e5;border-radius:8px;background:linear-gradient(135deg,#126f9d,#0a365b);color:#fff;font-size:18px;font-weight:900;box-shadow:0 2px 10px #001e3680;cursor:pointer}
+#stadium .field-bottom #stadiumMode:hover{background:linear-gradient(135deg,#188bb9,#11517d)}
+#stadium .field-bottom #stadiumMode:focus-visible{outline:3px solid #b9f7ff;outline-offset:2px}
+/* Functional full-viewport fallback for Android WebViews that decline the
+ * browser Fullscreen API; Escape and the same button always close it. */
+body.neo-pseudo-fullscreen{overflow:hidden!important}
+body.neo-pseudo-fullscreen #stadium.fullscreen-active:not(:fullscreen){position:fixed!important;inset:0!important;z-index:250!important;margin:0!important;max-width:none!important;max-height:none!important;border-radius:0!important}
+body.neo-pseudo-fullscreen .neo-mobile-bottom{visibility:hidden!important}
+body.neo-pseudo-fullscreen #playerModal:not(.hidden){z-index:400!important}

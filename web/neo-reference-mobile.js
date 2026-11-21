@@ -253,14 +253,23 @@
   pitch.insertAdjacentElement('afterend',tabs);
   tabs.addEventListener('click',e=>{
    const btn=e.target.closest('[data-ref-target]');if(!btn)return;
-   tabs.querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===btn));
    const target=btn.dataset.refTarget;
+   const node=$(target)||document.querySelector('#match .'+target);
    if(target==='squads')go('players');
-   else{
-    const node=$(target)||document.querySelector('#match .'+target);
-    if(node)node.scrollIntoView({behavior:'smooth',block:'center'});
-    else if(target==='neo980-squad-area')go('squads');
+   else if(node&&!node.closest('.hidden,[hidden],details:not([open])')){
+    node.scrollIntoView({behavior:'smooth',block:'center'});
+   }else if(target==='neo980-squad-area'){
+    // The extra lineup panel is optional and often collapsed; fall back to
+    // the populated player cards instead of leaving a dead pill on screen.
+    go('players');
+   }else{
+    // A missing/hidden optional panel should not look like a successful click.
+    return;
    }
+   tabs.querySelectorAll('button').forEach(x=>{
+    const selected=x===btn;x.classList.toggle('active',selected);
+    x.setAttribute('aria-pressed',String(selected));
+   });
   });
  }
  function handleNavEvent(e){
@@ -276,7 +285,7 @@
  function setup(){
   if(document.body.classList.contains('neo-ref-mobile'))return;
   document.body.classList.add('neo-ref-mobile');
-  const style=document.createElement('link');style.rel='stylesheet';style.href='./neo-reference-mobile.css?v=20261116a';style.id='neo-ref-css';document.head.appendChild(style);
+  const style=document.createElement('link');style.rel='stylesheet';style.href='./neo-reference-mobile.css?v=10.6.46';style.id='neo-ref-css';document.head.appendChild(style);
   const shell=document.querySelector('.shell');
   for(const id of ['home','players','ranking','menu']){
    const section=document.createElement('section');section.id='neoRef'+id[0].toUpperCase()+id.slice(1);
