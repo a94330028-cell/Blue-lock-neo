@@ -88,6 +88,7 @@ jobs:
           node tests/neo-bids-v3.test.cjs
           node tests/neo-master-market-v1.test.cjs
           node tests/neo-foundation-public-release.test.cjs
+          node tests/android-stable-signing-v10645.test.cjs
           node --check web/neo-advanced-v200.js
           node --check web/neo-universe-v220.js
           node --check web/neo-twelve-v230.js
